@@ -152,7 +152,7 @@ class Options implements Cloneable {
 		}
 	}
 
-	public void openFile() throws IOException, UnsupportedEncodingException {
+	public void openFile() throws IOException {
 		FileOutputStream fos = new FileOutputStream(outputFileName);
 		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, outputEncoding)));
 	}
@@ -251,6 +251,15 @@ class StringFuns {
 class ClassGraph {
 	private static HashMap classnames = new HashMap();
 	private Options opt;
+  private Set specifiedPackages;
+
+  public ClassGraph(PackageDoc[] packages) {
+    specifiedPackages = new HashSet();
+    for (int i = 0; i < packages.length; i++) {
+      specifiedPackages.add(packages[i].name());
+    }
+    System.out.println(specifiedPackages);
+  }
 
 	/**
 	 * Print the visibility adornment of element e prefixed by
@@ -434,7 +443,9 @@ class ClassGraph {
 				opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
 			opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 			opt.w.print(", fontsize=" + opt.nodeFontSize);
-			opt.w.print(", URL=\"" + c.toString().replace('.',File.separatorChar) + ".html\"");
+      String url = classToUrl(c.qualifiedName());
+      if (url != null) 
+        opt.w.print(", URL=\"" + url + "\"");
 			opt.w.println("];");
 			ci.nodePrinted = true;
 		}
@@ -536,11 +547,57 @@ class ClassGraph {
 					opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
 				opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 				opt.w.print(", fontsize=" + opt.nodeFontSize);
-				opt.w.print(", URL=\"" + entry.getKey().toString().replace('.',File.separatorChar) + ".html\"");
+				opt.w.print(", URL=\"" + classToUrl(entry.getKey().toString()));
 				opt.w.println("]");
 			}
 		}
 	}
+
+  public boolean isSpecifiedPackage(String className) {
+    int idx = className.lastIndexOf(".");
+    String packageName = idx > 0 ? className.substring(0, idx) : className;
+    System.out.println("isSpecifiedPackage("+className+") = " + specifiedPackages.contains(packageName));
+    return specifiedPackages.contains(packageName);
+  }
+
+  public String classToUrl(String className) {
+    if (isSpecifiedPackage(className)) {
+      return packageToLocalUrl(className);
+    } else {
+      return packageToExternalUrl(className);
+    }
+  }
+
+  /**
+   * Converts a package name to an URL.  The convertion is designed to help the
+   * creation of diagrams that can be used for the navigation of JavaDoc
+   * documents. To be effective it distinguishes between "local" and "external"
+   * packages. 
+   * Local packages are the ones that belong to packages included in the current run of UMLGraph. 
+   * We assume that classes in those packages are available through relative indexes from the root
+   * of the JavaDoc tree, so we generate relative indexes for them.
+   */
+  public String packageToLocalUrl(String packageName) {
+
+    String[] s = packageName.split("\\.");
+    StringBuffer tmp = new StringBuffer(packageName.length() * 2);
+    for (int i = 0; i < s.length - 1; i++) { 
+      tmp.append("..").append(File.separatorChar); 
+    }
+    for (int j = 0; j < s.length; j++) { 
+      tmp.append(s[j]);
+      if (j != s.length - 1) {
+        tmp.append(File.separatorChar); 
+      }
+    }
+    tmp.append(".html");
+    return tmp.toString();
+  }
+
+  public String packageToExternalUrl(String packageName) {
+    String externalDocRoot = "http://java.sun.com/j2se/1.4.2/docs/api/";
+    return externalDocRoot + packageName.replace('.',File.separatorChar) + ".html";
+  }
 }
 
 /** Doclet API implementation */
@@ -549,13 +606,14 @@ public class UmlGraph {
 
 	/** Entry point */
 	public static boolean start(RootDoc root)
-                            throws IOException, UnsupportedEncodingException {
+                            throws IOException {
 		opt.setOptions(root.options());
 		opt.openFile();
 		opt.setOptions(root.classNamed("UMLOptions"));
 		prologue();
 		ClassDoc[] classes = root.classes();
-		ClassGraph c = new ClassGraph();
+
+		ClassGraph c = new ClassGraph(root.specifiedPackages());
 		for (int i = 0; i < classes.length; i++) {
 			c.print(opt, classes[i]);
 		}
