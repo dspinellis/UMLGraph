@@ -40,5 +40,5 @@ UmlGraph.class: UmlGraph.java
 
 web: $(TARBALL)
 	cp $(TARBALL) $(ZIPBALL) $(WEBDIR)
-	cp UmlGraph.jar $(WEBDIR)/UmlGraph-$(VERSION).jar
+	cp UmlGraph.jar $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
 	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
