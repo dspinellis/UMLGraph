@@ -164,14 +164,29 @@ visibility (private, public, protected)
 <code>-visibility</code>
 <code>-types</code>
 <dt>-nodefillcolor<dd>Specify the color to use to fill the shapes.
-The color can be either a symbolic name (e.g. blue),
+<dt>-nodefontname<dd>Specify the font name to use inside nodes.
+<dt>-nodefontabstractname<dd>Specify the font name to use
+inside abstract class nodes.
+<dt>-nodefontsize<dd>Specify the font size to use inside nodes.
+<dt>-nodefontcolor<dd>Specify the font color to use inside nodes.
+<dt>-edgefontname<dd>Specify the font name to use for edge labels.
+<dt>-edgefontsize<dd>Specify the font size to use for edge labels.
+<dt>-edgefontcolor<dd>Specify the font color to use for edge labels.
+<dt>-edgecolor<dd>Specify the color for drawing edges.
+<dt>-bgcolor<dd>Specify the graph's background color.
+</dl>
+<p>
+All colors can be either a symbolic name (e.g. blue),
 a tripple specifying hue-saturation-brightness as values 0-1
 (e.g. ".13 0.9 1"),
 or a tripple specifying red-green-blue values as hexadecimal
 digits prefixed by a # (e.g. "#ff8020"). 
 The symbolic color names are derived from the X Windows System;
 you can find a complete list in the Graphviz documentation.
-</dl>
+<p>
+Font names are passed directly to the dot graph generation back-end.
+In general the Postcript standard names Times, Helvetica, Courier, and
+Symbol are safe to use.
 <p>
 Since the options are really a part of the generated graph you
 want in many cases to include them in the diagram specification.
@@ -202,6 +217,18 @@ You can download it in source and compiled format from the following links:
 
 <h3>Version History</h3> <!-- {{{1 -->
 <dl>
+<dt>Version 1.19 2002/09/20<dd>
+New options:
+nodefontname,
+nodefontabstractname,
+nodefontsize,
+nodefontcolor,
+edgefontname,
+edgefontsize,
+edgefontcolor,
+edgecolor,
+bgcolor.
+
 <dt>Version 1.18 2002/08/26<dd>
 <ul>
 <li> Can now specify class-local options.
@@ -501,17 +528,23 @@ class ActionQueue {
 <img src="classadd.gif">
 </tr></table>
 Download the <a href="classadd.java">declarative specification</a>, the generated <a href="classadd.dot">dot code</a>.
-<h3>Global and Local Options</h3> <!-- {{{2 -->
+<h3>Colors, Global and Local Options</h3> <!-- {{{2 -->
 <table>
 <tr><td>
 <pre>
 /**
+ * @opt edgecolor "yellow"
+ * @opt nodefontname "Times" 
+ * @opt bgcolor ".7 .9 1" 
  * @opt nodefillcolor "#a0a0a0" 
+ * @opt nodefontsize 14
  * @hidden
  */
 class UMLOptions{}
 
 /** 
+ * @opt nodefontname "Helvetica-Bold" 
+ * @opt nodefontcolor "white"
  * @composed - - - Red
  * @composed - - - Green
  * @composed - - - Blue

@@ -36,11 +36,14 @@ class Options implements Cloneable {
 	boolean showType;
 	String edgeFontName;
 	String edgeFontColor;
+	String edgeColor;
 	double edgeFontSize;
 	String nodeFontName;
+	String nodeFontAbstractName;
 	String nodeFontColor;
 	double nodeFontSize;
 	String nodeFillColor;
+	String bgColor;
 
 	Options() {
 		showQualified = false;
@@ -49,12 +52,14 @@ class Options implements Cloneable {
 		showVisibility = false;
 		showType = false;
 		edgeFontName = "Helvetica";
-		edgeFontColor = null;
+		edgeFontColor = "black";
+		edgeColor = "black";
 		edgeFontSize = 10;
-		nodeFontName = "Helvetica";
-		nodeFontColor = null;
+		nodeFontAbstractName = "Helvetica-Oblique";
+		nodeFontColor = "black";
 		nodeFontSize = 10;
 		nodeFillColor = null;
+		bgColor = null;
 	}
 
 	public Object clone() 
@@ -92,6 +97,24 @@ class Options implements Cloneable {
 			showType = true;
 		} else if(opt[0].equals("-all")) {
 			setAll();
+		} else if(opt[0].equals("-bgcolor")) {
+			bgColor = opt[1];
+		} else if(opt[0].equals("-edgecolor")) {
+			edgeColor = opt[1];
+		} else if(opt[0].equals("-edgefontcolor")) {
+			edgeFontColor = opt[1];
+		} else if(opt[0].equals("-edgefontname")) {
+			edgeFontName = opt[1];
+		} else if(opt[0].equals("-edgefontsize")) {
+			edgeFontSize = Integer.parseInt(opt[1]);
+		} else if(opt[0].equals("-nodefontcolor")) {
+			nodeFontColor = opt[1];
+		} else if(opt[0].equals("-nodefontname")) {
+			nodeFontName = opt[1];
+		} else if(opt[0].equals("-nodefontabstractname")) {
+			nodeFontAbstractName = opt[1];
+		} else if(opt[0].equals("-nodefontsize")) {
+			nodeFontSize = Integer.parseInt(opt[1]);
 		} else if(opt[0].equals("-nodefillcolor")) {
 			nodeFillColor = opt[1];
 		}
@@ -380,9 +403,12 @@ class ClassGraph {
 				opt.w.print("}\"");
 			// Use ariali for gif output
 			if (c.isAbstract())
-				opt.w.print(", fontname=\"Helvetica-Oblique\"");
+				opt.w.print(", fontname=\"" + opt.nodeFontAbstractName + "\"");
 			if (opt.nodeFillColor != null)
 				opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
+			opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
+			opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
+			opt.w.print(", fontsize=" + opt.nodeFontSize);
 			opt.w.println("];");
 			ci.nodePrinted = true;
 		}
@@ -408,6 +434,10 @@ class ClassGraph {
 				"taillabel=\"" + t[0] + "\", " + 
 				"label=\"" + StringFuns.guillemize(t[1]) + "\", " + 
 				"headlabel=\"" + t[2] + "\", " + 
+				"fontname=\"" + opt.edgeFontName + "\", " + 
+				"fontcolor=\"" + opt.edgeFontColor + "\", " + 
+				"fontsize=" + opt.edgeFontSize + ", " + 
+				"color=\"" + opt.edgeColor + "\", " + 
 				edgetype + "]"
 			);
 		}
@@ -476,7 +506,16 @@ public class UmlGraph {
 		   option.equals("-types") ||
 		   option.equals("-all"))
 			return 1;
-		else if(option.equals("-nodefillcolor"))
+		else if(option.equals("-nodefillcolor") ||
+		   option.equals("-nodefontcolor") ||
+		   option.equals("-nodefontsize") ||
+		   option.equals("-nodefontname") ||
+		   option.equals("-nodefontabstractname") ||
+		   option.equals("-edgefontcolor") ||
+		   option.equals("-edgecolor") ||
+		   option.equals("-edgefontsize") ||
+		   option.equals("-edgefontname") ||
+		   option.equals("-bgcolor"))
 			return 2;
 		else
 			return 0;
@@ -497,6 +536,8 @@ public class UmlGraph {
 		);
 		if (opt.horizontal)
 			opt.w.println("\trankdir=LR;\n\tranksep=1;");
+		if (opt.bgColor != null)
+			opt.w.println("\tbgcolor=\"" + opt.bgColor + "\";\n");
 	}
 
 	/** Dot epilogue */
