@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * Represent the program options
  */
-class Options {
+class Options implements Cloneable {
 	PrintWriter w;
 	boolean showQualified;
 	boolean showAttributes;
@@ -34,6 +34,13 @@ class Options {
 	boolean showVisibility;
 	boolean horizontal;
 	boolean showType;
+	String edgeFontName;
+	String edgeFontColor;
+	double edgeFontSize;
+	String nodeFontName;
+	String nodeFontColor;
+	double nodeFontSize;
+	String nodeFillColor;
 
 	Options() {
 		showQualified = false;
@@ -41,6 +48,24 @@ class Options {
 		showOperations = false;
 		showVisibility = false;
 		showType = false;
+		edgeFontName = "Helvetica";
+		edgeFontColor = null;
+		edgeFontSize = 10;
+		nodeFontName = "Helvetica";
+		nodeFontColor = null;
+		nodeFontSize = 10;
+		nodeFillColor = null;
+	}
+
+	public Object clone() 
+	{
+		Object o = null;
+		try {
+			o = super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Should not happen
+		} 
+		return o;
 	}
 
 	/** Most verbose output */
@@ -51,15 +76,45 @@ class Options {
 		showType = true;
 	}
 
+	/** Set the options based on a lingle option and its arguments */
+	private void setOption(String[] opt) {
+		if(opt[0].equals("-qualify")) {
+			showQualified = true;
+		} else if(opt[0].equals("-horizontal")) {
+			horizontal = true;
+		} else if(opt[0].equals("-attributes")) {
+			showAttributes = true;
+		} else if(opt[0].equals("-operations")) {
+			showOperations = true;
+		} else if(opt[0].equals("-visibility")) {
+			showVisibility = true;
+		} else if(opt[0].equals("-types")) {
+			showType = true;
+		} else if(opt[0].equals("-all")) {
+			setAll();
+		} else if(opt[0].equals("-nodefillcolor")) {
+			nodeFillColor = opt[1];
+		}
+	}
+
+	/** Set the options based on the command line parameters */
+	public void setOptions(String[][] options) {
+		for (int i = 0; i < options.length; i++)
+			setOption(options[i]);
+	}
+
+
 	/** Set the options based on the tag elements of the ClassDoc parameter */
 	public void setOptions(ClassDoc p) {
 		if (p == null)
 			return;
 
 		Tag tags[] = p.tags("opt");
-		for (int i = 0; i < tags.length; i++)
-			if (UmlGraph.optionLength("-" + tags[i].text()) == 0)
-				System.err.println("Unknown option " + tags[i].text());
+		for (int i = 0; i < tags.length; i++) {
+			String[] opt = StringFuns.tokenize(tags[i].text());
+			opt[0] = "-" + opt[0];
+			setOption(opt);
+		}
 	}
 
 	public void openFile() throws IOException, UnsupportedEncodingException {
@@ -86,20 +141,71 @@ class ClassInfo {
 	}
 }
 
+/** String utility functions */
+class StringFuns {
+	/** Guillemot left (open) */
+	public static final char guilopen = (char)0xab;
+	/** Guillemot right (close) */
+	public static final char guilclose = (char)0xbb;
+
+	/** Tokenize string s into an array */
+	public static String[] tokenize(String s) {
+		ArrayList r = new ArrayList();
+		String remain = s, tok;
+		int n = 0, pos;
+
+		remain.trim();
+		while (remain.length() > 0) {
+			if (remain.startsWith("\"")) {
+				// Field in quotes
+				pos = remain.indexOf('"', 1);
+				if (pos == -1)
+					break;
+				r.add(remain.substring(1, pos));
+				if (pos + 1 < remain.length())
+					pos++;
+			} else {
+				// Space-separated field
+				pos = remain.indexOf(' ', 0);
+				if (pos == -1) {
+					r.add(remain);
+					remain = "";
+				} else
+					r.add(remain.substring(0, pos));
+			}
+			remain = remain.substring(pos + 1);
+			remain.trim();
+			// - is used as a placeholder for empy fields
+			if (r.get(n).equals("-"))
+				r.set(n, "");
+			n++;
+		}
+		return ((String[])(r.toArray(new String[0])));
+	}
+
+	/** Convert < and > characters in the string to the respective guillemot characters */
+	public static String guillemize(String s) {
+		StringBuffer r = new StringBuffer(s);
+
+		for (int i = 0; i < r.length(); i++)
+			switch (r.charAt(i)) {
+			case '<':
+				r.setCharAt(i, guilopen);
+				break;
+			case '>':
+				r.setCharAt(i, guilclose);
+				break;
+			}
+		return r.toString();
+	}
+}
+
 /**
  * Class graph generation engine
  */
 class ClassGraph {
 	private static HashMap classnames = new HashMap();
 	private Options opt;
-	/** Guillemot left (open) */
-	private static char guilopen = (char)0xab;
-	/** Guillemot right (close) */
-	private static char guilclose = (char)0xbb;
-
-	ClassGraph(Options iopt) { 
-		opt = iopt;
-	}
 
 	/** Print the visibility adornment of element e */
 	private void visibility(ProgramElementDoc e) {
@@ -206,7 +312,7 @@ class ClassGraph {
 			// Create label
 			opt.w.print("\t" + ci.name + " [");
 			if (c.isInterface())
-				r = guilopen + "interface" + guilclose + "\\n" + r;
+				r = StringFuns.guilopen + "interface" + StringFuns.guilclose + "\\n" + r;
 			boolean showMembers = 
 				(opt.showAttributes || opt.showOperations) &&
 				(c.methods().length > 0 || c.fields().length > 0);
@@ -225,65 +331,14 @@ class ClassGraph {
 			// Use ariali for gif output
 			if (c.isAbstract())
 				opt.w.print(", fontname=\"Helvetica-Oblique\"");
+			if (opt.nodeFillColor != null)
+				opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
 			opt.w.println("];");
 			ci.nodePrinted = true;
 		}
 		return ci.name;
 	}
 
-	/**
-	 * Tokenize s into four elements and return them
-	 */
-	private static String[] tokenize(String s) {
-		String r[] = new String[4];
-		String remain = s, tok;
-		int n = 0, pos;
-
-		remain.trim();
-		while (remain.length() > 0 && n < 4) {
-			if (remain.startsWith("\"")) {
-				// Field in quotes
-				pos = remain.indexOf('"', 1);
-				if (pos == -1)
-					break;
-				r[n] = remain.substring(1, pos);
-				if (pos + 1 < remain.length())
-					pos++;
-			} else {
-				// Space-separated field
-				pos = remain.indexOf(' ', 0);
-				if (pos == -1)
-					r[n] = remain;
-				else
-					r[n] = remain.substring(0, pos);
-			}
-			remain = remain.substring(pos + 1);
-			remain.trim();
-			// - is used as a placeholder for empy fields
-			if (r[n].equals("-"))
-				r[n] = "";
-			n++;
-		}
-		if (n != 4)
-			System.err.println("Expected four fields: " + s);
-		return (r);
-	}
-
-	/** Convert < and > characters in the string to the respective guillemot characters */
-	private static String guillemize(String s) {
-		StringBuffer r = new StringBuffer(s);
-
-		for (int i = 0; i < r.length(); i++)
-			switch (r.charAt(i)) {
-			case '<':
-				r.setCharAt(i, guilopen);
-				break;
-			case '>':
-				r.setCharAt(i, guilclose);
-				break;
-			}
-		return r.toString();
-	}
 
 	/** 
 	 * Print all relations for a given's class's tag
@@ -295,11 +350,13 @@ class ClassGraph {
 	private void relation(String tagname, Doc from, String name, String edgetype) {
 		Tag tags[] = from.tags(tagname);
 		for (int i = 0; i < tags.length; i++) {
-			String t[] = tokenize(tags[i].text());	// l-src label l-dst target
+			String t[] = StringFuns.tokenize(tags[i].text());	// l-src label l-dst target
+			if (t.length != 4)
+				System.err.println("Expected four fields: " + tags[i].text());
 			opt.w.println("\t// " + from + " " + tagname + " " + t[3]);
 			opt.w.println("\t" + name + " -> " + name(t[3]) + " [" +
 				"taillabel=\"" + t[0] + "\", " + 
-				"label=\"" + guillemize(t[1]) + "\", " + 
+				"label=\"" + StringFuns.guillemize(t[1]) + "\", " + 
 				"headlabel=\"" + t[2] + "\", " + 
 				edgetype + "]"
 			);
@@ -307,7 +364,10 @@ class ClassGraph {
 	}
 
 	/** Print a class */
-	public void print(ClassDoc c) {
+	public void print(Options iopt, ClassDoc c) {
+		opt = (Options)iopt.clone();
+		// Process class-local options (through @opt tags)
+		opt.setOptions(c);
 		String cs = name(c);
 		// Print generalization (through the Java superclass)
 		ClassDoc s = c.superclass();
@@ -315,7 +375,7 @@ class ClassGraph {
 			opt.w.println("\t//" + c + " extends " + s);
 			opt.w.println("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
 		}
-		// Print generalization (through @extends tags)
+		// Print generalizations (through @extends tags)
 		Tag tags[] = c.tags("extends");
 		for (int i = 0; i < tags.length; i++) {
 			opt.w.println("\t//" + c + " extends " + tags[i].text());
@@ -344,12 +404,13 @@ public class UmlGraph {
 	public static boolean start(RootDoc root)
                             throws IOException, UnsupportedEncodingException {
 		opt.openFile();
+		opt.setOptions(root.options());
 		opt.setOptions(root.classNamed("UMLOptions"));
 		prologue();
 		ClassDoc[] classes = root.classes();
-		ClassGraph c = new ClassGraph(opt);
+		ClassGraph c = new ClassGraph();
 		for (int i = 0; i < classes.length; i++) {
-			c.print(classes[i]);
+			c.print(opt, classes[i]);
 		}
 		epilogue();
 		return true;
@@ -357,35 +418,16 @@ public class UmlGraph {
 
 	/** Option checking */
 	public static int optionLength(String option) {
-		if(option.equals("-qualify")) {
-			opt.showQualified = true;
+		if(option.equals("-qualify") ||
+		   option.equals("-horizontal") ||
+		   option.equals("-attributes") ||
+		   option.equals("-operations") ||
+		   option.equals("-visibility") ||
+		   option.equals("-types") ||
+		   option.equals("-all"))
 			return 1;
-		}
-		if(option.equals("-horizontal")) {
-			opt.horizontal = true;
-			return 1;
-		}
-		if(option.equals("-attributes")) {
-			opt.showAttributes = true;
-			return 1;
-		}
-		if(option.equals("-operations")) {
-			opt.showOperations = true;
-			return 1;
-		}
-		if(option.equals("-visibility")) {
-			opt.showVisibility = true;
-			return 1;
-		}
-		if(option.equals("-types")) {
-			opt.showType = true;
-			return 1;
-		}
-		if(option.equals("-all")) {
-			opt.setAll();
-			return 1;
-		}
-		return 0;
+		else
+			return 0;
 	}
 
 	/** Dot prologue */
