@@ -174,6 +174,11 @@ class Options implements Cloneable {
 		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, outputEncoding)));
 	}
 
+	/**
+	 * Check if the supplied string matches an entity specified
+	 * with the -hide parameter.
+	 * @return true if the string matches.
+	 */
 	public boolean matchesHideExpression(String s) {
 		for (int i = 0; i < hideNames.size(); i++) {
 			String hideString = (String) hideNames.get(i);
@@ -278,7 +283,7 @@ class StringFuns {
 	}
 
 	/**
-	 * Convert < and > characters in the string to the respective guillemot characters
+	 * Convert &lt; and &gt; characters in the string to the respective guillemot characters
 	 * or returns the same string if the use of those characters has been disabled.
 	 */
 	public static String guillemize(String s) {
@@ -356,6 +361,17 @@ class ClassGraph {
 			return null;
 	}
 
+	/** Return the class's name, possibly by stripping the leading path */
+	String qualifiedName(String r) {
+		if (!opt.showQualified) {
+			// Create readable string by stripping leading path
+			int dotpos = r.lastIndexOf('.');
+			if (dotpos != -1)
+				return r.substring(dotpos + 1, r.length());
+		}
+		return r;
+	}
+
 	/**
 	 * Print the visibility adornment of element e prefixed by
 	 * any stereotypes
@@ -426,6 +442,16 @@ class ClassGraph {
 			opt.w.print("\\l");
 			opt.w.print(tagvalue(m[i], "", 'r'));
 		}
+	}
+
+	/** Print the common class node's properties */
+	private void nodeProperties(String s) {
+		if (opt.nodeFillColor != null)
+			opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
+		opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
+		opt.w.print(", fontsize=" + opt.nodeFontSize);
+		opt.w.print(", URL=\"" + classToUrl(s)+ "\"");
+		opt.w.println("];");
 	}
 
 	/**
@@ -499,18 +525,12 @@ class ClassGraph {
 			classnames.put(c.toString(), ci = new ClassInfo(true));
 		}
 		if (toPrint && !hidden(c)) {
-			// Associate classnames alias
+			// Associate classname's alias
 			String r = c.toString();
 			opt.w.println("\t// " + r);
-			if (!opt.showQualified) {
-				// Create readable string by stripping leading path
-				int dotpos = r.lastIndexOf('.');
-				if (dotpos != -1)
-					r = r.substring(dotpos + 1, r.length());
-			}
 			// Create label
 			opt.w.print("\t" + ci.name + " [");
-			r = stereotype(c, 'n') + r;
+			r = stereotype(c, 'n') + qualifiedName(r);
 			if (c.isInterface())
 				r = StringFuns.guilWrap("interface") + " \\n" + r;
 			boolean showMembers =
@@ -534,12 +554,7 @@ class ClassGraph {
 				(c.isAbstract() ?
 				 opt.nodeFontAbstractName :
 				 opt.nodeFontName) + "\"");
-			if (opt.nodeFillColor != null)
-				opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
-			opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
-			opt.w.print(", fontsize=" + opt.nodeFontSize);
-			opt.w.print(", URL=\"" + classToUrl(c.qualifiedName())+ "\"");
-			opt.w.println("];");
+			nodeProperties(c.qualifiedName());
 			ci.nodePrinted = true;
 		}
 		return ci.name;
@@ -568,7 +583,7 @@ class ClassGraph {
 				"fontcolor=\"" + opt.edgeFontColor + "\", " +
 				"fontsize=" + opt.edgeFontSize + ", " +
 				"color=\"" + opt.edgeColor + "\", " +
-				edgetype + "]"
+				edgetype + "];"
 			);
 		}
 	}
@@ -616,6 +631,7 @@ class ClassGraph {
 		relation("depend", c, cs, "arrowhead=open, style=dashed");
 	}
 
+	/** Print classes that were parts of relationships, but not parsed by javadoc */ 
 	public void printExtraClasses() {
 		Collection myClassInfos = classnames.entrySet();
 		Iterator iter = myClassInfos.iterator();
@@ -626,21 +642,9 @@ class ClassGraph {
 				String r = entry.getKey().toString();
 				opt.w.println("\t// " + r);
 
-				if (!opt.showQualified) {
-					// Create readable string by stripping leading path
-					int dotpos = r.lastIndexOf('.');
-					if (dotpos != -1)
-						r = r.substring(dotpos + 1, r.length());
-				}
-
-				opt.w.print("\t" + info.name + "[label=\"" + r + "\"");
+				opt.w.print("\t" + info.name + "[label=\"" + qualifiedName(r) + "\"");
 				opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
-				if (opt.nodeFillColor != null)
-					opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
-				opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
-				opt.w.print(", fontsize=" + opt.nodeFontSize);
-				opt.w.print(", URL=\"" + classToUrl(entry.getKey().toString()) + "\"");
-				opt.w.println("]");
+				nodeProperties(entry.getKey().toString());
 			}
 		}
 	}
