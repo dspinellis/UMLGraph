@@ -29,6 +29,7 @@ class Options {
 	boolean showAttributes;
 	boolean showOperations;
 	boolean showVisibility;
+	boolean horizontal;
 	boolean showType;
 
 	Options() {
@@ -44,6 +45,17 @@ class Options {
 		showOperations = true;
 		showVisibility = true;
 		showType = true;
+	}
+
+	/** Set the options based on the tag elements of the ClassDoc parameter */
+	public void setOptions(ClassDoc p) {
+		if (p == null)
+			return;
+
+		Tag tags[] = p.tags("opt");
+		for (int i = 0; i < tags.length; i++)
+			if (UmlGraph.optionLength("-" + tags[i].text()) != 1)
+				System.err.println("Unknown option " + tags[i].text());
 	}
 
 	public void openFile() throws IOException, UnsupportedEncodingException {
@@ -242,6 +254,12 @@ class ClassGraph {
 			opt.w.print("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
 			opt.w.println("\t//" + c + " extends " + s);
 		}
+		// Print generalization (through @extends tags)
+		Tag tags[] = c.tags("extends");
+		for (int i = 0; i < tags.length; i++) {
+			opt.w.print("\t" + name(tags[i].text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
+			opt.w.println("\t//" + c + " extends " + tags[i].text());
+		}
 		// Print realizations (Java interfaces)
 		ClassDoc ifs[] = c.interfaces();
 		for (int i = 0; i < ifs.length; i++) {
@@ -250,6 +268,7 @@ class ClassGraph {
 		}
 		// Print other associations
 		relation("assoc", c, cs, "arrowhead=none");
+		relation("navassoc", c, cs, "arrowhead=open");
 		relation("has", c, cs, "arrowhead=none, arrowtail=ediamond");
 		relation("composed", c, cs, "arrowhead=none, arrowtail=diamond");
 	}
@@ -261,6 +280,7 @@ public class UmlGraph {
 	public static boolean start(RootDoc root)
                             throws IOException, UnsupportedEncodingException {
 		opt.openFile();
+		opt.setOptions(root.classNamed("UMLOptions"));
 		prologue();
 		ClassDoc[] classes = root.classes();
 		for (int i = 0; i < classes.length; i++) {
@@ -274,6 +294,10 @@ public class UmlGraph {
 	public static int optionLength(String option) {
 		if(option.equals("-qualify")) {
 			opt.showQualified = true;
+			return 1;
+		}
+		if(option.equals("-horizontal")) {
+			opt.horizontal = true;
 			return 1;
 		}
 		if(option.equals("-attributes")) {
@@ -311,6 +335,8 @@ public class UmlGraph {
 
 			"\tnode [fontname=\"Helvetica\",fontsize=8,shape=record];"
 		);
+		if (opt.horizontal)
+			opt.w.println("\trankdir=LR;");
 	}
 
 	private static void epilogue() {
