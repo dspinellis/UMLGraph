@@ -30,7 +30,7 @@ import java.util.regex.PatternSyntaxException;
  * Represent the program options
  */
 class Options implements Cloneable {
-	private Vector hideNames;
+	private Vector hidePatterns;
 	PrintWriter w;
 	boolean showQualified;
 	boolean showAttributes;
@@ -76,7 +76,7 @@ class Options implements Cloneable {
 		bgColor = null;
 		outputFileName = "graph.dot";
 		outputEncoding = "ISO-8859-1";
-		hideNames = new Vector();
+		hidePatterns = new Vector();
 		apiDocMapFileName = null;
 		apiDocRoot = null;
 		useGuillemot = true;
@@ -141,17 +141,18 @@ class Options implements Cloneable {
 		} else if(opt[0].equals("-outputencoding")) {
 			outputEncoding = opt[1];
 		} else if(opt[0].equals("-hide")) {
-			hideNames.add(opt[1]);
+			try {
+				hidePatterns.add(Pattern.compile(opt[1]));
+			} catch (PatternSyntaxException e) {
+				System.err.println("Skipping invalid pattern " + opt[1]);
+			}
 		} else if(opt[0].equals("-apidocroot")) {
 			apiDocRoot = opt[1];
 		} else if(opt[0].equals("-apidocmap")) {
 			apiDocMapFileName = opt[1];
-		} else if(opt[0].equals("-guillemot")) {
-			String value = opt[1].trim().toLowerCase();
-			if (!(value.equals("true") || value.equals("yes") || value.equals("on"))) {
-				guilOpen = '<';
-				guilClose = '>';
-			}
+		} else if(opt[0].equals("-noguillemot")) {
+			guilOpen = '<';
+			guilClose = '>';
 		} else
 			; // Do nothing, javadoc will handle the option or complain, if needed.
 	}
@@ -187,10 +188,10 @@ class Options implements Cloneable {
 	 * @return true if the string matches.
 	 */
 	public boolean matchesHideExpression(String s) {
-		for (int i = 0; i < hideNames.size(); i++) {
-			String hideString = (String) hideNames.get(i);
-
-			if(s.endsWith(hideString))
+		for (int i = 0; i < hidePatterns.size(); i++) {
+			Pattern hidePattern = (Pattern)hidePatterns.get(i);
+			Matcher m = hidePattern.matcher(s);
+			if (m.find())
 				return true;
 		}
 		return false;
@@ -297,7 +298,7 @@ class ClassGraph {
 				}
 			}
 		} else
-			apiDocMap.put(Pattern.compile(".*"), DEFAULT_EXTERNAL_APIDOC);
+			apiDocMap.put(Pattern.compile(""), DEFAULT_EXTERNAL_APIDOC);
 	}
 
 	/** Trim and append a file separator to the string */
@@ -732,7 +733,8 @@ public class UmlGraph {
 		   option.equals("-operations") ||
 		   option.equals("-visibility") ||
 		   option.equals("-types") ||
-		   option.equals("-all"))
+		   option.equals("-all") ||
+		   option.equals("-noguillemot"))
 			return 1;
 		else if(option.equals("-nodefillcolor") ||
 		   option.equals("-nodefontcolor") ||
@@ -748,8 +750,7 @@ public class UmlGraph {
 		   option.equals("-bgcolor") ||
 		   option.equals("-hide") ||
 		   option.equals("-apidocroot") ||
-		   option.equals("-apidocmap") ||
-		   option.equals("-guillemot"))
+		   option.equals("-apidocmap"))
 			return 2;
 		else
 			return 0;
