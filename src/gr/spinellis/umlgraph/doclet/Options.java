@@ -344,7 +344,7 @@ class ClassGraph {
 				System.err.println("@stereotype expects one field: " + tags[i].text());
 				return ("");
 			}
-			r += StringFuns.guilopen + t[0] + StringFuns.guilclose + '\\' + term;
+			r += StringFuns.guilopen + t[0] + StringFuns.guilclose + " \\" + term;
 		}
 		return (r);
 	}
@@ -389,7 +389,7 @@ class ClassGraph {
 			opt.w.print("\t" + ci.name + " [");
 			r = stereotype(c, 'n') + r;
 			if (c.isInterface())
-				r = StringFuns.guilopen + "interface" + StringFuns.guilclose + "\\n" + r;
+				r = StringFuns.guilopen + "interface" + StringFuns.guilclose + " \\n" + r;
 			boolean showMembers = 
 				(opt.showAttributes || opt.showOperations) &&
 				(c.methods().length > 0 || c.fields().length > 0);
