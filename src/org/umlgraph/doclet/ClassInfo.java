@@ -2,14 +2,14 @@
  * Create a graphviz graph based on the classes in the specified java
  * source files.
  *
- * (C) Copyright 2002, 2003 Diomidis Spinellis
- * 
+ * (C) Copyright 2002-2004 Diomidis Spinellis
+ *
  * Permission to use, copy, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted,
  * provided that the above copyright notice appear in all copies and that
  * both that copyright notice and this permission notice appear in
  * supporting documentation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
  * MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -28,7 +28,7 @@ import java.util.Map.Entry;
  */
 class Options implements Cloneable {
 	private Vector hideNames;
-    PrintWriter w;
+	PrintWriter w;
 	boolean showQualified;
 	boolean showAttributes;
 	boolean showOperations;
@@ -46,6 +46,7 @@ class Options implements Cloneable {
 	String nodeFillColor;
 	String bgColor;
 	String outputFileName;
+	String outputEncoding;
 
 	Options() {
 		showQualified = false;
@@ -64,17 +65,18 @@ class Options implements Cloneable {
 		nodeFillColor = null;
 		bgColor = null;
 		outputFileName = "graph.dot";
+		outputEncoding = "ISO-8859-1";
 		hideNames = new Vector();
 	}
 
-	public Object clone() 
+	public Object clone()
 	{
 		Object o = null;
 		try {
 			o = super.clone();
 		} catch (CloneNotSupportedException e) {
 			// Should not happen
-		} 
+		}
 		return o;
 	}
 
@@ -124,6 +126,8 @@ class Options implements Cloneable {
 			nodeFillColor = opt[1];
 		} else if(opt[0].equals("-output")) {
 			outputFileName = opt[1];
+		} else if(opt[0].equals("-outputencoding")) {
+			outputEncoding = opt[1];
 		} else if(opt[0].equals("-hide")) {
 			hideNames.add(opt[1]);
 		}
@@ -151,9 +155,9 @@ class Options implements Cloneable {
 
 	public void openFile() throws IOException, UnsupportedEncodingException {
 		FileOutputStream fos = new FileOutputStream(outputFileName);
-		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos)));
+		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, outputEncoding)));
 	}
-	
+
 	public boolean matchesHideExpression(String s)
 	{
 		for (int i = 0; i < hideNames.size(); i++)
@@ -190,9 +194,9 @@ class ClassInfo {
 /** String utility functions */
 class StringFuns {
 	/** Guillemot left (open) */
-	public static final char guilopen = (char)0xab;
+	public static final char guilopen = '\u00ab';
 	/** Guillemot right (close) */
-	public static final char guilclose = (char)0xbb;
+	public static final char guilclose = '\u00bb';
 
 	/** Tokenize string s into an array */
 	public static String[] tokenize(String s) {
@@ -253,7 +257,7 @@ class ClassGraph {
 	private static HashMap classnames = new HashMap();
 	private Options opt;
 
-	/** 
+	/**
 	 * Print the visibility adornment of element e prefixed by
 	 * any stereotypes
 	 */
@@ -325,8 +329,8 @@ class ClassGraph {
 		}
 	}
 
-	/** 
-	 * Return as a string the tagged values associated with c 
+	/**
+	 * Return as a string the tagged values associated with c
 	 * @param c the Doc entry to look for @tagvalue
 	 * @param prevterm the termination string for the previous element
 	 * @param term the termination character for each tagged value
@@ -349,9 +353,9 @@ class ClassGraph {
 		return (r);
 	}
 
-	/** 
-	 * Return as a string the stereotypes associated with c 
-	 * terminated by the escape character term 
+	/**
+	 * Return as a string the stereotypes associated with c
+	 * terminated by the escape character term
 	 */
 	private static String stereotype(Doc c, char term) {
 		String r = "";
@@ -412,7 +416,7 @@ class ClassGraph {
 			r = stereotype(c, 'n') + r;
 			if (c.isInterface())
 				r = StringFuns.guilopen + "interface" + StringFuns.guilclose + " \\n" + r;
-			boolean showMembers = 
+			boolean showMembers =
 				(opt.showAttributes || opt.showOperations) &&
 				(c.methods().length > 0 || c.fields().length > 0);
 			r += tagvalue(c, "\\n", 'r');
@@ -429,8 +433,8 @@ class ClassGraph {
 			if (showMembers)
 				opt.w.print("}\"");
 			// Use ariali [sic] for gif output of abstract classes
-			opt.w.print(", fontname=\"" + 
-				(c.isAbstract() ? 
+			opt.w.print(", fontname=\"" +
+				(c.isAbstract() ?
 				 opt.nodeFontAbstractName :
 				 opt.nodeFontName) + "\"");
 			if (opt.nodeFillColor != null)
@@ -445,7 +449,7 @@ class ClassGraph {
 	}
 
 
-	/** 
+	/**
 	 * Print all relations for a given's class's tag
 	 * @param tagname the tag containing the given relation
 	 * @param from the source class
@@ -460,13 +464,13 @@ class ClassGraph {
 				System.err.println("Expected four fields: " + tags[i].text());
 			opt.w.println("\t// " + from + " " + tagname + " " + t[3]);
 			opt.w.println("\t" + name + " -> " + name(t[3]) + " [" +
-				"taillabel=\"" + t[0] + "\", " + 
-				"label=\"" + StringFuns.guillemize(t[1]) + "\", " + 
-				"headlabel=\"" + t[2] + "\", " + 
-				"fontname=\"" + opt.edgeFontName + "\", " + 
-				"fontcolor=\"" + opt.edgeFontColor + "\", " + 
-				"fontsize=" + opt.edgeFontSize + ", " + 
-				"color=\"" + opt.edgeColor + "\", " + 
+				"taillabel=\"" + t[0] + "\", " +
+				"label=\"" + StringFuns.guillemize(t[1]) + "\", " +
+				"headlabel=\"" + t[2] + "\", " +
+				"fontname=\"" + opt.edgeFontName + "\", " +
+				"fontcolor=\"" + opt.edgeFontColor + "\", " +
+				"fontsize=" + opt.edgeFontSize + ", " +
+				"color=\"" + opt.edgeColor + "\", " +
 				edgetype + "]"
 			);
 		}
@@ -518,7 +522,7 @@ class ClassGraph {
 		relation("composed", c, cs, "arrowhead=none, arrowtail=diamond");
 		relation("depend", c, cs, "arrowhead=open, style=dashed");
 	}
-	
+
 	public void printExtraClasses()
 	{
 		Collection myClassInfos = classnames.entrySet();
@@ -532,7 +536,7 @@ class ClassGraph {
 				System.out.println("--- Need: " + entry.getKey().toString());
 				String r = entry.getKey().toString();
 				opt.w.println("\t// " + r);
-				
+
 				if (!opt.showQualified) {
 					// Create readable string by stripping leading path
 					int dotpos = r.lastIndexOf('.');
@@ -596,6 +600,7 @@ public class UmlGraph {
 		   option.equals("-edgefontsize") ||
 		   option.equals("-edgefontname") ||
 		   option.equals("-output") ||
+		   option.equals("-outputencoding") ||
 		   option.equals("-bgcolor") ||
 		   option.equals("-hide"))
 			return 2;
