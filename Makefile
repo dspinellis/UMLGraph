@@ -11,7 +11,7 @@ WEBDIR=/dds/pubs/web/home/sw/umlgraph
 SRCFILE=UmlGraph.java sequence.pic README
 
 .java.class:
-	javac -classpath d:/jdk/lib/tools.jar $<
+	javac -source 1.4 -target 1.4 -classpath d:/jdk/lib/tools.jar $<
 
 all: UmlGraph.jar
 
