@@ -30,6 +30,22 @@ define object {
 	lifestart_$1 = $1.s.y;
 }
 
+# Create a new external actor(label, name)
+define actor {
+	$1: [
+		XSEQC: circle rad 0.06;
+		XSEQL: line from XSEQC.s down .12;
+		line from XSEQL.start - (.15,.02) to XSEQL.start + (.15,-.02);
+		XSEQL1: line from XSEQL.end left .08 down .15;
+		XSEQL2: line from XSEQL.end right .08 down .15;
+		line at XSEQC.n invis "" "" "" $2;
+	]
+	move to $1.e;
+	move right;
+	active_$1 = 0;
+	lifestart_$1 = $1.s.y - .05;
+}
+
 # Create a new placeholder object(label)
 define pobject {
 	$1: box invisible;
