@@ -69,8 +69,7 @@ class Options implements Cloneable {
 		hideNames = new Vector();
 	}
 
-	public Object clone()
-	{
+	public Object clone() {
 		Object o = null;
 		try {
 			o = super.clone();
@@ -158,16 +157,12 @@ class Options implements Cloneable {
 		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, outputEncoding)));
 	}
 
-	public boolean matchesHideExpression(String s)
-	{
-		for (int i = 0; i < hideNames.size(); i++)
-		{
+	public boolean matchesHideExpression(String s) {
+		for (int i = 0; i < hideNames.size(); i++) {
 			String hideString = (String) hideNames.get(i);
 
 			if(s.endsWith(hideString))
-			{
 				return true;
-			}
 		}
 		return false;
 	}
@@ -375,9 +370,7 @@ class ClassGraph {
 	private boolean hidden(Doc c) {
 		Tag tags[] = c.tags("hidden");
 		if (tags.length > 0)
-		{
 			return true;
-		}
 		return opt.matchesHideExpression(c.toString());
 	}
 
@@ -484,35 +477,29 @@ class ClassGraph {
 		String cs = name(c);
 		// Print generalization (through the Java superclass)
 		ClassDoc s = c.superclass();
-		if (s != null && !s.toString().equals("java.lang.Object"))
-		{
+		if (s != null && !s.toString().equals("java.lang.Object")) {
 			if (!opt.matchesHideExpression(c.toString())
 				&& !opt.matchesHideExpression(s.toString())
-				&& !hidden(c) && !hidden(s))
-			{
+				&& !hidden(c) && !hidden(s)) {
 				opt.w.println("\t//" + c + " extends " + s);
 				opt.w.println("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
 			}
 		}
 		// Print generalizations (through @extends tags)
 		Tag tags[] = c.tags("extends");
-		for (int i = 0; i < tags.length; i++)
-		{
+		for (int i = 0; i < tags.length; i++) {
 			if (!opt.matchesHideExpression(c.toString())
-				&& !opt.matchesHideExpression(tags[i].text()))
-			{
+				&& !opt.matchesHideExpression(tags[i].text())) {
 				opt.w.println("\t//" + c + " extends " + tags[i].text());
 				opt.w.println("\t" + name(tags[i].text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
 			}
 		}
 		// Print realizations (Java interfaces)
 		ClassDoc ifs[] = c.interfaces();
-		for (int i = 0; i < ifs.length; i++)
-		{
+		for (int i = 0; i < ifs.length; i++) {
 			if (!opt.matchesHideExpression(c.toString())
 				&& !opt.matchesHideExpression(ifs[i].toString())
-				&& !hidden(c) && !hidden(ifs[i]))
-			{
+				&& !hidden(c) && !hidden(ifs[i])) {
 				opt.w.print("\t" + name(ifs[i]) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
 				opt.w.println("\t//" + c + " implements " + ifs[i]);
 			}
@@ -525,16 +512,13 @@ class ClassGraph {
 		relation("depend", c, cs, "arrowhead=open, style=dashed");
 	}
 
-	public void printExtraClasses()
-	{
+	public void printExtraClasses() {
 		Collection myClassInfos = classnames.entrySet();
 		Iterator iter = myClassInfos.iterator();
-		while (iter.hasNext())
-		{
+		while (iter.hasNext()) {
 			Map.Entry entry = (Entry) iter.next();
 			ClassInfo info = (ClassInfo) entry.getValue();
-			if (! info.nodePrinted)
-			{
+			if (! info.nodePrinted) {
 				System.out.println("--- Need: " + entry.getKey().toString());
 				String r = entry.getKey().toString();
 				opt.w.println("\t// " + r);
