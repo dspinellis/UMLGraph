@@ -151,8 +151,8 @@ class Options implements Cloneable {
 		} else if(opt[0].equals("-apidocmap")) {
 			apiDocMapFileName = opt[1];
 		} else if(opt[0].equals("-noguillemot")) {
-			guilOpen = '<';
-			guilClose = '>';
+			guilOpen = '(';
+			guilClose = ')';
 		} else
 			; // Do nothing, javadoc will handle the option or complain, if needed.
 	}
