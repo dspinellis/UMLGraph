@@ -44,6 +44,7 @@ class Options implements Cloneable {
 	double nodeFontSize;
 	String nodeFillColor;
 	String bgColor;
+	String outputFileName;
 
 	Options() {
 		showQualified = false;
@@ -61,6 +62,7 @@ class Options implements Cloneable {
 		nodeFontSize = 10;
 		nodeFillColor = null;
 		bgColor = null;
+		outputFileName = "graph.dot";
 	}
 
 	public Object clone() 
@@ -118,6 +120,8 @@ class Options implements Cloneable {
 			nodeFontSize = Integer.parseInt(opt[1]);
 		} else if(opt[0].equals("-nodefillcolor")) {
 			nodeFillColor = opt[1];
+		} else if(opt[0].equals("-output")) {
+			outputFileName = opt[1];
 		}
 	}
 
@@ -142,7 +146,7 @@ class Options implements Cloneable {
 	}
 
 	public void openFile() throws IOException, UnsupportedEncodingException {
-		FileOutputStream fos = new FileOutputStream("graph.dot");
+		FileOutputStream fos = new FileOutputStream(outputFileName);
 		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos)));
 	}
 }
@@ -486,8 +490,8 @@ public class UmlGraph {
 	/** Entry point */
 	public static boolean start(RootDoc root)
                             throws IOException, UnsupportedEncodingException {
-		opt.openFile();
 		opt.setOptions(root.options());
+		opt.openFile();
 		opt.setOptions(root.classNamed("UMLOptions"));
 		prologue();
 		ClassDoc[] classes = root.classes();
@@ -518,6 +522,7 @@ public class UmlGraph {
 		   option.equals("-edgecolor") ||
 		   option.equals("-edgefontsize") ||
 		   option.equals("-edgefontname") ||
+		   option.equals("-output") ||
 		   option.equals("-bgcolor"))
 			return 2;
 		else
