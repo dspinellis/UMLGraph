@@ -23,6 +23,9 @@ import java.io.*;
 import java.lang.*;
 import java.util.*;
 
+/**
+ * Represent the program options
+ */
 class Options {
 	PrintWriter w;
 	boolean showQualified;
@@ -40,6 +43,7 @@ class Options {
 		showType = false;
 	}
 
+	/** Most verbose output */
 	public void setAll() {
 		showAttributes = true;
 		showOperations = true;
@@ -64,6 +68,10 @@ class Options {
 	}
 }
 
+/**
+ * Class's dot-comaptible alias name (for fully qualified class names)
+ * and printed information
+ */
 class ClassInfo {
 	private static int classnum;
 	/** Alias name for the class */
@@ -78,8 +86,10 @@ class ClassInfo {
 	}
 }
 
+/**
+ * Class graph generation engine
+ */
 class ClassGraph {
-	private ClassDoc c;
 	private static HashMap classnames = new HashMap();
 	private Options opt;
 	/** Guillemot left (open) */
@@ -87,11 +97,11 @@ class ClassGraph {
 	/** Guillemot right (close) */
 	private static char guilclose = (char)0xbb;
 
-	ClassGraph(Options iopt, ClassDoc ic) { 
-		c = ic;
+	ClassGraph(Options iopt) { 
 		opt = iopt;
 	}
 
+	/** Print the visibility adornment of element e */
 	private void visibility(ProgramElementDoc e) {
 		if (!opt.showVisibility)
 			return;
@@ -104,6 +114,7 @@ class ClassGraph {
 		opt.w.print(' ');
 	}
 
+	/** Print the method parameter p */
 	private void parameter(Parameter p[]) {
 		for (int i = 0; i < p.length; i++) {
 			opt.w.print(p[i].name());
@@ -113,6 +124,7 @@ class ClassGraph {
 		}
 	}
 
+	/** Print the type t */
 	private void type(Type t) {
 		if (t.typeName().equals("void"))
 			return;
@@ -124,6 +136,7 @@ class ClassGraph {
 		opt.w.print(t.dimension());
 	}
 
+	/** Print the class's attributes f */
 	private void attributes(FieldDoc f[]) {
 		for (int i = 0; i < f.length; i++) {
 			if (hidden(f[i]))
@@ -136,6 +149,7 @@ class ClassGraph {
 		}
 	}
 
+	/** Print the class's operations m */
 	private void operations(MethodDoc m[]) {
 		for (int i = 0; i < m.length; i++) {
 			if (hidden(m[i]))
@@ -153,7 +167,14 @@ class ClassGraph {
 		}
 	}
 
-	private String name(String c) {
+	/** Return true if c has a @hidden tag associated with it */
+	private static boolean hidden(Doc c) {
+		Tag tags[] = c.tags("hidden");
+		return (tags.length > 0);
+	}
+
+	/** Return a class's internal name */
+	private static String name(String c) {
 		ClassInfo ci;
 
 		if ((ci = (ClassInfo)classnames.get(c)) == null)
@@ -161,12 +182,7 @@ class ClassGraph {
 		return ci.name;
 	}
 
-	/** Return true if c has a @hidden tag associated with it */
-	private boolean hidden(Doc c) {
-		Tag tags[] = c.tags("hidden");
-		return (tags.length > 0);
-	}
-
+	/** Return a class's internal name, printing the class if needed */
 	private String name(ClassDoc c) {
 		ClassInfo ci;
 		boolean toPrint;
@@ -215,7 +231,10 @@ class ClassGraph {
 		return ci.name;
 	}
 
-	private String[] tokenize(String s) {
+	/**
+	 * Tokenize s into four elements and return them
+	 */
+	private static String[] tokenize(String s) {
 		String r[] = new String[4];
 		String remain = s, tok;
 		int n = 0, pos;
@@ -251,7 +270,7 @@ class ClassGraph {
 	}
 
 	/** Convert < and > characters in the string to the respective guillemot characters */
-	private String guillemize(String s) {
+	private static String guillemize(String s) {
 		StringBuffer r = new StringBuffer(s);
 
 		for (int i = 0; i < r.length(); i++)
@@ -266,6 +285,13 @@ class ClassGraph {
 		return r.toString();
 	}
 
+	/** 
+	 * Print all relations for a given's class's tag
+	 * @param tagname the tag containing the given relation
+	 * @param from the source class
+	 * @param name the source class internal name
+	 * @param edgetype the dot edge specification
+	 */
 	private void relation(String tagname, Doc from, String name, String edgetype) {
 		Tag tags[] = from.tags(tagname);
 		for (int i = 0; i < tags.length; i++) {
@@ -280,7 +306,8 @@ class ClassGraph {
 		}
 	}
 
-	public void print() {
+	/** Print a class */
+	public void print(ClassDoc c) {
 		String cs = name(c);
 		// Print generalization (through the Java superclass)
 		ClassDoc s = c.superclass();
@@ -309,23 +336,26 @@ class ClassGraph {
 	}
 }
 
+/** Doclet API implementation */
 public class UmlGraph {
 	private static Options opt = new Options();
 
+	/** Entry point */
 	public static boolean start(RootDoc root)
                             throws IOException, UnsupportedEncodingException {
 		opt.openFile();
 		opt.setOptions(root.classNamed("UMLOptions"));
 		prologue();
 		ClassDoc[] classes = root.classes();
+		ClassGraph c = new ClassGraph(opt);
 		for (int i = 0; i < classes.length; i++) {
-			ClassGraph c = new ClassGraph(opt, classes[i]);
-			c.print();
+			c.print(classes[i]);
 		}
 		epilogue();
 		return true;
 	}
 
+	/** Option checking */
 	public static int optionLength(String option) {
 		if(option.equals("-qualify")) {
 			opt.showQualified = true;
@@ -358,6 +388,7 @@ public class UmlGraph {
 		return 0;
 	}
 
+	/** Dot prologue */
 	private static void prologue() {
 		opt.w.println(
 			"#!/usr/local/bin/dot\n" +
@@ -374,6 +405,7 @@ public class UmlGraph {
 			opt.w.println("\trankdir=LR;\n\tranksep=1;");
 	}
 
+	/** Dot epilogue */
 	private static void epilogue() {
 		opt.w.println("}\n");
 		opt.w.flush();
