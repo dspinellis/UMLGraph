@@ -32,21 +32,29 @@ class ClassGraph {
 	ClassGraph(PrintWriter iw, ClassDoc ic) { 
 		c = ic;
 		w = iw;
-		// Associate classnames alias
-		String name;
-		name = "c" + (new Integer(classnum)).toString();
-		classnames.put(c, name);
-		classnum++;
-		// Create label
-		w.print("\t" + name + " [");
-		w.print("label=\"" + c + "\"");
-		if (c.isAbstract())
-			w.print(", fontname=\"Helvetica-Oblique\"");
-		w.println("];");
 	}
 
 	private String name(ClassDoc c) {
-		return (String)classnames.get(c);
+		String name;
+
+		if ((name = (String)classnames.get(c)) == null) {
+			// Associate classnames alias
+			name = "c" + (new Integer(classnum)).toString();
+			classnames.put(c, name);
+			classnum++;
+			// Create readable string by stripping leading path
+			String r = c.toString();
+			int dotpos = r.lastIndexOf('.');
+			if (dotpos != -1)
+				r = r.substring(dotpos + 1, r.length());
+			// Create label
+			w.print("\t" + name + " [");
+			w.print("label=\"" + r + "\"");
+			if (c.isAbstract())
+				w.print(", fontname=\"Helvetica-Oblique\"");
+			w.println("];");
+		}
+		return name;
 	}
 
 	public void print() {
