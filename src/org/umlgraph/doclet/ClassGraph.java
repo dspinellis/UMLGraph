@@ -20,14 +20,36 @@
 
 import com.sun.javadoc.*;
 
+class ClassGraph {
+	private ClassDoc c;
+	ClassGraph(ClassDoc ic) { c = ic; }
+	public void print() {
+		System.out.println(c);
+	}
+}
+
 public class UmlGraph {
 	public static boolean start(RootDoc root) {
+		prologue();
 		ClassDoc[] classes = root.classes();
 		for (int i = 0; i < classes.length; i++) {
-			ClassDoc c = classes[i];
-
-			System.out.println(classes[i]);
+			ClassGraph c = new ClassGraph(classes[i]);
+			c.print();
 		}
+		epilogue();
 		return true;
+	}
+	private static void prologue() {
+		System.out.println(
+			"#!/usr/local/bin/dot\n" +
+			"#\n" +
+			"# Class hirerarchy\n" +
+			"#\n\n" +
+			"digraph G {\n" +
+			"\tnode [fontname=\"Helvetica\",fontsize=8,shape=record];"
+		);
+	}
+	private static void epilogue() {
+		System.out.println("}\n");
 	}
 }
