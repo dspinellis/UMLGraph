@@ -84,7 +84,7 @@ Example:
 <pre>
 javadoc -docletpath UmlGraph.jar -doclet UmlGraph -private Simple.java
 </pre>
-<em>javadoc</em> will create a file named <code>graph.dot</code>
+<em>javadoc</em> will create by default a file named <code>graph.dot</code>
 in the current directory;
 this is a text file that can be processed by the <em>Graphviz</em>
  <em>dot</em> program to layout and draw the graph.
@@ -153,6 +153,7 @@ class Car {}
 <h3>Program Options</h3> <!-- {{{1 -->
 A number of command-line options contol the operation of UMLGraph:
 <dl>
+<dt>-output<dd>Specify the output file name (default <code>graph.dot</code>).
 <dt>-qualify<dd>Produce fully-qualified class names.
 <dt>-horizontal<dd>Layout the graph in the horizontal direction.
 <dt>-attributes<dd>Show class attributes (Java fields)
@@ -208,19 +209,22 @@ using <code>@opt</code> attributes on individual classes.
 In this case the <code>@opt</code> specification temporarily overrides
 the particular global setting for the class being processed.
 
-<h3>Availability</h3> <!-- {{{1 -->
+<h3>Download</h3> <!-- {{{1 -->
 UMLGraph is hereby made freely available as Open Source Software.
 You can download it in source and compiled format from the following links:
 <ul>
 <li> <a href="UmlGraph.java">UmlGraph.java (source code)</a>
 <li> <a href="UmlGraph.jar">UmlGraph.jar (compiled archive)</a>
-<li> <a href="makefile">Makefile example (GNU make)</a>
+<li> <a href="makefile">Makefile example</a> (GNU make)
+<li> <a href="build.xml">build.xml</a> (to use with <a href="http://ant.apache.org">ant</a>)
 </ul>
 
 <h3>Version History</h3> <!-- {{{1 -->
 <dl>
-<dt>Version 1.20 2002/09/23<dd>
-Fixed bug in 1.19 with node font name specification.
+<dt>Version 1.23 2003/05/7<dd>
+Added <code>-output</code> command-line option, and an <em>ant</em>-based
+build file.
+Modified the dot output to avoid triggering a graphviz bug that made escape codes visible.
 
 <dt>Version 1.20 2003/04/25<dd>
 Fixes by Nick Efthymiou (thanks):
@@ -589,7 +593,7 @@ Download the <a href="color.java">declarative specification</a>, the generated <
 <HR> <P>
 <font size=-2>
 $Id$<br>
-(C) Copyright 2002 Diomidis D. Spinellis. 
+(C) Copyright 2002-2003 Diomidis D. Spinellis. 
 May be freely uploaded by WWW viewers and similar programs.
 All other rights reserved.
 </font>
