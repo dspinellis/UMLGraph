@@ -22,6 +22,9 @@ import com.sun.javadoc.*;
 import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Represent the program options
@@ -47,6 +50,9 @@ class Options implements Cloneable {
 	String bgColor;
 	String outputFileName;
 	String outputEncoding;
+	String apidocMapFileName;
+	String apiDocRoot;
+	boolean useGuillemot;
 
 	Options() {
 		showQualified = false;
@@ -67,6 +73,9 @@ class Options implements Cloneable {
 		outputFileName = "graph.dot";
 		outputEncoding = "ISO-8859-1";
 		hideNames = new Vector();
+		apidocMapFileName = null;
+		apiDocRoot = null;
+		useGuillemot = true;
 	}
 
 	public Object clone() {
@@ -129,7 +138,15 @@ class Options implements Cloneable {
 			outputEncoding = opt[1];
 		} else if(opt[0].equals("-hide")) {
 			hideNames.add(opt[1]);
-		}
+		} else if(opt[0].equals("-apidocroot")) {
+			apiDocRoot = opt[1];
+		} else if(opt[0].equals("-apidocmap")) {
+			apidocMapFileName = opt[1];
+		} else if(opt[0].equals("-guillemot")) {
+			String value = opt[1].trim().toLowerCase();
+			useGuillemot = value.equals("true") || value.equals("yes") || value.equals("on");
+		} else
+			; // Do nothing, javadoc will handle the option or complain, if needed.
 	}
 
 	/** Set the options based on the command line parameters */
@@ -189,9 +206,28 @@ class ClassInfo {
 /** String utility functions */
 class StringFuns {
 	/** Guillemot left (open) */
-	public static final char guilopen = '\u00ab';
+	private static final char guilopen = '\u00ab';
 	/** Guillemot right (close) */
-	public static final char guilclose = '\u00bb';
+	private static final char guilclose = '\u00bb';
+
+	// using '<' and '>' doesn't work.
+	private static char open  = '=';
+	private static char close = '=';
+
+	private static boolean useGuillemot = false;
+
+	public static void init(boolean value) {
+		useGuillemot = value;
+		if (useGuillemot) {
+			open = guilopen;
+			close = guilclose;
+		}
+	}
+
+	public static String guilWrap(String str) {
+		return open + str + close;
+	}
+
 
 	/** Tokenize string s into an array */
 	public static String[] tokenize(String s) {
@@ -230,6 +266,8 @@ class StringFuns {
 
 	/** Convert < and > characters in the string to the respective guillemot characters */
 	public static String guillemize(String s) {
+		if (!useGuillemot)
+			return s;
 		StringBuffer r = new StringBuffer(s);
 
 		for (int i = 0; i < r.length(); i++)
@@ -249,22 +287,57 @@ class StringFuns {
  * Class graph generation engine
  */
 class ClassGraph {
-	private static HashMap classnames = new HashMap();
+	private static Map classnames = new HashMap();
+	private static String apiDocRoot;
+	private static Map apidocMap = new HashMap();
+
+	private static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
+
 	private Options opt;
 	private Set specifiedPackages;
-	/** Used for anchoring the external URLs */
-	private static final String externalDocRoot = "http://java.sun.com/j2se/1.4.2/docs/api/";
 
 	/**
 	 * Create a new ClassGraph.  The packages passed as an
 	 * argument are the ones specified on the command line.
 	 * Local URLs will be generated for these packages.
 	 */
-	public ClassGraph(PackageDoc[] packages) {
+	public ClassGraph(PackageDoc[] packages, String root, String mapFileName) throws IOException {
 		specifiedPackages = new HashSet();
-		for (int i = 0; i < packages.length; i++) {
+		for (int i = 0; i < packages.length; i++)
 			specifiedPackages.add(packages[i].name());
-		}
+		apiDocRoot = fixApiDocRoot(root);
+		if (mapFileName != null) {
+			InputStream is = new FileInputStream(mapFileName);
+			Properties userMap = new Properties();
+			userMap.load(is);
+			for (Iterator iter = userMap.entrySet().iterator(); iter.hasNext();) {
+				Map.Entry mapEntry = (Map.Entry)iter.next();
+				try {
+					Pattern regex = Pattern.compile((String)mapEntry.getKey());
+					String thisRoot = (String)mapEntry.getValue();
+					if (thisRoot != null) {
+						thisRoot = fixApiDocRoot(thisRoot);
+						apidocMap.put(regex, thisRoot);
+					} else {
+						System.err.println("No URL for pattern " + mapEntry.getKey());
+					}
+				} catch (PatternSyntaxException e) {
+					System.err.println("Skipping bad pattern " + mapEntry.getKey());
+				}
+			}
+		} else
+			apidocMap.put(Pattern.compile(".*"), DEFAULT_EXTERNAL_APIDOC);
+	}
+
+	/** Trim and append a file separator to the string */
+	private String fixApiDocRoot(String str) {
+		if (str != null) {
+			String fixed = str.trim();
+			if (!fixed.endsWith(File.separator))
+				fixed = fixed + "/";
+			return fixed;
+		} else
+			return null;
 	}
 
 	/**
@@ -376,7 +449,7 @@ class ClassGraph {
 				System.err.println("@stereotype expects one field: " + tags[i].text());
 				return ("");
 			}
-			r += StringFuns.guilopen + t[0] + StringFuns.guilclose + " \\" + term;
+			r += StringFuns.guilWrap(t[0]) + " \\" + term;
 		}
 		return (r);
 	}
@@ -423,7 +496,7 @@ class ClassGraph {
 			opt.w.print("\t" + ci.name + " [");
 			r = stereotype(c, 'n') + r;
 			if (c.isInterface())
-				r = StringFuns.guilopen + "interface" + StringFuns.guilclose + " \\n" + r;
+				r = StringFuns.guilWrap("interface") + " \\n" + r;
 			boolean showMembers =
 				(opt.showAttributes || opt.showOperations) &&
 				(c.methods().length > 0 || c.fields().length > 0);
@@ -533,7 +606,7 @@ class ClassGraph {
 		while (iter.hasNext()) {
 			Map.Entry entry = (Entry) iter.next();
 			ClassInfo info = (ClassInfo) entry.getValue();
-			if (! info.nodePrinted) {
+			if (!info.nodePrinted) {
 				String r = entry.getKey().toString();
 				opt.w.println("\t// " + r);
 
@@ -563,48 +636,52 @@ class ClassGraph {
 		return specifiedPackages.contains(packageName);
 	}
 
-	/** Convert the class name into a corresponding local or remote URL */
+	/** Convert the class name into a corresponding URL */
 	public String classToUrl(String className) {
-		/*
-		 * When no packages have been specified, maintain compatibility
-		 * with previous versions; all URLs are local.
-		 */
-		if (specifiedPackages.isEmpty() ||
-		    isSpecifiedPackage(className))
-			return packageToLocalUrl(className);
+		String DocRoot = mapApiDocRoot(className);
+		StringBuffer buf = new StringBuffer(DocRoot);
+		buf.append(className.replace('.', File.separatorChar));
+		buf.append(".html");
+		String result = buf.toString();
+		return result;
+	}
+
+	private String mapApiDocRoot(String className) {
+		String root = null;
+		if (specifiedPackages.isEmpty() || isSpecifiedPackage(className))
+			root = getLocalApiDocRoot(className);
 		else
-			return packageToExternalUrl(className);
+			root = getExternalApiDocRoot(className);
+		if (root == null)
+			root = "";
+		return root;
 	}
 
-	/**
-	* Converts a package name into an URL.
-	* The convertion is designed to help the creation of diagrams that
-	* can be used for the navigation of JavaDoc documents.
-	* To be effective it distinguishes between "local" and "external"
-	* packages.
-	* Local packages are the ones that belong to packages specified
-	* in the command line of the current run of UMLGraph.
-	* We assume that classes in those packages are available through
-	* relative indexes from the root of the JavaDoc tree, so we generate
-	* relative indexes for them.
-	*/
-	public String packageToLocalUrl(String packageName) {
+	public String getLocalApiDocRoot(String className) {
+		String root = null;
+		if (apiDocRoot == null) {
+			// works if the diagram is placed in the package doc-files directory,
+			// to be used as part of a "customized" JavaDoc.
+			String[] s = className.split("\\.");
+			StringBuffer tmp = new StringBuffer(className.length() * 2);
+			for (int i = 0; i < s.length - 1; i++)
+				tmp.append("..").append(File.separatorChar);
+			root = tmp.toString();
+		} else
+			// usually the case when part of a maven plugin.
+			root = apiDocRoot;
+		return root;
+	}
 
-		String[] s = packageName.split("\\.");
-		StringBuffer tmp = new StringBuffer(packageName.length() * 2);
-		for (int i = 0; i < s.length - 1; i++)
-			tmp.append("..").append(File.separatorChar);
-		for (int j = 0; j < s.length; j++) {
-			tmp.append(s[j]);
-			if (j != s.length - 1)
-				tmp.append(File.separatorChar);
+	public String getExternalApiDocRoot(String className) {
+		for (Iterator iter = apidocMap.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry mapEntry = (Map.Entry)iter.next();
+			Pattern regex = (Pattern)mapEntry.getKey();
+			Matcher matcher = regex.matcher(className);
+			if (matcher.matches())
+				return (String)mapEntry.getValue();
 		}
-		tmp.append(".html");
-		return tmp.toString();
-	}
-
-	public String packageToExternalUrl(String packageName) {
-		return externalDocRoot + packageName.replace('.',File.separatorChar) + ".html";
+		return null;
 	}
 }
 
@@ -620,7 +697,11 @@ public class UmlGraph {
 		prologue();
 		ClassDoc[] classes = root.classes();
 
-		ClassGraph c = new ClassGraph(root.specifiedPackages());
+		StringFuns.init(opt.useGuillemot);
+
+		ClassGraph c = new ClassGraph(root.specifiedPackages(),
+                                  opt.apiDocRoot,
+                                  opt.apidocMapFileName);
 		for (int i = 0; i < classes.length; i++)
 			c.print(opt, classes[i]);
 		c.printExtraClasses();
@@ -650,7 +731,10 @@ public class UmlGraph {
 		   option.equals("-output") ||
 		   option.equals("-outputencoding") ||
 		   option.equals("-bgcolor") ||
-		   option.equals("-hide"))
+		   option.equals("-hide") ||
+		   option.equals("-apidocroot") ||
+		   option.equals("-apidocmap") ||
+		   option.equals("-guillemot"))
 			return 2;
 		else
 			return 0;
