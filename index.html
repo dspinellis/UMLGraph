@@ -177,6 +177,10 @@ inside abstract class nodes.
 <dt>-edgefontcolor<dd>Specify the font color to use for edge labels.
 <dt>-edgecolor<dd>Specify the color for drawing edges.
 <dt>-bgcolor<dd>Specify the graph's background color.
+<dt>-hide<dd>Specify entities to hide from the graph.
+Matching is done against the end of each entity's name.
+For instance, "<code>-hide Widget</code>" would hide "<code>com.foo.widgets.Widget</code>" and
+"<code>com.foo.widgets.BigWidget</code>".
 </dl>
 <p>
 All colors can be either a symbolic name (e.g. blue),
@@ -221,6 +225,18 @@ You can download it in source and compiled format from the following links:
 
 <h3>Version History</h3> <!-- {{{1 -->
 <dl>
+<dt>Version 1.24 2003/07/30<dd>
+Changes by Art Hampton (thanks):
+<ul>
+<li> Create the appropriate label for relationship tags when referring to
+ classes which were not parsed by javadoc.
+<li> New "-hide &lt;matchstring&gt;" option, where &lt;matchstring&gt;
+matches the end of the name of an entity.
+Matched entities are removed from the graph.
+A regular expression matching facility will be added when Java 1.4
+becomes more widespread.
+</ul>
+
 <dt>Version 1.23 2003/05/7<dd>
 Added <code>-output</code> command-line option, and an <em>ant</em>-based
 build file.
