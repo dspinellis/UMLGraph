@@ -2,7 +2,7 @@
  * Create a graphviz graph based on the classes in the specified java
  * source files.
  *
- * (C) Copyright 2002-2004 Diomidis Spinellis
+ * (C) Copyright 2002-2005 Diomidis Spinellis
  *
  * Permission to use, copy, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted,
@@ -30,7 +30,7 @@ import java.util.regex.PatternSyntaxException;
  * Represent the program options
  */
 class Options implements Cloneable {
-	private Vector hidePatterns;
+	private Vector<Pattern> hidePatterns;
 	PrintWriter w;
 	boolean showQualified;
 	boolean showAttributes;
@@ -78,7 +78,7 @@ class Options implements Cloneable {
 		bgColor = null;
 		outputFileName = "graph.dot";
 		outputEncoding = "ISO-8859-1";
-		hidePatterns = new Vector();
+		hidePatterns = new Vector<Pattern>();
 		apiDocMapFileName = null;
 		apiDocRoot = null;
 		useGuillemot = true;
@@ -194,7 +194,7 @@ class Options implements Cloneable {
 	 */
 	public boolean matchesHideExpression(String s) {
 		for (int i = 0; i < hidePatterns.size(); i++) {
-			Pattern hidePattern = (Pattern)hidePatterns.get(i);
+			Pattern hidePattern = hidePatterns.get(i);
 			Matcher m = hidePattern.matcher(s);
 			if (m.find())
 				return true;
@@ -225,7 +225,7 @@ class ClassInfo {
 class StringUtil {
 	/** Tokenize string s into an array */
 	public static String[] tokenize(String s) {
-		ArrayList r = new ArrayList();
+		ArrayList<String> r = new ArrayList<String>();
 		String remain = s;
 		int n = 0, pos;
 
@@ -264,16 +264,16 @@ class StringUtil {
  * Class graph generation engine
  */
 class ClassGraph {
-	private static Map classnames = new HashMap();
+	private static Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
 	private static String apiDocRoot;
-	private static Map apiDocMap = new HashMap();
+	private static Map<Pattern, String> apiDocMap = new HashMap<Pattern, String>();
 
 	private static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
 
 	private static final char FILE_SEPARATOR = '/';
 
 	private Options opt;
-	private Set specifiedPackages;
+	private Set<String> specifiedPackages;
 
 	/**
 	 * Create a new ClassGraph.  The packages passed as an
@@ -281,7 +281,7 @@ class ClassGraph {
 	 * Local URLs will be generated for these packages.
 	 */
 	public ClassGraph(PackageDoc[] packages, String root, String mapFileName) throws IOException {
-		specifiedPackages = new HashSet();
+		specifiedPackages = new HashSet<String>();
 		for (int i = 0; i < packages.length; i++)
 			specifiedPackages.add(packages[i].name());
 		apiDocRoot = fixApiDocRoot(root);
@@ -519,7 +519,7 @@ class ClassGraph {
 	private static String name(String c) {
 		ClassInfo ci;
 
-		if ((ci = (ClassInfo)classnames.get(c)) == null)
+		if ((ci = classnames.get(c)) == null)
 			classnames.put(c, ci = new ClassInfo(false));
 		return ci.name;
 	}
@@ -529,7 +529,7 @@ class ClassGraph {
 		ClassInfo ci;
 		boolean toPrint;
 
-		if ((ci = (ClassInfo)classnames.get(c.toString())) != null)
+		if ((ci = classnames.get(c.toString())) != null)
 			toPrint = !ci.nodePrinted;
 		else {
 			toPrint = true;
@@ -647,11 +647,11 @@ class ClassGraph {
 
 	/** Print classes that were parts of relationships, but not parsed by javadoc */ 
 	public void printExtraClasses() {
-		Collection myClassInfos = classnames.entrySet();
-		Iterator iter = myClassInfos.iterator();
+		Collection<Map.Entry<String, ClassInfo>> myClassInfos = classnames.entrySet();
+		Iterator<Map.Entry<String, ClassInfo>> iter = myClassInfos.iterator();
 		while (iter.hasNext()) {
-			Map.Entry entry = (Entry) iter.next();
-			ClassInfo info = (ClassInfo) entry.getValue();
+			Map.Entry<String, ClassInfo> entry = iter.next();
+			ClassInfo info = entry.getValue();
 			if (!info.nodePrinted) {
 				String r = entry.getKey().toString();
 				opt.w.println("\t// " + r);
@@ -708,12 +708,12 @@ class ClassGraph {
 	 * so if more then one regular expression matches the result is undetermined.
 	 */
 	public String getExternalApiDocRoot(String className) {
-		for (Iterator iter = apiDocMap.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry mapEntry = (Map.Entry)iter.next();
-			Pattern regex = (Pattern)mapEntry.getKey();
+		for (Iterator<Map.Entry<Pattern, String>> iter = apiDocMap.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry<Pattern, String> mapEntry = iter.next();
+			Pattern regex = mapEntry.getKey();
 			Matcher matcher = regex.matcher(className);
 			if (matcher.matches()) 
-				return (String)mapEntry.getValue();
+				return mapEntry.getValue();
 		}
 		return null;
 	}
