@@ -57,7 +57,7 @@ You only specify the details you want to appear on the graph.
 If you wish your (Java) implementation to evolve together with the
 design feel free to include code or additional details.
 You can hide these details from the UML diagram using the <em>javadoc</em>
-<code>@hide</code> tag applied to classes, methods, and fields.
+<code>@hidden</code> tag applied to classes, methods, and fields.
 In theory you can also use UMLGraph to reverse engineer existing
 Java code.
 Note however that UMLGraph is not designed for this purpose;
@@ -163,6 +163,14 @@ visibility (private, public, protected)
 <code>-operations</code>
 <code>-visibility</code>
 <code>-types</code>
+<dt>-nodefillcolor<dd>Specify the color to use to fill the shapes.
+The color can be either a symbolic name (e.g. blue),
+a tripple specifying hue-saturation-brightness as values 0-1
+(e.g. ".13 0.9 1"),
+or a tripple specifying red-green-blue values as hexadecimal
+digits prefixed by a # (e.g. "#ff8020"). 
+The symbolic color names are derived from the X Windows System;
+you can find a complete list in the Graphviz documentation.
 </dl>
 <p>
 Since the options are really a part of the generated graph you
@@ -177,6 +185,11 @@ of a class named <code>UMLOptions</code>, as in the following example:
  */
 class UMLOptions {}
 </pre>
+
+You can also change the UMLGraph operation on a per-class basis by
+using <code>@opt</code> attributes on individual classes.
+In this case the <code>@opt</code> specification temporarily overrides
+the particular global setting for the class being processed.
 
 <h3>Availability</h3> <!-- {{{1 -->
 UMLGraph is hereby made freely available as Open Source Software.
@@ -488,6 +501,45 @@ class ActionQueue {
 <img src="classadd.gif">
 </tr></table>
 Download the <a href="classadd.java">declarative specification</a>, the generated <a href="classadd.dot">dot code</a>.
+<h3>Global and Local Options</h3> <!-- {{{2 -->
+<table>
+<tr><td>
+<pre>
+/**
+ * @opt nodefillcolor "#a0a0a0" 
+ * @hidden
+ */
+class UMLOptions{}
+
+/** 
+ * @composed - - - Red
+ * @composed - - - Green
+ * @composed - - - Blue
+ * @opt attributes
+ * @opt visibility
+ * @opt types
+ */
+class Pixel {
+	private int x, y;
+	public void setColor(ColorValue v) {}
+}
+
+/** @opt nodefillcolor red */
+class Red {}
+
+/** @opt nodefillcolor green */
+class Green {}
+
+/** @opt nodefillcolor blue */
+class Blue {}
+
+/** @hidden */
+class ColorValue{}
+</pre>
+</td><td>
+<img src="color.gif">
+</tr></table>
+Download the <a href="color.java">declarative specification</a>, the generated <a href="color.dot">dot code</a>.
 <!-- End matter {{{1 -->
 <p>
 <a href="../../">Diomidis Spinellis home page</a>
