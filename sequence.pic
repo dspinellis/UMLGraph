@@ -47,13 +47,17 @@ define actor {
 }
 
 # Create a new placeholder object(label)
-define pobject {
+define placeholder_object {
 	$1: box invisible;
 	move;
 	move to $1.e;
 	move right;
 	active_$1 = 0;
 	lifestart_$1 = $1.s.y;
+}
+
+define pobject {
+	placeholder_object($1);
 }
 
 # Complete the lifeline of the given object
@@ -90,18 +94,26 @@ define message {
 }
 
 # Display a lifeline constraint(object, label)
-define lconstraint {
+define lifeline_constraint {
 	box at ($1.x + awid, Here.y) invis $2 ljust " " ;
+}
+
+define lconstraint {
+	lifeline_constraint($1,$2);
 }
 
 # Display an object constraint(label)
 # for the last object drawn
-define oconstraint {
+define object_constraint {
 	{ box invis with .s at last box .nw $1 ljust; }
 }
 
+define oconstraint {
+	object_constraint($1);
+}
+
 # Draw a creation message(from_object, to_object, object_label)
-define cmessage {
+define create_message {
 	down;
 	move spacing;
 	if ($1.x <= $2.x) then {
@@ -124,6 +136,10 @@ define cmessage {
 	move (spacing + boxht) / 2;
 }
 
+define cmessage {
+	create_message($1,$2,$3);
+}
+
 # Draw an X for a given object
 define drawx {
 	{
@@ -133,12 +149,16 @@ define drawx {
 }
 
 # Draw a destroy message(from_object, to_object)
-define dmessage {
+define destroy_message {
 	# troff code is \(Fo \(Fc, but they don't work in pic2plot
 	# See http://www.delorie.com/gnu/docs/plotutils/plotutils_71.html
 	message($1,$2,"\Fodestroy\Fc");
 	complete($2);
 	drawx($2);
+}
+
+define dmessage {
+	destroy_message($1, $2);
 }
 
 # An object deletes itself: delete(object)
@@ -149,7 +169,7 @@ define delete {
 }
 
 # Draw a message return(from_object, to_object, label)
-define rmessage {
+define return_message {
 	down;
 	move spacing;
 	# See comment in message
@@ -161,6 +181,10 @@ define rmessage {
 		off_to = awid * .6;
 	}
 	arrow from  ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) dashed $3 " ";
+}
+
+define rmessage {
+	return_message($1,$2,$3);
 }
 
 # Object becomes active
