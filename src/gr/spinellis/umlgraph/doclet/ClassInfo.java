@@ -2,7 +2,7 @@
  * Create a graphviz graph based on the classes in the specified java
  * source files.
  *
- * (C) Copyright 2002 Diomidis Spinellis
+ * (C) Copyright 2002, 2003 Diomidis Spinellis
  * 
  * Permission to use, copy, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted,
@@ -402,14 +402,16 @@ class ClassGraph {
 				operations(c.methods());
 			if (showMembers)
 				opt.w.print("}\"");
-			// Use ariali for gif output
-			if (c.isAbstract())
-				opt.w.print(", fontname=\"" + opt.nodeFontAbstractName + "\"");
+			// Use ariali [sic] for gif output of abstract classes
+			opt.w.print(", fontname=\"" + 
+				(c.isAbstract() ? 
+				 opt.nodeFontAbstractName :
+				 opt.nodeFontName) + "\"");
 			if (opt.nodeFillColor != null)
 				opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
-			opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
 			opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 			opt.w.print(", fontsize=" + opt.nodeFontSize);
+			opt.w.print(", URL=\"" + c.toString() + ".html\"");
 			opt.w.println("];");
 			ci.nodePrinted = true;
 		}
@@ -466,7 +468,7 @@ class ClassGraph {
 		ClassDoc ifs[] = c.interfaces();
 		for (int i = 0; i < ifs.length; i++) {
 			opt.w.print("\t" + name(ifs[i]) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
-			opt.w.println("\t//" + c + " implements " + s);
+			opt.w.println("\t//" + c + " implements " + ifs[i]);
 		}
 		// Print other associations
 		relation("assoc", c, cs, "arrowhead=none");
