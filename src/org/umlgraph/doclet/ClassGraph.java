@@ -25,13 +25,15 @@ import java.util.*;
 
 class ClassGraph {
 	private ClassDoc c;
-	private PrintWriter w;
 	private static HashMap classnames = new HashMap();
 	private static int classnum;
+	private PrintWriter w;
+	private boolean stripPath;
 
-	ClassGraph(PrintWriter iw, ClassDoc ic) { 
+	ClassGraph(PrintWriter iw, boolean isp, ClassDoc ic) { 
 		c = ic;
 		w = iw;
+		stripPath = isp;
 	}
 
 	private String name(ClassDoc c) {
@@ -42,11 +44,13 @@ class ClassGraph {
 			name = "c" + (new Integer(classnum)).toString();
 			classnames.put(c, name);
 			classnum++;
-			// Create readable string by stripping leading path
 			String r = c.toString();
-			int dotpos = r.lastIndexOf('.');
-			if (dotpos != -1)
-				r = r.substring(dotpos + 1, r.length());
+			if (stripPath) {
+				// Create readable string by stripping leading path
+				int dotpos = r.lastIndexOf('.');
+				if (dotpos != -1)
+					r = r.substring(dotpos + 1, r.length());
+			}
 			// Create label
 			w.print("\t" + name + " [");
 			w.print("label=\"" + r + "\"");
@@ -70,6 +74,7 @@ class ClassGraph {
 
 public class UmlGraph {
 	private static PrintWriter w;
+	private static boolean stripPath = true;
 
 	public static boolean start(RootDoc root)
                             throws IOException, UnsupportedEncodingException {
@@ -78,12 +83,21 @@ public class UmlGraph {
 		prologue();
 		ClassDoc[] classes = root.classes();
 		for (int i = 0; i < classes.length; i++) {
-			ClassGraph c = new ClassGraph(w, classes[i]);
+			ClassGraph c = new ClassGraph(w, stripPath, classes[i]);
 			c.print();
 		}
 		epilogue();
 		return true;
 	}
+
+	public static int optionLength(String option) {
+		if(option.equals("-wholename")) {
+			stripPath = false;
+			return 1;
+		}
+			return 0;
+	}
+
 	private static void prologue() {
 		w.println(
 			"#!/usr/local/bin/dot\n" +
@@ -94,6 +108,7 @@ public class UmlGraph {
 			"\tnode [fontname=\"Helvetica\",fontsize=8,shape=record];"
 		);
 	}
+
 	private static void epilogue() {
 		w.println("}\n");
 		w.flush();
