@@ -428,7 +428,7 @@ class ClassGraph {
 				attributes(c.fields());
 			if (showMembers)
 				opt.w.print("|");
-			if (opt.showAttributes)
+			if (opt.showOperations)
 				operations(c.methods());
 			if (showMembers)
 				opt.w.print("}\"");
@@ -441,7 +441,7 @@ class ClassGraph {
 				opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
 			opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 			opt.w.print(", fontsize=" + opt.nodeFontSize);
-			opt.w.print(", URL=\"" + c.toString() + ".html\"");
+			opt.w.print(", URL=\"" + c.toString().replace('.',File.separatorChar) + ".html\"");
 			opt.w.println("];");
 			ci.nodePrinted = true;
 		}
@@ -487,7 +487,8 @@ class ClassGraph {
 		if (s != null && !s.toString().equals("java.lang.Object"))
 		{
 			if (!opt.matchesHideExpression(c.toString())
-				&& !opt.matchesHideExpression(s.toString()))
+				&& !opt.matchesHideExpression(s.toString())
+				&& !hidden(c) && !hidden(s))
 			{
 				opt.w.println("\t//" + c + " extends " + s);
 				opt.w.println("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
@@ -509,7 +510,8 @@ class ClassGraph {
 		for (int i = 0; i < ifs.length; i++)
 		{
 			if (!opt.matchesHideExpression(c.toString())
-				&& !opt.matchesHideExpression(ifs[i].toString()))
+				&& !opt.matchesHideExpression(ifs[i].toString())
+				&& !hidden(c) && !hidden(ifs[i]))
 			{
 				opt.w.print("\t" + name(ifs[i]) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
 				opt.w.println("\t//" + c + " implements " + ifs[i]);
@@ -550,7 +552,7 @@ class ClassGraph {
 					opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
 				opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 				opt.w.print(", fontsize=" + opt.nodeFontSize);
-				opt.w.print(", URL=\"" + entry.getKey().toString() + ".html\"");
+				opt.w.print(", URL=\"" + entry.getKey().toString().replace('.',File.separatorChar) + ".html\"");
 				opt.w.println("]");
 			}
 		}
