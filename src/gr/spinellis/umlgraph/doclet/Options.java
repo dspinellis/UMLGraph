@@ -55,6 +55,7 @@ class Options implements Cloneable {
 		edgeFontColor = "black";
 		edgeColor = "black";
 		edgeFontSize = 10;
+		nodeFontName = "Helvetica";
 		nodeFontAbstractName = "Helvetica-Oblique";
 		nodeFontColor = "black";
 		nodeFontSize = 10;
