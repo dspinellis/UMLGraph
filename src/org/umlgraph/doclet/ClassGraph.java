@@ -23,17 +23,100 @@ import java.io.*;
 import java.lang.*;
 import java.util.*;
 
+class Options {
+	PrintWriter w;
+	boolean showQualified;
+	boolean showAttributes;
+	boolean showOperations;
+	boolean showVisibility;
+	boolean showType;
+
+	Options() {
+		showQualified = false;
+		showAttributes = false;
+		showOperations = false;
+		showVisibility = false;
+		showType = false;
+	}
+
+	public void setAll() {
+		showAttributes = true;
+		showOperations = true;
+		showVisibility = true;
+		showType = true;
+	}
+
+	public void openFile() throws IOException, UnsupportedEncodingException {
+		FileOutputStream fos = new FileOutputStream("graph.dot");
+		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos)));
+	}
+}
+
 class ClassGraph {
 	private ClassDoc c;
 	private static HashMap classnames = new HashMap();
 	private static int classnum;
-	private PrintWriter w;
-	private boolean stripPath;
+	private Options opt;
 
-	ClassGraph(PrintWriter iw, boolean isp, ClassDoc ic) { 
+	ClassGraph(Options iopt, ClassDoc ic) { 
 		c = ic;
-		w = iw;
-		stripPath = isp;
+		opt = iopt;
+	}
+
+	private void visibility(ProgramElementDoc e) {
+		if (!opt.showVisibility)
+			return;
+		if (e.isPrivate())
+			opt.w.print('-');
+		if (e.isPublic())
+			opt.w.print('+');
+		if (e.isProtected())
+			opt.w.print('#');
+		opt.w.print(' ');
+	}
+
+	private void parameter(Parameter p[]) {
+		for (int i = 0; i < p.length; i++) {
+			opt.w.print(p[i].name());
+			opt.w.print(" : ");
+			opt.w.print(p[i].type());
+			if (i + 1 < p.length)
+				opt.w.print(", ");
+		}
+	}
+
+	private void type(Type t) {
+		opt.w.print(" : ");
+		if (opt.showQualified)
+			opt.w.print(t.qualifiedTypeName());
+		else
+			opt.w.print(t.typeName());
+		opt.w.print(t.dimension());
+	}
+
+	private void attributes(FieldDoc f[]) {
+		for (int i = 0; i < f.length; i++) {
+			visibility(f[i]);
+			opt.w.print(f[i].name());
+			if (opt.showType)
+				type(f[i].type());
+			opt.w.print("\\l");
+		}
+	}
+
+	private void operations(MethodDoc m[]) {
+		for (int i = 0; i < m.length; i++) {
+			visibility(m[i]);
+			opt.w.print(m[i].name());
+			if (opt.showType) {
+				opt.w.print("(");
+				parameter(m[i].parameters());
+				opt.w.print(")");
+				type(m[i].returnType());
+			} else
+				opt.w.print("()");
+			opt.w.print("\\l");
+		}
 	}
 
 	private String name(ClassDoc c) {
@@ -45,18 +128,29 @@ class ClassGraph {
 			classnames.put(c, name);
 			classnum++;
 			String r = c.toString();
-			if (stripPath) {
+			if (!opt.showQualified) {
 				// Create readable string by stripping leading path
 				int dotpos = r.lastIndexOf('.');
 				if (dotpos != -1)
 					r = r.substring(dotpos + 1, r.length());
 			}
 			// Create label
-			w.print("\t" + name + " [");
-			w.print("label=\"" + r + "\"");
+			opt.w.print("\t" + name + " [");
+			if (opt.showAttributes || opt.showOperations)
+				opt.w.print("label=\"{" + r + "\\n|");
+			else
+				opt.w.print("label=\"" + r + "\"");
+			if (opt.showAttributes)
+				attributes(c.fields());
+			if (opt.showAttributes || opt.showOperations)
+				opt.w.print("|");
+			if (opt.showAttributes)
+				operations(c.methods());
+			if (opt.showAttributes || opt.showOperations)
+				opt.w.print("}\"");
 			if (c.isAbstract())
-				w.print(", fontname=\"Helvetica-Oblique\"");
-			w.println("];");
+				opt.w.print(", fontname=\"Helvetica-Oblique\"");
+			opt.w.println("];");
 		}
 		return name;
 	}
@@ -66,24 +160,22 @@ class ClassGraph {
 		// Print the derivation path
 		ClassDoc s = c.superclass();
 		if (s != null && !s.toString().equals("java.lang.Object")) {
-			w.print("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
-			w.println("\t//" + c + " extends " + s);
+			opt.w.print("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
+			opt.w.println("\t//" + c + " extends " + s);
 		}
 	}
 }
 
 public class UmlGraph {
-	private static PrintWriter w;
-	private static boolean stripPath = true;
+	private static Options opt = new Options();
 
 	public static boolean start(RootDoc root)
                             throws IOException, UnsupportedEncodingException {
-		FileOutputStream fos = new FileOutputStream("graph.dot");
-		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos)));
+		opt.openFile();
 		prologue();
 		ClassDoc[] classes = root.classes();
 		for (int i = 0; i < classes.length; i++) {
-			ClassGraph c = new ClassGraph(w, stripPath, classes[i]);
+			ClassGraph c = new ClassGraph(opt, classes[i]);
 			c.print();
 		}
 		epilogue();
@@ -91,15 +183,35 @@ public class UmlGraph {
 	}
 
 	public static int optionLength(String option) {
-		if(option.equals("-wholename")) {
-			stripPath = false;
+		if(option.equals("-qualify")) {
+			opt.showQualified = true;
 			return 1;
 		}
-			return 0;
+		if(option.equals("-attributes")) {
+			opt.showAttributes = true;
+			return 1;
+		}
+		if(option.equals("-operations")) {
+			opt.showOperations = true;
+			return 1;
+		}
+		if(option.equals("-visibility")) {
+			opt.showVisibility = true;
+			return 1;
+		}
+		if(option.equals("-types")) {
+			opt.showType = true;
+			return 1;
+		}
+		if(option.equals("-all")) {
+			opt.setAll();
+			return 1;
+		}
+		return 0;
 	}
 
 	private static void prologue() {
-		w.println(
+		opt.w.println(
 			"#!/usr/local/bin/dot\n" +
 			"#\n" +
 			"# Class hirerarchy\n" +
@@ -110,7 +222,7 @@ public class UmlGraph {
 	}
 
 	private static void epilogue() {
-		w.println("}\n");
-		w.flush();
+		opt.w.println("}\n");
+		opt.w.flush();
 	}
 }
