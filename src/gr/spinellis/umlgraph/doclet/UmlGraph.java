@@ -226,7 +226,7 @@ class StringUtil {
 	/** Tokenize string s into an array */
 	public static String[] tokenize(String s) {
 		ArrayList r = new ArrayList();
-		String remain = s, tok;
+		String remain = s;
 		int n = 0, pos;
 
 		remain = remain.trim();
@@ -545,8 +545,8 @@ class ClassGraph {
 			if (c.isInterface())
 				r = guilWrap("interface") + " \\n" + r;
 			boolean showMembers =
-				(opt.showAttributes && c.methods().length > 0) ||
-				(opt.showOperations && c.fields().length > 0) ||
+				(opt.showAttributes && c.fields().length > 0) ||
+				(opt.showOperations && c.methods().length > 0) ||
 				(opt.showConstructors && c.constructors().length > 0);
 			r += tagvalue(c, "\\n", 'r');
 			if (showMembers)
