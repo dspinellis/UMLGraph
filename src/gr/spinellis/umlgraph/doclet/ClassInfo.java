@@ -567,7 +567,12 @@ class ClassGraph {
 
 	/** Convert the class name into a corresponding local or remote URL */
 	public String classToUrl(String className) {
-		if (isSpecifiedPackage(className))
+		/*
+		 * When no packages have been specified, maintain compatibility
+		 * with previous versions; all URLs are local.
+		 */
+		if (specifiedPackages.isEmpty() ||
+		    isSpecifiedPackage(className))
 			return packageToLocalUrl(className);
 		else
 			return packageToExternalUrl(className);
