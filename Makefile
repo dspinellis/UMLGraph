@@ -3,7 +3,7 @@
 #
 
 .SUFFIXES:.class .java
-VERSION=2.4
+VERSION=2.6
 TARBALL=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
@@ -39,5 +39,6 @@ UmlGraph.jar: UmlGraph.class
 UmlGraph.class: UmlGraph.java
 
 web: $(TARBALL)
-	cp UmlGraph.jar $(TARBALL) $(ZIPBALL) $(WEBDIR)
+	cp $(TARBALL) $(ZIPBALL) $(WEBDIR)
+	cp UmlGraph.jar $(WEBDIR)/UmlGraph-$(VERSION).jar
 	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
