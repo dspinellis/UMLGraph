@@ -265,6 +265,8 @@ class ClassGraph {
 
 	private static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
 
+	private static final char FILE_SEPARATOR = '/';
+
 	private Options opt;
 	private Set specifiedPackages;
 
@@ -284,6 +286,7 @@ class ClassGraph {
 			userMap.load(is);
 			for (Iterator iter = userMap.entrySet().iterator(); iter.hasNext();) {
 				Map.Entry mapEntry = (Map.Entry)iter.next();
+
 				try {
 					Pattern regex = Pattern.compile((String)mapEntry.getKey());
 					String thisRoot = (String)mapEntry.getValue();
@@ -298,18 +301,22 @@ class ClassGraph {
 				}
 			}
 		} else
-			apiDocMap.put(Pattern.compile(""), DEFAULT_EXTERNAL_APIDOC);
+			apiDocMap.put(Pattern.compile(".*"), DEFAULT_EXTERNAL_APIDOC);
 	}
 
 	/** Trim and append a file separator to the string */
 	private String fixApiDocRoot(String str) {
+		String fixed = null;
 		if (str != null) {
-			String fixed = str.trim();
-			if (!fixed.endsWith(File.separator))
-				fixed = fixed + "/";
-			return fixed;
-		} else
-			return null;
+			fixed = str.trim();
+			if (fixed.length() > 0) {
+				if (!File.separator.equals("/"))
+					fixed = fixed.replace(File.separator.charAt(0), '/');
+				if (!fixed.endsWith("/"))
+					fixed = fixed + "/";
+			}
+		}
+		return fixed;
 	}
 
 	/** Return the class's name, possibly by stripping the leading path */
@@ -429,7 +436,9 @@ class ClassGraph {
 			opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
 		opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 		opt.w.print(", fontsize=" + opt.nodeFontSize);
-		opt.w.print(", URL=\"" + classToUrl(s)+ "\"");
+		String url = classToUrl(s);
+		if (url != null)
+			opt.w.print(", URL=\"" + url + "\"");
 		opt.w.println("];");
 	}
 
@@ -452,7 +461,7 @@ class ClassGraph {
 				System.err.println("@tagvalue expects two fields: " + tags[i].text());
 				return ("");
 			}
-			r += "\\{" + t[0] + " = " + t[1] + "\\}\\"  + term;
+			r += "\\{" + t[0] + " = " + t[1] + "\\}\\" + term;
 		}
 		return (r);
 	}
@@ -637,11 +646,14 @@ class ClassGraph {
 
 	/** Convert the class name into a corresponding URL */
 	public String classToUrl(String className) {
-		String DocRoot = mapApiDocRoot(className);
-		StringBuffer buf = new StringBuffer(DocRoot);
-		buf.append(className.replace('.', File.separatorChar));
-		buf.append(".html");
-		String result = buf.toString();
+		String result = null;
+		String docRoot = mapApiDocRoot(className);
+		if (docRoot != null) {
+			StringBuffer buf = new StringBuffer(docRoot);
+			buf.append(className.replace('.', FILE_SEPARATOR));
+			buf.append(".html");
+			result = buf.toString();
+		}
 		return result;
 	}
 
@@ -651,34 +663,12 @@ class ClassGraph {
 	 * the final diagram to the associated JavaDoc page.
 	 */
 	private String mapApiDocRoot(String className) {
+
 		String root = null;
 		if (specifiedPackages.isEmpty() || isSpecifiedPackage(className))
-			root = getLocalApiDocRoot(className);
+			root = apiDocRoot;
 		else
 			root = getExternalApiDocRoot(className);
-		if (root == null)
-			root = "";
-		return root;
-	}
-
-	/**
-	 * Returns the appropriate URL "root" for a local class name.  It will use the
-	 * value set in the <code>apiDocRoot</code> if set, otherwise will calculate a
-	 * relative path.
-	 */
-	public String getLocalApiDocRoot(String className) {
-		String root = null;
-		if (apiDocRoot == null) {
-			// works if the diagram is placed in the package doc-files directory,
-			// to be used as part of a "customized" JavaDoc.
-			String[] s = className.split("\\.");
-			StringBuffer tmp = new StringBuffer(className.length() * 2);
-			for (int i = 0; i < s.length - 1; i++)
-				tmp.append("..").append(File.separatorChar);
-			root = tmp.toString();
-		} else
-			// usually the case when part of a maven plugin.
-			root = apiDocRoot;
 		return root;
 	}
 
@@ -696,7 +686,7 @@ class ClassGraph {
 			Map.Entry mapEntry = (Map.Entry)iter.next();
 			Pattern regex = (Pattern)mapEntry.getKey();
 			Matcher matcher = regex.matcher(className);
-			if (matcher.matches())
+			if (matcher.matches()) 
 				return (String)mapEntry.getValue();
 		}
 		return null;
@@ -716,8 +706,7 @@ public class UmlGraph {
 		ClassDoc[] classes = root.classes();
 
 		ClassGraph c = new ClassGraph(root.specifiedPackages(),
-                                  opt.apiDocRoot,
-                                  opt.apiDocMapFileName);
+					opt.apiDocRoot, opt.apiDocMapFileName);
 		for (int i = 0; i < classes.length; i++)
 			c.print(opt, classes[i]);
 		c.printExtraClasses();
