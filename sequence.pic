@@ -14,10 +14,26 @@
 spacing = 0.25;
 # Active box width
 awid = .1;
+# Box height
+boxht = 0.3;
 
-# Create a new object(label, name1, name2)
+# Create a new object(label, name)
 define object {
-	$1: box $2 $3; move;
+	$1: box $2; move;
+	# Could also underline text with \mk\ul\ul\ul...\rt
+	{
+		line from $1.w + (.1, -.07) to $1.e + (-.1, -.07);
+	}
+	move to $1.e;
+	move right;
+	active_$1 = 0;
+	lifestart_$1 = $1.s.y;
+}
+
+# Create a new placeholder object(label)
+define pobject {
+	$1: box invisible;
+	move;
 	move to $1.e;
 	move right;
 	active_$1 = 0;
@@ -57,6 +73,65 @@ define message {
 	}
 }
 
+# Display a lifeline constraint(object, label)
+define lconstraint {
+	box at ($1.x + awid, Here.y) invis $2 ljust " " ;
+}
+
+# Display an object constraint(label)
+# for the last object drawn
+define oconstraint {
+	{ box invis with .s at last box .nw $1 ljust; }
+}
+
+# Draw a creation message(from_object, to_object, object_label)
+define cmessage {
+	down;
+	move spacing;
+	if ($1.x <= $2.x) then {
+		off_from = awid * .6;
+		off_to = -boxwid * .51;
+	} else {
+		off_from = -awid * .6;
+		off_to = boxwid * .51;
+	}
+	XSEQA: arrow from ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) "\Focreate\Fc" " ";
+	if ($1.x <= $2.x) then {
+		{ XSEQB: box $3 with .w at XSEQA.end; }
+	} else {
+		{ XSEQB: box $3 with .e at XSEQA.end; }
+	}
+	{
+		line from XSEQB.w + (.1, -.07) to XSEQB.e + (-.1, -.07);
+	}
+	lifestart_$2 = XSEQB.s.y;
+	move (spacing + boxht) / 2;
+}
+
+# Draw an X for a given object
+define drawx {
+	{
+	line from($1.x - awid, lifestart_$1 - awid) to ($1.x + awid, lifestart_$1 + awid);
+	line from($1.x - awid, lifestart_$1 + awid) to ($1.x + awid, lifestart_$1 - awid);
+	}
+}
+
+# Draw a destroy message(from_object, to_object)
+define dmessage {
+	# troff code is \(Fo \(Fc, but they don't work in pic2plot
+	# See http://www.delorie.com/gnu/docs/plotutils/plotutils_71.html
+	message($1,$2,"\Fodestroy\Fc");
+	complete($2);
+	drawx($2);
+}
+
+# An object deletes itself: delete(object)
+define delete {
+	complete($1);
+	lifestart_$1 = lifestart_$1 - awid;
+	drawx($1);
+}
+
 # Draw a message return(from_object, to_object, label)
 define rmessage {
 	down;
@@ -82,4 +157,24 @@ define active {
 define inactive {
 	complete($1);
 	active_$1 = 0;
+}
+
+# Time step
+# Useful at the beginning and the end
+# to show object states
+define step {
+	down;
+	move spacing;
+}
+
+# Switch to asynchronous messages
+define async {
+	arrowhead = 0;
+	arrowwid = arrowwid * 2;
+}
+
+# Swtich to synchronous messages
+define sync {
+	arrowhead = 1;
+	arrowwid = arrowwid / 2;
 }
