@@ -20,14 +20,15 @@
 
 import com.sun.javadoc.*;
 import java.io.*;
-import java.lang.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Represent the program options
  */
 class Options implements Cloneable {
-	PrintWriter w;
+	private Vector hideNames;
+    PrintWriter w;
 	boolean showQualified;
 	boolean showAttributes;
 	boolean showOperations;
@@ -63,6 +64,7 @@ class Options implements Cloneable {
 		nodeFillColor = null;
 		bgColor = null;
 		outputFileName = "graph.dot";
+		hideNames = new Vector();
 	}
 
 	public Object clone() 
@@ -122,6 +124,8 @@ class Options implements Cloneable {
 			nodeFillColor = opt[1];
 		} else if(opt[0].equals("-output")) {
 			outputFileName = opt[1];
+		} else if(opt[0].equals("-hide")) {
+			hideNames.add(opt[1]);
 		}
 	}
 
@@ -148,6 +152,20 @@ class Options implements Cloneable {
 	public void openFile() throws IOException, UnsupportedEncodingException {
 		FileOutputStream fos = new FileOutputStream(outputFileName);
 		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos)));
+	}
+	
+	public boolean matchesHideExpression(String s)
+	{
+		for (int i = 0; i < hideNames.size(); i++)
+		{
+			String hideString = (String) hideNames.get(i);
+
+			if(s.endsWith(hideString))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }
 
@@ -350,9 +368,13 @@ class ClassGraph {
 	}
 
 	/** Return true if c has a @hidden tag associated with it */
-	private static boolean hidden(Doc c) {
+	private boolean hidden(Doc c) {
 		Tag tags[] = c.tags("hidden");
-		return (tags.length > 0);
+		if (tags.length > 0)
+		{
+			return true;
+		}
+		return opt.matchesHideExpression(c.toString());
 	}
 
 	/** Return a class's internal name */
@@ -458,21 +480,36 @@ class ClassGraph {
 		String cs = name(c);
 		// Print generalization (through the Java superclass)
 		ClassDoc s = c.superclass();
-		if (s != null && !s.toString().equals("java.lang.Object")) {
-			opt.w.println("\t//" + c + " extends " + s);
-			opt.w.println("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
+		if (s != null && !s.toString().equals("java.lang.Object"))
+		{
+			if (!opt.matchesHideExpression(c.toString())
+				&& !opt.matchesHideExpression(s.toString()))
+			{
+				opt.w.println("\t//" + c + " extends " + s);
+				opt.w.println("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
+			}
 		}
 		// Print generalizations (through @extends tags)
 		Tag tags[] = c.tags("extends");
-		for (int i = 0; i < tags.length; i++) {
-			opt.w.println("\t//" + c + " extends " + tags[i].text());
-			opt.w.println("\t" + name(tags[i].text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
+		for (int i = 0; i < tags.length; i++)
+		{
+			if (!opt.matchesHideExpression(c.toString())
+				&& !opt.matchesHideExpression(tags[i].text()))
+			{
+				opt.w.println("\t//" + c + " extends " + tags[i].text());
+				opt.w.println("\t" + name(tags[i].text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
+			}
 		}
 		// Print realizations (Java interfaces)
 		ClassDoc ifs[] = c.interfaces();
-		for (int i = 0; i < ifs.length; i++) {
-			opt.w.print("\t" + name(ifs[i]) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
-			opt.w.println("\t//" + c + " implements " + ifs[i]);
+		for (int i = 0; i < ifs.length; i++)
+		{
+			if (!opt.matchesHideExpression(c.toString())
+				&& !opt.matchesHideExpression(ifs[i].toString()))
+			{
+				opt.w.print("\t" + name(ifs[i]) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
+				opt.w.println("\t//" + c + " implements " + ifs[i]);
+			}
 		}
 		// Print other associations
 		relation("assoc", c, cs, "arrowhead=none");
@@ -480,6 +517,39 @@ class ClassGraph {
 		relation("has", c, cs, "arrowhead=none, arrowtail=ediamond");
 		relation("composed", c, cs, "arrowhead=none, arrowtail=diamond");
 		relation("depend", c, cs, "arrowhead=open, style=dashed");
+	}
+	
+	public void printExtraClasses()
+	{
+		Collection myClassInfos = classnames.entrySet();
+		Iterator iter = myClassInfos.iterator();
+		while (iter.hasNext())
+		{
+			Map.Entry entry = (Entry) iter.next();
+			ClassInfo info = (ClassInfo) entry.getValue();
+			if (! info.nodePrinted)
+			{
+				System.out.println("--- Need: " + entry.getKey().toString());
+				String r = entry.getKey().toString();
+				opt.w.println("\t// " + r);
+				
+				if (!opt.showQualified) {
+					// Create readable string by stripping leading path
+					int dotpos = r.lastIndexOf('.');
+					if (dotpos != -1)
+						r = r.substring(dotpos + 1, r.length());
+				}
+
+				opt.w.print("\t" + info.name + "[label=\"" + r + "\"");
+				opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
+				if (opt.nodeFillColor != null)
+					opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
+				opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
+				opt.w.print(", fontsize=" + opt.nodeFontSize);
+				opt.w.print(", URL=\"" + entry.getKey().toString() + ".html\"");
+				opt.w.println("]");
+			}
+		}
 	}
 }
 
@@ -499,9 +569,12 @@ public class UmlGraph {
 		for (int i = 0; i < classes.length; i++) {
 			c.print(opt, classes[i]);
 		}
+        c.printExtraClasses();
 		epilogue();
 		return true;
 	}
+
+
 
 	/** Option checking */
 	public static int optionLength(String option) {
@@ -523,7 +596,8 @@ public class UmlGraph {
 		   option.equals("-edgefontsize") ||
 		   option.equals("-edgefontname") ||
 		   option.equals("-output") ||
-		   option.equals("-bgcolor"))
+		   option.equals("-bgcolor") ||
+		   option.equals("-hide"))
 			return 2;
 		else
 			return 0;
