@@ -34,6 +34,8 @@ class Options implements Cloneable {
 	PrintWriter w;
 	boolean showQualified;
 	boolean showAttributes;
+	boolean showEnumerations;
+	boolean showEnumConstants;
 	boolean showOperations;
 	boolean showConstructors;
 	boolean showVisibility;
@@ -62,8 +64,10 @@ class Options implements Cloneable {
 	Options() {
 		showQualified = false;
 		showAttributes = false;
+		showEnumConstants = false;
 		showOperations = false;
 		showVisibility = false;
+		showEnumerations = false;
 		showConstructors = false;
 		showType = false;
 		edgeFontName = "Helvetica";
@@ -97,6 +101,8 @@ class Options implements Cloneable {
 	/** Most verbose output */
 	public void setAll() {
 		showAttributes = true;
+		showEnumerations = true;
+		showEnumConstants = true;
 		showOperations = true;
 		showConstructors = true;
 		showVisibility = true;
@@ -111,8 +117,12 @@ class Options implements Cloneable {
 			horizontal = true;
 		} else if(opt[0].equals("-attributes")) {
 			showAttributes = true;
+		} else if(opt[0].equals("-enumconstants")) {
+			showEnumConstants = true;
 		} else if(opt[0].equals("-operations")) {
 			showOperations = true;
+		} else if(opt[0].equals("-enumerations")) {
+			showEnumerations = true;
 		} else if(opt[0].equals("-constructors")) {
 			showConstructors = true;
 		} else if(opt[0].equals("-visibility")) {
@@ -535,7 +545,7 @@ class ClassGraph {
 			toPrint = true;
 			classnames.put(c.toString(), ci = new ClassInfo(true));
 		}
-		if (toPrint && !hidden(c)) {
+		if (toPrint && !hidden(c) && (!c.isEnum() || opt.showEnumerations)) {
 			// Associate classname's alias
 			String r = c.toString();
 			opt.w.println("\t// " + r);
@@ -544,8 +554,11 @@ class ClassGraph {
 			r = stereotype(c, 'n') + qualifiedName(r);
 			if (c.isInterface())
 				r = guilWrap("interface") + " \\n" + r;
+			if (c.isEnum())
+				r = guilWrap("enumeration") + " \\n" + r;
 			boolean showMembers =
 				(opt.showAttributes && c.fields().length > 0) ||
+				(c.isEnum() && opt.showEnumConstants && c.enumConstants().length > 0) ||
 				(opt.showOperations && c.methods().length > 0) ||
 				(opt.showConstructors && c.constructors().length > 0);
 			r += tagvalue(c, "\\n", 'r');
@@ -555,11 +568,18 @@ class ClassGraph {
 				opt.w.print("label=\"" + r + "\"");
 			if (opt.showAttributes)
 				attributes(c.fields());
+			if (c.isEnum() && opt.showEnumConstants) {
+				FieldDoc ec[] = c.enumConstants();
+				for (int i = 0; i < ec.length; i++) {
+					opt.w.print(ec[i].name());
+					opt.w.print("\\l");
+				}
+			}
 			if (showMembers)
 				opt.w.print("|");
-			if (opt.showConstructors)
+			if (opt.showConstructors && !c.isEnum())
 				operations(c.constructors());
-			if (opt.showOperations)
+			if (opt.showOperations && !c.isEnum())
 				operations(c.methods());
 			if (showMembers)
 				opt.w.print("}\"");
@@ -610,7 +630,7 @@ class ClassGraph {
 		String cs = name(c);
 		// Print generalization (through the Java superclass)
 		ClassDoc s = c.superclass();
-		if (s != null && !s.toString().equals("java.lang.Object")) {
+		if (s != null && !s.toString().equals("java.lang.Object") && !c.isEnum()) {
 			if (!opt.matchesHideExpression(c.toString())
 				&& !opt.matchesHideExpression(s.toString())
 				&& !hidden(c) && !hidden(s)) {
@@ -770,6 +790,11 @@ public class UmlGraph {
 			return 2;
 		else
 			return 0;
+	}
+
+	/** Indicate the language version we support */
+	public static LanguageVersion languageVersion() {
+		return LanguageVersion.JAVA_1_5;
 	}
 
 	/** Dot prologue */
