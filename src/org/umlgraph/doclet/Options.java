@@ -139,6 +139,12 @@ class ClassGraph {
 		return ci.name;
 	}
 
+	/** Return true if c has a @hidden tag associated with it */
+	private boolean hidden(ClassDoc c) {
+		Tag tags[] = c.tags("hidden");
+		return (tags.length > 0);
+	}
+
 	private String name(ClassDoc c) {
 		ClassInfo ci;
 		boolean toPrint;
@@ -147,9 +153,9 @@ class ClassGraph {
 			toPrint = !ci.nodePrinted;
 		else {
 			toPrint = true;
-			classnames.put(c, ci = new ClassInfo(true));
+			classnames.put(c.toString(), ci = new ClassInfo(true));
 		}
-		if (toPrint) {
+		if (toPrint && !hidden(c)) {
 			// Associate classnames alias
 			String r = c.toString();
 			if (!opt.showQualified) {
@@ -175,6 +181,7 @@ class ClassGraph {
 			if (c.isAbstract())
 				opt.w.print(", fontname=\"Helvetica-Oblique\"");
 			opt.w.println("];");
+			ci.nodePrinted = true;
 		}
 		return ci.name;
 	}
@@ -241,7 +248,7 @@ class ClassGraph {
 			opt.w.print("\t" + name(ifs[i]) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
 			opt.w.println("\t//" + c + " implements " + s);
 		}
-		// Print associations
+		// Print other associations
 		relation("assoc", c, cs, "arrowhead=none");
 		relation("has", c, cs, "arrowhead=none, arrowtail=ediamond");
 		relation("composed", c, cs, "arrowhead=none, arrowtail=diamond");
