@@ -19,28 +19,47 @@
  */
 
 import com.sun.javadoc.*;
+import java.io.*;
+import java.lang.*;
+import java.util.*;
 
 class ClassGraph {
 	private ClassDoc c;
-	ClassGraph(ClassDoc ic) { c = ic; }
+	private PrintWriter w;
+
+	ClassGraph(PrintWriter iw, ClassDoc ic) { 
+		c = ic;
+		w = iw;
+	}
 	public void print() {
-		System.out.println(c);
+		w.print(c + "[");
+		if (c.isAbstract())
+			w.print("fontname=\"Helvetica-Oblique\"");
+		w.println("];");
+		ClassDoc s = c.superclass();
+		if (s != null && !s.toString().equals("java.lang.Object"))
+			w.println(s + " -> " + c + " [dir=back,arrowtail=empty];\n");
 	}
 }
 
 public class UmlGraph {
-	public static boolean start(RootDoc root) {
+	private static PrintWriter w;
+
+	public static boolean start(RootDoc root)
+                            throws IOException, UnsupportedEncodingException {
+		FileOutputStream fos = new FileOutputStream("graph.dot");
+		w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos)));
 		prologue();
 		ClassDoc[] classes = root.classes();
 		for (int i = 0; i < classes.length; i++) {
-			ClassGraph c = new ClassGraph(classes[i]);
+			ClassGraph c = new ClassGraph(w, classes[i]);
 			c.print();
 		}
 		epilogue();
 		return true;
 	}
 	private static void prologue() {
-		System.out.println(
+		w.println(
 			"#!/usr/local/bin/dot\n" +
 			"#\n" +
 			"# Class hirerarchy\n" +
@@ -50,6 +69,7 @@ public class UmlGraph {
 		);
 	}
 	private static void epilogue() {
-		System.out.println("}\n");
+		w.println("}\n");
+		w.flush();
 	}
 }
