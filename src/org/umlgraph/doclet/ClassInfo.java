@@ -244,13 +244,29 @@ class ClassGraph {
 		return (r);
 	}
 
+	/** Convert < and > characters in the string to the respective guillemot characters */
+	private String guillemize(String s) {
+		StringBuffer r = new StringBuffer(s);
+
+		for (int i = 0; i < r.length(); i++)
+			switch (r.charAt(i)) {
+			case '<':
+				r.setCharAt(i, guilopen);
+				break;
+			case '>':
+				r.setCharAt(i, guilclose);
+				break;
+			}
+		return r.toString();
+	}
+
 	private void relation(String tagname, Doc from, String name, String edgetype) {
 		Tag tags[] = from.tags(tagname);
 		for (int i = 0; i < tags.length; i++) {
 			String t[] = tokenize(tags[i].text());	// l-src label l-dst target
 			opt.w.println("\t" + name + " -> " + name(t[3]) + "[" +
 				"taillabel=\"" + t[0] + "\", " + 
-				"label=\"" + t[1] + "\", " + 
+				"label=\"" + guillemize(t[1]) + "\", " + 
 				"headlabel=\"" + t[2] + "\", " + 
 				edgetype + "]"
 			);
@@ -282,6 +298,7 @@ class ClassGraph {
 		relation("navassoc", c, cs, "arrowhead=open");
 		relation("has", c, cs, "arrowhead=none, arrowtail=ediamond");
 		relation("composed", c, cs, "arrowhead=none, arrowtail=diamond");
+		relation("depend", c, cs, "arrowhead=open, style=dashed");
 	}
 }
 
