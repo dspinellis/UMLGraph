@@ -26,19 +26,37 @@ import java.util.*;
 class ClassGraph {
 	private ClassDoc c;
 	private PrintWriter w;
+	private static HashMap classnames = new HashMap();
+	private static int classnum;
 
 	ClassGraph(PrintWriter iw, ClassDoc ic) { 
 		c = ic;
 		w = iw;
-	}
-	public void print() {
-		w.print(c + "[");
+		// Associate classnames alias
+		String name;
+		name = "c" + (new Integer(classnum)).toString();
+		classnames.put(c, name);
+		classnum++;
+		// Create label
+		w.print("\t" + name + " [");
+		w.print("label=\"" + c + "\"");
 		if (c.isAbstract())
-			w.print("fontname=\"Helvetica-Oblique\"");
+			w.print(", fontname=\"Helvetica-Oblique\"");
 		w.println("];");
+	}
+
+	private String name(ClassDoc c) {
+		return (String)classnames.get(c);
+	}
+
+	public void print() {
+		String cs = name(c);
+		// Print the derivation path
 		ClassDoc s = c.superclass();
-		if (s != null && !s.toString().equals("java.lang.Object"))
-			w.println(s + " -> " + c + " [dir=back,arrowtail=empty];\n");
+		if (s != null && !s.toString().equals("java.lang.Object")) {
+			w.print("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
+			w.println("\t//" + c + " extends " + s);
+		}
 	}
 }
 
