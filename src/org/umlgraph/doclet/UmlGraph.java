@@ -449,9 +449,7 @@ class ClassGraph {
 				opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
 			opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 			opt.w.print(", fontsize=" + opt.nodeFontSize);
-      String url = classToUrl(c.qualifiedName());
-      if (url != null) 
-        opt.w.print(", URL=\"" + url + "\"");
+			opt.w.print(", URL=\"" + classToUrl(c.qualifiedName())+ "\"");
 			opt.w.println("];");
 			ci.nodePrinted = true;
 		}
@@ -552,7 +550,7 @@ class ClassGraph {
 					opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
 				opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 				opt.w.print(", fontsize=" + opt.nodeFontSize);
-				opt.w.print(", URL=\"" + classToUrl(entry.getKey().toString()));
+				opt.w.print(", URL=\"" + classToUrl(entry.getKey().toString()) + "\"");
 				opt.w.println("]");
 			}
 		}
@@ -615,8 +613,7 @@ public class UmlGraph {
 	private static Options opt = new Options();
 
 	/** Entry point */
-	public static boolean start(RootDoc root)
-                            throws IOException {
+	public static boolean start(RootDoc root) throws IOException {
 		opt.setOptions(root.options());
 		opt.openFile();
 		opt.setOptions(root.classNamed("UMLOptions"));
@@ -624,15 +621,12 @@ public class UmlGraph {
 		ClassDoc[] classes = root.classes();
 
 		ClassGraph c = new ClassGraph(root.specifiedPackages());
-		for (int i = 0; i < classes.length; i++) {
+		for (int i = 0; i < classes.length; i++)
 			c.print(opt, classes[i]);
-		}
-        c.printExtraClasses();
+		c.printExtraClasses();
 		epilogue();
 		return true;
 	}
-
-
 
 	/** Option checking */
 	public static int optionLength(String option) {
