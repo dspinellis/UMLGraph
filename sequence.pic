@@ -17,7 +17,7 @@ awid = .1;
 # Box height
 boxht = 0.3;
 
-# Create a new object(label, name)
+# Create a new object(name,label)
 define object {
 	$1: box $2; move;
 	# Could also underline text with \mk\ul\ul\ul...\rt
@@ -30,7 +30,7 @@ define object {
 	lifestart_$1 = $1.s.y;
 }
 
-# Create a new external actor(label, name)
+# Create a new external actor(name,label)
 define actor {
 	$1: [
 		XSEQC: circle rad 0.06;
@@ -46,7 +46,7 @@ define actor {
 	lifestart_$1 = $1.s.y - .05;
 }
 
-# Create a new placeholder object(label)
+# Create a new placeholder object(name)
 define placeholder_object {
 	$1: box invisible;
 	move;
@@ -60,7 +60,8 @@ define pobject {
 	placeholder_object($1);
 }
 
-# Complete the lifeline of the given object
+# complete(name)
+# Complete the lifeline of the object with the given name
 define complete {
 	if (active_$1) then {
 		{
@@ -72,7 +73,7 @@ define complete {
 	lifestart_$1 = Here.y;
 }
 
-# Draw a message(from_object, to_object, label)
+# Draw a message(from_object,to_object,label)
 define message {
 	down;
 	move spacing;
@@ -93,7 +94,7 @@ define message {
 	}
 }
 
-# Display a lifeline constraint(object, label)
+# Display a lifeline constraint(object,label)
 define lifeline_constraint {
 	box at ($1.x + awid, Here.y) invis $2 ljust " " ;
 }
@@ -112,7 +113,7 @@ define oconstraint {
 	object_constraint($1);
 }
 
-# Draw a creation message(from_object, to_object, object_label)
+# Draw a creation message(from_object,to_object,object_label)
 define create_message {
 	down;
 	move spacing;
@@ -148,7 +149,7 @@ define drawx {
 	}
 }
 
-# Draw a destroy message(from_object, to_object)
+# Draw a destroy message(from_object,to_object)
 define destroy_message {
 	# troff code is \(Fo \(Fc, but they don't work in pic2plot
 	# See http://www.delorie.com/gnu/docs/plotutils/plotutils_71.html
@@ -158,7 +159,7 @@ define destroy_message {
 }
 
 define dmessage {
-	destroy_message($1, $2);
+	destroy_message($1,$2);
 }
 
 # An object deletes itself: delete(object)
@@ -168,7 +169,7 @@ define delete {
 	drawx($1);
 }
 
-# Draw a message return(from_object, to_object, label)
+# Draw a message return(from_object,to_object,label)
 define return_message {
 	down;
 	move spacing;
