@@ -36,6 +36,10 @@ define object {
 	}
 	move to $1.e;
 	move right;
+	# Active is the level of activations of the object
+	# 0 : inactive : draw thin line swimlane
+	# 1 : active : draw thick swimlane
+	# 2 : nested : draw nested swimlane
 	active_$1 = 0;
 	lifestart_$1 = $1.s.y;
 }
@@ -70,17 +74,28 @@ define pobject {
 	placeholder_object($1);
 }
 
-# complete(name)
-# Complete the lifeline of the object with the given name
-define complete {
-	if (active_$1) then {
-		{
-		box ht (Here.y - lifestart_$1) wid awid with .s at ($1.x, lifestart_$1);
+define extend_lifeline {
+	if (active_$1 > 0) then {
+		move to ($1.x - awid/2, Here.y);
+		for level = 1 to active_$1 do {
+			line from (Here.x, lifestart_$1) to Here;
+			move right awid/2
 		}
+		move right awid/2;
+		line from (Here.x, lifestart_$1) to Here;
 	} else {
 		line from ($1.x, lifestart_$1) to ($1.x, Here.y) dashed;
 	}
 	lifestart_$1 = Here.y;
+}
+
+# complete(name)
+# Complete the lifeline of the object with the given name
+define complete {
+	extend_lifeline($1)
+	if (active_$1) then {
+		line right ((active_$1 + 1) * awid/2) from ($1.x - awid/2, Here.y);
+	}
 }
 
 # Draw a message(from_object,to_object,label)
@@ -91,11 +106,15 @@ define message {
 	# active box.  Should be .5, but the arrow heads tend to
 	# overshoot.
 	if ($1.x <= $2.x) then {
-		off_from = awid * .6;
-		off_to = -awid * .6;
+		off_from = (active_$1 / 2 + .1) * awid;
+		off_to = ((active_$2 - 1) / 2 - .1) * awid;
 	} else {
-		off_from = -awid * .6;
-		off_to = awid * .6;
+		if (active_$1 > 0) then {
+			off_from = ((active_$1 - 2) / 2 - .1) * awid;
+		} else {
+			off_from = .1 * -awid;
+		}
+		off_to = ((active_$2 + 1) / 2 + .1) * awid;
 	}
 	if ($1.x == $2.x) then {
 		arrow from ($1.x + off_from, Here.y) right then down .25 then left $3 ljust " " " " " " ;
@@ -128,11 +147,15 @@ define create_message {
 	down;
 	move spacing;
 	if ($1.x <= $2.x) then {
-		off_from = awid * .6;
-		off_to = -boxwid * .51;
+		off_from = (active_$1 / 2 + .1) * awid;
+		off_to = -boxwid / 21;
 	} else {
-		off_from = -awid * .6;
-		off_to = boxwid * .51;
+		if (active_$1 > 0) then {
+			off_from = ((active_$1 - 2) / 2 - .1) * awid;
+		} else {
+			off_from = .1 * -awid;
+		}
+		off_to = boxwid / 21;
 	}
 	# See comment in destroy_message
 	XSEQA: arrow from ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) "«create»" " ";
@@ -162,6 +185,8 @@ define drawx {
 
 # Draw a destroy message(from_object,to_object)
 define destroy_message {
+	down;
+	move spacing;
 	# The troff code is \(Fo \(Fc
 	# The groff code is also \[Fo] \[Fc]
 	# The pic2plot code is \Fo \Fc
@@ -189,11 +214,19 @@ define return_message {
 	move spacing;
 	# See comment in message
 	if ($1.x <= $2.x) then {
-		off_from = awid * .6;
-		off_to = -awid * .6;
+		off_from = (active_$1 / 2 + .1) * awid;
+		if (active_$2 > 0) then {
+			off_to = ((active_$2 - 2) / 2 - .1) * awid;
+		} else {
+			off_to = .1 * -awid;
+		}
 	} else {
-		off_from = -awid * .6;
-		off_to = awid * .6;
+		if (active_$1 > 0) then {
+			off_from = ((active_$1 - 2) / 2 - .1) * awid;
+		} else {
+			off_from = .1 * -awid;
+		}
+		off_to = (active_$2 / 2 + .1) * awid;
 	}
 	arrow from  ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) dashed $3 " ";
 }
@@ -203,15 +236,19 @@ define rmessage {
 }
 
 # Object becomes active
+# Can be nested to show recursion
 define active {
-	complete($1);
-	active_$1 = 1;
+	extend_lifeline($1);
+	line right awid from ($1.x + (active_$1 - 1) * awid/2, Here.y);
+	active_$1 = active_$1 + 1;
 }
 
 # Object becomes inactive
+# Can be nested to show recursion
 define inactive {
-	complete($1);
-	active_$1 = 0;
+	extend_lifeline($1);
+	active_$1 = active_$1 - 1;
+	line right awid from ($1.x + (active_$1 - 1) * awid/2, Here.y);
 }
 
 # Time step
