@@ -54,7 +54,7 @@ class Options {
 
 		Tag tags[] = p.tags("opt");
 		for (int i = 0; i < tags.length; i++)
-			if (UmlGraph.optionLength("-" + tags[i].text()) != 1)
+			if (UmlGraph.optionLength("-" + tags[i].text()) == 0)
 				System.err.println("Unknown option " + tags[i].text());
 	}
 
@@ -82,6 +82,10 @@ class ClassGraph {
 	private ClassDoc c;
 	private static HashMap classnames = new HashMap();
 	private Options opt;
+	/** Guillemot left (open) */
+	private static char guilopen = (char)0xab;
+	/** Guillemot right (close) */
+	private static char guilclose = (char)0xbb;
 
 	ClassGraph(Options iopt, ClassDoc ic) { 
 		c = ic;
@@ -110,6 +114,8 @@ class ClassGraph {
 	}
 
 	private void type(Type t) {
+		if (t.typeName().equals("void"))
+			return;
 		opt.w.print(" : ");
 		if (opt.showQualified)
 			opt.w.print(t.qualifiedTypeName());
@@ -178,17 +184,22 @@ class ClassGraph {
 			}
 			// Create label
 			opt.w.print("\t" + ci.name + " [");
-			if (opt.showAttributes || opt.showOperations)
+			if (c.isInterface())
+				r = guilopen + "interface" + guilclose + "\\n" + r;
+			boolean showMembers = 
+				(opt.showAttributes || opt.showOperations) &&
+				(c.methods().length > 0 || c.fields().length > 0);
+			if (showMembers)
 				opt.w.print("label=\"{" + r + "\\n|");
 			else
 				opt.w.print("label=\"" + r + "\"");
 			if (opt.showAttributes)
 				attributes(c.fields());
-			if (opt.showAttributes || opt.showOperations)
+			if (showMembers)
 				opt.w.print("|");
 			if (opt.showAttributes)
 				operations(c.methods());
-			if (opt.showAttributes || opt.showOperations)
+			if (showMembers)
 				opt.w.print("}\"");
 			if (c.isAbstract())
 				opt.w.print(", fontname=\"Helvetica-Oblique\"");
@@ -336,7 +347,7 @@ public class UmlGraph {
 			"\tnode [fontname=\"Helvetica\",fontsize=8,shape=record];"
 		);
 		if (opt.horizontal)
-			opt.w.println("\trankdir=LR;");
+			opt.w.println("\trankdir=LR;\n\tranksep=1;");
 	}
 
 	private static void epilogue() {
