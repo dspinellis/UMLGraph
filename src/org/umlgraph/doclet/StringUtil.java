@@ -53,6 +53,10 @@ class Options implements Cloneable {
 	String apiDocMapFileName;
 	String apiDocRoot;
 	boolean useGuillemot;
+	/** Guillemot left (open) */
+	char guilOpen = '\u00ab';
+	/** Guillemot right (close) */
+	char guilClose = '\u00bb';
 
 	Options() {
 		showQualified = false;
@@ -144,7 +148,10 @@ class Options implements Cloneable {
 			apiDocMapFileName = opt[1];
 		} else if(opt[0].equals("-guillemot")) {
 			String value = opt[1].trim().toLowerCase();
-			useGuillemot = value.equals("true") || value.equals("yes") || value.equals("on");
+			if (!(value.equals("true") || value.equals("yes") || value.equals("on"))) {
+				guilOpen = '<';
+				guilClose = '>';
+			}
 		} else
 			; // Do nothing, javadoc will handle the option or complain, if needed.
 	}
@@ -163,7 +170,7 @@ class Options implements Cloneable {
 
 		Tag tags[] = p.tags("opt");
 		for (int i = 0; i < tags.length; i++) {
-			String[] opt = StringFuns.tokenize(tags[i].text());
+			String[] opt = StringUtil.tokenize(tags[i].text());
 			opt[0] = "-" + opt[0];
 			setOption(opt);
 		}
@@ -209,44 +216,7 @@ class ClassInfo {
 }
 
 /** String utility functions */
-class StringFuns {
-	/** Guillemot left (open) */
-	private static final char guilopen = '\u00ab';
-	/** Guillemot right (close) */
-	private static final char guilclose = '\u00bb';
-
-	// using '<' and '>' doesn't work.
-	private static char open  = '=';
-	private static char close = '=';
-
-	private static boolean useGuillemot = false;
-
-	/**
-	 * Initial configuration of StringFuns.
-	 *
-	 * @param value if true, will use Guillemot digraph characters to enclose
-	 *        special names like "interface" and stereotype names.
-	 *        Otherwise will simulate that with regular ASCII characters.
-	 */
-	public static void init(boolean value) {
-		useGuillemot = value;
-		if (useGuillemot) {
-			open = guilopen;
-			close = guilclose;
-		}
-	}
-
-	/**
-	 * Wraps a string in Guillemot (or an ASCII substitute) characters.
-	 *
-	 * @param str the <code>String</code> to be wrapped.
-	 * @return the wrapped <code>String</code>.
-	 */
-	public static String guilWrap(String str) {
-		return open + str + close;
-	}
-
-
+class StringUtil {
 	/** Tokenize string s into an array */
 	public static String[] tokenize(String s) {
 		ArrayList r = new ArrayList();
@@ -282,26 +252,6 @@ class StringFuns {
 		return ((String[])(r.toArray(new String[0])));
 	}
 
-	/**
-	 * Convert &lt; and &gt; characters in the string to the respective guillemot characters
-	 * or returns the same string if the use of those characters has been disabled.
-	 */
-	public static String guillemize(String s) {
-		if (!useGuillemot)
-			return s;
-		StringBuffer r = new StringBuffer(s);
-
-		for (int i = 0; i < r.length(); i++)
-			switch (r.charAt(i)) {
-			case '<':
-				r.setCharAt(i, guilopen);
-				break;
-			case '>':
-				r.setCharAt(i, guilclose);
-				break;
-			}
-		return r.toString();
-	}
 }
 
 /**
@@ -362,7 +312,7 @@ class ClassGraph {
 	}
 
 	/** Return the class's name, possibly by stripping the leading path */
-	String qualifiedName(String r) {
+	private String qualifiedName(String r) {
 		if (!opt.showQualified) {
 			// Create readable string by stripping leading path
 			int dotpos = r.lastIndexOf('.');
@@ -370,6 +320,34 @@ class ClassGraph {
 				return r.substring(dotpos + 1, r.length());
 		}
 		return r;
+	}
+
+	/**
+	 * Convert &lt; and &gt; characters in the string to the respective guillemot characters,
+	 * or return the same string if the use of those characters has been disabled.
+	 */
+	private String guillemize(String s) {
+		StringBuffer r = new StringBuffer(s);
+		for (int i = 0; i < r.length(); i++)
+			switch (r.charAt(i)) {
+			case '<':
+				r.setCharAt(i, opt.guilOpen);
+				break;
+			case '>':
+				r.setCharAt(i, opt.guilClose);
+				break;
+			}
+		return r.toString();
+	}
+
+	/**
+	 * Wraps a string in Guillemot (or an ASCII substitute) characters.
+	 *
+	 * @param str the <code>String</code> to be wrapped.
+	 * @return the wrapped <code>String</code>.
+	 */
+	private String guilWrap(String str) {
+		return opt.guilOpen + str + opt.guilClose;
 	}
 
 	/**
@@ -468,7 +446,7 @@ class ClassGraph {
 		else
 			r = "";
 		for (int i = 0; i < tags.length; i++) {
-			String t[] = StringFuns.tokenize(tags[i].text());
+			String t[] = StringUtil.tokenize(tags[i].text());
 			if (t.length != 2) {
 				System.err.println("@tagvalue expects two fields: " + tags[i].text());
 				return ("");
@@ -482,16 +460,16 @@ class ClassGraph {
 	 * Return as a string the stereotypes associated with c
 	 * terminated by the escape character term
 	 */
-	private static String stereotype(Doc c, char term) {
+	private String stereotype(Doc c, char term) {
 		String r = "";
 		Tag tags[] = c.tags("stereotype");
 		for (int i = 0; i < tags.length; i++) {
-			String t[] = StringFuns.tokenize(tags[i].text());
+			String t[] = StringUtil.tokenize(tags[i].text());
 			if (t.length != 1) {
 				System.err.println("@stereotype expects one field: " + tags[i].text());
 				return ("");
 			}
-			r += StringFuns.guilWrap(t[0]) + " \\" + term;
+			r += guilWrap(t[0]) + " \\" + term;
 		}
 		return (r);
 	}
@@ -532,7 +510,7 @@ class ClassGraph {
 			opt.w.print("\t" + ci.name + " [");
 			r = stereotype(c, 'n') + qualifiedName(r);
 			if (c.isInterface())
-				r = StringFuns.guilWrap("interface") + " \\n" + r;
+				r = guilWrap("interface") + " \\n" + r;
 			boolean showMembers =
 				(opt.showAttributes || opt.showOperations) &&
 				(c.methods().length > 0 || c.fields().length > 0);
@@ -571,13 +549,13 @@ class ClassGraph {
 	private void relation(String tagname, Doc from, String name, String edgetype) {
 		Tag tags[] = from.tags(tagname);
 		for (int i = 0; i < tags.length; i++) {
-			String t[] = StringFuns.tokenize(tags[i].text());	// l-src label l-dst target
+			String t[] = StringUtil.tokenize(tags[i].text());	// l-src label l-dst target
 			if (t.length != 4)
 				System.err.println("Expected four fields: " + tags[i].text());
 			opt.w.println("\t// " + from + " " + tagname + " " + t[3]);
 			opt.w.println("\t" + name + " -> " + name(t[3]) + " [" +
 				"taillabel=\"" + t[0] + "\", " +
-				"label=\"" + StringFuns.guillemize(t[1]) + "\", " +
+				"label=\"" + guillemize(t[1]) + "\", " +
 				"headlabel=\"" + t[2] + "\", " +
 				"fontname=\"" + opt.edgeFontName + "\", " +
 				"fontcolor=\"" + opt.edgeFontColor + "\", " +
@@ -735,8 +713,6 @@ public class UmlGraph {
 		opt.setOptions(root.classNamed("UMLOptions"));
 		prologue();
 		ClassDoc[] classes = root.classes();
-
-		StringFuns.init(opt.useGuillemot);
 
 		ClassGraph c = new ClassGraph(root.specifiedPackages(),
                                   opt.apiDocRoot,

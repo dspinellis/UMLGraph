@@ -33,7 +33,7 @@ docs:
 
 UmlGraph.jar: UmlGraph.class
 	jar cvf UmlGraph.jar ClassGraph.class ClassInfo.class Options.class \
-	StringFuns.class UmlGraph.class
+	StringUtil.class UmlGraph.class
 	jar i UmlGraph.jar
 
 UmlGraph.class: UmlGraph.java
