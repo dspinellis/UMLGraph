@@ -1,0 +1,85 @@
+#/usr/bin/pic2plot -Tps
+#
+# Pic macros for drawing UML sequence diagrams
+#
+# (C) Copyright 2004 Diomidis Spinellis.
+#
+# $Id$
+#
+
+
+# Parameters (can be redefined)
+
+# Spacing between messages
+spacing = 0.25;
+# Active box width
+awid = .1;
+
+# Create a new object(label, name1, name2)
+define object {
+	$1: box $2 $3; move;
+	move to $1.e;
+	move right;
+	active_$1 = 0;
+	lifestart_$1 = $1.s.y;
+}
+
+# Complete the lifeline of the given object
+define complete {
+	if (active_$1) then {
+		{
+		box ht (Here.y - lifestart_$1) wid awid with .s at ($1.x, lifestart_$1);
+		}
+	} else {
+		line from ($1.x, lifestart_$1) to ($1.x, Here.y) dashed;
+	}
+	lifestart_$1 = Here.y;
+}
+
+# Draw a message(from_object, to_object, label)
+define message {
+	down;
+	move spacing;
+	# Adjust so that lines and arrows do not fall into the
+	# active box.  Should be .5, but the arrow heads tend to
+	# overshoot.
+	if ($1.x <= $2.x) then {
+		off_from = awid * .6;
+		off_to = -awid * .6;
+	} else {
+		off_from = -awid * .6;
+		off_to = awid * .6;
+	}
+	if ($1.x == $2.x) then {
+		arrow from ($1.x + off_from, Here.y) right then down .25 then left $3 ljust " " " " " " ;
+	} else {
+		arrow from ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) $3 " ";
+	}
+}
+
+# Draw a message return(from_object, to_object, label)
+define rmessage {
+	down;
+	move spacing;
+	# See comment in message
+	if ($1.x <= $2.x) then {
+		off_from = awid * .6;
+		off_to = -awid * .6;
+	} else {
+		off_from = -awid * .6;
+		off_to = awid * .6;
+	}
+	arrow from  ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) dashed $3 " ";
+}
+
+# Object becomes active
+define active {
+	complete($1);
+	active_$1 = 1;
+}
+
+# Object becomes inactive
+define inactive {
+	complete($1);
+	active_$1 = 0;
+}
