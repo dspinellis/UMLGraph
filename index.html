@@ -98,6 +98,8 @@ UMLGraph allows you to model
 <li>classes (specified as Java classes)
 <li>attributes (specified as Java fields)
 <li>operations (specified as Java methods)
+<li>stereotypes (using the <code>@stereotype</code> <em>name</em> tag)
+<li>tagged values (using the <code>@tagvalue</code> <em>name</em> <em>value</em> tag)
 <li>implementation relationships (specified using the Java <code>implements</code> declaration)
 <li>generalization relationships (specified using the Java <code>extends</code> declaration or (for multiple inheritance) the <em>javadoc</em> <code>@extends</code> tag)
 <li>association relationships (specified using the <em>javadoc</em> <code>@assoc</code> tag)
@@ -183,6 +185,19 @@ You can download it in source and compiled format from the following links:
 <li> <a href="UmlGraph.class">UmlGraph.class (compiled)</a>
 <li> <a href="makefile">Makefile (GNU make)</a>
 </ul>
+
+<h3>Version History</h3> <!-- {{{1 -->
+<dl>
+<dt>Version 1.18 2002/08/26<dd>
+<ul>
+<li> Can now specify class-local options.
+<li> Support for the @tagvalue tag.
+<li> Support for the @stereotype tag.
+<li> Added nodefillcolor option.
+</ul>
+
+<dt>Version 1.15 2002/07/26<dd>First public release.
+</dl>
 
 <h3>More Examples</h3> <!-- {{{1 -->
 <h3>Generalisation Relationships</h3> <!-- {{{2 -->
@@ -433,6 +448,45 @@ abstract interface Response {}
 </pre>
 <img src="catalina.gif"><br>
 Download the <a href="catalina.java">declarative specification</a>, the generated <a href="catalina.dot">dot code</a>.
+<h3>Class Stereotypes and Tagged Values</h3> <!-- {{{2 -->
+<table>
+<tr><td>
+<pre>
+/*
+ * Class stereotypes and tagged values
+ * UML User Guide p. 439
+ */
+
+/** 
+ * @opt attributes 
+ * @opt operations 
+ * @opt types 
+ * @hidden
+ */
+class UMLOptions {}
+
+/** @hidden */
+class Action {}
+
+/** 
+ * @stereotype container 
+ * @tagvalue version 3.2
+ */
+class ActionQueue {
+	void add(Action a) {};
+	/** @tagvalue version 1.0 */
+	void add(Action a, int n) {};
+	void remove(int n) {};
+	/** @stereotype query */
+	int length() {};
+	/** @stereotype "helper functions" */
+	void reorder() {};
+}
+</pre>
+</td><td>
+<img src="classadd.gif">
+</tr></table>
+Download the <a href="classadd.java">declarative specification</a>, the generated <a href="classadd.dot">dot code</a>.
 <!-- End matter {{{1 -->
 <p>
 <a href="../../">Diomidis Spinellis home page</a>
