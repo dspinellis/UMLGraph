@@ -209,6 +209,7 @@ class ClassGraph {
 
 	/** Print the visibility adornment of element e */
 	private void visibility(ProgramElementDoc e) {
+		opt.w.print(stereotype(e, 'l'));
 		if (!opt.showVisibility)
 			return;
 		if (e.isPrivate())
@@ -273,6 +274,21 @@ class ClassGraph {
 		}
 	}
 
+	/** Return as a string the stereotypes associated with c */
+	private static String stereotype(Doc c, char term) {
+		String r = "";
+		Tag tags[] = c.tags("stereotype");
+		for (int i = 0; i < tags.length; i++) {
+			String t[] = StringFuns.tokenize(tags[i].text());
+			if (t.length != 1) {
+				System.err.println("@stereotype expects one field: " + tags[i].text());
+				return ("");
+			}
+			r += StringFuns.guilopen + t[0] + StringFuns.guilclose + '\\' + term;
+		}
+		return (r);
+	}
+
 	/** Return true if c has a @hidden tag associated with it */
 	private static boolean hidden(Doc c) {
 		Tag tags[] = c.tags("hidden");
@@ -311,6 +327,7 @@ class ClassGraph {
 			}
 			// Create label
 			opt.w.print("\t" + ci.name + " [");
+			r = stereotype(c, 'n') + r;
 			if (c.isInterface())
 				r = StringFuns.guilopen + "interface" + StringFuns.guilclose + "\\n" + r;
 			boolean showMembers = 
@@ -426,6 +443,8 @@ public class UmlGraph {
 		   option.equals("-types") ||
 		   option.equals("-all"))
 			return 1;
+		else if(option.equals("-nodefillcolor"))
+			return 2;
 		else
 			return 0;
 	}
