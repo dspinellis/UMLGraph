@@ -1,10 +1,12 @@
 <!doctype html public "-//IETF//DTD HTML//EN">
 <HTML>
 <HEAD>
-<TITLE>UMLGraph- Declarative Drawing of UML diagrams</TITLE>
+<TITLE>UMLGraph - Declarative Drawing of UML diagrams</TITLE>
+<META NAME="AUTHOR" CONTENT="Diomidis Spinellis">
 </HEAD>
 <body>
-<h1>UMLGraph- Declarative Drawing of UML diagrams</h1>
+<h1 align=right><tt><font color="#ff0000">UMLGraph dds</font></tt></h1>
+<h2>UMLGraph - Declarative Drawing of UML diagrams</h2>
  <!-- Introduction {{{1 -->
 UMLGraph allows the declarative specification and drawing of
 a number of UML diagrams.
@@ -34,7 +36,11 @@ class Client extends Person {}
 <img src="simple.gif">
 </tr></table>
 <p>
-<h2>Operation</h2> <!-- {{{1 -->
+<b>See also</b>
+Diomidis Spinellis. On the Declarative Specification of Models.
+<em>IEEE Software</em>, 20(2), March/April 2003. To appear.
+
+<h3>Operation</h3> <!-- {{{1 -->
 To use UMLGraph you need to have 
 <a href="http://java.sun.com/j2se/javadoc/"><em>javadoc</em></a>
 and
@@ -86,7 +92,7 @@ dot -Tps -ograph.ps graph.dot
 </pre>
 Refer to the <em>dot</em> documentation for information on creating other file formats
 or adjusting the UMLGraph output.
-<h2>Modelling</h2> <!-- {{{1 -->
+<h3>Modelling</h3> <!-- {{{1 -->
 UMLGraph allows you to model
 <ul>
 <li>classes (specified as Java classes)
@@ -139,7 +145,7 @@ class Car {}
 <img src="car.gif">
 </tr></table>
 
-<h2>Program Options</h2> <!-- {{{1 -->
+<h3>Program Options</h3> <!-- {{{1 -->
 A number of command-line options contol the operation of UMLGraph:
 <dl>
 <dt>-qualify<dd>Produce fully-qualified class names.
@@ -170,7 +176,7 @@ of a class named <code>UMLOptions</code>, as in the following example:
 class UMLOptions {}
 </pre>
 
-<h2>Availability</h2> <!-- {{{1 -->
+<h3>Availability</h3> <!-- {{{1 -->
 UMLGraph is freely available as Open Source Software.
 You can download it in source and compiled format from the following links:
 <ul>
@@ -179,7 +185,7 @@ You can download it in source and compiled format from the following links:
 <li> <a href="makefile">Makefile (GNU make)</a>
 </ul>
 
-<h2>More Examples</h2> <!-- {{{1 -->
+<h3>More Examples</h3> <!-- {{{1 -->
 <h3>Generalisation Relationships</h3> <!-- {{{2 -->
 <table>
 <tr><td>
@@ -215,7 +221,7 @@ class SavingsAccount extends BankAccount {}
 </td><td>
 <img src="general.gif">
 </tr></table>
-<a href="general.dot">Download the dot code</a>
+Download the <a href="general.java">declarative specification</a>, the generated <a href="general.dot">dot code</a>.
 <h3>Advanced Relationships</h3> <!-- {{{2 -->
 <table>
 <tr><td>
@@ -261,7 +267,7 @@ interface URLStreamHandler {
 </td><td>
 <img src="advrel.gif">
 </tr></table>
-<a href="advrel.dot">Download the dot code</a>
+Download the <a href="advrel.java">declarative specification</a>, the generated <a href="advrel.dot">dot code</a>.
 <h3>Schema</h3> <!-- {{{2 -->
 <table>
 <tr><td>
@@ -339,7 +345,7 @@ class Instructor {
 </td><td>
 <img src="schema.gif">
 </tr></table>
-<a href="schema.dot">Download the dot code</a>
+Download the <a href="schema.java">declarative specification</a>, the generated <a href="schema.dot">dot code</a>.
 <h3>Element Visibility</h3> <!-- {{{2 -->
 <table>
 <tr><td>
@@ -373,7 +379,7 @@ class Toolbar {
 </td><td>
 <img src="vis.gif">
 </tr></table>
-<a href="vis.dot">Download the dot code</a>
+Download the <a href="vis.java">declarative specification</a>, the generated <a href="vis.dot">dot code</a>.
 <h3>Association Types</h3> <!-- {{{2 -->
 <table>
 <tr><td>
@@ -398,7 +404,7 @@ class Password{}
 </td><td>
 <img src="assoc.gif">
 </tr></table>
-<a href="assoc.dot">Download the dot code</a>
+Download the <a href="assoc.java">declarative specification</a>, the generated <a href="assoc.dot">dot code</a>.
 <h3>Real Example (Catalina Classes)</h3> <!-- {{{2 -->
 <pre>
 /*
@@ -427,14 +433,16 @@ abstract interface ServletResponse {}
 abstract interface Response {}
 </pre>
 <img src="catalina.gif"><br>
-<a href="catalina.dot">Download the dot code</a>
+Download the <a href="catalina.java">declarative specification</a>, the generated <a href="catalina.dot">dot code</a>.
 <!-- End matter {{{1 -->
-<hr>
-<a href="http://www.dmst.aueb.gr/dds">Diomidis Spinellis home page</a>.<p>
+<p>
+<a href="../../">Diomidis Spinellis home page</a>
+<HR> <P>
 <font size=-2>
 $Id$<br>
 (C) Copyright 2002 Diomidis D. Spinellis. 
 May be freely uploaded by WWW viewers and similar programs.
 All other rights reserved.
 </font>
-</body>
+</BODY>
+</HTML>
