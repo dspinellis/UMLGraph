@@ -50,7 +50,7 @@ class Options implements Cloneable {
 	String bgColor;
 	String outputFileName;
 	String outputEncoding;
-	String apidocMapFileName;
+	String apiDocMapFileName;
 	String apiDocRoot;
 	boolean useGuillemot;
 
@@ -73,7 +73,7 @@ class Options implements Cloneable {
 		outputFileName = "graph.dot";
 		outputEncoding = "ISO-8859-1";
 		hideNames = new Vector();
-		apidocMapFileName = null;
+		apiDocMapFileName = null;
 		apiDocRoot = null;
 		useGuillemot = true;
 	}
@@ -141,7 +141,7 @@ class Options implements Cloneable {
 		} else if(opt[0].equals("-apidocroot")) {
 			apiDocRoot = opt[1];
 		} else if(opt[0].equals("-apidocmap")) {
-			apidocMapFileName = opt[1];
+			apiDocMapFileName = opt[1];
 		} else if(opt[0].equals("-guillemot")) {
 			String value = opt[1].trim().toLowerCase();
 			useGuillemot = value.equals("true") || value.equals("yes") || value.equals("on");
@@ -216,6 +216,13 @@ class StringFuns {
 
 	private static boolean useGuillemot = false;
 
+	/**
+	 * Initial configuration of StringFuns.
+	 *
+	 * @param value if true, will use Guillemot digraph characters to enclose
+	 *        special names like "interface" and stereotype names.
+	 *        Otherwise will simulate that with regular ASCII characters.
+	 */
 	public static void init(boolean value) {
 		useGuillemot = value;
 		if (useGuillemot) {
@@ -224,6 +231,12 @@ class StringFuns {
 		}
 	}
 
+	/**
+	 * Wraps a string in Guillemot (or an ASCII substitute) characters.
+	 *
+	 * @param str the <code>String</code> to be wrapped.
+	 * @return the wrapped <code>String</code>.
+	 */
 	public static String guilWrap(String str) {
 		return open + str + close;
 	}
@@ -264,7 +277,10 @@ class StringFuns {
 		return ((String[])(r.toArray(new String[0])));
 	}
 
-	/** Convert < and > characters in the string to the respective guillemot characters */
+	/**
+	 * Convert < and > characters in the string to the respective guillemot characters
+	 * or returns the same string if the use of those characters has been disabled.
+	 */
 	public static String guillemize(String s) {
 		if (!useGuillemot)
 			return s;
@@ -289,7 +305,7 @@ class StringFuns {
 class ClassGraph {
 	private static Map classnames = new HashMap();
 	private static String apiDocRoot;
-	private static Map apidocMap = new HashMap();
+	private static Map apiDocMap = new HashMap();
 
 	private static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
 
@@ -317,7 +333,7 @@ class ClassGraph {
 					String thisRoot = (String)mapEntry.getValue();
 					if (thisRoot != null) {
 						thisRoot = fixApiDocRoot(thisRoot);
-						apidocMap.put(regex, thisRoot);
+						apiDocMap.put(regex, thisRoot);
 					} else {
 						System.err.println("No URL for pattern " + mapEntry.getKey());
 					}
@@ -326,7 +342,7 @@ class ClassGraph {
 				}
 			}
 		} else
-			apidocMap.put(Pattern.compile(".*"), DEFAULT_EXTERNAL_APIDOC);
+			apiDocMap.put(Pattern.compile(".*"), DEFAULT_EXTERNAL_APIDOC);
 	}
 
 	/** Trim and append a file separator to the string */
@@ -646,6 +662,11 @@ class ClassGraph {
 		return result;
 	}
 
+	/**
+	 * Returns the appropriate URL "root" for a given class name.
+	 * The root will be used as the prefix of the URL used to link the class in
+	 * the final diagram to the associated JavaDoc page.
+	 */
 	private String mapApiDocRoot(String className) {
 		String root = null;
 		if (specifiedPackages.isEmpty() || isSpecifiedPackage(className))
@@ -657,6 +678,11 @@ class ClassGraph {
 		return root;
 	}
 
+	/**
+	 * Returns the appropriate URL "root" for a local class name.  It will use the
+	 * value set in the <code>apiDocRoot</code> if set, otherwise will calculate a
+	 * relative path.
+	 */
 	public String getLocalApiDocRoot(String className) {
 		String root = null;
 		if (apiDocRoot == null) {
@@ -673,8 +699,17 @@ class ClassGraph {
 		return root;
 	}
 
+	/**
+	 * Returns the appropriate URL "root" for an external class name.  It will
+	 * match the class name against the regular expressions specified in the
+	 * <code>apiDocMapFileName</doc> file; if a match is found, the associated URL
+	 * will be returned.
+	 *
+	 * <b>NOTE:</b> Currently the order of the match attempts is not specified,
+	 * so if more then one regular expression matches the result is undetermined.
+	 */
 	public String getExternalApiDocRoot(String className) {
-		for (Iterator iter = apidocMap.entrySet().iterator(); iter.hasNext();) {
+		for (Iterator iter = apiDocMap.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry mapEntry = (Map.Entry)iter.next();
 			Pattern regex = (Pattern)mapEntry.getKey();
 			Matcher matcher = regex.matcher(className);
@@ -701,7 +736,7 @@ public class UmlGraph {
 
 		ClassGraph c = new ClassGraph(root.specifiedPackages(),
                                   opt.apiDocRoot,
-                                  opt.apidocMapFileName);
+                                  opt.apiDocMapFileName);
 		for (int i = 0; i < classes.length; i++)
 			c.print(opt, classes[i]);
 		c.printExtraClasses();
