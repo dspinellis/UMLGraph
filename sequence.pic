@@ -39,7 +39,7 @@ define object {
 	# Active is the level of activations of the object
 	# 0 : inactive : draw thin line swimlane
 	# 1 : active : draw thick swimlane
-	# 2 : nested : draw nested swimlane
+	# > 1: nested : draw nested swimlane
 	active_$1 = 0;
 	lifestart_$1 = $1.s.y;
 }
@@ -76,11 +76,14 @@ define pobject {
 
 define extend_lifeline {
 	if (active_$1 > 0) then {
+                # draw the left edges of the boxes
 		move to ($1.x - awid/2, Here.y);
 		for level = 1 to active_$1 do {
 			line from (Here.x, lifestart_$1) to Here;
 			move right awid/2
 		}
+
+                # draw the right edge of the innermost box
 		move right awid/2;
 		line from (Here.x, lifestart_$1) to Here;
 	} else {
@@ -94,6 +97,7 @@ define extend_lifeline {
 define complete {
 	extend_lifeline($1)
 	if (active_$1) then {
+		# draw bottom of all active boxes
 		line right ((active_$1 + 1) * awid/2) from ($1.x - awid/2, Here.y);
 	}
 }
@@ -106,16 +110,23 @@ define message {
 	# active box.  Should be .5, but the arrow heads tend to
 	# overshoot.
 	if ($1.x <= $2.x) then {
-		off_from = (active_$1 / 2 + .1) * awid;
-		off_to = ((active_$2 - 1) / 2 - .1) * awid;
+		off_from = awid * .6;
+		off_to = -awid * .6;
 	} else {
-		if (active_$1 > 0) then {
-			off_from = ((active_$1 - 2) / 2 - .1) * awid;
-		} else {
-			off_from = .1 * -awid;
-		}
-		off_to = ((active_$2 + 1) / 2 + .1) * awid;
+		off_from = -awid * .6;
+		off_to = awid * .6;
 	}
+
+        # add half a box width for each level of nesting
+        if (active_$1 > 1) then {
+                off_from = off_from + (active_$1 - 1) * awid/2;
+        }
+
+        # add half a box width for each level of nesting
+        if (active_$2 > 1) then {
+                off_to = off_to + (active_$2 - 1) * awid/2;
+        }
+
 	if ($1.x == $2.x) then {
 		arrow from ($1.x + off_from, Here.y) right then down .25 then left $3 ljust " " " " " " ;
 	} else {
@@ -125,7 +136,13 @@ define message {
 
 # Display a lifeline constraint(object,label)
 define lifeline_constraint {
-	box at ($1.x + awid, Here.y) invis $2 ljust " " ;
+        off_from = awid;
+        # add half a box width for each level of nesting
+        if (active_$1 > 1) then {
+                off_from = off_from + (active_$1 - 1) * awid/2;
+        }
+
+	box at ($1.x + off_from, Here.y) invis $2 ljust " " ;
 }
 
 define lconstraint {
@@ -147,16 +164,18 @@ define create_message {
 	down;
 	move spacing;
 	if ($1.x <= $2.x) then {
-		off_from = (active_$1 / 2 + .1) * awid;
-		off_to = -boxwid / 21;
+		off_from = awid * .6;
+		off_to = -boxwid * .51;
 	} else {
-		if (active_$1 > 0) then {
-			off_from = ((active_$1 - 2) / 2 - .1) * awid;
-		} else {
-			off_from = .1 * -awid;
-		}
-		off_to = boxwid / 21;
+		off_from = -awid * .6;
+		off_to = boxwid * .51;
 	}
+
+        # add half a box width for each level of nesting
+        if (active_$1 > 1) then {
+                off_from = off_from + (active_$1 - 1) * awid/2;
+        }
+
 	# See comment in destroy_message
 	XSEQA: arrow from ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) "«create»" " ";
 	if ($1.x <= $2.x) then {
@@ -214,20 +233,23 @@ define return_message {
 	move spacing;
 	# See comment in message
 	if ($1.x <= $2.x) then {
-		off_from = (active_$1 / 2 + .1) * awid;
-		if (active_$2 > 0) then {
-			off_to = ((active_$2 - 2) / 2 - .1) * awid;
-		} else {
-			off_to = .1 * -awid;
-		}
+		off_from = awid * .6;
+		off_to = -awid * .6;
 	} else {
-		if (active_$1 > 0) then {
-			off_from = ((active_$1 - 2) / 2 - .1) * awid;
-		} else {
-			off_from = .1 * -awid;
-		}
-		off_to = (active_$2 / 2 + .1) * awid;
+		off_from = -awid * .6;
+		off_to = awid * .6;
 	}
+
+        # add half a box width for each level of nesting
+        if (active_$1 > 1) then {
+                off_from = off_from + (active_$1 - 1) * awid/2;
+        }
+
+        # add half a box width for each level of nesting
+        if (active_$2 > 1) then {
+                off_to = off_to + (active_$2 - 1) * awid/2;
+        }
+
 	arrow from  ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) dashed $3 " ";
 }
 
@@ -239,6 +261,7 @@ define rmessage {
 # Can be nested to show recursion
 define active {
 	extend_lifeline($1);
+	# draw top of new active box
 	line right awid from ($1.x + (active_$1 - 1) * awid/2, Here.y);
 	active_$1 = active_$1 + 1;
 }
@@ -248,6 +271,7 @@ define active {
 define inactive {
 	extend_lifeline($1);
 	active_$1 = active_$1 - 1;
+	# draw bottom of innermost active box
 	line right awid from ($1.x + (active_$1 - 1) * awid/2, Here.y);
 }
 
