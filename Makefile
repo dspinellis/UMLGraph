@@ -3,8 +3,9 @@
 #
 
 .SUFFIXES:.class .java
-VERSION=2.0
+VERSION=2.4
 TARBALL=UMLGraph-$(VERSION).tar.gz
+ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
 WEBDIR=/dds/pubs/web/home/sw/umlgraph
 SRCFILE=UmlGraph.java sequence.pic README
@@ -12,8 +13,10 @@ SRCFILE=UmlGraph.java sequence.pic README
 .java.class:
 	javac -classpath d:/jdk/lib/tools.jar $<
 
+all: UmlGraph.jar
+
 $(TARBALL): UmlGraph.jar docs Makefile
-	cmd /c rd /s/q $(DISTDIR)
+	-cmd /c rd /s/q $(DISTDIR)
 	mkdir $(DISTDIR)
 	mkdir $(DISTDIR)/doc
 	cp $(WEBDIR)/doc/* $(DISTDIR)/doc
@@ -23,6 +26,7 @@ $(TARBALL): UmlGraph.jar docs Makefile
 	perl -p -e 'BEGIN {binmode(STDOUT);} s/\r//' $$i >$(DISTDIR)/$$i;\
 	done
 	tar cvf - $(DISTDIR) | gzip -c >$(TARBALL)
+	zip -r $(ZIPBALL) $(DISTDIR)
 
 docs:
 	(cd doc && make)
@@ -35,5 +39,5 @@ UmlGraph.jar: UmlGraph.class
 UmlGraph.class: UmlGraph.java
 
 web: $(TARBALL)
-	cp $(TARBALL) $(WEBDIR)
+	cp $(TARBALL) $(ZIPBALL) $(WEBDIR)
 	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
