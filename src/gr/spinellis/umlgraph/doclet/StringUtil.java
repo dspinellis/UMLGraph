@@ -35,6 +35,7 @@ class Options implements Cloneable {
 	boolean showQualified;
 	boolean showAttributes;
 	boolean showOperations;
+	boolean showConstructors;
 	boolean showVisibility;
 	boolean horizontal;
 	boolean showType;
@@ -63,6 +64,7 @@ class Options implements Cloneable {
 		showAttributes = false;
 		showOperations = false;
 		showVisibility = false;
+		showConstructors = false;
 		showType = false;
 		edgeFontName = "Helvetica";
 		edgeFontColor = "black";
@@ -96,6 +98,7 @@ class Options implements Cloneable {
 	public void setAll() {
 		showAttributes = true;
 		showOperations = true;
+		showConstructors = true;
 		showVisibility = true;
 		showType = true;
 	}
@@ -110,6 +113,8 @@ class Options implements Cloneable {
 			showAttributes = true;
 		} else if(opt[0].equals("-operations")) {
 			showOperations = true;
+		} else if(opt[0].equals("-constructors")) {
+			showConstructors = true;
 		} else if(opt[0].equals("-visibility")) {
 			showVisibility = true;
 		} else if(opt[0].equals("-types")) {
@@ -411,6 +416,24 @@ class ClassGraph {
 		}
 	}
 
+	/** Print the class's constructors m */
+	private void operations(ConstructorDoc m[]) {
+		for (int i = 0; i < m.length; i++) {
+			if (hidden(m[i]))
+				continue;
+			visibility(m[i]);
+			opt.w.print(m[i].name());
+			if (opt.showType) {
+				opt.w.print("(");
+				parameter(m[i].parameters());
+				opt.w.print(")");
+			} else
+				opt.w.print("()");
+			opt.w.print("\\l");
+			opt.w.print(tagvalue(m[i], "", 'r'));
+		}
+	}
+
 	/** Print the class's operations m */
 	private void operations(MethodDoc m[]) {
 		for (int i = 0; i < m.length; i++) {
@@ -522,8 +545,9 @@ class ClassGraph {
 			if (c.isInterface())
 				r = guilWrap("interface") + " \\n" + r;
 			boolean showMembers =
-				(opt.showAttributes || opt.showOperations) &&
-				(c.methods().length > 0 || c.fields().length > 0);
+				(opt.showAttributes && c.methods().length > 0) ||
+				(opt.showOperations && c.fields().length > 0) ||
+				(opt.showConstructors && c.constructors().length > 0);
 			r += tagvalue(c, "\\n", 'r');
 			if (showMembers)
 				opt.w.print("label=\"{" + r + "\\n|");
@@ -533,6 +557,8 @@ class ClassGraph {
 				attributes(c.fields());
 			if (showMembers)
 				opt.w.print("|");
+			if (opt.showConstructors)
+				operations(c.constructors());
 			if (opt.showOperations)
 				operations(c.methods());
 			if (showMembers)
@@ -720,6 +746,7 @@ public class UmlGraph {
 		   option.equals("-horizontal") ||
 		   option.equals("-attributes") ||
 		   option.equals("-operations") ||
+		   option.equals("-constructors") ||
 		   option.equals("-visibility") ||
 		   option.equals("-types") ||
 		   option.equals("-all") ||
