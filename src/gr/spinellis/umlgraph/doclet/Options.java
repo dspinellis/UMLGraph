@@ -251,15 +251,21 @@ class StringFuns {
 class ClassGraph {
 	private static HashMap classnames = new HashMap();
 	private Options opt;
-  private Set specifiedPackages;
+	private Set specifiedPackages;
+	/** Used for anchoring the external URLs */
+	private static final String externalDocRoot = "http://java.sun.com/j2se/1.4.2/docs/api/";
 
-  public ClassGraph(PackageDoc[] packages) {
-    specifiedPackages = new HashSet();
-    for (int i = 0; i < packages.length; i++) {
-      specifiedPackages.add(packages[i].name());
-    }
-    System.out.println(specifiedPackages);
-  }
+	/**
+	 * Create a new ClassGraph.  The packages passed as an
+	 * argument are the ones specified on the command line.
+	 * Local URLs will be generated for these packages.
+	 */
+	public ClassGraph(PackageDoc[] packages) {
+		specifiedPackages = new HashSet();
+		for (int i = 0; i < packages.length; i++) {
+			specifiedPackages.add(packages[i].name());
+		}
+	}
 
 	/**
 	 * Print the visibility adornment of element e prefixed by
@@ -530,7 +536,6 @@ class ClassGraph {
 			Map.Entry entry = (Entry) iter.next();
 			ClassInfo info = (ClassInfo) entry.getValue();
 			if (! info.nodePrinted) {
-				System.out.println("--- Need: " + entry.getKey().toString());
 				String r = entry.getKey().toString();
 				opt.w.println("\t// " + r);
 
@@ -553,51 +558,51 @@ class ClassGraph {
 		}
 	}
 
-  public boolean isSpecifiedPackage(String className) {
-    int idx = className.lastIndexOf(".");
-    String packageName = idx > 0 ? className.substring(0, idx) : className;
-    System.out.println("isSpecifiedPackage("+className+") = " + specifiedPackages.contains(packageName));
-    return specifiedPackages.contains(packageName);
-  }
+	/** Return true if the class name has been specified in the command line */
+	public boolean isSpecifiedPackage(String className) {
+		int idx = className.lastIndexOf(".");
+		String packageName = idx > 0 ? className.substring(0, idx) : className;
+		return specifiedPackages.contains(packageName);
+	}
 
-  public String classToUrl(String className) {
-    if (isSpecifiedPackage(className)) {
-      return packageToLocalUrl(className);
-    } else {
-      return packageToExternalUrl(className);
-    }
-  }
+	/** Convert the class name into a corresponding local or remote URL */
+	public String classToUrl(String className) {
+		if (isSpecifiedPackage(className))
+			return packageToLocalUrl(className);
+		else
+			return packageToExternalUrl(className);
+	}
 
-  /**
-   * Converts a package name to an URL.  The convertion is designed to help the
-   * creation of diagrams that can be used for the navigation of JavaDoc
-   * documents. To be effective it distinguishes between "local" and "external"
-   * packages. 
-   * Local packages are the ones that belong to packages included in the current run of UMLGraph. 
-   * We assume that classes in those packages are available through relative indexes from the root
-   * of the JavaDoc tree, so we generate relative indexes for them.
-   */
-  public String packageToLocalUrl(String packageName) {
+	/**
+	* Converts a package name into an URL.
+	* The convertion is designed to help the creation of diagrams that
+	* can be used for the navigation of JavaDoc documents.
+	* To be effective it distinguishes between "local" and "external"
+	* packages.
+	* Local packages are the ones that belong to packages specified
+	* in the command line of the current run of UMLGraph.
+	* We assume that classes in those packages are available through
+	* relative indexes from the root of the JavaDoc tree, so we generate
+	* relative indexes for them.
+	*/
+	public String packageToLocalUrl(String packageName) {
 
-    String[] s = packageName.split("\\.");
-    StringBuffer tmp = new StringBuffer(packageName.length() * 2);
-    for (int i = 0; i < s.length - 1; i++) { 
-      tmp.append("..").append(File.separatorChar); 
-    }
-    for (int j = 0; j < s.length; j++) { 
-      tmp.append(s[j]);
-      if (j != s.length - 1) {
-        tmp.append(File.separatorChar); 
-      }
-    }
-    tmp.append(".html");
-    return tmp.toString();
-  }
+		String[] s = packageName.split("\\.");
+		StringBuffer tmp = new StringBuffer(packageName.length() * 2);
+		for (int i = 0; i < s.length - 1; i++)
+			tmp.append("..").append(File.separatorChar);
+		for (int j = 0; j < s.length; j++) {
+			tmp.append(s[j]);
+			if (j != s.length - 1)
+				tmp.append(File.separatorChar);
+		}
+		tmp.append(".html");
+		return tmp.toString();
+	}
 
-  public String packageToExternalUrl(String packageName) {
-    String externalDocRoot = "http://java.sun.com/j2se/1.4.2/docs/api/";
-    return externalDocRoot + packageName.replace('.',File.separatorChar) + ".html";
-  }
+	public String packageToExternalUrl(String packageName) {
+		return externalDocRoot + packageName.replace('.',File.separatorChar) + ".html";
+	}
 }
 
 /** Doclet API implementation */
