@@ -199,7 +199,7 @@ class StringFuns {
 		String remain = s, tok;
 		int n = 0, pos;
 
-		remain.trim();
+		remain = remain.trim();
 		while (remain.length() > 0) {
 			if (remain.startsWith("\"")) {
 				// Field in quotes
@@ -219,7 +219,7 @@ class StringFuns {
 					r.add(remain.substring(0, pos));
 			}
 			remain = remain.substring(pos + 1);
-			remain.trim();
+			remain = remain.trim();
 			// - is used as a placeholder for empy fields
 			if (r.get(n).equals("-"))
 				r.set(n, "");
