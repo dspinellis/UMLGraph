@@ -134,7 +134,8 @@ define create_message {
 		off_from = -awid * .6;
 		off_to = boxwid * .51;
 	}
-	XSEQA: arrow from ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) "\Focreate\Fc" " ";
+	# See comment in destroy_message
+	XSEQA: arrow from ($1.x + off_from, Here.y) to ($2.x + off_to, Here.y) "«create»" " ";
 	if ($1.x <= $2.x) then {
 		{ XSEQB: box $3 with .w at XSEQA.end; }
 	} else {
@@ -161,9 +162,12 @@ define drawx {
 
 # Draw a destroy message(from_object,to_object)
 define destroy_message {
-	# troff code is \(Fo \(Fc, but they don't work in pic2plot
+	# The troff code is \(Fo \(Fc
+	# The groff code is also \[Fo] \[Fc]
+	# The pic2plot code is \Fo \Fc
 	# See http://www.delorie.com/gnu/docs/plotutils/plotutils_71.html
-	message($1,$2,"\Fodestroy\Fc");
+	# To stay compatible with all we have to hardcode the characters
+	message($1,$2,"«destroy»");
 	complete($2);
 	drawx($2);
 }
