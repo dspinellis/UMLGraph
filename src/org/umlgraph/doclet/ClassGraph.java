@@ -207,7 +207,10 @@ class ClassGraph {
 	private static HashMap classnames = new HashMap();
 	private Options opt;
 
-	/** Print the visibility adornment of element e */
+	/** 
+	 * Print the visibility adornment of element e prefixed by
+	 * any stereotypes
+	 */
 	private void visibility(ProgramElementDoc e) {
 		opt.w.print(stereotype(e, 'l'));
 		if (!opt.showVisibility)
@@ -253,6 +256,7 @@ class ClassGraph {
 			if (opt.showType)
 				type(f[i].type());
 			opt.w.print("\\l");
+			opt.w.print(tagvalue(f[i], "", 'r'));
 		}
 	}
 
@@ -271,10 +275,38 @@ class ClassGraph {
 			} else
 				opt.w.print("()");
 			opt.w.print("\\l");
+			opt.w.print(tagvalue(m[i], "", 'r'));
 		}
 	}
 
-	/** Return as a string the stereotypes associated with c */
+	/** 
+	 * Return as a string the tagged values associated with c 
+	 * @param c the Doc entry to look for @tagvalue
+	 * @param prevterm the termination string for the previous element
+	 * @param term the termination character for each tagged value
+	 */
+	private static String tagvalue(Doc c, String prevterm, char term) {
+		String r;
+		Tag tags[] = c.tags("tagvalue");
+		if (tags.length > 0)
+			r = prevterm;
+		else
+			r = "";
+		for (int i = 0; i < tags.length; i++) {
+			String t[] = StringFuns.tokenize(tags[i].text());
+			if (t.length != 2) {
+				System.err.println("@tagvalue expects two fields: " + tags[i].text());
+				return ("");
+			}
+			r += "\\{" + t[0] + " = " + t[1] + "\\}\\"  + term;
+		}
+		return (r);
+	}
+
+	/** 
+	 * Return as a string the stereotypes associated with c 
+	 * terminated by the escape character term 
+	 */
 	private static String stereotype(Doc c, char term) {
 		String r = "";
 		Tag tags[] = c.tags("stereotype");
@@ -333,6 +365,7 @@ class ClassGraph {
 			boolean showMembers = 
 				(opt.showAttributes || opt.showOperations) &&
 				(c.methods().length > 0 || c.fields().length > 0);
+			r += tagvalue(c, "\\n", 'r');
 			if (showMembers)
 				opt.w.print("label=\"{" + r + "\\n|");
 			else
