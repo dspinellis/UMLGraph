@@ -645,7 +645,7 @@ class ClassGraph {
 		relation("depend", c, cs, "arrowhead=open, style=dashed");
 	}
 
-	/** Print classes that were parts of relationships, but not parsed by javadoc */ 
+	/** Print classes that were parts of relationships, but not parsed by javadoc */
 	public void printExtraClasses() {
 		Collection<Map.Entry<String, ClassInfo>> myClassInfos = classnames.entrySet();
 		Iterator<Map.Entry<String, ClassInfo>> iter = myClassInfos.iterator();
@@ -712,7 +712,7 @@ class ClassGraph {
 			Map.Entry<Pattern, String> mapEntry = iter.next();
 			Pattern regex = mapEntry.getKey();
 			Matcher matcher = regex.matcher(className);
-			if (matcher.matches()) 
+			if (matcher.matches())
 				return mapEntry.getValue();
 		}
 		return null;
