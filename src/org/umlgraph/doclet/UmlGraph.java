@@ -345,6 +345,18 @@ class ClassGraph {
 		return r;
 	}
 
+	/** Escape &lt; and &gt; characters in the string with a backslash. */
+	private String escapeLG(String s) {
+		StringBuffer r = new StringBuffer(s);
+		for (int i = 0; i < r.length(); i++)
+			switch (r.charAt(i)) {
+			case '<':
+			case '>':
+				r.insert(i++, '\\');
+			}
+		return r.toString();
+	}
+
 	/**
 	 * Convert &lt; and &gt; characters in the string to the respective guillemot characters,
 	 * or return the same string if the use of those characters has been disabled.
@@ -551,7 +563,7 @@ class ClassGraph {
 			opt.w.println("\t// " + r);
 			// Create label
 			opt.w.print("\t" + ci.name + " [");
-			r = stereotype(c, 'n') + qualifiedName(r);
+			r = stereotype(c, 'n') + escapeLG(qualifiedName(r));
 			if (c.isInterface())
 				r = guilWrap("interface") + " \\n" + r;
 			if (c.isEnum())
@@ -676,7 +688,7 @@ class ClassGraph {
 				String r = entry.getKey().toString();
 				opt.w.println("\t// " + r);
 
-				opt.w.print("\t" + info.name + "[label=\"" + qualifiedName(r) + "\"");
+				opt.w.print("\t" + info.name + "[label=\"" + escapeLG(qualifiedName(r)) + "\"");
 				opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
 				nodeProperties(entry.getKey().toString());
 			}
@@ -711,6 +723,7 @@ class ClassGraph {
 	private String mapApiDocRoot(String className) {
 
 		String root = null;
+		/* If no packages are specified, we use apiDocRoot for all of them. */
 		if (specifiedPackages.isEmpty() || isSpecifiedPackage(className))
 			root = apiDocRoot;
 		else
