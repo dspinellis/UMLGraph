@@ -406,21 +406,41 @@ class ClassGraph {
 	private void parameter(Parameter p[]) {
 		for (int i = 0; i < p.length; i++) {
 			opt.w.print(p[i].name());
-			type(p[i].type());
+			typeAnnotation(p[i].type());
 			if (i + 1 < p.length)
 				opt.w.print(", ");
 		}
 	}
 
-	/** Print the type t */
+	/** Print a a basic type t */
 	private void type(Type t) {
-		if (t.typeName().equals("void"))
-			return;
-		opt.w.print(" : ");
 		if (opt.showQualified)
 			opt.w.print(t.qualifiedTypeName());
 		else
 			opt.w.print(t.typeName());
+		typeParameters(t.asParameterizedType());
+	}
+
+	/** Print the parameters of the parameterized type t */
+	private void typeParameters(ParameterizedType t) {
+		if (t == null)
+			return;
+		Type args[] = t.typeArguments();
+		opt.w.print("\\<");
+		for (int i = 0; i < args.length; i++) {
+			type(args[i]);
+			if (i != args.length - 1)
+				opt.w.print(", ");
+		}
+		opt.w.print("\\>");
+	}
+
+	/** Annotate an field/argument with its type t */
+	private void typeAnnotation(Type t) {
+		if (t.typeName().equals("void"))
+			return;
+		opt.w.print(" : ");
+		type(t);
 		opt.w.print(t.dimension());
 	}
 
@@ -432,7 +452,7 @@ class ClassGraph {
 			visibility(f[i]);
 			opt.w.print(f[i].name());
 			if (opt.showType)
-				type(f[i].type());
+				typeAnnotation(f[i].type());
 			opt.w.print("\\l");
 			opt.w.print(tagvalue(f[i], "", 'r'));
 		}
@@ -467,7 +487,7 @@ class ClassGraph {
 				opt.w.print("(");
 				parameter(m[i].parameters());
 				opt.w.print(")");
-				type(m[i].returnType());
+				typeAnnotation(m[i].returnType());
 			} else
 				opt.w.print("()");
 			opt.w.print("\\l");
@@ -641,13 +661,13 @@ class ClassGraph {
 		opt.setOptions(c);
 		String cs = name(c);
 		// Print generalization (through the Java superclass)
-		ClassDoc s = c.superclass();
+		Type s = c.superclassType();
 		if (s != null && !s.toString().equals("java.lang.Object") && !c.isEnum()) {
 			if (!opt.matchesHideExpression(c.toString())
 				&& !opt.matchesHideExpression(s.toString())
-				&& !hidden(c) && !hidden(s)) {
+				&& !hidden(c) && !hidden(s.asClassDoc())) {
 				opt.w.println("\t//" + c + " extends " + s);
-				opt.w.println("\t" + name(s) + " -> " + cs + " [dir=back,arrowtail=empty];");
+				opt.w.println("\t" + name(s.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty];");
 			}
 		}
 		// Print generalizations (through @extends tags)
@@ -660,13 +680,13 @@ class ClassGraph {
 			}
 		}
 		// Print realizations (Java interfaces)
-		ClassDoc ifs[] = c.interfaces();
+		Type ifs[] = c.interfaceTypes();
 		for (int i = 0; i < ifs.length; i++) {
 			if (!opt.matchesHideExpression(c.toString())
 				&& !opt.matchesHideExpression(ifs[i].toString())
-				&& !hidden(c) && !hidden(ifs[i])) {
-				opt.w.print("\t" + name(ifs[i]) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
-				opt.w.println("\t//" + c + " implements " + ifs[i]);
+				&& !hidden(c) && !hidden(ifs[i].asClassDoc())) {
+				opt.w.print("\t" + name(ifs[i].asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
+				opt.w.println("\t//" + c + " implements " + ifs[i].asClassDoc());
 			}
 		}
 		// Print other associations
