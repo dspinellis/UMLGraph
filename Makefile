@@ -3,15 +3,15 @@
 #
 
 .SUFFIXES:.class .java
-VERSION=2.10
+VERSION=3.2
 TARBALL=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
 WEBDIR=/dds/pubs/web/home/sw/umlgraph
-SRCFILE=UmlGraph.java sequence.pic README
+SRCFILE=UmlGraph.java sequence.pic README.txt
 
 .java.class:
-	javac -source 1.4 -target 1.4 -classpath d:/jdk/lib/tools.jar $<
+	javac -Xlint -classpath d:/jdk/lib/tools.jar $<
 
 all: UmlGraph.jar
 
@@ -38,7 +38,10 @@ UmlGraph.jar: UmlGraph.class
 
 UmlGraph.class: UmlGraph.java
 
-web: $(TARBALL)
-	cp $(TARBALL) $(ZIPBALL) $(WEBDIR)
+web: $(TARBALL) CHECKSUM.MD5
+	cp $(TARBALL) $(ZIPBALL) CHECKSUM.MD5 $(WEBDIR)
 	cp UmlGraph.jar $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
 	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
+
+CHECKSUM.MD5: $(TARBALL)
+	md5 UMLGraph-2.10.* UMLGraph-$(VERSION).* UmlGraph.jar >CHECKSUM.MD5
