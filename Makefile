@@ -3,7 +3,7 @@
 #
 
 .SUFFIXES:.class .java
-VERSION=3.2
+VERSION=3.3
 TARBALL=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
