@@ -57,9 +57,9 @@ class Options implements Cloneable {
 	String apiDocRoot;
 	boolean useGuillemot;
 	/** Guillemot left (open) */
-	char guilOpen = '\u00ab';
+	String guilOpen = "\u00ab";
 	/** Guillemot right (close) */
-	char guilClose = '\u00bb';
+	String guilClose = "\u00bb";
 
 	Options() {
 		showQualified = false;
@@ -166,8 +166,8 @@ class Options implements Cloneable {
 		} else if(opt[0].equals("-apidocmap")) {
 			apiDocMapFileName = opt[1];
 		} else if(opt[0].equals("-noguillemot")) {
-			guilOpen = '(';
-			guilClose = ')';
+			guilOpen = "\\<\\<";
+			guilClose = "\\>\\>";
 		} else
 			; // Do nothing, javadoc will handle the option or complain, if needed.
 	}
@@ -358,18 +358,22 @@ class ClassGraph {
 	}
 
 	/**
-	 * Convert &lt; and &gt; characters in the string to the respective guillemot characters,
-	 * or return the same string if the use of those characters has been disabled.
+	 * Convert &lt; and &gt; characters in the string to the respective guillemot characters.
 	 */
 	private String guillemize(String s) {
 		StringBuffer r = new StringBuffer(s);
-		for (int i = 0; i < r.length(); i++)
+		for (int i = 0; i < r.length();)
 			switch (r.charAt(i)) {
 			case '<':
-				r.setCharAt(i, opt.guilOpen);
+				r.replace(i, i + 1, opt.guilOpen);
+				i += opt.guilOpen.length();
 				break;
 			case '>':
-				r.setCharAt(i, opt.guilClose);
+				r.replace(i, i + 1, opt.guilClose);
+				i += opt.guilOpen.length();
+				break;
+			default:
+				i++;
 				break;
 			}
 		return r.toString();
