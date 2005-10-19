@@ -2,7 +2,7 @@
 #
 # Pic macros for drawing UML sequence diagrams
 #
-# (C) Copyright 2004 Diomidis Spinellis.
+# (C) Copyright 2004-2005 Diomidis Spinellis.
 #
 # Permission to use, copy, and distribute this software and its
 # documentation for any purpose and without fee is hereby granted,
@@ -18,7 +18,7 @@
 #
 
 
-# Parameters (can be redefined)
+# Default parameters (can be redefined)
 
 # Spacing between messages
 spacing = 0.25;
@@ -26,6 +26,15 @@ spacing = 0.25;
 awid = .1;
 # Box height
 boxht = 0.3;
+# Commend folding
+corner_fold=awid
+# Comment distance
+define comment_default_move {up 0.25 right 0.25};
+# Comment height
+comment_default_ht=0.5;
+# Comment width
+comment_default_wid=1;
+
 
 # Create a new object(name,label)
 define object {
@@ -289,8 +298,109 @@ define async {
 	arrowwid = arrowwid * 2;
 }
 
-# Swtich to synchronous messages
+# Switch to synchronous messages
 define sync {
 	arrowhead = 1;
 	arrowwid = arrowwid / 2;
+}
+
+# same as lifeline_constraint, but Text and empty string are exchanged.
+define lconstraint_below{
+        off_from = awid;
+        # add half a box width for each level of nesting
+        if (active_$1 > 1) then {
+                off_from = off_from + (active_$1 - 1) * awid/2;
+        }
+
+	box at ($1.x + off_from, Here.y) invis "" $2 ljust;
+}
+
+# begin_frame(left_object,name,label_text);
+define begin_frame {
+	# The lifeline will be cut here
+	extend_lifeline($1);
+	# draw the frame-label
+	$2: box $3 invis with .n at ($1.x, Here.y);
+	d = $2.e.y - $2.se.y;
+	line from $2.ne to $2.e then down d left d then to $2.sw;
+	# continue the lifeline below the frame-label
+	move to $2.s;
+	lifestart_$1 = Here.y;
+}
+
+# end_frame(right_object,name);
+define end_frame {
+	# dummy-box for the lower right corner:
+	box invis "" with .s at ($1.x, Here.y);
+	# draw the frame
+	frame_wid = last box.se.x - $2.nw.x
+	frame_ht = - last box.se.y + $2.nw.y
+	box with .nw at $2.nw wid frame_wid ht frame_ht;
+	# restore Here.y
+	move to last box.s;
+}
+
+# comment(object,[name],[line_movement], [box_size] text);
+define comment {
+	old_y = Here.y
+	# draw the first connecting line, at which's end the box wil be positioned
+	move to ($1.x, Here.y)
+	if "$3" == "" then {
+		line comment_default_move() dashed;
+	} else {
+		line $3 dashed;
+	}
+
+	# draw the box, use comment_default_xx if no explicit
+	# size is given together with the text in parameter 4
+	old_boxht=boxht;
+	old_boxwid=boxwid;
+	boxht=comment_default_ht;
+	boxwid=comment_default_wid;
+	if "$2" == "" then {
+		box invis $4;
+	} else {
+		$2: box invis $4;
+	}
+	boxht=old_boxht;
+	boxwid=old_boxwid;
+
+	# draw the frame of the comment
+	line from       last box.nw \
+		to          last box.ne - (corner_fold, 0) \
+		then to last box.ne - (0, corner_fold) \
+		then to last box.se \
+		then to last box.sw \
+		then to last box.nw ;
+	line from       last box.ne - (corner_fold, 0) \
+		to          last box.ne - (corner_fold, corner_fold) \
+		then to last box.ne - (0, corner_fold) ;
+
+	# restore Here.y
+	move to ($1.x, old_y)
+}
+
+# connect_to_comment(object,name);
+define connect_to_comment {
+	old_y = Here.y
+	# start at the object
+	move to ($1.x, Here.y)
+	# find the best connection-point of the comment to use as line-end
+	if $1.x < $2.w.x then {
+		line to $2.w dashed;
+	} else {
+		if $1.x > $2.e.x then {
+			line to $2.e dashed;
+		} else {
+			if Here.y < $2.s.y then {
+				line to $2.s dashed;
+			} else {
+				if Here.y > $2.n.y then {
+					line to $2.n dashed;
+				}
+			}
+		}
+	}
+	# restore Here.y
+	move to ($1.x, old_y)
 }
