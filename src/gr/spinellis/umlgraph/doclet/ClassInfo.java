@@ -399,12 +399,12 @@ class ClassGraph {
 			return;
 		if (e.isPrivate())
 			opt.w.print('-');
-		if (e.isPublic())
+		else if (e.isPublic())
 			opt.w.print('+');
-		if (e.isProtected())
+		else if (e.isProtected())
 			opt.w.print('#');
-		if (e.isPackagePrivate())
-			opt.w.print('$');
+		else if (e.isPackagePrivate())
+			opt.w.print('~');
 		opt.w.print(' ');
 	}
 
