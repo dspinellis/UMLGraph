@@ -403,6 +403,8 @@ class ClassGraph {
 			opt.w.print('+');
 		if (e.isProtected())
 			opt.w.print('#');
+		if (e.isPackagePrivate())
+			opt.w.print('$');
 		opt.w.print(' ');
 	}
 
