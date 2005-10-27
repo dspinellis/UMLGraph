@@ -21,7 +21,6 @@
 import com.sun.javadoc.*;
 import java.io.*;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -265,7 +264,7 @@ class StringUtil {
 				r.set(n, "");
 			n++;
 		}
-		return ((String[])(r.toArray(new String[0])));
+		return r.toArray(new String[0]);
 	}
 
 }
