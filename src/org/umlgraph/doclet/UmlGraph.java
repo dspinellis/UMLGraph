@@ -643,8 +643,10 @@ class ClassGraph {
 		Tag tags[] = from.tags(tagname);
 		for (int i = 0; i < tags.length; i++) {
 			String t[] = StringUtil.tokenize(tags[i].text());	// l-src label l-dst target
-			if (t.length != 4)
-				System.err.println("Expected four fields: " + tags[i].text());
+			if (t.length != 4) {
+				System.err.println("Error in " + from + "\n" + tagname + " expectes four fields (l-src label l-dst target): " + tags[i].text());
+				return;
+			}
 			opt.w.println("\t// " + from + " " + tagname + " " + t[3]);
 			opt.w.println("\t" + name + " -> " + name(t[3]) + " [" +
 				"taillabel=\"" + t[0] + "\", " +
