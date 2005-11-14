@@ -19,6 +19,7 @@
  */
 
 import com.sun.javadoc.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -217,14 +218,19 @@ class Options implements Cloneable {
  * and printed information
  */
 class ClassInfo {
-	private static int classnum;
+	static int classnum = 0;
 	/** Alias name for the class */
 	String name;
 	/** True if the class class node has been printed */
 	boolean nodePrinted;
+	/** True if the class class node is hidden */
+	boolean hidden;
+	/** The actual class doc, if available */
+	ClassDoc classDoc;
 
-	ClassInfo(boolean p) {
+	ClassInfo(boolean p, boolean h) {
 		nodePrinted = p;
+		hidden = h;
 		name = "c" + (new Integer(classnum)).toString();
 		classnum++;
 	}
@@ -273,9 +279,9 @@ class StringUtil {
  * Class graph generation engine
  */
 class ClassGraph {
-	private static Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
-	private static String apiDocRoot;
-	private static Map<Pattern, String> apiDocMap = new HashMap<Pattern, String>();
+	private Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
+	private String apiDocRoot;
+	private Map<Pattern, String> apiDocMap = new HashMap<Pattern, String>();
 
 	private static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
 
@@ -562,25 +568,32 @@ class ClassGraph {
 		return opt.matchesHideExpression(c.toString());
 	}
 
+	/** Return true if the class name is associated to an hidden class or matches a hide expression */
+	private boolean hidden(String s) {
+		ClassInfo ci = classnames.get(s);
+		return (ci != null ? ci.hidden : false) || opt.matchesHideExpression(s);
+	}
+
 	/** Return a class's internal name */
-	private static String name(String c) {
+	private String name(String c) {
 		ClassInfo ci;
 
 		if ((ci = classnames.get(c)) == null)
-			classnames.put(c, ci = new ClassInfo(false));
+			classnames.put(c, ci = new ClassInfo(false, false));
 		return ci.name;
 	}
 
-	/** Return a class's internal name, printing the class if needed */
-	private String name(ClassDoc c) {
+	/** Prints the class if needed */
+	public String printClass(Options opt, ClassDoc c) {
 		ClassInfo ci;
 		boolean toPrint;
+		this.opt = opt;
 
 		if ((ci = classnames.get(c.toString())) != null)
 			toPrint = !ci.nodePrinted;
 		else {
 			toPrint = true;
-			classnames.put(c.toString(), ci = new ClassInfo(true));
+			classnames.put(c.toString(), ci = new ClassInfo(true, hidden(c)));
 		}
 		if (toPrint && !hidden(c) && (!c.isEnum() || opt.showEnumerations)) {
 			// Associate classname's alias
@@ -631,6 +644,13 @@ class ClassGraph {
 		return ci.name;
 	}
 
+	private String getNodeName(ClassDoc c) {
+		ClassInfo ci;
+
+		if ((ci = classnames.get(c.toString())) == null)
+			classnames.put(c.toString(), ci = new ClassInfo(false, hidden(c)));
+		return ci.name;
+	}
 
 	/**
 	 * Print all relations for a given's class's tag
@@ -644,9 +664,11 @@ class ClassGraph {
 		for (int i = 0; i < tags.length; i++) {
 			String t[] = StringUtil.tokenize(tags[i].text());	// l-src label l-dst target
 			if (t.length != 4) {
-				System.err.println("Error in " + from + "\n" + tagname + " expectes four fields (l-src label l-dst target): " + tags[i].text());
+				System.err.println("Error in " + from + "\n" + tagname + " expects four fields (l-src label l-dst target): " + tags[i].text());
 				return;
 			}
+			if(hidden(t[3]))
+				return;
 			opt.w.println("\t// " + from + " " + tagname + " " + t[3]);
 			opt.w.println("\t" + name + " -> " + name(t[3]) + " [" +
 				"taillabel=\"" + t[0] + "\", " +
@@ -661,38 +683,36 @@ class ClassGraph {
 		}
 	}
 
-	/** Print a class */
-	public void print(Options iopt, ClassDoc c) {
-		opt = (Options)iopt.clone();
-		// Process class-local options (through @opt tags)
-		opt.setOptions(c);
-		String cs = name(c);
+	/** Print a class's relations */
+	public void printRelations(Options iopt, ClassDoc c) {
+		opt = iopt;
+		if(opt.matchesHideExpression(c.toString()) || hidden(c))
+			return;
+		String cs = getNodeName(c);
+
 		// Print generalization (through the Java superclass)
 		Type s = c.superclassType();
 		if (s != null && !s.toString().equals("java.lang.Object") && !c.isEnum()) {
-			if (!opt.matchesHideExpression(c.toString())
-				&& !opt.matchesHideExpression(s.toString())
-				&& !hidden(c) && !hidden(s.asClassDoc())) {
+			if (!hidden(s.asClassDoc())) {
 				opt.w.println("\t//" + c + " extends " + s);
-				opt.w.println("\t" + name(s.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty];");
+				opt.w.println("\t" + getNodeName(s.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty];");
 			}
 		}
+
 		// Print generalizations (through @extends tags)
 		Tag tags[] = c.tags("extends");
 		for (int i = 0; i < tags.length; i++) {
-			if (!opt.matchesHideExpression(c.toString())
-				&& !opt.matchesHideExpression(tags[i].text())) {
+			if (!hidden(tags[i].text())) {
 				opt.w.println("\t//" + c + " extends " + tags[i].text());
 				opt.w.println("\t" + name(tags[i].text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
+				
 			}
 		}
 		// Print realizations (Java interfaces)
 		Type ifs[] = c.interfaceTypes();
 		for (int i = 0; i < ifs.length; i++) {
-			if (!opt.matchesHideExpression(c.toString())
-				&& !opt.matchesHideExpression(ifs[i].toString())
-				&& !hidden(c) && !hidden(ifs[i].asClassDoc())) {
-				opt.w.print("\t" + name(ifs[i].asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
+			if (!hidden(ifs[i].asClassDoc())) {
+				opt.w.print("\t" + getNodeName(ifs[i].asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
 				opt.w.println("\t//" + c + " implements " + ifs[i].asClassDoc());
 			}
 		}
@@ -704,22 +724,43 @@ class ClassGraph {
 		relation("depend", c, cs, "arrowhead=open, style=dashed");
 	}
 
-	/** Print classes that were parts of relationships, but not parsed by javadoc */
-	public void printExtraClasses() {
+	/** Print classes that were parts of relationships, but not parsed by javadoc 
+	 * @param root */
+	public void printExtraClasses(Options opt, RootDoc root) {
 		Collection<Map.Entry<String, ClassInfo>> myClassInfos = classnames.entrySet();
 		Iterator<Map.Entry<String, ClassInfo>> iter = myClassInfos.iterator();
 		while (iter.hasNext()) {
 			Map.Entry<String, ClassInfo> entry = iter.next();
 			ClassInfo info = entry.getValue();
 			if (!info.nodePrinted) {
-				String r = entry.getKey().toString();
-				opt.w.println("\t// " + r);
-
-				opt.w.print("\t" + info.name + "[label=\"" + escapeLG(qualifiedName(r)) + "\"");
-				opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
-				nodeProperties(entry.getKey().toString());
+				String r = entry.getKey();
+				ClassDoc c = root.classNamed(removeTemplate(r));
+				if(c != null) {
+					Options localOpt = (Options) opt.clone();
+					localOpt.setOptions(c);
+					printClass(localOpt, c);
+				} else {
+					opt.w.println("\t// " + r);
+	
+					opt.w.print("\t" + info.name + "[label=\"" + escapeLG(qualifiedName(r)) + "\"");
+					opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
+					nodeProperties(entry.getKey().toString());
+				}
 			}
 		}
+	}
+
+	/**
+	 * Removes the template specs from a class name
+	 * @param r
+	 * @return
+	 */
+	private String removeTemplate(String name) {
+		int openIdx = name.indexOf("<");
+		if(openIdx == -1)
+			return name;
+		else
+			return name.substring(0, openIdx);
 	}
 
 	/** Return true if the class name has been specified in the command line */
@@ -781,22 +822,34 @@ class ClassGraph {
 
 /** Doclet API implementation */
 public class UmlGraph {
-	private static Options opt = new Options();
-
 	/** Entry point */
 	public static boolean start(RootDoc root) throws IOException {
+		ClassInfo.classnum = 0;
+		Options opt = new Options();
+		
 		opt.setOptions(root.options());
 		opt.openFile();
 		opt.setOptions(root.classNamed("UMLOptions"));
-		prologue();
+		prologue(opt);
 		ClassDoc[] classes = root.classes();
 
 		ClassGraph c = new ClassGraph(root.specifiedPackages(),
-					opt.apiDocRoot, opt.apiDocMapFileName);
-		for (int i = 0; i < classes.length; i++)
-			c.print(opt, classes[i]);
-		c.printExtraClasses();
-		epilogue();
+			opt.apiDocRoot, opt.apiDocMapFileName);
+		for (int i = 0; i < classes.length; i++) {
+			// Process class-local options (through @opt tags)
+			Options localOpt = (Options) opt.clone();
+			localOpt.setOptions(classes[i]);
+			c.printClass(localOpt, classes[i]);
+		}
+		for (int i = 0; i < classes.length; i++) {
+			// Process class-local options (through @opt tags)
+			Options localOpt = (Options) opt.clone();
+			localOpt.setOptions(classes[i]);
+			c.printRelations(localOpt, classes[i]);
+		}
+
+		c.printExtraClasses(opt, root);
+		epilogue(opt);
 		return true;
 	}
 
@@ -838,7 +891,7 @@ public class UmlGraph {
 	}
 
 	/** Dot prologue */
-	private static void prologue() {
+	private static void prologue(Options opt) {
 		opt.w.println(
 			"#!/usr/local/bin/dot\n" +
 			"#\n" +
@@ -859,8 +912,9 @@ public class UmlGraph {
 	}
 
 	/** Dot epilogue */
-	private static void epilogue() {
+	private static void epilogue(Options opt) {
 		opt.w.println("}\n");
 		opt.w.flush();
 	}
 }
+
