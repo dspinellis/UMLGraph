@@ -18,7 +18,7 @@
  *
  */
 
-package gr.spinellis.umlgraph;
+package gr.spinellis.umlgraph.doclet;
 
 /**
  * Class's dot-comaptible alias name (for fully qualified class names)

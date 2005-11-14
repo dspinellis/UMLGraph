@@ -18,7 +18,7 @@
  *
  */
 
-package gr.spinellis.umlgraph;
+package gr.spinellis.umlgraph.doclet;
 
 import com.sun.javadoc.*;
 
