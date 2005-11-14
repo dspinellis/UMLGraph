@@ -218,21 +218,24 @@ class Options implements Cloneable {
  * and printed information
  */
 class ClassInfo {
-	static int classnum = 0;
+	private static int classnum;
 	/** Alias name for the class */
 	String name;
 	/** True if the class class node has been printed */
 	boolean nodePrinted;
 	/** True if the class class node is hidden */
 	boolean hidden;
-	/** The actual class doc, if available */
-	ClassDoc classDoc;
 
 	ClassInfo(boolean p, boolean h) {
 		nodePrinted = p;
 		hidden = h;
 		name = "c" + (new Integer(classnum)).toString();
 		classnum++;
+	}
+
+	/** Start numbering from zero. */
+	public static void reset() {
+		classnum = 0;
 	}
 }
 
@@ -705,7 +708,6 @@ class ClassGraph {
 			if (!hidden(tags[i].text())) {
 				opt.w.println("\t//" + c + " extends " + tags[i].text());
 				opt.w.println("\t" + name(tags[i].text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
-				
 			}
 		}
 		// Print realizations (Java interfaces)
@@ -724,8 +726,7 @@ class ClassGraph {
 		relation("depend", c, cs, "arrowhead=open, style=dashed");
 	}
 
-	/** Print classes that were parts of relationships, but not parsed by javadoc 
-	 * @param root */
+	/** Print classes that were parts of relationships, but not parsed by javadoc */
 	public void printExtraClasses(Options opt, RootDoc root) {
 		Collection<Map.Entry<String, ClassInfo>> myClassInfos = classnames.entrySet();
 		Iterator<Map.Entry<String, ClassInfo>> iter = myClassInfos.iterator();
@@ -741,7 +742,6 @@ class ClassGraph {
 					printClass(localOpt, c);
 				} else {
 					opt.w.println("\t// " + r);
-	
 					opt.w.print("\t" + info.name + "[label=\"" + escapeLG(qualifiedName(r)) + "\"");
 					opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
 					nodeProperties(entry.getKey().toString());
@@ -824,9 +824,9 @@ class ClassGraph {
 public class UmlGraph {
 	/** Entry point */
 	public static boolean start(RootDoc root) throws IOException {
-		ClassInfo.classnum = 0;
 		Options opt = new Options();
-		
+		ClassInfo.reset();
+
 		opt.setOptions(root.options());
 		opt.openFile();
 		opt.setOptions(root.classNamed("UMLOptions"));
