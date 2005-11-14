@@ -750,11 +750,7 @@ class ClassGraph {
 		}
 	}
 
-	/**
-	 * Removes the template specs from a class name
-	 * @param r
-	 * @return
-	 */
+	/** Removes the template specs from a class name. */
 	private String removeTemplate(String name) {
 		int openIdx = name.indexOf("<");
 		if(openIdx == -1)
