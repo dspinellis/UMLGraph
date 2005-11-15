@@ -28,11 +28,11 @@ import java.util.List;
 
 public class BasicTest {
 
-    static String testSourceFolder = "test/data/simple/java";
+    static String testSourceFolder = "testdata/java";
 
-    static String testDestFolder = "test/data/simple/dot-out";
+    static String testDestFolder = "testdata/dot-out";
 
-    static String testRefFolder = "test/data/simple/dot-ref";
+    static String testRefFolder = "testdata/dot-ref";
 
     static PrintWriter pw = new PrintWriter(System.out);
 
