@@ -65,11 +65,11 @@ test:
 
 web: $(TARBALL) CHECKSUM.MD5
 	cp $(TARBALL) $(ZIPBALL) CHECKSUM.MD5 $(WEBDIR)
-	cp UmlGraph.jar $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
+	cp $(JARFILE) $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
 	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
 
 CHECKSUM.MD5: $(TARBALL)
-	md5 UMLGraph-2.10.* UMLGraph-$(VERSION).* UmlGraph.jar >CHECKSUM.MD5
+	md5 UMLGraph-2.10.* UMLGraph-$(VERSION).* $(JARFILE) >CHECKSUM.MD5
 
 tag:
 	rcs -nV$(TAGVERSION): $(ALLTAG)
