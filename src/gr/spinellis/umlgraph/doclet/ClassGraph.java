@@ -222,6 +222,12 @@ class ClassGraph {
 	}
     }
 
+    /*
+     * The following two methods look similar, but can't
+     * be refactored into one, because their common interface,
+     * ExecutableMemberDoc, doesn't support returnType for ctors.
+     */
+
     /** Print the class's constructors m */
     private void operations(ConstructorDoc m[]) {
 	for (ConstructorDoc cd : m) {
