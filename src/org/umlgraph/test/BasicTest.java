@@ -28,11 +28,11 @@ import java.util.List;
 
 public class BasicTest {
 
-    static String testSourceFolder = "./test-data/simple/java";
+    static String testSourceFolder = "test/data/simple/java";
 
-    static String testDestFolder = "./test-data/simple/dot-out";
+    static String testDestFolder = "test/data/simple/dot-out";
 
-    static String testRefFolder = "./test-data/simple/dot-ref";
+    static String testRefFolder = "test/data/simple/dot-ref";
 
     static PrintWriter pw = new PrintWriter(System.out);
 
@@ -47,13 +47,15 @@ public class BasicTest {
         boolean equal = true;
         for (int i = 0; i < javaFiles.length; i++) {
             String javaFileName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
-            String dotPath = new File(testDestFolder, javaFileName + ".dot").getAbsolutePath();
+            File dotFile = new File(testDestFolder, javaFileName + ".dot");
+	    dotFile.delete();
+            String dotPath = dotFile.getAbsolutePath();
             String refPath = new File(testRefFolder, javaFileName + ".dot").getAbsolutePath();
             String javaPath = new File(testSourceFolder, javaFiles[i]).getAbsolutePath();
-            String[] options = new String[] { "-hide", "Hidden", "-private", "-output", dotPath,
+            String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden", "-private", "-output", dotPath,
                     javaPath };
 
-            com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw, "UmlGraph", options);
+            com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw, "gr.spinellis.umlgraph.doclet.UmlGraph", options);
 
             System.out.println("Performing diff:\nout:" + dotPath + "\nref:" + refPath);
             DotDiff differ = new DotDiff(new File(dotPath), new File(refPath));
