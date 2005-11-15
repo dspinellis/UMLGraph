@@ -5,11 +5,18 @@ UML class and sequence diagrams.  You can browse the system's
 documentation from the doc/index.html page, or print it from
 doc/indexw.html.
 
-To compile the Java doclet from the source code simply execute:
-	javac -classpath YOUR_JDK_DIRECTORY/lib/tools.jar UmlGraph.java
-	jar cvf UmlGraph.jar ClassGraph.class ClassInfo.class Options.class StringFuns.class UmlGraph.class
-	jar i UmlGraph.jar
+To install the elements required to run UMLGraph, simply copy
+the contents of the lib directory to a location consistent with
+your installation's conventions (for example to /usr/local/lib).
+
+To compile the Java doclet from the source code run ant on the
+build.xml file.
+
+If you change the source code, you can run regression tests by
+executing "ant test".
 
 Project home page: http://www.spinellis.gr/sw/umlgraph
 
-Diomidis Spinellis - May 2004
+Diomidis Spinellis - November 2005
+
+$Id$
