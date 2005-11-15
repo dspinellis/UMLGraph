@@ -2,7 +2,6 @@
 # $Id$
 #
 
-.SUFFIXES:.class .java
 VERSION=4.1
 TARBALL=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
@@ -21,7 +20,13 @@ TESTSRC = \
 	src/gr/spinellis/umlgraph/test/BasicTest.java
 PICFILE=sequence.pic
 README=README.txt
+OTHERSRC=index.html build.xml Makefile
+# Files to tag
+ALLTAG=$(DOCLETSRC) $(TESTSRC) $(PICFILE) $(README) $(OTHERSRC)
+
 JARFILE=lib/UmlGraph.jar
+
+# Remove carriage returns
 LF=perl -p -e 'BEGIN {binmode(STDOUT);} s/\r//'
 
 all: $(JARFILE)
@@ -38,13 +43,13 @@ $(TARBALL): $(JARFILE) docs Makefile
 	mkdir $(DISTDIR)
 	mkdir $(DISTDIR)/doc
 	mkdir $(DISTDIR)/lib
-	cp $(WEBDIR)/doc/* $(DISTDIR)/doc
+	$(LF) $(README) >$(DISTDIR)/$(README)
+	$(LF) $(PICFILE) >$(DISTDIR)/lib/$(PICFILE)
 	cp $(JARFILE) $(DISTDIR)/lib
+	cp $(WEBDIR)/doc/* $(DISTDIR)/doc
 	cp build.xml $(DISTDIR)
 	tar cf - src testdata/{java,dot-ref} --exclude='*/RCS' | tar -C $(DISTDIR) -xvf -
-	$(LF) $(PICFILE) >$(DISTDIR)/lib/$(PICFILE)
 	$(LF) $(PICFILE) >$(DISTDIR)/src/$(PICFILE)
-	$(LF) $(README) >$(DISTDIR)/src/$(README)
 	tar cvf - $(DISTDIR) | gzip -c >$(TARBALL)
 	zip -r $(ZIPBALL) $(DISTDIR)
 
@@ -64,3 +69,6 @@ web: $(TARBALL) CHECKSUM.MD5
 
 CHECKSUM.MD5: $(TARBALL)
 	md5 UMLGraph-2.10.* UMLGraph-$(VERSION).* UmlGraph.jar >CHECKSUM.MD5
+
+tag:
+	rcs -nV$(VERSION): 
