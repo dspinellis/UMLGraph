@@ -3,6 +3,7 @@
 #
 
 VERSION=4.1
+TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
 TARBALL=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
@@ -71,4 +72,4 @@ CHECKSUM.MD5: $(TARBALL)
 	md5 UMLGraph-2.10.* UMLGraph-$(VERSION).* UmlGraph.jar >CHECKSUM.MD5
 
 tag:
-	rcs -nV$(VERSION): 
+	rcs -nV$(TAGVERSION): $(ALLTAG)
