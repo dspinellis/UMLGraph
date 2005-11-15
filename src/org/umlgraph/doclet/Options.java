@@ -178,8 +178,8 @@ class Options implements Cloneable {
 
     /** Set the options based on the command line parameters */
     public void setOptions(String[][] options) {
-	for (int i = 0; i < options.length; i++)
-	    setOption(options[i]);
+	for (String s[] : options)
+	    setOption(s);
     }
 
 
@@ -188,9 +188,8 @@ class Options implements Cloneable {
 	if (p == null)
 	    return;
 
-	Tag tags[] = p.tags("opt");
-	for (int i = 0; i < tags.length; i++) {
-	    String[] opt = StringUtil.tokenize(tags[i].text());
+	for (Tag tag : p.tags("opt")) {
+	    String[] opt = StringUtil.tokenize(tag.text());
 	    opt[0] = "-" + opt[0];
 	    setOption(opt);
 	}
@@ -207,8 +206,7 @@ class Options implements Cloneable {
      * @return true if the string matches.
      */
     public boolean matchesHideExpression(String s) {
-	for (int i = 0; i < hidePatterns.size(); i++) {
-	    Pattern hidePattern = hidePatterns.get(i);
+	for (Pattern hidePattern : hidePatterns) {
 	    Matcher m = hidePattern.matcher(s);
 	    if (m.find())
 		return true;

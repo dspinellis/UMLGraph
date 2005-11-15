@@ -52,16 +52,14 @@ class ClassGraph {
      */
     public ClassGraph(PackageDoc[] packages, String root, String mapFileName) throws IOException {
 	specifiedPackages = new HashSet<String>();
-	for (int i = 0; i < packages.length; i++)
-	    specifiedPackages.add(packages[i].name());
+	for (PackageDoc p : packages)
+	    specifiedPackages.add(p.name());
 	apiDocRoot = fixApiDocRoot(root);
 	if (mapFileName != null) {
 	    InputStream is = new FileInputStream(mapFileName);
 	    Properties userMap = new Properties();
 	    userMap.load(is);
-	    for (Iterator iter = userMap.entrySet().iterator(); iter.hasNext();) {
-		Map.Entry mapEntry = (Map.Entry)iter.next();
-
+	    for (Map.Entry mapEntry : userMap.entrySet()) {
 		try {
 		    Pattern regex = Pattern.compile((String)mapEntry.getKey());
 		    String thisRoot = (String)mapEntry.getValue();
@@ -210,54 +208,54 @@ class ClassGraph {
 	opt.w.print(t.dimension());
     }
 
-    /** Print the class's attributes f */
-    private void attributes(FieldDoc f[]) {
-	for (int i = 0; i < f.length; i++) {
-	    if (hidden(f[i]))
+    /** Print the class's attributes fd */
+    private void attributes(FieldDoc fd[]) {
+	for (FieldDoc f : fd) {
+	    if (hidden(f))
 		continue;
-	    visibility(f[i]);
-	    opt.w.print(f[i].name());
+	    visibility(f);
+	    opt.w.print(f.name());
 	    if (opt.showType)
-		typeAnnotation(f[i].type());
+		typeAnnotation(f.type());
 	    opt.w.print("\\l");
-	    opt.w.print(tagvalue(f[i], "", 'r'));
+	    opt.w.print(tagvalue(f, "", 'r'));
 	}
     }
 
     /** Print the class's constructors m */
     private void operations(ConstructorDoc m[]) {
-	for (int i = 0; i < m.length; i++) {
-	    if (hidden(m[i]))
+	for (ConstructorDoc cd : m) {
+	    if (hidden(cd))
 		continue;
-	    visibility(m[i]);
-	    opt.w.print(m[i].name());
+	    visibility(cd);
+	    opt.w.print(cd.name());
 	    if (opt.showType) {
 		opt.w.print("(");
-		parameter(m[i].parameters());
+		parameter(cd.parameters());
 		opt.w.print(")");
 	    } else
 		opt.w.print("()");
 	    opt.w.print("\\l");
-	    opt.w.print(tagvalue(m[i], "", 'r'));
+	    opt.w.print(tagvalue(cd, "", 'r'));
 	}
     }
 
     /** Print the class's operations m */
     private void operations(MethodDoc m[]) {
-	for (int i = 0; i < m.length; i++) {
-	    if (hidden(m[i]))
+	for (MethodDoc md : m) {
+	    if (hidden(md))
 		continue;
-	    visibility(m[i]);
-	    opt.w.print(m[i].name());
+	    visibility(md);
+	    opt.w.print(md.name());
 	    if (opt.showType) {
 		opt.w.print("(");
-		parameter(m[i].parameters());
+		parameter(md.parameters());
 		opt.w.print(")");
-		typeAnnotation(m[i].returnType());
+		typeAnnotation(md.returnType());
 	    } else
 		opt.w.print("()");
 	    opt.w.print("\\l");
-	    opt.w.print(tagvalue(m[i], "", 'r'));
+	    opt.w.print(tagvalue(md, "", 'r'));
 	}
     }
 
@@ -286,10 +284,10 @@ class ClassGraph {
 	    r = prevterm;
 	else
 	    r = "";
-	for (int i = 0; i < tags.length; i++) {
-	    String t[] = StringUtil.tokenize(tags[i].text());
+	for (Tag tag : tags) {
+	    String t[] = StringUtil.tokenize(tag.text());
 	    if (t.length != 2) {
-		System.err.println("@tagvalue expects two fields: " + tags[i].text());
+		System.err.println("@tagvalue expects two fields: " + tag.text());
 		return ("");
 	    }
 	    r += "\\{" + t[0] + " = " + t[1] + "\\}\\" + term;
@@ -303,11 +301,10 @@ class ClassGraph {
      */
     private String stereotype(Doc c, char term) {
 	String r = "";
-	Tag tags[] = c.tags("stereotype");
-	for (int i = 0; i < tags.length; i++) {
-	    String t[] = StringUtil.tokenize(tags[i].text());
+	for (Tag tag : c.tags("stereotype")) {
+	    String t[] = StringUtil.tokenize(tag.text());
 	    if (t.length != 1) {
-		System.err.println("@stereotype expects one field: " + tags[i].text());
+		System.err.println("@stereotype expects one field: " + tag.text());
 		return ("");
 	    }
 	    r += guilWrap(t[0]) + " \\" + term;
@@ -374,9 +371,8 @@ class ClassGraph {
 	    if (opt.showAttributes)
 		attributes(c.fields());
 	    if (c.isEnum() && opt.showEnumConstants) {
-		FieldDoc ec[] = c.enumConstants();
-		for (int i = 0; i < ec.length; i++) {
-		    opt.w.print(ec[i].name());
+		for (FieldDoc fd : c.enumConstants()) {
+		    opt.w.print(fd.name());
 		    opt.w.print("\\l");
 		}
 	    }
@@ -415,11 +411,10 @@ class ClassGraph {
      * @param edgetype the dot edge specification
      */
     private void relation(String tagname, Doc from, String name, String edgetype) {
-	Tag tags[] = from.tags(tagname);
-	for (int i = 0; i < tags.length; i++) {
-	    String t[] = StringUtil.tokenize(tags[i].text());    // l-src label l-dst target
+	for (Tag tag : from.tags(tagname)) {
+	    String t[] = StringUtil.tokenize(tag.text());    // l-src label l-dst target
 	    if (t.length != 4) {
-		System.err.println("Error in " + from + "\n" + tagname + " expects four fields (l-src label l-dst target): " + tags[i].text());
+		System.err.println("Error in " + from + "\n" + tagname + " expects four fields (l-src label l-dst target): " + tag.text());
 		return;
 	    }
 	    if(hidden(t[3]))
@@ -441,35 +436,29 @@ class ClassGraph {
     /** Print a class's relations */
     public void printRelations(Options iopt, ClassDoc c) {
 	opt = iopt;
-	if(opt.matchesHideExpression(c.toString()) || hidden(c))
+	if (opt.matchesHideExpression(c.toString()) || hidden(c))
 	    return;
 	String cs = getNodeName(c);
 
 	// Print generalization (through the Java superclass)
 	Type s = c.superclassType();
-	if (s != null && !s.toString().equals("java.lang.Object") && !c.isEnum()) {
-	    if (!hidden(s.asClassDoc())) {
-		opt.w.println("\t//" + c + " extends " + s);
-		opt.w.println("\t" + getNodeName(s.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty];");
-	    }
-	}
+	if (s != null &&
+	    !s.toString().equals("java.lang.Object") &&
+	    !c.isEnum() &&
+	    !hidden(s.asClassDoc()))
+		opt.w.println("\t//" + c + " extends " + s + "\n" +
+		    "\t" + getNodeName(s.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty];");
 
 	// Print generalizations (through @extends tags)
-	Tag tags[] = c.tags("extends");
-	for (int i = 0; i < tags.length; i++) {
-	    if (!hidden(tags[i].text())) {
-		opt.w.println("\t//" + c + " extends " + tags[i].text());
-		opt.w.println("\t" + name(tags[i].text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
-	    }
-	}
+	for (Tag tag : c.tags("extends"))
+	    if (!hidden(tag.text()))
+		opt.w.println("\t//" + c + " extends " + tag.text() + "\n" +
+		    "\t" + name(tag.text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
 	// Print realizations (Java interfaces)
-	Type ifs[] = c.interfaceTypes();
-	for (int i = 0; i < ifs.length; i++) {
-	    if (!hidden(ifs[i].asClassDoc())) {
-		opt.w.print("\t" + getNodeName(ifs[i].asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];");
-		opt.w.println("\t//" + c + " implements " + ifs[i].asClassDoc());
-	    }
-	}
+	for (Type iface : c.interfaceTypes())
+	    if (!hidden(iface.asClassDoc()))
+		opt.w.println("\t" + getNodeName(iface.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];" +
+		    "\t//" + c + " implements " + iface.asClassDoc());
 	// Print other associations
 	relation("assoc", c, cs, "arrowhead=none");
 	relation("navassoc", c, cs, "arrowhead=open");
@@ -557,8 +546,7 @@ class ClassGraph {
      * so if more then one regular expression matches the result is undetermined.
      */
     public String getExternalApiDocRoot(String className) {
-	for (Iterator<Map.Entry<Pattern, String>> iter = apiDocMap.entrySet().iterator(); iter.hasNext();) {
-	    Map.Entry<Pattern, String> mapEntry = iter.next();
+	for (Map.Entry<Pattern, String> mapEntry : apiDocMap.entrySet()) {
 	    Pattern regex = mapEntry.getKey();
 	    Matcher matcher = regex.matcher(className);
 	    if (matcher.matches())

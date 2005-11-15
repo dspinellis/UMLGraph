@@ -44,17 +44,17 @@ public class UmlGraph {
 
 	ClassGraph c = new ClassGraph(root.specifiedPackages(),
 	    opt.apiDocRoot, opt.apiDocMapFileName);
-	for (int i = 0; i < classes.length; i++) {
+	for (ClassDoc cd : classes) {
 	    // Process class-local options (through @opt tags)
 	    Options localOpt = (Options) opt.clone();
-	    localOpt.setOptions(classes[i]);
-	    c.printClass(localOpt, classes[i]);
+	    localOpt.setOptions(cd);
+	    c.printClass(localOpt, cd);
 	}
-	for (int i = 0; i < classes.length; i++) {
+	for (ClassDoc cd : classes) {
 	    // Process class-local options (through @opt tags)
 	    Options localOpt = (Options) opt.clone();
-	    localOpt.setOptions(classes[i]);
-	    c.printRelations(localOpt, classes[i]);
+	    localOpt.setOptions(cd);
+	    c.printRelations(localOpt, cd);
 	}
 
 	c.printExtraClasses(opt, root);
