@@ -1,0 +1,23 @@
+# UML User Guide Figure 7-1.
+#
+# $Id$
+#
+.PS
+
+copy "sequence.pic";
+
+actor(A,"");
+object(T,":OTaker");
+object(F,":OFulfill");
+step();
+
+message(A,T,"submitOrder");
+message(T,F,"placeOrder");
+message(F,A,"acknowledgeOrder");
+
+step();
+complete(A);
+complete(T);
+complete(F);
+
+.PE

@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+The following diagram, based on the one appearing on p. 247 of the
+UML User Guide, illustrates the dynamic creation and destruction of
+objects, an object constraint, and the changing of the focus of control.
+<h2>Diagram</h2>
+<img src="uml-182.gif" alt="UML User Guide: Figure 18-2, p. 247" />
+<h2>Diagram Source Code</h2>
+<fmtcode ext="pic">
+# UML User Guide: Figure 18-2
+
+.PS
+
+copy "sequence.pic";
+
+boxwid = 1.1;
+movewid = 0.5;
+
+# Define the objects
+object(C,"c:Client");
+pobject(T);
+object(P,"p:ODBCProxy");
+
+# Message sequences
+step();
+active(C);
+cmessage(C,T,":Transaction");
+oconstraint("{Transient}");
+step();
+message(C,T,"setActions(a,d,o)");
+active(T);
+message(T,P,"setValues(d,3.4)");
+active(P);
+step();
+inactive(P);
+message(T,P,"setValues(a,\"CO\")");
+active(P);
+rmessage(T,C,"committed");
+inactive(T);
+inactive(P);
+async(); dmessage(C,T);
+step();
+inactive(C);
+step();
+
+complete(C);
+complete(P);
+
+.PE
+</fmtcode>
+</notes>

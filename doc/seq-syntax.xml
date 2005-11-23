@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+Sequence diagrams consist of objects, their lifelines
+(also known as smimming lanes),
+and the exchanged messages.
+Sequence diagrams are defined in UMLGraph using the <em>pic</em>
+syntax.
+<p />
+A sequence diagram file must start with the sequence:
+<fmtcode ext="pic">
+.PS
+
+copy "sequence.pic";
+</fmtcode>
+The <code>.PS</code> marks the beginning of <em>pic</em> commands.
+The sequence
+<code>copy "sequence.pic";</code>
+loads the macros defining the sequence diagram operations.
+The file <code>sequence.pic</code>, part of the UMLGraph distribution,
+must exist in the directory where <em>pic2plot</em> will be executed.
+<p />
+Sequence diagram files must end with the sequence:
+<fmtcode ext="pic">
+.PE
+</fmtcode>
+<p />
+The sequence diagrams are defined by calling function-like <em>pic</em>
+macros.
+Each function call is terminated with a semicolon.
+Space is not significant between macro calls; on the other hand
+adding a space character between a macro's arguments can lead
+to surprises and should be avoided.
+Objects are referenced using variable-like alphanumeric identifiers.
+Strings are enclosed in double quotes.
+<p />
+As an example, the following defines an object <code>O</code>
+that will be identified in the diagram as
+<code>o:Toolkit</code>
+<fmtcode ext="pic">
+object(O,"o:Toolkit");
+</fmtcode>
+<p />
+Comments start with a <code>#</code> character.
+<fmtcode ext="pic">
+# This is a comment
+</fmtcode>
+</notes>

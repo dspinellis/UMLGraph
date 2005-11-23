@@ -1,0 +1,240 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+<dl>
+
+<dt>Version 4.2 Under development</dt><dd>
+<ul>
+<li> Correct the handling of qualified class names following
+the extends keyword (Arnaud Rogues).</li>
+</ul>
+
+<dt>Version 4.1 2005/11/15</dt><dd>
+<ul>
+<li> Major source code reorganization to move closer to the Java coding
+conventions.
+The user-visible change is that the doclet is now invoked as
+<fmtcode ext="sh">
+javadoc -docletpath UmlGraph.jar -doclet gr.spinellis.umlgraph.doclet.UmlGraph
+</fmtcode>
+</li>
+<li> Show package visibility for class members (Olek Poplavskyy). </li>
+<li> Prevent crash when processing erroneous relation specifications (Andrea Aime).</li>
+<li> Most loops were refarctored to use the typesafe Java 1.5 foreach construct. </li>
+<li> Fix Eclipse warning (Andrea Aime).</li>
+<li> Better control of class hiding.
+Now classes are hidden even when  involved in a relationship with a visible class
+(Andrea Aime).</li>
+<li> Source code modifications to allow Java-based testing (Andrea Aime).</li>
+</ul>
+</dd>
+
+<dt>Version 3.3 2005/10/19</dt><dd>
+<ul>
+<li> The sequence diagrams now include support for drawing
+comments and frames. (Contributed by Sebastian Setzer)</li>
+<li> The -noguillemot option will output two angle bracket pairs
+instead of round brackets around stereotypes.</li>
+</ul>
+</dd>
+
+<dt>Version 3.2 2005/07/19</dt><dd>
+<ul>
+<li> Display the template arguments of generic classes inside angle brackets.
+Note that according to the UML specification these arguments should
+be displayed in a dashed box on the top right of the class.
+However, such a display is currently not possible in GraphViz.</li>
+<li> Display the type parameters of fields and method arguments. </li>
+</ul>
+</dd>
+
+<dt>Version 3.1 2005/03/26</dt><dd>
+<ul>
+<li> <b>Note that from this version UMLGraph requires Java 1.5.</b></li>
+<li> First step of the Java 1.5 transition; more will follow.</li>
+<li> The container code in the source was changed to use the Java 1.5 generics.</li>
+<li> Will display enumerations as a stereotyped primitive type.
+Two new options <code>-enumerations</code> and <code>-enumconstants</code>
+control the corresponding operation.</li>
+</ul>
+</dd>
+
+<dt>Version 2.10 2004/11/19</dt><dd>
+<ul>
+<li> This is the last version compatible with Java 1.4.</li>
+<li> Corrected the interaction between the
+<code>-attributes</code> and
+<code>-operations</code> options and classes with no
+fields or methods.
+Many thanks to Jonathan Wright for this contribution. </li>
+<li>New documentation look, designed by George Zouganelis</li>
+</ul>
+</dd>
+
+<dt>Version 2.9 2004/10/07</dt><dd>
+<ul>
+<li> Class diagrams can now include constructors, through the new
+<code>-constructors</code> option.</li>
+</ul>
+</dd>
+
+<dt>Version 2.8 2004/08/09</dt><dd>
+<ul>
+<li> Fixes to support the Maven plugin.</li>
+<li> From this version onward, use the appropriate options to create
+documentation links; no hyperlinks are created by default.</li>
+</ul>
+</dd>
+
+<dt>Version 2.7 2004/08/06</dt><dd>
+<ul>
+<li> The -noguillemot option will output round brackets around stereotypes,
+instead of angle brackets.
+The angle brackets appear to be breaking some programs.
+</li>
+</ul>
+</dd>
+
+<dt>Version 2.6 2004/08/03</dt><dd>
+<ul>
+<li> <b>Note that from this version UMLGraph requires Java 1.4.</b></li>
+<li> Documentation example: multiple views from the same source.
+Many thanks to Vadim Nasardinov for this contribution. </li>
+<li> Documentation now includes a FAQ section. </li>
+<li> Documented the fact that package names must be explicitly
+specified in tags.  Arne Bayer noticed the associated problem.  </li>
+<li> Correct handling of multiple space in tags.
+Noted by Jeffrey M. Thompson which the help of
+<a href="http://findbugs.sourceforge.net/">FindBugs</a>.
+</li>
+<li> Completed customization of URL mapping. Now the mapping is fully
+configurable and can be controlled by the use of two new options:
+"-apiDocRoot" and -"apiDocMapFileName".
+This change allows the creation of "clickable"
+diagrams fully integrated with web-based documentation
+(for example JavaDoc pages).
+The upcoming UMLGraph Maven plugin will take full advantage of this feature.
+Implementation contributed by Nascif Abousalh-Neto
+</li>
+<li> The -hide argument now accepts regular expressions. </li>
+<li> Removed copy-pasted Java code that was introduced in version 1.24.</li>
+<li> Some dot edges were missing a semicolon.  This is now fixed. </li>
+</ul>
+</dd>
+
+<dt>Version 2.5 2004/06/15</dt><dd>
+The object swimlanes in a sequence diagram
+can now show nested object invocations.
+This very useful and non-trivial change was contributed by Jonathan R. Santos.
+</dd>
+
+<dt>Version 2.4 2004/05/29</dt><dd>
+Will now generate local URL hyperlinks for packages specified in
+the command line; and links to the Sun documentation for all
+other packages.
+Many thanks to Nascif Abousalh-Neto for contributing this change.
+</dd>
+
+<dt>Version 2.3 2004/05/27</dt><dd>
+<ul>
+<li>
+Remove hardcoded default node and edge fonts.
+Thanks to Vadim Nasardinov for submitting the corresponding patch.
+</li>
+<li>
+Generate javadoc hyperlink paths in a directory-tree structure;
+do not show arcs on hidden classes.
+Thanks to Alessandro Riva for submitting the corresponding patch.
+</li>
+</ul>
+</dd>
+
+<dt>Version 2.2 2004/05/25</dt><dd>
+SVG class diagrams containing guillemot characters
+for stereotypes
+can now be made valid through a new -outputencoding option.
+Use "-outputencoding UTF-8" when using dot to generate SVG diagrams.
+Many thanks to Nascif Abousalh-Neto for bringing this problem to
+my attention.
+</dd>
+
+<dt>Version 2.1 2004/05/16</dt><dd>
+The guillemot characters used for the create and destroy stereotypes
+are now portable between <em>groff</em> and <em>pic2plot</em>.
+Many thanks to Scott Johnson (Duluth, MN) for recommending the change.
+</dd>
+
+
+<dt>Version 2.0 2004/05/09</dt><dd>
+<ul>
+<li> Support for drawing sequence diagrams.</li>
+<li> New distribution format.</li>
+<li> Browsable and printable documentation.</li>
+<li> Removed the <em>ant</em>-based compilation and distribution
+system; it was proving a hindrance in organizing the project in
+a resonable manner.
+Compiling the documentation and distribution is now handled by
+a (non-distributed) Makefile; the compilation process is described
+in the README file.
+</li>
+</ul>
+</dd>
+
+<dt>Version 1.24 2003/07/30</dt><dd>
+Changes by Art Hampton (thanks):
+<ul>
+<li> Create the appropriate label for relationship tags when referring to
+ classes which were not parsed by javadoc.
+</li>
+<li> New "-hide &lt;matchstring&gt;" option, where &lt;matchstring&gt;
+matches the end of the name of an entity.
+Matched entities are removed from the graph.
+A regular expression matching facility will be added when Java 1.4
+becomes more widespread.
+</li>
+</ul>
+
+</dd>
+<dt>Version 1.23 2003/05/7</dt><dd>
+Added <code>-output</code> command-line option, and an <em>ant</em>-based
+build file.
+Modified the dot output to avoid triggering a graphviz bug that made escape codes visible.
+
+</dd>
+<dt>Version 1.20 2003/04/25</dt><dd>
+Fixes by Nick Efthymiou (thanks):
+will generate SVG hyperlinks to Javadoc documentation,
+better handling of abstract class fonts,
+and correct listing of interfaces.
+</dd>
+<dt>Version 1.19 2002/09/20</dt><dd>
+New options:
+nodefontname,
+nodefontabstractname,
+nodefontsize,
+nodefontcolor,
+edgefontname,
+edgefontsize,
+edgefontcolor,
+edgecolor,
+bgcolor.
+
+</dd>
+<dt>Version 1.18 2002/08/26</dt><dd>
+<ul>
+<li> Can now specify class-local options.
+</li>
+<li> Support for the @tagvalue tag.
+</li>
+<li> Support for the @stereotype tag.
+</li>
+<li> Added nodefillcolor option.
+</li>
+</ul>
+
+</dd>
+<dt>Version 1.15 2002/07/26</dt><dd>First public release.
+</dd>
+</dl>
+</notes>
+

@@ -1,0 +1,43 @@
+# UML User Guide: Figure 18-2
+#
+# $Id$
+#
+
+.PS
+
+copy "sequence.pic";
+
+boxwid = 1.1;
+movewid = 0.5;
+
+# Define the objects
+object(C,"c:Client");
+pobject(T);
+object(P,"p:ODBCProxy");
+
+# Message sequences
+step();
+active(C);
+cmessage(C,T,":Transaction");
+oconstraint("{Transient}");
+step();
+message(C,T,"setActions(a,d,o)");
+active(T);
+message(T,P,"setValues(d,3.4)");
+active(P);
+step();
+inactive(P);
+message(T,P,"setValues(a,\"CO\")");
+active(P);
+rmessage(T,C,"committed");
+inactive(T);
+inactive(P);
+async(); dmessage(C,T);
+step();
+inactive(C);
+step();
+
+complete(C);
+complete(P);
+
+.PE

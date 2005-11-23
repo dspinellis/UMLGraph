@@ -1,0 +1,116 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+The following calls can be used to define a sequence diagram.
+<dl>
+<dt>object(name,label);</dt>
+	<dd>Defines an object with the given name, labeled on the diagram
+	as specified.</dd>
+<dt>placeholder_object(name)</dt>
+	<dd>Defines a place where the named object will later be
+	created.
+	Can also be written as <code>pobject</code>.
+	</dd>
+<dt>actor(name,label);</dt>
+	<dd>Defines an actor with the given name, labeled on the diagram
+	as specified.
+	Actors are typically used instead of objects to indicate operations
+	initiated by human actions. </dd>
+<dt>complete(name);</dt>
+	<dd>Completes the lifeline of a given object (or actor)
+	by drawing its lifeline to the bottom of the diagram.</dd>
+<dt>message(from_object,to_object,label)</dt>
+	<dd>Draws a message between two objects, with the given label.
+	Self messages (where an objects sends a message to itself)
+	are supported.
+	</dd>
+<dt>return_message(from_object,to_object,label)</dt>
+	<dd>Draws a return message between two objects, with the given label.
+	Can also be written as <code>rmessage</code>.
+	</dd>
+<dt>create_message(from_object,to_object,object_label);</dt>
+	<dd>Has from_object create the to_object, labeled
+	with object_label.
+	The message is labeled with the <code>&laquo;create&raquo;</code> stereotype.
+	Can also be written as <code>cmessage</code>.
+	</dd>
+<dt>destroy_message(from_object,to_object);</dt>
+	<dd>Sends a message
+	labeled with the <code>&laquo;destroy&raquo;</code> stereotype
+	from the from_object to the to_object.
+	The object to_object is marked as destroyed, with an X at the
+	end of its lifeline.
+	The object's lifeline need not be otherwise completed.
+	Can also be written as <code>dmessage</code>.
+	</dd>
+<dt>active(object);</dt>
+	<dd>Changes the object's status to active, and
+	changes its lifeline drawing style correspondingly.
+	An active call in an already active object will result
+	in a swimlane showing a nested object activation.</dd>
+<dt>inactive(object);</dt>
+	<dd>Changes the object's status to inactive, and
+	changes its lifeline drawing style correspondingly.
+	An inactive call on a nested object invocation will
+	result in showing a simple active swimlane.</dd>
+<dt>delete(object);</dt>
+	<dd>The object deletes itself, drawing an X at the end
+	of its lifeline.
+	The object's lifeline need not be otherwise completed.
+	</dd>
+<dt>lifeline_constraint(object,label);</dt>
+	<dd>Displays a constraint label (typically given inside curly braces)
+	for the given object.
+	The constraint will appear on the right of the object's lifeline
+	at the time it appears.
+	Can also be used to place an message label on the left of a
+	message arrow, rather than its center.
+	Can also be written as <code>lconstraint</code>.
+	</dd>
+<dt>lconstraint_below(object,label);</dt>
+	<dd>same as <code>lconstraint</code>,
+	but it will be shown below the current line instead of above.
+	</dd>
+<dt>object_constraint(label)</dt>
+	<dd>Displays an object constraint (typically given inside curly braces)
+	for the last object defined.
+	Can also be written as <code>oconstraint</code>.
+	</dd>
+<dt>step();</dt>
+	<dd>Steps the time by a single increment, extending all
+	lifelines.</dd>
+<dt>async();</dt>
+	<dd>All subsequent messages are asynchronous and will
+	be drawn correspondingly.</dd>
+<dt>sync();</dt>
+	<dd>All subsequent messages are synchronous and will
+	be drawn correspondingly.</dd>
+<dt>begin_frame(left_object,name,label_text);</dt>
+	<dd>Begins a frame with the upper left corner at
+	<code>left_object</code> column and the current line.
+	The specified <code>label_text</code> is shown in the upper left corner.
+	</dd>
+<dt>end_frame(right_object,name);</dt>
+	<dd>Ends a frame with the lower right corner at
+	<code>right_object</code> column and the current line.
+	The name must correspond to a <code>begin_frame</code>'s name.
+	</dd>
+<dt>comment(object,[name],[line_movement],[box_size] text);</dt>
+	<dd>Displays a comment about the object.
+	The name can be used with
+	<code>connect_to_comment(object2,name);</code> to get additional
+	connecting lines to the comment.
+	<code>line_movement</code> changes the position of the comment and
+	<code>box_size</code> its size. Note that there's no comma between
+	<code>box_size</code> and <code>text</code>.
+	<code>text</code> is the (multiline) comment-text that will be displayed.
+	<code>name</code>, <code>line_movement</code> and <code>box_size</code> are optional
+	(but the commas must still appear).
+	</dd>
+<dt>connect_to_comment(object2,name);</dt>
+	<dd>See <code>comment</code>.
+	</dd>
+</dl>
+
+</notes>
+

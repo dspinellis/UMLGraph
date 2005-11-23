@@ -1,0 +1,33 @@
+# UML User Guide: Appendix A,p. 436
+#
+# $Id$
+#
+
+.PS
+
+copy "sequence.pic";
+
+# Define the objects
+object(O,"o:Toolkit");
+placeholder_object(P);
+step();
+
+# Message sequences
+active(O);
+step();
+active(O);
+message(O,O,"callbackLoop()");
+inactive(O);
+create_message(O,P,"p:Peer");
+message(O,P,"handleExpose()");
+active(P);
+return_message(P,O,"");
+inactive(P);
+destroy_message(O,P);
+inactive(O);
+
+# Complete the lifelines
+step();
+complete(O);
+
+.PE

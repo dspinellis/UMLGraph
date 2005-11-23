@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+The following diagram, based on the one appearing on p. 436 of the
+UML User Guide, contains the most important elements
+of an interaction.
+It also uses nested
+<em>active</em> <em>inactive</em> calls to show a nested object activation.
+<h2>Diagram</h2>
+<img src="uml-appa.gif" alt="UML User Guide: Appendix A, p. 436" />
+<h2>Diagram Source Code</h2>
+<fmtcode ext="pic">
+# UML User Guide: Appendix A,p. 436
+
+.PS
+
+copy "sequence.pic";
+
+# Define the objects
+pobject(E,"External Messages");
+object(T,"t:thread");
+object(O,":Toolkit");
+pobject(P);
+
+step();
+
+# Message sequences
+message(E,T,"a1: run(3)");
+active(T);
+message(T,O,"run()");
+active(O);
+message(O,O,"callbackLoop()");
+cmessage(O,P,"p:Peer"," ");
+active(O);
+message(O,P,"handleExpose()");
+active(P);
+rmessage(P,O,"");
+inactive(P);
+inactive(O);
+dmessage(O,P);
+inactive(T);
+inactive(O);
+
+step();
+
+complete(T);
+complete(O);
+
+.PE
+</fmtcode>
+</notes>

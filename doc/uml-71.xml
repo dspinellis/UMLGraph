@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+The following diagram, based on Figure 7-1 appearing on p. 102 of the
+UML User Guide, illustrates an interaction diagram with an
+external actor.
+<h2>Diagram</h2>
+<img src="uml-71.gif" alt="UML User Guide: Figure 7-1, p. 102" />
+<h2>Diagram Source Code</h2>
+<fmtcode ext="pic">
+# UML User Guide Figure 7-1.
+.PS
+
+copy "sequence.pic";
+
+actor(A,"");
+object(T,":OTaker");
+object(F,":OFulfill");
+step();
+
+message(A,T,"submitOrder");
+message(T,F,"placeOrder");
+message(F,A,"acknowledgeOrder");
+
+step();
+complete(A);
+complete(T);
+complete(F);
+
+.PE
+</fmtcode>
+</notes>

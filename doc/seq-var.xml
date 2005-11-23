@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+The value of
+<em>pic</em> variables can sometimes be modified by assignment
+to achieve a better-looking result.
+The following two lines change the width of the object boxes to
+1.1" and the spacing between objects
+to 0.5".
+<fmtcode ext="pic">
+boxwid = 1.1;
+movewid = 0.5;
+</fmtcode>
+The following variables can be redefined to change the layout of
+a drawing.
+<p />
+<table border = "1">
+<tr><th>Variable Name</th><th>Default Value</th><th>Operation</th></tr>
+<tr><td>boxht</td><td>0.3</td><td>Object box height</td></tr>
+<tr><td>boxwid</td><td>0.75</td><td>Object box width</td></tr>
+<tr><td>awid</td><td>0.1</td><td>Active lifeline width</td></tr>
+<tr><td>spacing</td><td>0.25</td><td>Spacing between messages</td></tr>
+<tr><td>movewid</td><td>0.75</td><td>Spacing between objects</td></tr>
+<tr><td>dashwid</td><td>0.05</td><td>Interval for dashed lines</td></tr>
+<tr><td>maxpswid</td><td>11</td><td>Maximum width of picture</td></tr>
+<tr><td>maxpsht</td><td>11</td><td>Maximum height of picture</td></tr>
+</table>
+</notes>

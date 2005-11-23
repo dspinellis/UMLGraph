@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+<table>
+<tr><td>
+<fmtcode ext="java">
+/**
+ * Associations with visibility
+ * UML User Guide p. 145
+ *
+ * @opt horizontal
+ * @hidden
+ */
+class UMLOptions {}
+
+/** @assoc * - "*\n\n+user " User */
+class UserGroup {}
+
+/** @navassoc "1\n\n+owner\r" - "*\n\n+key" Password */
+class User{}
+
+class Password{}
+</fmtcode>
+</td><td>
+<img src="assoc.gif" alt="UML diagram showing association types" />
+</td></tr></table>
+</notes>

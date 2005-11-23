@@ -1,0 +1,19 @@
+#
+# $Id$
+#
+.PS
+
+copy "sequence.pic";
+
+# Define the objects
+object(S,"s:Switch");
+object(P,"p:Pump");
+
+# Message sequences
+message(S,P,"run()");
+message(S,P,"stop()");
+
+complete(S);
+complete(P);
+
+.PE

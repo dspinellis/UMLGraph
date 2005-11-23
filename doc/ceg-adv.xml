@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+<table>
+<tr><td>
+<fmtcode ext="java">
+/*
+ * Advanced relationships
+ * UML User Guide p. 137
+ */
+
+/**
+ * @opt attributes
+ * @opt operations
+ * @hidden
+ */
+class UMLOptions {}
+
+class Controller {}
+class EmbeddedAgent {}
+class PowerManager {}
+
+/**
+ * @extends Controller
+ * @extends EmbeddedAgent
+ * @navassoc - - - PowerManager
+ */
+class  SetTopController implements URLStreamHandler {
+	int authorizationLevel;
+	void startUp() {}
+	void shutDown() {}
+	void connect() {}
+}
+
+/** @depend - <friend> - SetTopController */
+class ChannelIterator {}
+
+interface URLStreamHandler {
+	void OpenConnection();
+	void parseURL();
+	void setURL();
+	void toExternalForm();
+}
+</fmtcode>
+</td><td>
+<img src="advrel.gif" alt="UML diagram showing dependency and navigation relationships" />
+</td></tr></table>
+</notes>

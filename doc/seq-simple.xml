@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+A sequence diagram is defined in three main phases:
+<ol>
+<li> Object definition </li>
+<li> Message exchange </li>
+<li> Object lifeline completion</li>
+</ol>
+The following is an example of a very simple UMLGraph
+sequence diagram
+(from now on we will ommit the <code>.PS/.PE</code> and
+<code>copy "sequence.pic";</code>
+elements.)
+<fmtcode ext="pic">
+.PS
+copy "sequence.pic";
+
+# Object definition
+object(S,"s:Switch");
+object(P,"p:Pump");
+
+# Message exchange
+message(S,P,"run()");
+message(S,P,"stop()");
+
+# Object lifeline completion
+complete(S);
+complete(P);
+
+.PE
+</fmtcode>
+The above code, defines two objects, S and P,
+labeled as "s:Switch" and "p:Pump".
+Objects are placed in the diagram from left to right, in the
+order they are defined.
+All defined objects are initially inactive.
+<p />
+The code then sends a messages from S to P labeled "run()",
+and another one labeled "stop()".
+Each message automatically advances the sequence diagram timeline by a
+single step.
+<p />
+Finally, the code completes the lifelines of the two objects.
+<p />
+The resultant diagram is<br />
+<img src="seq-simple.gif" alt="Simple sequence diagram" />
+<p />
+</notes>

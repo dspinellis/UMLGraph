@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+Objects do not always appear at the top of a UML sequence diagram;
+they are often constructed by other objects.
+In this case, a placeholder object is defined at the beginning
+of the diagram, to leave the appropriate space of the object.
+Later a create message will actually create an object with the
+given label.
+Any object can also receive a destroy message, that will stop
+its life.
+The lifeline of destroyed messages is not typically completed.
+<p />
+The following definition extends our previous diagram with a
+dynamically created flow object.
+<fmtcode ext="pic">
+# Define the objects
+object(S,"s:Switch");
+object(P,"p:Pump");
+placeholder_object(F);
+step();
+active(S);
+active(P);
+
+# Message sequences
+message(S,P,"run()");
+create_message(P,F,"f:Flow");
+active(F);
+message(S,P,"stop()");
+destroy_message(P,F);
+
+# Object completion
+step();
+complete(S);
+complete(P);
+</fmtcode>
+<p />
+The resultant diagram is<br />
+<img src="seq-cd.gif" alt="Sequence diagram with object construction and destruiction" />
+<p />
+</notes>

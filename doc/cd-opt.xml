@@ -1,0 +1,124 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+A number of command-line options contol the operation of UMLGraph
+class diagram generator:
+<dl>
+<dt>-output</dt><dd>Specify the output file name (default <code>graph.dot</code>).
+</dd>
+<dt>-outputencoding</dt><dd>Specify the output encoding character set (default <code>ISO-8859-1</code>).
+When using <em>dot</em> to generate SVG diagrams you should specify
+<code>UTF-8</code> as the output encoding, to have guillemots correctly
+appearing in the resulting SVG.
+</dd>
+<dt>-qualify</dt><dd>Produce fully-qualified class names.
+</dd>
+<dt>-horizontal</dt><dd>Layout the graph in the horizontal direction.
+</dd>
+<dt>-attributes</dt><dd>Show class attributes (Java fields)
+</dd>
+<dt>-operations</dt><dd>Show class operations (Java methods)
+</dd>
+<dt>-constructors</dt><dd>Show a class's constructors
+</dd>
+<dt>-visibility</dt><dd>Adorn class elements according to their
+visibility (private, public, protected, package)
+</dd>
+<dt>-types</dt><dd>Add type information to attributes and operations
+</dd>
+<dt>-enumerations</dt><dd>Show enumarations as separate stereotyped primitive
+types.
+</dd>
+<dt>-enumconstants</dt><dd>When showing enumerations, also show the values they can take.
+</dd>
+<dt>-all</dt><dd>Same as
+<code>-attributes</code>
+<code>-operations</code>
+<code>-visibility</code>
+<code>-types</code>
+<code>-enumerations</code>
+<code>-enumconstants</code>
+</dd>
+<dt>-nodefillcolor</dt><dd>Specify the color to use to fill the shapes.
+</dd>
+<dt>-nodefontname</dt><dd>Specify the font name to use inside nodes.
+</dd>
+<dt>-nodefontabstractname</dt><dd>Specify the font name to use
+inside abstract class nodes.
+</dd>
+<dt>-nodefontsize</dt><dd>Specify the font size to use inside nodes.
+</dd>
+<dt>-nodefontcolor</dt><dd>Specify the font color to use inside nodes.
+</dd>
+<dt>-edgefontname</dt><dd>Specify the font name to use for edge labels.
+</dd>
+<dt>-edgefontsize</dt><dd>Specify the font size to use for edge labels.
+</dd>
+<dt>-edgefontcolor</dt><dd>Specify the font color to use for edge labels.
+</dd>
+<dt>-edgecolor</dt><dd>Specify the color for drawing edges.
+</dd>
+<dt>-bgcolor</dt><dd>Specify the graph's background color.
+</dd>
+<dt>-hide</dt><dd>Specify entities to hide from the graph.
+Matching is done against the end of each entity's name.
+For instance, "<code>-hide Widget</code>" would hide "<code>com.foo.widgets.Widget</code>" and
+"<code>com.foo.widgets.BigWidget</code>".
+</dd>
+<dt>-apidocroot</dt><dd>Specify the URL that should be used as the "root" for local classes.
+This URL will be used as a prefix, to which the page name for the local class or
+package will be appended (following the JavaDoc convention).
+For example, if the value <code>http://www.acme.org/apidocs</code> is
+provided, the class <code>org.acme.util.MyClass<code> will be mapped to the URL
+<code>http://www.acme.org/apidocs/org/acme/util/MyClass.html</code>.
+This URL will then be added to .dot diagram and can be surfaced in the
+final class diagram by setting the output to SVG, or by creating an HTML page
+that associates the diagram static image (a .gif or .png) with a client-side
+image map.
+</dd>
+<dt>-apidocmap</dt><dd>Specify the file name of the URL mapping table. 
+The is a standard Java property file, where the property name is a regular
+expression (as defined in the java.util.regex package) and the property value is
+an URL "root" as described above.
+This table is used to resolved external class names (class names that do not
+belong to the current package being processed by UMLGraph). If no file is provided,
+external classes will just be mapped to the on-line Java API documentation.
+</dd>
+<dt>-noguillemot</dt><dd>Specify that guillemot characters should not
+be used to denote special terms like "interface" and stereotype names.
+This is used on some platforms to circumvent problems associated
+with displaying non-ASCII characters.
+</dd>
+</dl>
+<p />
+All colors can be either a symbolic name (e.g. blue),
+a tripple specifying hue-saturation-brightness as values 0-1
+(e.g. ".13 0.9 1"),
+or a tripple specifying red-green-blue values as hexadecimal
+digits prefixed by a # (e.g. "#ff8020").
+The symbolic color names are derived from the X Windows System;
+you can find a complete list in the Graphviz documentation.
+<p />
+Font names are passed directly to the dot graph generation back-end.
+In general the Postcript standard names Times, Helvetica, Courier, and
+Symbol are safe to use.
+<p />
+Since the options are really a part of the generated graph you
+want in many cases to include them in the diagram specification.
+You can do that by adding <em>javadoc</em> <code>@opt</code> tags in front
+of a class named <code>UMLOptions</code>, as in the following example:
+<fmtcode ext="java">
+/**
+ * @opt horizontal
+ * @opt all
+ * @hidden
+ */
+class UMLOptions {}
+</fmtcode>
+
+You can also change the UMLGraph operation on a per-class basis by
+using <code>@opt</code> attributes on individual classes.
+In this case the <code>@opt</code> specification temporarily overrides
+the particular global setting for the class being processed.
+
+</notes>

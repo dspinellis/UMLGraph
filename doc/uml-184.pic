@@ -1,0 +1,45 @@
+# UML User Guide: Figure 18-4
+#
+# $Id$
+#
+
+.PS
+
+copy "sequence.pic";
+
+movewid = 0.5;
+
+# Define the objects
+object(S,"s:Caller");
+object(W,":Switch");
+pobject(C);
+object(R,"r:Caller");
+
+# Message sequences
+step();
+active(W);
+async(); message(S,W,"liftReceiver"); sync();
+active(S);
+message(W,S,"setDialTone()");
+async(); message(S,W,"*dialDigit(d)"); sync();
+lconstraint(W,"{dialing.executionTime < 30s}");
+active(W);
+message(W,W,"routeCalls(s,n)");
+inactive(W);
+cmessage(W,C,"c:Convers");
+active(C);
+message(C,R,"ring()");
+active(R);
+async(); message(R,C,"liftReceiver"); sync();
+message(C,W,"connect(r,s)");
+message(W,S,"connect(r)");
+# Specify label as a "constraint" to allign on W
+message(W,R,""); lconstraint(W,"connect(s)");
+step();
+
+complete(S);
+complete(W);
+complete(C);
+complete(R);
+
+.PE

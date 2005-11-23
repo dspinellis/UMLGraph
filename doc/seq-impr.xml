@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+Let us try to improve the simple sequence diagram.
+<fmtcode ext="pic">
+# Object definition
+object(S,"s:Switch");
+object(P,"p:Pump");
+step();
+active(S);
+active(P);
+
+# Message exchange
+message(S,P,"run()");
+message(S,P,"stop()");
+
+# Object lifeline completion
+step();
+complete(S);
+complete(P);
+</fmtcode>
+Here, we have manually advanced the timeline of our diagrams
+with a <code>step();</code> call after we defined the objects,
+to provide them with a bit of breathing space.
+We also added a similar step call at the end of the diagram.
+Finally, we made both objects active, after their definition.
+Calling active on a given object will change the drawing of its
+lifeline, from the dashed format indicating an inactive object,
+to a thick swimming-lane, active object, format.
+<p />
+The resultant diagram is<br />
+<img src="seq-impr.gif" alt="Improved sequence diagram" />
+<p />
+</notes>

@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<index>
+<ch><ti>Introduction</ti><fi>intro</fi></ch>
+<ch><ti>Class Diagrams</ti><fi>cd-intro</fi></ch>
+<ch><ti>Class Diagram Operations</ti><fi>cd-oper</fi></ch>
+<ch><ti>Class Modelling</ti><fi>cd-model</fi></ch>
+<ch><ti>Class Diagram Options</ti><fi>cd-opt</fi></ch>
+<ch><ti>Class Diagram Example: Generalisation Relationships</ti><fi>ceg-gen</fi></ch>
+<ch><ti>Class Diagram Example: Advanced Relationships</ti><fi>ceg-adv</fi></ch>
+<ch><ti>Class Diagram Example: Schema</ti><fi>ceg-schema</fi></ch>
+<ch><ti>Class Diagram Example: Element Visibility</ti><fi>ceg-ev</fi></ch>
+<ch><ti>Class Diagram Example: Association Types</ti><fi>ceg-at</fi></ch>
+<ch><ti>Class Diagram Example: Real Example (Catalina Classes)</ti><fi>ceg-cat</fi></ch>
+<ch><ti>Class Diagram Example: Class Stereotypes and Tagged Values</ti><fi>ceg-ster</fi></ch>
+<ch><ti>Class Diagram Example: Colors, Global and Local Options</ti><fi>ceg-color</fi></ch>
+<ch><ti>Class Diagram Example: Multiple Views</ti><fi>ceg-mv</fi></ch>
+<ch><ti>Sequence Diagrams</ti><fi>seq-intro</fi></ch>
+<ch><ti>Syntax of Sequence Diagram Definitions</ti><fi>seq-syntax</fi></ch>
+<ch><ti>Defining a Simple Sequence Diagram</ti><fi>seq-simple</fi></ch>
+<ch><ti>An Improved Sequence Diagram</ti><fi>seq-impr</fi></ch>
+<ch><ti>Creating and Destroying Objects</ti><fi>seq-cd</fi></ch>
+<ch><ti>Sequence Diagram Operations</ti><fi>seq-ops</fi></ch>
+<ch><ti>Sequence Diagram Variables</ti><fi>seq-var</fi></ch>
+<ch><ti>Sequence Diagram Example: Nested Activation and Complex Interactions</ti><fi>uml-appa</fi></ch>
+<ch><ti>Sequence Diagram Example: Concurrent Processes and Activations</ti><fi>dist-52</fi></ch>
+<ch><ti>Sequence Diagram Example: Create and Destroy</ti><fi>uml-182</fi></ch>
+<ch><ti>Sequence Diagram Example: Lifeline Constraints</ti><fi>uml-184</fi></ch>
+<ch><ti>Sequence Diagram Example: External Actor</ti><fi>uml-71</fi></ch>
+<ch><ti>Sequence Diagram Example: A DNS Query</ti><fi>dns</fi></ch>
+<ch><ti>Sequence Diagram Example: A Comments and Frames</ti><fi>gui-db</fi></ch>
+<ch><ti>Frequently Asked Questions</ti><fi>faq</fi></ch>
+<ch><ti>Bibliography</ti><fi>bib</fi></ch>
+<ch><ti>Version History</ti><fi>ver</fi></ch>
+<ch><ti>Acknowledgements</ti><fi>ack</fi></ch>
+</index>

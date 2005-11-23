@@ -1,0 +1,40 @@
+# UML User Guide: Appendix A,p. 436
+#
+# $Id$
+#
+
+.PS
+
+copy "sequence.pic";
+
+# Define the objects
+pobject(E,"External Messages");
+object(T,"t:thread");
+object(O,":Toolkit");
+pobject(P);
+
+step();
+
+# Message sequences
+message(E,T,"a1: run(3)");
+active(T);
+message(T,O,"run()");
+active(O);
+message(O,O,"callbackLoop()");
+cmessage(O,P,"p:Peer"," ");
+active(O);
+message(O,P,"handleExpose()");
+active(P);
+rmessage(P,O,"");
+inactive(P);
+inactive(O);
+dmessage(O,P);
+inactive(T);
+inactive(O);
+
+step();
+
+complete(T);
+complete(O);
+
+.PE

@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+The UMLGraph class diagrams allows you to model
+<ul>
+<li>classes (specified as Java classes)
+</li>
+<li>attributes (specified as Java class fields)
+</li>
+<li>operations (specified as Java class methods)
+</li>
+<li>stereotypes (using the <code>@stereotype</code> <em>name</em> tag)
+</li>
+<li>tagged values (using the <code>@tagvalue</code> <em>name</em> <em>value</em> tag)
+</li>
+<li>implementation relationships (specified using the Java <code>implements</code> declaration)
+</li>
+<li>generalization relationships (specified using the Java <code>extends</code> declaration or (for multiple inheritance) the <em>javadoc</em> <code>@extends</code> tag)
+</li>
+<li>association relationships (specified using the <em>javadoc</em> <code>@assoc</code> tag)
+</li>
+<li>navigatable (directed) association relationships (specified using the <em>javadoc</em> <code>@navassoc</code> tag)
+</li>
+<li>aggregation relationships (specified using the <em>javadoc</em> <code>@has</code> tag)
+</li>
+<li>composition relationships (specified using the <em>javadoc</em> <code>@composed</code> tag)
+</li>
+<li>dependency relationships (specified using the <em>javadoc</em> <code>@depend</code> tag)
+</li>
+</ul>
+All relationship tags appart from <code>@extends</code> take four arguments:
+<ol>
+<li> The source adornments (role, multiplicity, and visibility)
+</li>
+<li> The relationship name
+</li>
+<li> The target adornments (role, multiplicity, and visibility)
+</li>
+<li> The target class
+</li>
+</ol>
+Arguments can be space-separated, or enclosed in quotes if they
+need to contain the space character.
+The - character is used as a placeholder to denote empty arguments.
+You can use the \n sequence to separate the first three adornments
+in separate centered lines;
+the \l and \r sequences can also be used to generate left and right
+aligned lines.
+You can use the &lt; and &gt; characters in the relationship name
+to enclose stereotype names.
+These will be automatically enclosed in guillemots.
+Note that a relationship's target class is not implicitly
+defined; it should also be specified using the Java class syntax.
+The following is an example of a relationship
+specification and the resulting UML diagram:
+<table>
+<tr><td>
+<pre>
+class Tyre {}
+class Engine {}
+class Body {}
+
+/**
+ * @composed 1 - 4 Tyre
+ * @composed 1 - 1 Engine
+ * @composed 1 - 1 Body
+ */
+class Car {}
+</pre>
+</td><td>
+<img src="car.gif" alt="UML relationship diagram" />
+</td></tr></table>
+
+</notes>

@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+<table>
+<tr><td>
+<fmtcode ext="java">
+/*
+ * Generalisation
+ * UML User Guide p. 141
+ */
+
+/* Basic categorisations */
+class Asset {}
+class InterestBearingItem {}
+class InsurableItem {}
+
+/* Asset types */
+/**
+ * @extends InsurableItem
+ * @extends InterestBearingItem
+ */
+class BankAccount extends Asset {}
+/** @extends InsurableItem */
+class RealEstate extends Asset {}
+class Security extends Asset {}
+
+/* Securities */
+class Stock extends Security {}
+class Bond extends Security {}
+
+/* Bank accounts */
+class CheckingAccount extends BankAccount {}
+class SavingsAccount extends BankAccount {}
+</fmtcode>
+</td><td>
+<img src="general.gif" alt="UML diagram showing generalization relationships" />
+</td></tr></table>
+</notes>

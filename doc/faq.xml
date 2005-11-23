@@ -1,0 +1,161 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+
+<!--
+To update the table of contents execute the following vim command from a register
+/^<h2>Contentsjjma/ul>kmb/^$"qyy:g/^<a name/s,<a name="\([^>]*\)><h2>\(.*\)</h2></a>,<li> <a href="\#\1>\2</a>,|y Q|u'ad'b"qP
+-->
+
+<h2>Contents</h2>
+<ul>
+
+<li> <a href="#utfsvg">Why are the SVG diagrams dot generates malformed?</a>
+<li> <a href="#antialias">How can I improve the quality of the bitmap images I generate?</a>
+<li> <a href="#layout">How can I improve the layout of my class diagrams?</a>
+<li> <a href="#mclass">A class appears multiple times in a class diagram.  Why?</a>
+<li> <a href="#static">Shouldn't static fields appear underlined?</a>
+<li> <a href="#winpic">Where can I find a <em>pic2plot</em> executable for Windows?</a>
+<li> <a href="#cr">Under Windows the output of <em>pic2plot</em> appears empty.  Why?</a>
+<li> <a href="#maven">I have a problem with Maven's Dotuml plugin.  Can you help me?</a>
+<li> <a href="#autopic">How can I make the UMLGraph doclet generate sequence diagrams?</a>
+<li> <a href="#packname">Why the vanity package name?  Why not name the package org.umlgraph?</a>
+</ul>
+
+<a name="utfsvg"><h2>Why are the SVG diagrams dot generates malformed?</h2></a>
+UMLGraph uses guillemot characters for representing the angle brackets around
+stereotypes, as in «interface».
+By default these are encoded as ISO-8859-1 characters, which are illegal
+in the UTF-8 output that dot generates for SVG.
+When using dot to generate SVG output, you should also specify
+<code>-outputencoding utf8</code> to UMLGraph.
+
+<a name="antialias"><h2>How can I improve the quality of the bitmap images I generate?</h2></a>
+
+Both
+<em>dot</em> and
+<em>pic2plot</em> can directly produce bitmap images in
+formats like GIF, PNG and PNM.
+However, if you want to produce presentation-quality output
+the a vector output format like Postscript or SVG is preferable.
+If you do require a bitmap format, it might be worth to create
+it at a higher resolution from a Postscript image, and then downsample it.
+This procedure (used for the diagrams appearing on the UMLGraph web site)
+will create an antialiased image of a higher quality than what the default
+bitmap output options produce.
+The following pipeline is an example of how you can achieve this
+effect:
+<fmtcode ext="sh">
+dot -Tps FILENAME.dot |
+gs -q -r360 -dNOPAUSE -sDEVICE=pnm -sOutputFile=-  - -c quit |
+pnmcrop |
+pnmscale 0.25 |
+ppmtogif >FILENAME.gif
+</fmtcode>
+(David Griffiths reports that he had to add to the <em>gs</em> command
+<code>-sPAPERSIZE=a4</code> or
+<code>-dDEVICEHEIGHTPOINTS=1000</code> to avoid getting
+his resutls chopped-off.)
+
+<p />
+One other possibility for converting the sequence diagram into Postscript
+is to pass it through <em>pic</em> and <em>groff</em>.
+Tools like <em>ps2epsi</em> and <em>ps2eps</em> can then be used to
+convert the Postscript into encapsulated Postscript.
+Of course, <em>groff</em> users will just use the <em>pic</em>
+program as part of their processing pipeline.
+
+<a name="layout"><h2>How can I improve the layout of my class diagrams?</h2></a>
+Try manipulating the <em>dot</em> parameters ratio, minlen, ranksep, and
+nodesep.
+For example, Arnaud Rogues recommends running <em>dot</em> with
+command-line arguments as follows.
+<fmtcode ext="sh">
+dot -Gratio=0.7 -Eminlen=2
+</fmtcode>
+
+<a name="mclass"><h2>A class appears multiple times in a class diagram.  Why?</h2></a>
+Most probably your class diagram uses packages, and you are not
+qualifying the classes with the respective package names in the
+tags you use.
+The tags are not smart enough to do the package resolution,
+so you will have to prepend the package name to the class,
+or avoid using packages.
+<p />
+<h3>Problematic Specification</h3>
+<fmtcode ext="java">
+package test;
+abstract class AbstractNode {}
+/** @composed 1 has * AbstractNode */
+class InnerNode extends AbstractNode {}
+class Leaf extends AbstractNode {}
+</fmtcode>
+<h3>First Approach: Class Name Qualified with the Package</h3>
+<fmtcode ext="java">
+package test;
+abstract class AbstractNode {}
+/** @composed 1 has * test.AbstractNode */
+class InnerNode extends AbstractNode {}
+class Leaf extends AbstractNode {}
+</fmtcode>
+<h3>Second Approach: No Package Specification</h3>
+<fmtcode ext="java">
+abstract class AbstractNode {}
+/** @composed 1 has * test.AbstractNode */
+class InnerNode extends AbstractNode {}
+class Leaf extends AbstractNode {}
+</fmtcode>
+
+<a name="static"><h2>Shouldn't static fields appear underlined?</h2></a>
+Yes they should.
+Unfortunately, <em>dot</em> does not (yet) support a way to underline
+single labels, and thus <em>UMLGraph</em> can not show the static fields
+underlined.
+
+
+<a name="winpic"><h2>Where can I find a <em>pic2plot</em> executable for Windows?</h2></a>
+A port of <em>pic2plot</em> for Windows can be found in
+GNU PlotUtils, which is part of the
+<a href="http://gnuwin32.sourceforge.net/packages.html">GnuWin32</a>
+project.
+
+<a name="cr"><h2>Under Windows the output of <em>pic2plot</em> appears empty.  Why?</h2></a>
+On Windows platforms note that the current version of
+<em>pic2plot</em> appears to be very picky about carriage return (CR - \r)
+characters (by default, CR is part of the platform's end of line sequence)
+appearing in its input file.
+Therefore, you will probably want to instruct your editor to create
+Unix-style files, or filter the files to remove the carriage return
+characters.
+The following Perl invocation is such a filter:
+<fmtcode ext="sh">
+perl -p -e "BEGIN {binmode(STDOUT);} s/\r//"
+</fmtcode>
+You can remove the CR characters in-place by running:
+<fmtcode ext="sh">
+perl -pi.bak -e "BEGIN {binmode(STDOUT);} s/\r//" FILENAME.pic
+</fmtcode>
+In addition, <em>pic2plot</em> appears to require that the last input file
+be properly terminated (with a newline).
+Apparently, some Windows editors may leave the last line unterminated,
+so if your editor is in this category it may be safer to add a blank line
+in the end.
+
+<a name="maven"><h2>I have a problem with Maven's Dotuml plugin.  Can you help me?</h2></a>
+Sorry, I did not develop this plugin, and therefore can not offer help.
+Have a look at the project's documentation and mailing lists available through
+<a href="http://maven-plugins.sourceforge.net/maven-dotuml-plugin/">plugin web page</a>.
+
+<a name="autopic"><h2>How can I make the UMLGraph doclet generate sequence diagrams?</h2></a>
+You can't.
+You have to write the <em>pic</em> code for the sequence diagrams by hand.
+
+<a name="packname"><h2>Why the vanity package name?  Why not name the package org.umlgraph?</h2></a>
+The package names are supposed to be unique.
+If everybody names their project under the org.* namespace there's
+no mechanism for ensuring that the name will be unique,
+unless the developer also registers the corresponding domain name.
+Registering a different domain name for each project is not practical,
+therefore I name the packages I develop using the domain name I own.
+
+</notes>

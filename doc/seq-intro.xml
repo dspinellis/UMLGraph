@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+One specifies a sequence diagram using <em>pic</em> macros to define
+objects and method invocations.
+The <a href="http://www.gnu.org/software/plotutils/plotutils.html">GNU plotutils</a>
+<em>pic2plot</em> program can then process the sequence diagram to create a
+PNG, PNM, (pseudo)GIF, SVG, AI, Postscript, CGM, FIG, PCL, HPGL, Regis, or TEK
+drawing.
+<p />
+The following is an example of a specification and the resulting UML sequence
+diagram:
+<table>
+<tr><td>
+<fmtcode ext="pic">
+.PS
+copy "sequence.pic";
+
+# Define the objects
+object(O,"o:Toolkit");
+placeholder_object(P);
+step();
+
+# Message sequences
+active(O);
+step();
+active(O);
+message(O,O,"callbackLoop()");
+inactive(O);
+create_message(O,P,"p:Peer");
+message(O,P,"handleExpose()");
+active(P);
+return_message(P,O,"");
+inactive(P);
+destroy_message(O,P);
+inactive(O);
+
+# Complete the lifelines
+step();
+complete(O);
+.PE
+</fmtcode>
+</td><td>
+<img src="seq-eg.gif" alt="Simple UML sequence diagram" />
+</td></tr></table>
+The diagram is drawn from its source code specification using a command
+like:
+<fmtcode ext="sh">
+pictplot -Tgif FILENAME.pic >FILENAME.gif
+</fmtcode>
+</notes>

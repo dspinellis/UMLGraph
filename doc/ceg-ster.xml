@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+<table>
+<tr><td>
+<fmtcode ext="java">
+/*
+ * Class stereotypes and tagged values
+ * UML User Guide p. 439
+ */
+
+/**
+ * @opt attributes
+ * @opt operations
+ * @opt types
+ * @hidden
+ */
+class UMLOptions {}
+
+/** @hidden */
+class Action {}
+
+/**
+ * @stereotype container
+ * @tagvalue version 3.2
+ */
+class ActionQueue {
+	void add(Action a) {};
+	/** @tagvalue version 1.0 */
+	void add(Action a, int n) {};
+	void remove(int n) {};
+	/** @stereotype query */
+	int length() {};
+	/** @stereotype "helper functions" */
+	void reorder() {};
+}
+</fmtcode>
+</td><td>
+<img src="classadd.gif" alt="UML diagram of class stereotypes and tagged values" />
+</td></tr></table>
+</notes>
