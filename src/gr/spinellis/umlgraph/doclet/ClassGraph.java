@@ -96,9 +96,19 @@ class ClassGraph {
     private String qualifiedName(String r) {
 	if (!opt.showQualified) {
 	    // Create readable string by stripping leading path
-	    int dotpos = r.lastIndexOf('.');
-	    if (dotpos != -1)
-		return r.substring(dotpos + 1, r.length());
+	    for (;;)  {
+		int dotpos = r.lastIndexOf('.');
+		if (dotpos == -1) break; // Work done!
+		/*
+		 * Change all occurences of
+		 * "p1.p2.myClass<S extends dummy.Otherclass>" into
+		 * "myClass<S extends Otherclass>"
+		 */
+		int start = dotpos;
+		while (start > 0 && Character.isJavaIdentifierPart(r.charAt(start - 1)))
+		    start--;
+		r = r.substring(0, start) + r.substring(dotpos + 1);
+	    }
 	}
 	return r;
     }
