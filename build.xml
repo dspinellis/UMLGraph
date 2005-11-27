@@ -9,12 +9,12 @@
 <property name="build" location="build"/>
 <property name="lib" location="lib"/>
 <property name="testsrc" location="test/src"/>
-<!-- import environment variables 
+<!-- import environment variables
 <property environment="env"/>
 -->
 
 
-<target name="init">	
+<target name="init">
 	<!-- Create the time stamp -->
 	<tstamp/>
 	<!-- Create the build directory structure used by compile -->
@@ -30,7 +30,7 @@ package gr.spinellis.umlgraph.doclet;
 class Version { public static String VERSION = "${VERSION}";}
 	</echo>
 </target>
-	
+
 <target name="compile" depends="init"
 	description="compile the source, build library " >
 	<javac srcdir="${src}" destdir="${build}" excludes="gr/spinellis/umlgraph/doclet/RCS/*,gr/spinellis/umlgraph/test/RCS/*"/>
