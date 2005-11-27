@@ -23,7 +23,6 @@ package gr.spinellis.umlgraph.doclet;
 import com.sun.javadoc.*;
 
 import java.io.*;
-import java.util.*;
 
 /**
  * Doclet API implementation
