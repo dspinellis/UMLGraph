@@ -35,9 +35,7 @@ all: $(JARFILE)
 tarball: $(TARBALL)
 
 src/gr/spinellis/umlgraph/doclet/Version.java: Makefile
-	echo "/* Automatically generated file */" >$@
-	echo "package gr.spinellis.umlgraph.doclet;" >>$@
-	echo "class Version { public static String VERSION = \"$(VERSION)\";}" >>$@
+	ant -DVERSION="$(VERSION)" version
 
 $(TARBALL): $(JARFILE) docs Makefile
 	-cmd /c rd /s/q $(DISTDIR)
