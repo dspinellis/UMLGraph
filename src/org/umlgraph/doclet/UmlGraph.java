@@ -26,6 +26,10 @@ import java.io.*;
 
 /**
  * Doclet API implementation
+ * @navassoc - - - gr.spinellis.umlgraph.doclet.Options
+ * @depend - - - gr.spinellis.umlgraph.doclet.ClassGraph
+ * @depend - - - gr.spinellis.umlgraph.doclet.Version
+ *
  * @version $Revision$
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */

@@ -30,6 +30,10 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * Class graph generation engine
+ * @navassoc - - 1 gr.spinellis.umlgraph.doclet.Options
+ * @depend - - - gr.spinellis.umlgraph.doclet.StringUtil
+ * @composed - - * gr.spinellis.umlgraph.doclet.ClassInfo
+ *
  * @version $Revision$
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
