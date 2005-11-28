@@ -51,6 +51,7 @@ class Version { public static String VERSION = "${VERSION}";}
 </target>
 
 <target name="javadocs" depends="compile">
+	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" destdir="${javadoc}" package="true"/>
 	<property name="dotFile" location="${javadoc}/gr/spinellis/umlgraph/doclet/umlgraph.dot"/>
 	<property name="gifFile" location="${javadoc}/gr/spinellis/umlgraph/doclet/umlgraph.gif"/>
 	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" package="true">
@@ -63,8 +64,7 @@ class Version { public static String VERSION = "${VERSION}";}
 		<arg value="-Tgif"/>
 		<arg value="-o${gifFile}"/>
 		<arg value="${dotFile}"/>
-	</exec>
-	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" destdir="${javadoc}" package="true"/>
+	</exec>		
 </target>
 
 </project>
