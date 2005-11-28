@@ -7,6 +7,7 @@
 <ul>
 <li> Correct the handling of qualified class names following
 the extends keyword (Arnaud Rogues).</li>
+<li> Javadoc documentation (Andrea Aime).</li>
 </ul>
 
 <dt>Version 4.1 2005/11/15</dt><dd>

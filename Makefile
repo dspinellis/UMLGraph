@@ -2,7 +2,7 @@
 # $Id$
 #
 
-VERSION=4.1
+VERSION=4.2
 TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
 TARBALL=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
@@ -47,13 +47,14 @@ $(TARBALL): $(JARFILE) docs Makefile
 	cp $(JARFILE) $(DISTDIR)/lib
 	cp $(WEBDIR)/doc/* $(DISTDIR)/doc
 	cp build.xml $(DISTDIR)
-	tar cf - src testdata/{java,dot-ref} --exclude='*/RCS' | tar -C $(DISTDIR) -xvf -
+	tar cf - src testdata/{java,dot-ref} javadoc --exclude='*/RCS' | tar -C $(DISTDIR) -xvf -
 	$(LF) $(PICFILE) >$(DISTDIR)/src/$(PICFILE)
 	tar cvf - $(DISTDIR) | gzip -c >$(TARBALL)
 	zip -r $(ZIPBALL) $(DISTDIR)
 
 docs:
 	(cd doc && make)
+	ant javadocs
 
 $(JARFILE): $(DOCLETSRC)
 	ant compile
@@ -64,6 +65,7 @@ test:
 web: $(TARBALL) CHECKSUM.MD5
 	cp $(TARBALL) $(ZIPBALL) CHECKSUM.MD5 $(WEBDIR)
 	cp $(JARFILE) $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
+	tar cf - javadoc | tar -C $(WEBDIR) -xvf -
 	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
 
 CHECKSUM.MD5: $(TARBALL) $(JARFILE)
