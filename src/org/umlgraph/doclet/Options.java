@@ -112,6 +112,38 @@ class Options implements Cloneable {
 	showVisibility = true;
 	showType = true;
     }
+    
+    /** Option checking */
+    public static int optionLength(String option) {
+        if(option.equals("-qualify") ||
+           option.equals("-horizontal") ||
+           option.equals("-attributes") ||
+           option.equals("-operations") ||
+           option.equals("-constructors") ||
+           option.equals("-visibility") ||
+           option.equals("-types") ||
+           option.equals("-all") ||
+           option.equals("-noguillemot"))
+            return 1;
+        else if(option.equals("-nodefillcolor") ||
+           option.equals("-nodefontcolor") ||
+           option.equals("-nodefontsize") ||
+           option.equals("-nodefontname") ||
+           option.equals("-nodefontabstractname") ||
+           option.equals("-edgefontcolor") ||
+           option.equals("-edgecolor") ||
+           option.equals("-edgefontsize") ||
+           option.equals("-edgefontname") ||
+           option.equals("-output") ||
+           option.equals("-outputencoding") ||
+           option.equals("-bgcolor") ||
+           option.equals("-hide") ||
+           option.equals("-apidocroot") ||
+           option.equals("-apidocmap"))
+            return 2;
+        else
+            return 0;
+    }
 
     /** Set the options based on a lingle option and its arguments */
     private void setOption(String[] opt) {
