@@ -112,8 +112,12 @@ class Options implements Cloneable {
 	showVisibility = true;
 	showType = true;
     }
-    
-    /** Option checking */
+
+    /**
+     * Return the number of arguments associated with the specified option.
+     * The return value includes the actual option.
+     * Will return 0 if the option is not supported.
+     */
     public static int optionLength(String option) {
         if(option.equals("-qualify") ||
            option.equals("-horizontal") ||
