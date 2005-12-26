@@ -7,11 +7,13 @@
 <ul>
 <li> Correct the handling of qualified class names following
 the extends keyword (Arnaud Rogues).</li>
+<li> A <em>views</em> feature provides the ability to specify package-based
+option overrides in UMLOptions like classes,
+and to generate multiple diagrams out of a code base in a single pass.
+See the new tags @view, @opt_override, @hideall, and the command line
+parameters -d, -view, -views (Andrea Aime)</li>
 <li> Javadoc documentation (Andrea Aime).</li>
 <li> Centralized option handling in the Option class (even for command line arguments) (Andrea Aime).</li>
-<li> Addded "views", that is, the ability to specify package based option overrides in UMLOptions like classes,
-     and to generate multiple diagrams out of a code base in a single pass. See the new tags @view, @opt_override, 
-     @hideall, and the command line parameters -d, -view, -views (Andrea Aime)</li>
 </ul>
 
 <dt>Version 4.1 2005/11/15</dt><dd>

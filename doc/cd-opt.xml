@@ -65,15 +65,16 @@ Matching is done against the end of each entity's name.
 For instance, "<code>-hide Widget</code>" would hide "<code>com.foo.widgets.Widget</code>" and
 "<code>com.foo.widgets.BigWidget</code>".
 </dd>
-<dt>-hideall</dt><dd>Hide all entities from the graph. Used with views to show only a specific
+<dt>-hideall</dt><dd>Hide all entities from the graph.
+Used with views to show only a specific
 subset of classes in each class diagram.
 </dd>
 <dt>-d</dt><dd>Destination folder for .dot files generated from views.
 </dd>
-<dt>-view</dt><dd>Specify the fully qualified name of a class that contains a view definition. Only 
-the class diagram specified by this view will be generated.
+<dt>-view</dt><dd>Specify the fully qualified name of a class that contains a view definition.
+Only the class diagram specified by this view will be generated.
 </dd>
-<dt>-views</dt><dd>Look into the source path and generate a class diagram for every view that is found.
+<dt>-views</dt><dd>Generate a class diagram for every view found in the source path.
 </dd>
 <dt>-apidocroot</dt><dd>Specify the URL that should be used as the "root" for local classes.
 This URL will be used as a prefix, to which the page name for the local class or

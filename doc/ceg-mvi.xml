@@ -1,20 +1,38 @@
 <?xml version="1.0" ?>
 <!-- $Id$ -->
 <notes>
-Documenting a big project usually requires multiple diagrams, each design to show a specific and limited portion of the system.
+Documenting a big project often requires multiple diagrams:
+each to show a specific and limited portion of the system.
 Each diagram is usually composed of few classes, possibily using a different detail level.<p/>
-Following the approach of the UMLOptions class, we introduced the <code>@view</code> tag, that marks a special class used to describe a single class diagram.
-Similarly to UMLOptions, the view can define his own general options, but what makes it interesting is the ability to specify package based <em>overrides</em> that allow to adopt different options based on the package the classes are in.
+The <code>@view</code> tag, marks a special class used to describe a single class diagram.
+Similarly to UMLOptions, the view can define its own general options,
+but what makes it interesting is the ability to specify package based <em>overrides</em> that allow to adopt different options based on the package the classes are in.
 The general syntax of an override is:
-<pre>@opt_override REGEXP ([!]option)*</pre>
-where REGEXP is a java regular expression that will match a single class, a group of classes, a package, and option is one of the UMLGraph options that
-are usually specified with the <code>@option</code> tag. A ! before the option disables the option for the specified package.
+<fmtcode ext="java">
+/**
+ * @opt_override REGEXP ([!]option)*
+ */
+</fmtcode>
+where
+<ul>
+<li><em>REGEXP</em> is a Java regular expression that will match a single class, a group of classes, or a package, and</li>
+<li> <em>option</em> is one of the UMLGraph options that
+are usually specified with the <code>@option</code> tag.
+</li>
+</ul>
+A ! before the option disables the option for the specified package.
+<p />
 For example:
-<pre>@opt_override net.test.* !operations types</pre>
-will add type information and disable operations listing for every class in the net.test package (and its subpackages).<p/>
-Multiple overrides can be specified in the same view, and they will be evaluated in the specification order (so, the last one wins in case of conflict).
+<fmtcode ext="java">
+/**
+ * @opt_override net.test.* !operations types
+ */
+</fmtcode>
+will add type information and disable the listing of operations for every class in the net.test package (and its subpackages).<p/>
+Multiple overrides can be specified in the same view, and they will be evaluated in the order they are specified
+(so, the last one wins in case of conflict).
 For example:
-<pre>
+<fmtcode ext="java">
 /**
  * @view
  * @hidden
@@ -23,11 +41,13 @@ For example:
  * @opt_override net.test2.* !hideall attributes operations visibility
  */
 class NetTest2PackageDiagram {}
-</pre>
-defines a class diagram for the net.test2 package. Everything in this package is shown, classes in the net.test1 package are shown as well, 
+</fmtcode>
+defines a class diagram for the net.test2 package.
+Everything in this package is shown, classes in the net.test1 package are shown as well,
 but without details (probably because they are somewhat related to the net.test2 classes), the rest is hidden.<p/>
 Each view will generate a .dot file whose name is the name of the view (only the class name). Use the <code>-d</code> command line
-parameter to better specify in which folder the .dot files should be generated.
-Oh, if you're wondering why we used ".*" as the regular expression to hide all the classes (and not simply *), that's because 
-this is not a file system like wildcard, but a java regular expression: see the <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html">Pattern</a> javadoc for further details.
+parameter to specify in which folder the .dot files should be generated.
+If you're wondering why we used ".*" as the regular expression to hide all the classes (and not simply *), that's because
+the specification is not a filename globbing pattern, but a Java regular expression:
+see the <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html">Pattern</a> class documentation for further details.
 </notes>
