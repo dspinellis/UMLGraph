@@ -14,7 +14,8 @@
 <ch><ti>Class Diagram Example: Real Example (Catalina Classes)</ti><fi>ceg-cat</fi></ch>
 <ch><ti>Class Diagram Example: Class Stereotypes and Tagged Values</ti><fi>ceg-ster</fi></ch>
 <ch><ti>Class Diagram Example: Colors, Global and Local Options</ti><fi>ceg-color</fi></ch>
-<ch><ti>Class Diagram Example: Multiple Views</ti><fi>ceg-mv</fi></ch>
+<ch><ti>Class Diagram Example: Multiple Views (command line)</ti><fi>ceg-mv</fi></ch>
+<ch><ti>Class Diagram Example: Multiple Views (internal support)</ti><fi>ceg-mvi</fi></ch>
 <ch><ti>Sequence Diagrams</ti><fi>seq-intro</fi></ch>
 <ch><ti>Syntax of Sequence Diagram Definitions</ti><fi>seq-syntax</fi></ch>
 <ch><ti>Defining a Simple Sequence Diagram</ti><fi>seq-simple</fi></ch>
