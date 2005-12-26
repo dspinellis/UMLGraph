@@ -60,6 +60,9 @@ class Options implements Cloneable {
     String apiDocMapFileName;
     String apiDocRoot;
     boolean useGuillemot;
+    boolean findViews;
+    String viewName;
+    String outputDirectory;
     /** Guillemot left (open) */
     String guilOpen = "\u00ab";
     /** Guillemot right (close) */
@@ -90,6 +93,8 @@ class Options implements Cloneable {
 	apiDocMapFileName = null;
 	apiDocRoot = null;
 	useGuillemot = true;
+	findViews = false;
+	viewName = null;
     }
 
     public Object clone() {
@@ -127,7 +132,10 @@ class Options implements Cloneable {
            option.equals("-visibility") ||
            option.equals("-types") ||
            option.equals("-all") ||
-           option.equals("-noguillemot"))
+           option.equals("-noguillemot") ||
+           option.equals("-hideall") ||
+           option.equals("-views"))
+
             return 1;
         else if(option.equals("-nodefillcolor") ||
            option.equals("-nodefontcolor") ||
@@ -143,14 +151,82 @@ class Options implements Cloneable {
            option.equals("-bgcolor") ||
            option.equals("-hide") ||
            option.equals("-apidocroot") ||
-           option.equals("-apidocmap"))
+           option.equals("-apidocmap") ||
+           option.equals("-d") ||
+           option.equals("-view"))
             return 2;
         else
             return 0;
     }
+    
+    /** Resets the specified option to its default value */
+    void resetOption(String[] opt) {
+	if (opt[0].equals("-qualify")) {
+	    showQualified = false;
+	} else if (opt[0].equals("-horizontal")) {
+	    horizontal = false;
+	} else if (opt[0].equals("-attributes")) {
+	    showAttributes = false;
+	} else if (opt[0].equals("-enumconstants")) {
+	    showEnumConstants = false;
+	} else if (opt[0].equals("-operations")) {
+	    showOperations = false;
+	} else if (opt[0].equals("-enumerations")) {
+	    showEnumerations = false;
+	} else if (opt[0].equals("-constructors")) {
+	    showConstructors = false;
+	} else if (opt[0].equals("-visibility")) {
+	    showVisibility = false;
+	} else if (opt[0].equals("-types")) {
+	    showType = false;
+	} else if (opt[0].equals("-bgcolor")) {
+	    bgColor = null;
+	} else if (opt[0].equals("-edgecolor")) {
+	    edgeColor = "black";
+	} else if (opt[0].equals("-edgefontcolor")) {
+	    edgeFontColor = "black";
+	} else if (opt[0].equals("-edgefontname")) {
+	    edgeFontName = "Helvetica";
+	} else if (opt[0].equals("-edgefontsize")) {
+	    edgeFontSize = 10;
+	} else if (opt[0].equals("-nodefontcolor")) {
+	    nodeFontColor = "black";
+	} else if (opt[0].equals("-nodefontname")) {
+	    nodeFontName = "Helvetica";
+	} else if (opt[0].equals("-nodefontabstractname")) {
+	    nodeFontAbstractName = "Helvetica-Oblique";
+	} else if (opt[0].equals("-nodefontsize")) {
+	    nodeFontSize = 10;
+	} else if (opt[0].equals("-nodefillcolor")) {
+	    nodeFillColor = null;
+	} else if (opt[0].equals("-output")) {
+	    outputFileName = "graph.dot";
+	} else if (opt[0].equals("-outputencoding")) {
+	    outputEncoding = "ISO-8859-1";
+	} else if (opt[0].equals("-hide")) {
+	    new Vector<Pattern>();
+	} else if (opt[0].equals("-apidocroot")) {
+	    apiDocRoot = null;
+	} else if (opt[0].equals("-apidocmap")) {
+	    apiDocMapFileName = null;
+	} else if (opt[0].equals("-noguillemot")) {
+	    guilOpen = "\u00ab";
+	    guilClose = "\u00bb";
+	} else if (opt[0].equals("-view")) {
+	    viewName = null;
+	} else if (opt[0].equals("-views")) {
+	    findViews = false;
+	} else if (opt[0].equals("-d")) {
+	    outputDirectory = null;
+	} else if (opt[0].equals("-hideall")) {
+	    hidePatterns.clear();
+	} else
+	    ; // Do nothing, javadoc will handle the option or complain, if
+                // needed.
+    }
 
     /** Set the options based on a lingle option and its arguments */
-    private void setOption(String[] opt) {
+    void setOption(String[] opt) {
 	if(opt[0].equals("-qualify")) {
 	    showQualified = true;
 	} else if(opt[0].equals("-horizontal")) {
@@ -195,6 +271,8 @@ class Options implements Cloneable {
 	    outputFileName = opt[1];
 	} else if(opt[0].equals("-outputencoding")) {
 	    outputEncoding = opt[1];
+	} else if(opt[0].equals("-hideall")) {
+	    hidePatterns.add(Pattern.compile(".*"));
 	} else if(opt[0].equals("-hide")) {
 	    try {
 		hidePatterns.add(Pattern.compile(opt[1]));
@@ -208,6 +286,12 @@ class Options implements Cloneable {
 	} else if(opt[0].equals("-noguillemot")) {
 	    guilOpen = "\\<\\<";
 	    guilClose = "\\>\\>";
+	} else if (opt[0].equals("-view")) {
+	    viewName = opt[1];
+	} else if (opt[0].equals("-views")) {
+	    findViews = true;
+	} else if (opt[0].equals("-d")) {
+	    outputDirectory = opt[1];
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if needed.
     }
@@ -235,6 +319,11 @@ class Options implements Cloneable {
 	FileOutputStream fos = new FileOutputStream(outputFileName);
 	w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, outputEncoding)));
     }
+    
+    public void closeFile() {
+	w.close();
+    }
+
 
     /**
      * Check if the supplied string matches an entity specified

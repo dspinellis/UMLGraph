@@ -20,9 +20,13 @@
 
 package gr.spinellis.umlgraph.doclet;
 
-import com.sun.javadoc.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.io.*;
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.LanguageVersion;
+import com.sun.javadoc.RootDoc;
 
 /**
  * Doclet API implementation
@@ -37,33 +41,79 @@ public class UmlGraph {
     /** Entry point */
     public static boolean start(RootDoc root) throws IOException {
 	Options opt = new Options();
-	ClassInfo.reset();
-
 	opt.setOptions(root.options());
-	opt.openFile();
 	opt.setOptions(root.classNamed("UMLOptions"));
+
+	View[] views = buildViews(opt, root);
+	if (views.length == 0) {
+	    buildGraph(root, null, opt);
+	} else {
+	    for (int i = 0; i < views.length; i++) {
+		buildGraph(root, views[i], (Options) opt.clone());
+	    }
+	}
+
+	return true;
+
+    }
+    
+    /**
+     * Builds and outputs a single graph according to the view overrides
+     */
+    private static void buildGraph(RootDoc root, View view, Options opt) throws IOException {
+	if (view != null)
+	    view.applyOverrides(opt);
+	opt.openFile();
 	prologue(opt);
 	ClassDoc[] classes = root.classes();
 
-	ClassGraph c = new ClassGraph(root.specifiedPackages(),
-	    opt.apiDocRoot, opt.apiDocMapFileName);
-	for (ClassDoc cd : classes) {
+	ClassGraph c = new ClassGraph(root.specifiedPackages(), opt.apiDocRoot,
+		opt.apiDocMapFileName);
+	for (int i = 0; i < classes.length; i++) {
 	    // Process class-local options (through @opt tags)
 	    Options localOpt = (Options) opt.clone();
-	    localOpt.setOptions(cd);
-	    c.printClass(localOpt, cd);
+	    localOpt.setOptions(classes[i]);
+	    if (view != null)
+		view.applyOverrides(localOpt, classes[i]);
+	    c.printClass(localOpt, classes[i]);
 	}
-	for (ClassDoc cd : classes) {
+	for (int i = 0; i < classes.length; i++) {
 	    // Process class-local options (through @opt tags)
 	    Options localOpt = (Options) opt.clone();
-	    localOpt.setOptions(cd);
-	    c.printRelations(localOpt, cd);
+	    localOpt.setOptions(classes[i]);
+	    if (view != null)
+		view.applyOverrides(localOpt, classes[i]);
+	    c.printRelations(localOpt, classes[i]);
 	}
 
 	c.printExtraClasses(opt, root);
 	epilogue(opt);
-	return true;
+	opt.closeFile();
     }
+
+    
+    
+    /**
+     * Builds the views according to the parameters on the command line
+     */
+    private static View[] buildViews(Options opt, RootDoc root) {
+	if (opt.findViews) {
+	    List<View> views = new ArrayList<View>();
+	    ClassDoc[] classes = root.classes();
+	    for (int i = 0; i < classes.length; i++) {
+		if (classes[i].tags("view").length > 0) {
+		    views.add(new View(classes[i]));
+		}
+	    }
+	    return views.toArray(new View[views.size()]);
+	} else if (opt.viewName != null) {
+	    ClassDoc viewClass = root.classNamed(opt.viewName);
+	    return new View[] { new View(viewClass) };
+	} else {
+	    return new View[0];
+	}
+    }
+
 
     /** Option checking */
     public static int optionLength(String option) {
