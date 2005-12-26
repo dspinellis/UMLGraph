@@ -41,7 +41,7 @@ class Version { public static String VERSION = "${VERSION}";}
 	description="run the regression tests" >
 	 <java classname="gr.spinellis.umlgraph.test.BasicTest" fork="true">
          <classpath>
-	   <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
+           <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
            <pathelement location="${build}"/>
            <pathelement location="${lib}/UmlGraph.jar"/>
          </classpath>
