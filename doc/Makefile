@@ -9,6 +9,7 @@ DESTDIR=/dds/pubs/web/home/sw/umlgraph
 THREAD=/dds/pubs/courses/intro/thread.pl
 GIF := $(shell sed -n 's/.*<img *src *= *"\([^.]*\.gif\)".*/\1/p' *.xml)
 XML := $(wildcard *.xml)
+DOC?=testdoc
 
 .SUFFIXES:.java .dot .ps .gif .pic .eps .png
 
@@ -41,7 +42,7 @@ XML := $(wildcard *.xml)
 
 
 all: sequence.pic $(GIF) $(XML)
-	echo "Drawing UML Diagrams with UMLGraph" | perl $(THREAD) -n -h html -r -p ../index.html index ${DESTDIR}/doc
+	echo "Drawing UML Diagrams with UMLGraph" | perl $(THREAD) -n -h html -r -p ../index.html index ${DESTDIR}/${DOC}
 
 sequence.pic: ../sequence.pic
 	perl -p -e 'BEGIN {binmode(STDOUT);} s/\r//' $< >$@

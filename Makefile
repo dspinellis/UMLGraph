@@ -24,6 +24,8 @@ README=README.txt
 OTHERSRC=index.html build.xml Makefile
 # Files to tag
 ALLTAG=$(DOCLETSRC) $(TESTSRC) $(PICFILE) $(README) $(OTHERSRC)
+# Documentation location (release)
+export DOC=doc
 
 JARFILE=lib/UmlGraph.jar
 
