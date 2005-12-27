@@ -8,10 +8,10 @@ digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
 	node [fontname="Helvetica",fontsize=10,shape=record];
 	// gr.spinellis.product.Product
-	c98 [label="{Product\n|name\lstock\lprice\lcategory\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c3 [label="{Product\n|name\lstock\lprice\lcategory\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.product.Category
-	c99 [label="{Category\n|name\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c4 [label="{Category\n|name\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.product.Product assoc gr.spinellis.product.Category
-	c98 -> c99 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	c3 -> c4 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 }
 

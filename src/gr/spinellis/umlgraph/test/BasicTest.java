@@ -65,7 +65,7 @@ public class BasicTest {
 	    String refPath = new File(testRefFolder, viewName + ".dot").getAbsolutePath();
 	    equal &= checkForDifferences(dotPath, refPath);
 	}
-	return true;
+	return equal;
     }
 
     private static boolean performBasicTests() throws IOException {
