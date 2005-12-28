@@ -88,6 +88,7 @@ class Options implements Cloneable {
 	nodeFillColor = null;
 	bgColor = null;
 	outputFileName = "graph.dot";
+	outputDirectory= ".";
 	outputEncoding = "ISO-8859-1";
 	hidePatterns = new Vector<Pattern>();
 	apiDocMapFileName = null;
@@ -98,13 +99,15 @@ class Options implements Cloneable {
     }
 
     public Object clone() {
-	Object o = null;
+	Options clone = null;
 	try {
-	    o = super.clone();
+	     clone = (Options) super.clone();
 	} catch (CloneNotSupportedException e) {
 	    // Should not happen
 	}
-	return o;
+	// deep clone the hide patterns
+	clone.hidePatterns = new Vector<Pattern>(hidePatterns);
+	return clone;
     }
 
     /** Most verbose output */
@@ -159,139 +162,133 @@ class Options implements Cloneable {
             return 0;
     }
     
-    /** Resets the specified option to its default value */
-    void resetOption(String[] opt) {
-	if (opt[0].equals("-qualify")) {
-	    showQualified = false;
-	} else if (opt[0].equals("-horizontal")) {
-	    horizontal = false;
-	} else if (opt[0].equals("-attributes")) {
-	    showAttributes = false;
-	} else if (opt[0].equals("-enumconstants")) {
-	    showEnumConstants = false;
-	} else if (opt[0].equals("-operations")) {
-	    showOperations = false;
-	} else if (opt[0].equals("-enumerations")) {
-	    showEnumerations = false;
-	} else if (opt[0].equals("-constructors")) {
-	    showConstructors = false;
-	} else if (opt[0].equals("-visibility")) {
-	    showVisibility = false;
-	} else if (opt[0].equals("-types")) {
-	    showType = false;
-	} else if (opt[0].equals("-bgcolor")) {
-	    bgColor = null;
-	} else if (opt[0].equals("-edgecolor")) {
-	    edgeColor = "black";
-	} else if (opt[0].equals("-edgefontcolor")) {
-	    edgeFontColor = "black";
-	} else if (opt[0].equals("-edgefontname")) {
-	    edgeFontName = "Helvetica";
-	} else if (opt[0].equals("-edgefontsize")) {
-	    edgeFontSize = 10;
-	} else if (opt[0].equals("-nodefontcolor")) {
-	    nodeFontColor = "black";
-	} else if (opt[0].equals("-nodefontname")) {
-	    nodeFontName = "Helvetica";
-	} else if (opt[0].equals("-nodefontabstractname")) {
-	    nodeFontAbstractName = "Helvetica-Oblique";
-	} else if (opt[0].equals("-nodefontsize")) {
-	    nodeFontSize = 10;
-	} else if (opt[0].equals("-nodefillcolor")) {
-	    nodeFillColor = null;
-	} else if (opt[0].equals("-output")) {
-	    outputFileName = "graph.dot";
-	} else if (opt[0].equals("-outputencoding")) {
-	    outputEncoding = "ISO-8859-1";
-	} else if (opt[0].equals("-hide")) {
-	    new Vector<Pattern>();
-	} else if (opt[0].equals("-apidocroot")) {
-	    apiDocRoot = null;
-	} else if (opt[0].equals("-apidocmap")) {
-	    apiDocMapFileName = null;
-	} else if (opt[0].equals("-noguillemot")) {
-	    guilOpen = "\u00ab";
-	    guilClose = "\u00bb";
-	} else if (opt[0].equals("-view")) {
-	    viewName = null;
-	} else if (opt[0].equals("-views")) {
-	    findViews = false;
-	} else if (opt[0].equals("-d")) {
-	    outputDirectory = null;
-	} else if (opt[0].equals("-hideall")) {
-	    hidePatterns.clear();
-	} else
-	    ; // Do nothing, javadoc will handle the option or complain, if
-                // needed.
-    }
-
     /** Set the options based on a lingle option and its arguments */
     void setOption(String[] opt) {
 	if(opt[0].equals("-qualify")) {
 	    showQualified = true;
+	} else if (opt[0].equals("-!qualify")) {
+	    showQualified = false;
 	} else if(opt[0].equals("-horizontal")) {
 	    horizontal = true;
+	} else if (opt[0].equals("-!horizontal")) {
+	    horizontal = false;
 	} else if(opt[0].equals("-attributes")) {
 	    showAttributes = true;
+	} else if (opt[0].equals("-!attributes")) {
+	    showAttributes = false;
 	} else if(opt[0].equals("-enumconstants")) {
 	    showEnumConstants = true;
+	} else if (opt[0].equals("-!enumconstants")) {
+	    showEnumConstants = false;
 	} else if(opt[0].equals("-operations")) {
 	    showOperations = true;
+	} else if (opt[0].equals("-!operations")) {
+	    showOperations = false;
 	} else if(opt[0].equals("-enumerations")) {
 	    showEnumerations = true;
+	} else if (opt[0].equals("-!enumerations")) {
+	    showEnumerations = false;
 	} else if(opt[0].equals("-constructors")) {
 	    showConstructors = true;
+	} else if (opt[0].equals("-!constructors")) {
+	    showConstructors = false;
 	} else if(opt[0].equals("-visibility")) {
 	    showVisibility = true;
+	} else if (opt[0].equals("-!visibility")) {
+	    showVisibility = false;
 	} else if(opt[0].equals("-types")) {
 	    showType = true;
+	} else if (opt[0].equals("-!types")) {
+	    showType = false;
 	} else if(opt[0].equals("-all")) {
 	    setAll();
 	} else if(opt[0].equals("-bgcolor")) {
 	    bgColor = opt[1];
+	} else if (opt[0].equals("-!bgcolor")) {
+	    bgColor = null;
 	} else if(opt[0].equals("-edgecolor")) {
 	    edgeColor = opt[1];
+	} else if (opt[0].equals("-!edgecolor")) {
+	    edgeColor = "black";
 	} else if(opt[0].equals("-edgefontcolor")) {
 	    edgeFontColor = opt[1];
+	} else if (opt[0].equals("-!edgefontcolor")) {
+	    edgeFontColor = "black";
 	} else if(opt[0].equals("-edgefontname")) {
 	    edgeFontName = opt[1];
+	} else if (opt[0].equals("-!edgefontname")) {
+	    edgeFontName = "Helvetica";
 	} else if(opt[0].equals("-edgefontsize")) {
 	    edgeFontSize = Integer.parseInt(opt[1]);
+	} else if (opt[0].equals("-!edgefontsize")) {
+	    edgeFontSize = 10;
 	} else if(opt[0].equals("-nodefontcolor")) {
 	    nodeFontColor = opt[1];
+	} else if (opt[0].equals("-!nodefontcolor")) {
+	    nodeFontColor = "black";
 	} else if(opt[0].equals("-nodefontname")) {
 	    nodeFontName = opt[1];
+	} else if (opt[0].equals("-!nodefontname")) {
+	    nodeFontName = "Helvetica";
 	} else if(opt[0].equals("-nodefontabstractname")) {
 	    nodeFontAbstractName = opt[1];
+	} else if (opt[0].equals("-!nodefontabstractname")) {
+	    nodeFontAbstractName = "Helvetica-Oblique";
 	} else if(opt[0].equals("-nodefontsize")) {
 	    nodeFontSize = Integer.parseInt(opt[1]);
+	} else if (opt[0].equals("-!nodefontsize")) {
+	    nodeFontSize = 10;
 	} else if(opt[0].equals("-nodefillcolor")) {
 	    nodeFillColor = opt[1];
+	} else if (opt[0].equals("-!nodefillcolor")) {
+	    nodeFillColor = null;
 	} else if(opt[0].equals("-output")) {
 	    outputFileName = opt[1];
+	} else if (opt[0].equals("-!output")) {
+	    outputFileName = "graph.dot";
 	} else if(opt[0].equals("-outputencoding")) {
 	    outputEncoding = opt[1];
-	} else if(opt[0].equals("-hideall")) {
-	    hidePatterns.add(Pattern.compile(".*"));
+	} else if (opt[0].equals("-!outputencoding")) {
+	    outputEncoding = "ISO-8859-1";
 	} else if(opt[0].equals("-hide")) {
-	    try {
-		hidePatterns.add(Pattern.compile(opt[1]));
-	    } catch (PatternSyntaxException e) {
-		System.err.println("Skipping invalid pattern " + opt[1]);
+	    if(opt.length == 1) {
+		hidePatterns.clear();
+		hidePatterns.add(Pattern.compile(".*"));
+	    } else {
+		try {
+		    hidePatterns.add(Pattern.compile(opt[1]));
+		} catch (PatternSyntaxException e) {
+		    System.err.println("Skipping invalid pattern " + opt[1]);
+		}
 	    }
+	} else if (opt[0].equals("-!hide")) {
+	    hidePatterns.clear();
 	} else if(opt[0].equals("-apidocroot")) {
 	    apiDocRoot = opt[1];
+	} else if (opt[0].equals("-!apidocroot")) {
+	    apiDocRoot = null;
 	} else if(opt[0].equals("-apidocmap")) {
 	    apiDocMapFileName = opt[1];
+	} else if (opt[0].equals("-!apidocmap")) {
+	    apiDocMapFileName = null;
 	} else if(opt[0].equals("-noguillemot")) {
 	    guilOpen = "\\<\\<";
 	    guilClose = "\\>\\>";
+	} else if (opt[0].equals("-!noguillemot")) {
+	    guilOpen = "\u00ab";
+	    guilClose = "\u00bb";
 	} else if (opt[0].equals("-view")) {
 	    viewName = opt[1];
+	} else if (opt[0].equals("-!view")) {
+	    viewName = null;
 	} else if (opt[0].equals("-views")) {
 	    findViews = true;
+	} else if (opt[0].equals("-!views")) {
+	    findViews = false;
 	} else if (opt[0].equals("-d")) {
 	    outputDirectory = opt[1];
+	} else if (opt[0].equals("-!d")) {
+	    outputDirectory = ".";
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if needed.
     }
@@ -316,7 +313,7 @@ class Options implements Cloneable {
     }
 
     public void openFile() throws IOException {
-	FileOutputStream fos = new FileOutputStream(outputFileName);
+	FileOutputStream fos = new FileOutputStream(new File(outputDirectory, outputFileName));
 	w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, outputEncoding)));
     }
     
