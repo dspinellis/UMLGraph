@@ -132,4 +132,16 @@ using <code>@opt</code> attributes on individual classes.
 In this case the <code>@opt</code> specification temporarily overrides
 the particular global setting for the class being processed.
 
+<p/>Finally, you can reset an option to its default value by prefixing it
+    with an exclamation mark. For example:
+<fmtcode ext="java">
+/**
+ * @opt !attributes
+ * @opt !nodefontsize
+ */
+class MyClass {}
+</fmtcode>
+
+will disable attribute listing for MyClass, and reset the node font size
+to its default value (10).
 </notes>
