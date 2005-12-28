@@ -17,9 +17,10 @@
  */
 package gr.spinellis.umlgraph.doclet;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,31 +38,56 @@ import com.sun.javadoc.Tag;
  *
  */
 class View {
-    Map<Pattern, String[]> optionOverrides = new LinkedHashMap<Pattern, String[]>();
+    Map<Pattern, String[][]> optionOverrides = new LinkedHashMap<Pattern, String[][]>();
+    ArrayList<String[]> globalOptions = new ArrayList<String[]>();
     ClassDoc viewDoc;
-
-    public View(ClassDoc c) {
+    
+    /**
+     * Builds a view given the class that contains its definition
+     * @param c
+     * @throws PatternSyntaxException
+     */
+    public View(ClassDoc c) throws PatternSyntaxException {
 	this.viewDoc = c;
-	Tag[] tags = c.tags("opt_override");
+	Tag[] tags = c.tags();
+	String currPattern = null;
+	List<String[]> patternOptions = new ArrayList<String[]>();
 	for (int i = 0; i < tags.length; i++) {
-	    String[] opts = StringUtil.tokenize(tags[i].text());
-	    try {
-		optionOverrides.put(Pattern.compile(opts[0]), opts);
-	    } catch (PatternSyntaxException e) {
-		System.err.println("Skipping invalid pattern " + opts[0] + " in view "
-			+ c.toString());
-	    }
-
+	    if(tags[i].name().equals("@match")) {
+		if(currPattern != null) {
+		    String[][] options = patternOptions.toArray(new String[patternOptions.size()][]);
+		    optionOverrides.put(Pattern.compile(currPattern), options);
+		}
+		currPattern = tags[i].text();
+	    } else if(tags[i].name().equals("@opt")) {
+		String[] opts = StringUtil.tokenize(tags[i].text());
+		opts[0] = "-" + opts[0];
+		if(currPattern == null) {
+		    globalOptions.add(opts);
+		} else {
+		    patternOptions.add(opts);
+		}
+	    } 
+	}
+	if(currPattern != null) {
+	    String[][] options = patternOptions.toArray(new String[patternOptions.size()][]);
+	    optionOverrides.put(Pattern.compile(currPattern), options);
 	}
     }
 
     /**
-     * Applies global view overrides
+     * Applies global view overrides. <br>
+     * If not output tag has been specified, the view name will be used as the output file name.
      */
     public void applyOverrides(Options o) {
-	o.setOptions(viewDoc);
-	File dotFile = new File(o.outputDirectory, viewDoc.name() + ".dot");
-	o.setOption(new String[] {"-output", dotFile.getPath()});
+	boolean outputSet = false;
+	for (String[] opts : globalOptions) {
+	    if(opts[0].equals("-output")) 
+		outputSet = true;
+	    o.setOption(opts);
+	}
+	if(!outputSet)
+	    o.setOption(new String[] {"-output", viewDoc.name() + ".dot"});
     }
 
     /**
@@ -69,31 +95,15 @@ class View {
      */
     public void applyOverrides(Options o, ClassDoc c) {
 	String className = c.toString();
-	for (Iterator<Map.Entry<Pattern, String[]>> iter = optionOverrides.entrySet().iterator(); iter
+	for (Iterator<Map.Entry<Pattern, String[][]>> iter = optionOverrides.entrySet().iterator(); iter
 		.hasNext();) {
-	    Map.Entry<Pattern, String[]> mapEntry = iter.next();
+	    Map.Entry<Pattern, String[][]> mapEntry = iter.next();
 	    Pattern regex = mapEntry.getKey();
 	    Matcher matcher = regex.matcher(className);
 	    if (matcher.matches()) {
-		String[] overrides = mapEntry.getValue(); // the first element is in fact the pattern
-		for (int i = 1; i < overrides.length; i++) {
-		    String[] option = null;
-		    boolean reset = false;
-		    if (overrides[i].contains("=")) {
-			option = overrides[i].split("=");
-		    } else {
-			option = new String[] { overrides[i] };
-		    }
-		    if (option[0].charAt(0) == '!') {
-			reset = true;
-			option[0] = option[0].substring(1);
-		    }
-		    option[0] = "-" + option[0];
-		    if (reset) {
-			o.resetOption(option);
-		    } else {
-			o.setOption(option);
-		    }
+		String[][] overrides = mapEntry.getValue(); // the first element is in fact the pattern
+		for (int i = 0; i < overrides.length; i++) {
+		    o.setOption(overrides[i]);
 		}
 	    }
 	}
