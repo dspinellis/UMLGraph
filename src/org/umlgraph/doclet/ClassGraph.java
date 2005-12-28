@@ -337,6 +337,9 @@ class ClassGraph {
 	Tag tags[] = c.tags("hidden");
 	if (tags.length > 0)
 	    return true;
+	tags = c.tags("view");
+	if (tags.length > 0)
+	    return true;
 	return opt.matchesHideExpression(c.toString());
     }
 
