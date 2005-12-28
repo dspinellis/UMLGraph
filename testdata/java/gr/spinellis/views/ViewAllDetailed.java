@@ -1,9 +1,12 @@
 package gr.spinellis.views;
 
 /**
- * @hidden
  * @view
- * @opt_override gr.spinellis.* attributes operations types
+ * 
+ * @match gr.spinellis.*
+ * @opt attributes 
+ * @opt operations 
+ * @opt types
  */
 public class ViewAllDetailed {
 }

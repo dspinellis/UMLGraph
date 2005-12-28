@@ -1,10 +1,14 @@
 package gr.spinellis.views;
 
 /**
- * @hidden
  * @view
- * @opt_override gr.spinellis.* hideall
- * @opt_override gr.spinellis.product.* !hideall attributes
+ * 
+ * @match .*
+ * @opt hide
+ * 
+ * @match gr.spinellis.product.* 
+ * @opt !hide 
+ * @opt attributes
  */
 public class ViewProduct {
 }
