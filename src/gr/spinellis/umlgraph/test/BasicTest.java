@@ -74,13 +74,14 @@ public class BasicTest {
 	boolean equal = true;
         for (int i = 0; i < javaFiles.length; i++) {
             String javaFileName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
-            File dotFile = new File(testDestFolder, javaFileName + ".dot");
+            String outFileName = javaFileName + ".dot";
+	    File dotFile = new File(testDestFolder, outFileName);
 	    dotFile.delete();
             String dotPath = dotFile.getAbsolutePath();
-            String refPath = new File(testRefFolder, javaFileName + ".dot").getAbsolutePath();
+            String refPath = new File(testRefFolder, outFileName).getAbsolutePath();
             String javaPath = new File(testSourceFolder, javaFiles[i]).getAbsolutePath();
-            String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden", "-private", "-output", dotPath,
-                    javaPath };
+            String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden", "-private", "-d", testDestFolder,
+                    "-output", outFileName, javaPath };
 
             runDoclet(options);
             equal &= checkForDifferences(dotPath, refPath);
