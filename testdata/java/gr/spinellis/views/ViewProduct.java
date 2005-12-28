@@ -2,8 +2,6 @@ package gr.spinellis.views;
 
 /**
  * @view
- * 
- * @match .*
  * @opt hide
  * 
  * @match gr.spinellis.product.* 
