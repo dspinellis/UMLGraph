@@ -20,6 +20,7 @@ To update the table of contents execute the following vim command from a registe
 <li> <a href="#maven">I have a problem with Maven's Dotuml plugin.  Can you help me?</a>
 <li> <a href="#autopic">How can I make the UMLGraph doclet generate sequence diagrams?</a>
 <li> <a href="#packname">Why the vanity package name?  Why not name the package org.umlgraph?</a>
+<li> <a href="#unnamed">Why do the options specified in the <code>UMLOptions</code> class stop working, when I pass the <code>packagenames</code> option to <em>javadoc</em>?</a>
 </ul>
 
 <a name="utfsvg"><h2>Why are the SVG diagrams dot generates malformed?</h2></a>
@@ -158,4 +159,11 @@ unless the developer also registers the corresponding domain name.
 Registering a different domain name for each project is not practical,
 therefore I name the packages I develop using the domain name I own.
 
+<a name="unnamed"><h2>Why do the options specified in the <code>UMLOptions</code> class stop working, when I pass the <code>packagenames</code> option to <em>javadoc</em>?</h2></a>
+When you pass the <code>packagenames</code> option to
+<em>javadoc</em>, the default (unnamed) package (and the
+<code>UMLOptions</code> class
+located in it) is ignored.
+In such cases you should include the <code>UMLOptions</code> class
+within a named package.
 </notes>

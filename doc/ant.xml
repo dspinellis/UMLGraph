@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<notes>
+To run the UMLGraph doclet from <em>ant</em>, use a rule,
+like the following.
+<fmtcode ext="xml">
+<target name="uml" depends="prepare">
+       <property name="uml.dir" value="${basedir}/uml"/>
+       <property name="src.uml.dir" value="${src.dir}/uml"/>
+       <mkdir dir="${uml.dir}"/>
+       <path id="uml.source.path">
+           <pathelement path="${src.uml.dir}/"/>
+           <pathelement path="${src.java.dir}"/>
+         </path>
+       <javadoc sourcepathref="uml.source.path" packagenames="*" package="true">
+           <doclet name="gr.spinellis.umlgraph.doclet.UmlGraph" path="${basedir}/lib/UMLGraph.jar">
+               <param name="-d" value="${uml.dir}"/>
+           </doclet>
+       </javadoc>
+       <apply executable="dot" dest="${uml.dir}" parallel="false">
+         <arg value="-Tpng"/>
+         <arg value="-o"/>
+         <targetfile/>
+         <srcfile/>
+         <fileset dir="${uml.dir}" includes="*.dot"/>
+         <mapper type="glob" from="*.dot" to="*.png"/>
+       </apply>
+   </target>
+</fmtcode>
+Note that when you pass the <code>packagenames</code> option to
+<em>javadoc</em>, the default (unnamed) package (and the
+<code>UMLOptions</code> class
+located in it) is ignored.
+In such cases you should include the <code>UMLOptions</code> class
+within a named package.
+</notes>
