@@ -46,20 +46,23 @@ class ClassGraph {
 
     private static final char FILE_SEPARATOR = '/';
 
-    private Options opt;
     private Set<String> specifiedPackages;
+    private OptionProvider optionProvider;
 
     /**
      * Create a new ClassGraph.  The packages passed as an
      * argument are the ones specified on the command line.
      * Local URLs will be generated for these packages.
      */
-    public ClassGraph(PackageDoc[] packages, String root, String mapFileName) throws IOException {
+    public ClassGraph(PackageDoc[] packages, OptionProvider optionProvider) throws IOException {
+	this.optionProvider = optionProvider;
 	specifiedPackages = new HashSet<String>();
 	for (PackageDoc p : packages)
 	    specifiedPackages.add(p.name());
-	apiDocRoot = fixApiDocRoot(root);
-	if (mapFileName != null) {
+	Options opt = optionProvider.getGlobalOptions();
+	apiDocRoot = fixApiDocRoot(opt.apiDocRoot);
+	String mapFileName = opt.apiDocMapFileName;
+ 	if (mapFileName != null) {
 	    InputStream is = new FileInputStream(mapFileName);
 	    Properties userMap = new Properties();
 	    userMap.load(is);
@@ -97,7 +100,7 @@ class ClassGraph {
     }
 
     /** Return the class's name, possibly by stripping the leading path */
-    private String qualifiedName(String r) {
+    private String qualifiedName(Options opt, String r) {
 	if (!opt.showQualified) {
 	    // Create readable string by stripping leading path
 	    for (;;)  {
@@ -132,7 +135,7 @@ class ClassGraph {
     /**
      * Convert &lt; and &gt; characters in the string to the respective guillemot characters.
      */
-    private String guillemize(String s) {
+    private String guillemize(Options opt, String s) {
 	StringBuffer r = new StringBuffer(s);
 	for (int i = 0; i < r.length();)
 	    switch (r.charAt(i)) {
@@ -157,7 +160,7 @@ class ClassGraph {
      * @param str the <code>String</code> to be wrapped.
      * @return the wrapped <code>String</code>.
      */
-    private String guilWrap(String str) {
+    private String guilWrap(Options opt, String str) {
 	return opt.guilOpen + str + opt.guilClose;
     }
 
@@ -165,8 +168,8 @@ class ClassGraph {
      * Print the visibility adornment of element e prefixed by
      * any stereotypes
      */
-    private void visibility(ProgramElementDoc e) {
-	opt.w.print(stereotype(e, 'l'));
+    private void visibility(Options opt, ProgramElementDoc e) {
+	opt.w.print(stereotype(opt, e, 'l'));
 	if (!opt.showVisibility)
 	    return;
 	if (e.isPrivate())
@@ -181,32 +184,32 @@ class ClassGraph {
     }
 
     /** Print the method parameter p */
-    private void parameter(Parameter p[]) {
+    private void parameter(Options opt, Parameter p[]) {
 	for (int i = 0; i < p.length; i++) {
 	    opt.w.print(p[i].name());
-	    typeAnnotation(p[i].type());
+	    typeAnnotation(opt, p[i].type());
 	    if (i + 1 < p.length)
 		opt.w.print(", ");
 	}
     }
 
     /** Print a a basic type t */
-    private void type(Type t) {
+    private void type(Options opt, Type t) {
 	if (opt.showQualified)
 	    opt.w.print(t.qualifiedTypeName());
 	else
 	    opt.w.print(t.typeName());
-	typeParameters(t.asParameterizedType());
+	typeParameters(opt, t.asParameterizedType());
     }
 
     /** Print the parameters of the parameterized type t */
-    private void typeParameters(ParameterizedType t) {
+    private void typeParameters(Options opt, ParameterizedType t) {
 	if (t == null)
 	    return;
 	Type args[] = t.typeArguments();
 	opt.w.print("\\<");
 	for (int i = 0; i < args.length; i++) {
-	    type(args[i]);
+	    type(opt, args[i]);
 	    if (i != args.length - 1)
 		opt.w.print(", ");
 	}
@@ -214,23 +217,23 @@ class ClassGraph {
     }
 
     /** Annotate an field/argument with its type t */
-    private void typeAnnotation(Type t) {
+    private void typeAnnotation(Options opt, Type t) {
 	if (t.typeName().equals("void"))
 	    return;
 	opt.w.print(" : ");
-	type(t);
+	type(opt, t);
 	opt.w.print(t.dimension());
     }
 
     /** Print the class's attributes fd */
-    private void attributes(FieldDoc fd[]) {
+    private void attributes(Options opt, FieldDoc fd[]) {
 	for (FieldDoc f : fd) {
 	    if (hidden(f))
 		continue;
-	    visibility(f);
+	    visibility(opt, f);
 	    opt.w.print(f.name());
 	    if (opt.showType)
-		typeAnnotation(f.type());
+		typeAnnotation(opt, f.type());
 	    opt.w.print("\\l");
 	    opt.w.print(tagvalue(f, "", 'r'));
 	}
@@ -243,15 +246,15 @@ class ClassGraph {
      */
 
     /** Print the class's constructors m */
-    private void operations(ConstructorDoc m[]) {
+    private void operations(Options opt, ConstructorDoc m[]) {
 	for (ConstructorDoc cd : m) {
 	    if (hidden(cd))
 		continue;
-	    visibility(cd);
+	    visibility(opt, cd);
 	    opt.w.print(cd.name());
 	    if (opt.showType) {
 		opt.w.print("(");
-		parameter(cd.parameters());
+		parameter(opt, cd.parameters());
 		opt.w.print(")");
 	    } else
 		opt.w.print("()");
@@ -261,17 +264,17 @@ class ClassGraph {
     }
 
     /** Print the class's operations m */
-    private void operations(MethodDoc m[]) {
+    private void operations(Options opt, MethodDoc m[]) {
 	for (MethodDoc md : m) {
 	    if (hidden(md))
 		continue;
-	    visibility(md);
+	    visibility(opt, md);
 	    opt.w.print(md.name());
 	    if (opt.showType) {
 		opt.w.print("(");
-		parameter(md.parameters());
+		parameter(opt, md.parameters());
 		opt.w.print(")");
-		typeAnnotation(md.returnType());
+		typeAnnotation(opt, md.returnType());
 	    } else
 		opt.w.print("()");
 	    opt.w.print("\\l");
@@ -280,7 +283,7 @@ class ClassGraph {
     }
 
     /** Print the common class node's properties */
-    private void nodeProperties(String s) {
+    private void nodeProperties(Options opt, String s) {
 	if (opt.nodeFillColor != null)
 	    opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
 	opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
@@ -319,7 +322,7 @@ class ClassGraph {
      * Return as a string the stereotypes associated with c
      * terminated by the escape character term
      */
-    private String stereotype(Doc c, char term) {
+    private String stereotype(Options opt, Doc c, char term) {
 	String r = "";
 	for (Tag tag : c.tags("stereotype")) {
 	    String t[] = StringUtil.tokenize(tag.text());
@@ -327,7 +330,7 @@ class ClassGraph {
 		System.err.println("@stereotype expects one field: " + tag.text());
 		return ("");
 	    }
-	    r += guilWrap(t[0]) + " \\" + term;
+	    r += guilWrap(opt, t[0]) + " \\" + term;
 	}
 	return (r);
     }
@@ -340,47 +343,56 @@ class ClassGraph {
 	tags = c.tags("view");
 	if (tags.length > 0)
 	    return true;
+	Options opt = optionProvider.getOptionsFor(c.toString());
 	return opt.matchesHideExpression(c.toString());
+    }
+    
+    private ClassInfo getClassInfo(String className) {
+	return classnames.get(removeTemplate(className));
+    }
+    
+    private ClassInfo newClassInfo(String className, boolean printed, boolean hidden) {
+	ClassInfo ci = new ClassInfo(printed, hidden);
+        classnames.put(removeTemplate(className), ci);
+        return ci;
     }
 
     /** Return true if the class name is associated to an hidden class or matches a hide expression */
     private boolean hidden(String s) {
-	ClassInfo ci = classnames.get(s);
-	return (ci != null ? ci.hidden : false) || opt.matchesHideExpression(s);
+	ClassInfo ci = getClassInfo(s);
+	Options opt = optionProvider.getOptionsFor(s);
+	if(ci != null)
+	    return ci.hidden || opt.matchesHideExpression(s);
+	else
+	    return opt.matchesHideExpression(s);
     }
 
-    /** Return a class's internal name */
-    private String name(String c) {
-	ClassInfo ci;
-
-	if ((ci = classnames.get(c)) == null)
-	    classnames.put(c, ci = new ClassInfo(false, false));
-	return ci.name;
-    }
+    
 
     /** Prints the class if needed */
-    public String printClass(Options opt, ClassDoc c) {
+    public String printClass(ClassDoc c) {
 	ClassInfo ci;
 	boolean toPrint;
-	this.opt = opt;
+	Options opt = optionProvider.getOptionsFor(c);
 
-	if ((ci = classnames.get(c.toString())) != null)
+	String className = c.toString();
+	if ((ci = getClassInfo(className)) != null)
 	    toPrint = !ci.nodePrinted;
 	else {
 	    toPrint = true;
-	    classnames.put(c.toString(), ci = new ClassInfo(true, hidden(c)));
+	    ci = newClassInfo(className, true, hidden(c));
 	}
 	if (toPrint && !hidden(c) && (!c.isEnum() || opt.showEnumerations)) {
 	    // Associate classname's alias
-	    String r = c.toString();
+	    String r = className;
 	    opt.w.println("\t// " + r);
 	    // Create label
 	    opt.w.print("\t" + ci.name + " [");
-	    r = stereotype(c, 'n') + escapeLG(qualifiedName(r));
+	    r = stereotype(opt, c, 'n') + escapeLG(qualifiedName(opt, r));
 	    if (c.isInterface())
-		r = guilWrap("interface") + " \\n" + r;
+		r = guilWrap(opt, "interface") + " \\n" + r;
 	    if (c.isEnum())
-		r = guilWrap("enumeration") + " \\n" + r;
+		r = guilWrap(opt, "enumeration") + " \\n" + r;
 	    boolean showMembers =
 		(opt.showAttributes && c.fields().length > 0) ||
 		(c.isEnum() && opt.showEnumConstants && c.enumConstants().length > 0) ||
@@ -392,7 +404,7 @@ class ClassGraph {
 	    else
 		opt.w.print("label=\"" + r + "\"");
 	    if (opt.showAttributes)
-		attributes(c.fields());
+		attributes(opt, c.fields());
 	    if (c.isEnum() && opt.showEnumConstants) {
 		for (FieldDoc fd : c.enumConstants()) {
 		    opt.w.print(fd.name());
@@ -402,9 +414,9 @@ class ClassGraph {
 	    if (showMembers)
 		opt.w.print("|");
 	    if (opt.showConstructors && !c.isEnum())
-		operations(c.constructors());
+		operations(opt, c.constructors());
 	    if (opt.showOperations && !c.isEnum())
-		operations(c.methods());
+		operations(opt, c.methods());
 	    if (showMembers)
 		opt.w.print("}\"");
 	    // Use ariali [sic] for gif output of abstract classes
@@ -412,17 +424,26 @@ class ClassGraph {
 		(c.isAbstract() ?
 		 opt.nodeFontAbstractName :
 		 opt.nodeFontName) + "\"");
-	    nodeProperties(c.qualifiedName());
+	    nodeProperties(opt, c.qualifiedName());
 	    ci.nodePrinted = true;
 	}
 	return ci.name;
     }
 
     private String getNodeName(ClassDoc c) {
-	ClassInfo ci;
+	String className = c.toString();
+	ClassInfo ci = getClassInfo(className);
+	if (ci == null)
+	    ci = newClassInfo(className, false, hidden(c));
+	return ci.name;
+    }
+    
+    /** Return a class's internal name */
+    private String getNodeName(String c) {
+	ClassInfo ci = getClassInfo(c);
 
-	if ((ci = classnames.get(c.toString())) == null)
-	    classnames.put(c.toString(), ci = new ClassInfo(false, hidden(c)));
+	if (ci == null)
+	    ci = newClassInfo(c, false, false);
 	return ci.name;
     }
 
@@ -433,7 +454,7 @@ class ClassGraph {
      * @param name the source class internal name
      * @param edgetype the dot edge specification
      */
-    private void relation(String tagname, Doc from, String name, String edgetype) {
+    private void relation(Options opt, String tagname, Doc from, String name, String edgetype) {
 	for (Tag tag : from.tags(tagname)) {
 	    String t[] = StringUtil.tokenize(tag.text());    // l-src label l-dst target
 	    if (t.length != 4) {
@@ -441,11 +462,11 @@ class ClassGraph {
 		return;
 	    }
 	    if(hidden(t[3]))
-		return;
+		continue;
 	    opt.w.println("\t// " + from + " " + tagname + " " + t[3]);
-	    opt.w.println("\t" + name + " -> " + name(t[3]) + " [" +
+	    opt.w.println("\t" + name + " -> " + getNodeName(t[3]) + " [" +
 		"taillabel=\"" + t[0] + "\", " +
-		"label=\"" + guillemize(t[1]) + "\", " +
+		"label=\"" + guillemize(opt, t[1]) + "\", " +
 		"headlabel=\"" + t[2] + "\", " +
 		"fontname=\"" + opt.edgeFontName + "\", " +
 		"fontcolor=\"" + opt.edgeFontColor + "\", " +
@@ -457,9 +478,9 @@ class ClassGraph {
     }
 
     /** Print a class's relations */
-    public void printRelations(Options iopt, ClassDoc c) {
-	opt = iopt;
-	if (opt.matchesHideExpression(c.toString()) || hidden(c))
+    public void printRelations(ClassDoc c) {
+	Options opt = optionProvider.getOptionsFor(c);
+	if (hidden(c))
 	    return;
 	String cs = getNodeName(c);
 
@@ -476,39 +497,37 @@ class ClassGraph {
 	for (Tag tag : c.tags("extends"))
 	    if (!hidden(tag.text()))
 		opt.w.println("\t//" + c + " extends " + tag.text() + "\n" +
-		    "\t" + name(tag.text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
+		    "\t" + getNodeName(tag.text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
 	// Print realizations (Java interfaces)
 	for (Type iface : c.interfaceTypes())
 	    if (!hidden(iface.asClassDoc()))
 		opt.w.println("\t" + getNodeName(iface.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];" +
 		    "\t//" + c + " implements " + iface.asClassDoc());
 	// Print other associations
-	relation("assoc", c, cs, "arrowhead=none");
-	relation("navassoc", c, cs, "arrowhead=open");
-	relation("has", c, cs, "arrowhead=none, arrowtail=ediamond");
-	relation("composed", c, cs, "arrowhead=none, arrowtail=diamond");
-	relation("depend", c, cs, "arrowhead=open, style=dashed");
+	relation(opt, "assoc", c, cs, "arrowhead=none");
+	relation(opt, "navassoc", c, cs, "arrowhead=open");
+	relation(opt, "has", c, cs, "arrowhead=none, arrowtail=ediamond");
+	relation(opt, "composed", c, cs, "arrowhead=none, arrowtail=diamond");
+	relation(opt, "depend", c, cs, "arrowhead=open, style=dashed");
     }
 
     /** Print classes that were parts of relationships, but not parsed by javadoc */
-    public void printExtraClasses(Options opt, RootDoc root) {
-	Collection<Map.Entry<String, ClassInfo>> myClassInfos = classnames.entrySet();
-	Iterator<Map.Entry<String, ClassInfo>> iter = myClassInfos.iterator();
-	while (iter.hasNext()) {
-	    Map.Entry<String, ClassInfo> entry = iter.next();
-	    ClassInfo info = entry.getValue();
+    public void printExtraClasses(RootDoc root) {
+	Set<String> names = new HashSet<String>(classnames.keySet()); 
+	for(String className: names) {
+	    ClassInfo info = getClassInfo(className);
 	    if (!info.nodePrinted) {
-		String r = entry.getKey();
-		ClassDoc c = root.classNamed(removeTemplate(r));
+		ClassDoc c = root.classNamed(className);
 		if(c != null) {
-		    Options localOpt = (Options) opt.clone();
-		    localOpt.setOptions(c);
-		    printClass(localOpt, c);
+		    printClass(c);
 		} else {
-		    opt.w.println("\t// " + r);
-		    opt.w.print("\t" + info.name + "[label=\"" + escapeLG(qualifiedName(r)) + "\"");
+		    Options opt = optionProvider.getOptionsFor(className);
+		    if(opt.matchesHideExpression(className))
+			continue;
+		    opt.w.println("\t// " + className);
+		    opt.w.print("\t" + info.name + "[label=\"" + escapeLG(qualifiedName(opt, className)) + "\"");
 		    opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
-		    nodeProperties(entry.getKey().toString());
+		    nodeProperties(opt, className);
 		}
 	    }
 	}
