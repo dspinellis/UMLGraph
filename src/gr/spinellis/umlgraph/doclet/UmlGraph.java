@@ -42,14 +42,16 @@ public class UmlGraph {
     public static boolean start(RootDoc root) throws IOException {
 	Options opt = new Options();
 	opt.setOptions(root.options());
-	opt.setOptions(root.classNamed("UMLOptions"));
+	opt.setOptions(findUMLOptions(root));
 
 	View[] views = buildViews(opt, root);
+	if(views == null)
+	    return false;
 	if (views.length == 0) {
-	    buildGraph(root, null, opt);
+	    buildGraph(root, opt);
 	} else {
 	    for (int i = 0; i < views.length; i++) {
-		buildGraph(root, views[i], (Options) opt.clone());
+		buildGraph(root, views[i]);
 	    }
 	}
 
@@ -57,36 +59,33 @@ public class UmlGraph {
 
     }
     
+    private static ClassDoc findUMLOptions(RootDoc root) {
+	ClassDoc[] classes = root.classes();
+	for (ClassDoc cd : classes) {
+	    if(cd.name().equals("UMLOptions"))
+		    return cd;
+	}
+	return null;
+    }
+
     /**
      * Builds and outputs a single graph according to the view overrides
      */
-    private static void buildGraph(RootDoc root, View view, Options opt) throws IOException {
-	if (view != null)
-	    view.applyOverrides(opt);
+    private static void buildGraph(RootDoc root, OptionProvider op) throws IOException {
+	Options opt = op.getGlobalOptions();
 	opt.openFile();
 	prologue(opt);
 	ClassDoc[] classes = root.classes();
 
-	ClassGraph c = new ClassGraph(root.specifiedPackages(), opt.apiDocRoot,
-		opt.apiDocMapFileName);
+	ClassGraph c = new ClassGraph(root.specifiedPackages(), op);
 	for (int i = 0; i < classes.length; i++) {
-	    // Process class-local options (through @opt tags)
-	    Options localOpt = (Options) opt.clone();
-	    localOpt.setOptions(classes[i]);
-	    if (view != null)
-		view.applyOverrides(localOpt, classes[i]);
-	    c.printClass(localOpt, classes[i]);
+	    c.printClass(classes[i]);
 	}
 	for (int i = 0; i < classes.length; i++) {
-	    // Process class-local options (through @opt tags)
-	    Options localOpt = (Options) opt.clone();
-	    localOpt.setOptions(classes[i]);
-	    if (view != null)
-		view.applyOverrides(localOpt, classes[i]);
-	    c.printRelations(localOpt, classes[i]);
+	    c.printRelations(classes[i]);
 	}
 
-	c.printExtraClasses(opt, root);
+	c.printExtraClasses(root);
 	epilogue(opt);
 	opt.closeFile();
     }
@@ -102,13 +101,17 @@ public class UmlGraph {
 	    ClassDoc[] classes = root.classes();
 	    for (int i = 0; i < classes.length; i++) {
 		if (classes[i].tags("view").length > 0) {
-		    views.add(new View(classes[i]));
+		    views.add(new View(classes[i], opt));
 		}
 	    }
 	    return views.toArray(new View[views.size()]);
 	} else if (opt.viewName != null) {
 	    ClassDoc viewClass = root.classNamed(opt.viewName);
-	    return new View[] { new View(viewClass) };
+	    if(viewClass == null) {
+		System.out.println("View " + opt.viewName + " not found! Exiting without generating any output.");
+		return null;
+	    }
+	    return new View[] { new View(viewClass, opt) };
 	} else {
 	    return new View[0];
 	}
