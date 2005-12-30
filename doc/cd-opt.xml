@@ -6,6 +6,8 @@ class diagram generator:
 <dl>
 <dt>-output</dt><dd>Specify the output file name (default <code>graph.dot</code>).
 </dd>
+<dt>-d</dt><dd>Specify the output directory (defaults to the current directory).
+</dd>
 <dt>-outputencoding</dt><dd>Specify the output encoding character set (default <code>ISO-8859-1</code>).
 When using <em>dot</em> to generate SVG diagrams you should specify
 <code>UTF-8</code> as the output encoding, to have guillemots correctly
@@ -63,7 +65,10 @@ inside abstract class nodes.
 <dt>-hide</dt><dd>Specify entities to hide from the graph.
 Matching is done against the end of each entity's name.
 For instance, "<code>-hide Widget</code>" would hide "<code>com.foo.widgets.Widget</code>" and
-"<code>com.foo.widgets.BigWidget</code>".
+"<code>com.foo.widgets.BigWidget</code>". Can also be used without arguments,
+in this case it will hide everything (useful in the context of views 
+to selectively unhide some portions of the graph, see the view chapter for
+further details).
 </dd>
 <dt>-hideall</dt><dd>Hide all entities from the graph.
 Used with views to show only a specific
