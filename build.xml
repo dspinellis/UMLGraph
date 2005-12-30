@@ -10,6 +10,8 @@
 <property name="javadoc" location="javadoc"/>
 <property name="lib" location="lib"/>
 <property name="testsrc" location="test/src"/>
+<property name="testout" location="${basedir}/testdata/dot-out"/>
+<property name="testref" location="${basedir}/testdata/dot-ref"/>
 <!-- import environment variables -->
 <property environment="env"/>
 
@@ -46,6 +48,22 @@ class Version { public static String VERSION = "${VERSION}";}
            <pathelement location="${lib}/UmlGraph.jar"/>
          </classpath>
        </java>
+	<apply executable="dot" dest="${testout}" parallel="false">
+		<arg value="-Tpng"/>
+		<arg value="-o"/>
+		<targetfile/>
+		<srcfile/>
+	  <fileset dir="${testout}" includes="*.dot"/>
+	  <mapper type="glob" from="*.dot" to="*.png"/>
+	</apply>
+	<apply executable="dot" dest="${testref}" parallel="false">
+		<arg value="-Tpng"/>
+		<arg value="-o"/>
+		<targetfile/>
+		<srcfile/>
+	  <fileset dir="${testref}" includes="*.dot"/>
+	  <mapper type="glob" from="*.dot" to="*.png"/>
+	</apply>
 </target>
 
 <target name="javadocs" depends="compile">
@@ -63,6 +81,10 @@ class Version { public static String VERSION = "${VERSION}";}
 		<arg value="-o${gifFile}"/>
 		<arg value="${dotFile}"/>
 	</exec>		
+</target>
+	
+<target name="out-classdiagrams" depends="compile">
+	
 </target>
 
 </project>
