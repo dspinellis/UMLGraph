@@ -33,7 +33,7 @@ import java.util.regex.PatternSyntaxException;
  * @version $Revision$
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
-class Options implements Cloneable {
+class Options implements Cloneable, OptionProvider {
     private Vector<Pattern> hidePatterns;
     PrintWriter w;
     boolean showQualified;
@@ -334,6 +334,25 @@ class Options implements Cloneable {
 		return true;
 	}
 	return false;
+    }
+
+    
+    /*
+     * OptionProvider methods
+     */
+    
+    public Options getOptionsFor(ClassDoc cd) {
+	Options localOpt = (Options) this.clone();
+	localOpt.setOptions(cd);
+	return localOpt;
+    }
+
+    public Options getOptionsFor(String name) {
+	return this;
+    }
+
+    public Options getGlobalOptions() {
+	return this;
     }
 }
 
