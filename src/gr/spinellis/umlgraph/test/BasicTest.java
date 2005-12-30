@@ -52,7 +52,7 @@ public class BasicTest {
     }
     
     private static boolean performViewTests(File outFolder) throws IOException {
-	String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden", "-private",
+	String[] options = new String[] { "-docletpath", "build", "-private",
 		"-d", outFolder.getAbsolutePath(), "-sourcepath", "testdata/java", "-subpackages", "gr.spinellis", "-views" };
 	runDoclet(options);
 	
