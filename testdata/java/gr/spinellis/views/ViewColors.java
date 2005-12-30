@@ -2,12 +2,11 @@ package gr.spinellis.views;
 
 /**
  * @view
- * @opt hide java.*
- * 
+
+ * @match .*
+ * @opt nodefillcolor gray
  * @match gr.spinellis.*
- * @opt attributes 
- * @opt nodefontsize 16 
  * @opt nodefillcolor yellow
  */
-public class ViewAtt {
+public class ViewColors {
 }

@@ -8,22 +8,22 @@ digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
 	node [fontname="Helvetica",fontsize=10,shape=record];
 	// gr.spinellis.invoice.InvoiceItem
-	c18 [label="{InvoiceItem\n|product : Product\lquantity : int\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c130 [label="{InvoiceItem\n|product : Product\lquantity : int\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.invoice.Invoice
-	c19 [label="{Invoice\n|total : double\litems : InvoiceItem[]\lcustomer : Customer\l|addItem(p : Product, quantity : int)\l}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c131 [label="{Invoice\n|total : double\litems : InvoiceItem[]\lcustomer : Customer\l|addItem(p : Product, quantity : int)\l}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.invoice.Customer
-	c20 [label="{Customer\n|name : String\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c132 [label="{Customer\n|name : String\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.product.Product
-	c21 [label="{Product\n|name : String\lstock : int\lprice : double\lcategory : Category\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c133 [label="{Product\n|name : String\lstock : int\lprice : double\lcategory : Category\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.product.Category
-	c22 [label="{Category\n|name : String\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c134 [label="{Category\n|name : String\lproducts : List\<\>\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.invoice.InvoiceItem assoc gr.spinellis.product.Product
-	c18 -> c21 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	c130 -> c133 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 	// gr.spinellis.invoice.Invoice assoc gr.spinellis.invoice.Customer
-	c19 -> c20 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	c131 -> c132 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 	// gr.spinellis.invoice.Invoice composed gr.spinellis.invoice.InvoiceItem
-	c19 -> c18 [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
+	c131 -> c130 [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
 	// gr.spinellis.product.Product assoc gr.spinellis.product.Category
-	c21 -> c22 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	c133 -> c134 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 }
 

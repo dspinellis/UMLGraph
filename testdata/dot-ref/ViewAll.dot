@@ -8,22 +8,22 @@ digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
 	node [fontname="Helvetica",fontsize=10,shape=record];
 	// gr.spinellis.invoice.InvoiceItem
-	c27 [label="InvoiceItem", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c140 [label="InvoiceItem", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.invoice.Invoice
-	c28 [label="Invoice", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c141 [label="Invoice", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.invoice.Customer
-	c29 [label="Customer", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c142 [label="Customer", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.product.Product
-	c30 [label="Product", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c143 [label="Product", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.product.Category
-	c31 [label="Category", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c144 [label="Category", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.invoice.InvoiceItem assoc gr.spinellis.product.Product
-	c27 -> c30 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	c140 -> c143 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 	// gr.spinellis.invoice.Invoice assoc gr.spinellis.invoice.Customer
-	c28 -> c29 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	c141 -> c142 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 	// gr.spinellis.invoice.Invoice composed gr.spinellis.invoice.InvoiceItem
-	c28 -> c27 [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
+	c141 -> c140 [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
 	// gr.spinellis.product.Product assoc gr.spinellis.product.Category
-	c30 -> c31 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	c143 -> c144 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 }
 
