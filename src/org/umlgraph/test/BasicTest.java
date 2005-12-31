@@ -23,6 +23,7 @@ package gr.spinellis.umlgraph.test;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BasicTest {
@@ -36,41 +37,44 @@ public class BasicTest {
     static PrintWriter pw = new PrintWriter(System.out);
 
     public static void main(String[] args) throws IOException {
-	boolean equal = true;
+	List<String> different = new ArrayList<String>(); 
 	
 	File outFolder = new File(testDestFolder);
         if (!outFolder.exists())
             outFolder.mkdirs();
 	
-        equal = performBasicTests();
-        equal &= performViewTests(outFolder);
+        performBasicTests(different);
+        performViewTests(different, outFolder);
 
-        if (!equal)
-            System.out.println("ERROR, some files are not structurally equal");
-        else
+        if (different.size() > 0) {
+            System.out.println("ERROR, some files are not structurally equal:");
+            for (String className : different) {
+		System.out.println(className);
+	    }
+        } else {
             System.out.println("GOOD, all files are structurally equal");
+        }
     }
     
-    private static boolean performViewTests(File outFolder) throws IOException {
+    private static void performViewTests(List<String> differences, File outFolder) throws IOException {
 	String[] options = new String[] { "-docletpath", "build", "-private",
 		"-d", outFolder.getAbsolutePath(), "-sourcepath", "testdata/java", "-subpackages", "gr.spinellis", "-views" };
 	runDoclet(options);
 	
 	String[] javaFiles = new File(testSourceFolder, "gr/spinellis/views").list(new JavaFilter());
-	boolean equal = true;
 	for (int i = 0; i < javaFiles.length; i++) {
 	    String viewName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
 	    File dotFile = new File(testDestFolder, viewName + ".dot");
 	    String dotPath = dotFile.getAbsolutePath();
 	    String refPath = new File(testRefFolder, viewName + ".dot").getAbsolutePath();
-	    equal &= checkForDifferences(dotPath, refPath);
+	    if(!dotFilesEqual(dotPath, refPath)) {
+		differences.add(dotFile.getName());
+	    }
 	}
-	return equal;
     }
 
-    private static boolean performBasicTests() throws IOException {
+    private static boolean performBasicTests(List<String> differences) throws IOException {
 	String[] javaFiles = new File(testSourceFolder).list(new JavaFilter());
-//	String[] javaFiles = new String[] {"MyVector.java"};
 	boolean equal = true;
         for (int i = 0; i < javaFiles.length; i++) {
             String javaFileName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
@@ -84,7 +88,9 @@ public class BasicTest {
                     "-output", outFileName, javaPath };
 
             runDoclet(options);
-            equal &= checkForDifferences(dotPath, refPath);
+            if(!dotFilesEqual(dotPath, refPath)) {
+        	differences.add(dotFile.getName());
+            }
         }
 	return equal;
     }
@@ -93,7 +99,7 @@ public class BasicTest {
 	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw, "gr.spinellis.umlgraph.doclet.UmlGraph", options);
     }
 
-    private static boolean checkForDifferences(String dotPath, String refPath) throws IOException {
+    private static boolean dotFilesEqual(String dotPath, String refPath) throws IOException {
 	System.out.println("Performing diff:\nout:" + dotPath + "\nref:" + refPath);
 	DotDiff differ = new DotDiff(new File(dotPath), new File(refPath));
 	boolean equal = differ.graphEquals();
