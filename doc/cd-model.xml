@@ -51,6 +51,8 @@ to enclose stereotype names.
 These will be automatically enclosed in guillemots.
 Note that a relationship's target class is not implicitly
 defined; it should also be specified using the Java class syntax.
+The target can be specified by simple name, java class lookup rules 
+(imports and visibility) will be used to determine the actual class.
 The following is an example of a relationship
 specification and the resulting UML diagram:
 <table>
