@@ -454,17 +454,27 @@ class ClassGraph {
      * @param name the source class internal name
      * @param edgetype the dot edge specification
      */
-    private void relation(Options opt, String tagname, Doc from, String name, String edgetype) {
+    private void relation(Options opt, String tagname, ClassDoc from, String name, String edgetype) {
 	for (Tag tag : from.tags(tagname)) {
 	    String t[] = StringUtil.tokenize(tag.text());    // l-src label l-dst target
 	    if (t.length != 4) {
 		System.err.println("Error in " + from + "\n" + tagname + " expects four fields (l-src label l-dst target): " + tag.text());
 		return;
 	    }
-	    if(hidden(t[3]))
+	    String destName = t[3];
+	    String nodeName = null;
+	    ClassDoc to = from.findClass(t[3]);
+	    if(to != null) {
+		destName = to.toString();
+		nodeName = getNodeName(destName);
+	    } else {
+		nodeName = getNodeName(t[3]);
+	    }
+	    
+	    if(hidden(destName))
 		continue;
-	    opt.w.println("\t// " + from + " " + tagname + " " + t[3]);
-	    opt.w.println("\t" + name + " -> " + getNodeName(t[3]) + " [" +
+	    opt.w.println("\t// " + from + " " + tagname + " " +destName);
+	    opt.w.println("\t" + name + " -> " + nodeName + " [" +
 		"taillabel=\"" + t[0] + "\", " +
 		"label=\"" + guillemize(opt, t[1]) + "\", " +
 		"headlabel=\"" + t[2] + "\", " +
