@@ -83,8 +83,4 @@ class Version { public static String VERSION = "${VERSION}";}
 	</exec>		
 </target>
 	
-<target name="out-classdiagrams" depends="compile">
-	
-</target>
-
 </project>
