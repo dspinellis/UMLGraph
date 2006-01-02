@@ -22,7 +22,6 @@ package gr.spinellis.umlgraph.doclet;
 
 import com.sun.javadoc.*;
 
-import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +34,7 @@ import java.util.regex.PatternSyntaxException;
  */
 class Options implements Cloneable, OptionProvider {
     private Vector<Pattern> hidePatterns;
-    PrintWriter w;
+    // PrintWriter w;
     boolean showQualified;
     boolean showAttributes;
     boolean showEnumerations;
@@ -312,15 +311,6 @@ class Options implements Cloneable, OptionProvider {
 	}
     }
 
-    public void openFile() throws IOException {
-	FileOutputStream fos = new FileOutputStream(new File(outputDirectory, outputFileName));
-	w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, outputEncoding)));
-    }
-    
-    public void closeFile() {
-	w.close();
-    }
-
 
     /**
      * Check if the supplied string matches an entity specified
@@ -337,22 +327,31 @@ class Options implements Cloneable, OptionProvider {
     }
 
     
-    /*
-     * OptionProvider methods
-     */
+    // ---------------------------------------------------------------- 
+    // OptionProvider methods
+    // ---------------------------------------------------------------- 
     
     public Options getOptionsFor(ClassDoc cd) {
-	Options localOpt = (Options) this.clone();
+	Options localOpt = getGlobalOptions();
 	localOpt.setOptions(cd);
 	return localOpt;
     }
 
     public Options getOptionsFor(String name) {
-	return this;
+	return getGlobalOptions();
     }
 
     public Options getGlobalOptions() {
-	return this;
+	return (Options) clone();
     }
+
+    public void overrideForClass(Options opt, ClassDoc cd) {
+	// nothing to do
+    }
+
+    public void overrideForClass(Options opt, String className) {
+	// nothing to do
+    }
+    
 }
 
