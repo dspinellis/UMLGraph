@@ -68,11 +68,14 @@ class Version { public static String VERSION = "${VERSION}";}
 
 <target name="javadocs" depends="compile">
 	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" destdir="${javadoc}" package="true"/>
-	<property name="dotFile" location="${javadoc}/gr/spinellis/umlgraph/doclet/umlgraph.dot"/>
+	<property name="outFolder" location="${javadoc}/gr/spinellis/umlgraph/doclet"/>
+	<property name="dotName" value="umlgraph.dot"/>
+	<property name="dotFile" location="${outFolder}/${dotName}"/>
 	<property name="gifFile" location="${javadoc}/gr/spinellis/umlgraph/doclet/umlgraph.gif"/>
 	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" package="true">
 		<doclet name="gr.spinellis.umlgraph.doclet.UmlGraph" path="${lib}/UMLGraph.jar">
-			<param name="-output" value="${dotFile}"/>
+			<param name="-d" value="${outFolder}"/>
+			<param name="-output" value="${dotName}"/>
 			<param name="-operations"/>
 		</doclet>
 	</javadoc>
