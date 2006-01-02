@@ -30,9 +30,9 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * Class graph generation engine
- * @navassoc - - 1 gr.spinellis.umlgraph.doclet.Options
- * @depend - - - gr.spinellis.umlgraph.doclet.StringUtil
- * @composed - - * gr.spinellis.umlgraph.doclet.ClassInfo
+ * @depend - - - StringUtil
+ * @composed - - * ClassInfo
+ * @has - - - OptionProvider
  *
  * @version $Revision$
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
@@ -48,6 +48,7 @@ class ClassGraph {
 
     private Set<String> specifiedPackages;
     private OptionProvider optionProvider;
+    private PrintWriter w;
 
     /**
      * Create a new ClassGraph.  The packages passed as an
@@ -169,36 +170,36 @@ class ClassGraph {
      * any stereotypes
      */
     private void visibility(Options opt, ProgramElementDoc e) {
-	opt.w.print(stereotype(opt, e, 'l'));
+	w.print(stereotype(opt, e, 'l'));
 	if (!opt.showVisibility)
 	    return;
 	if (e.isPrivate())
-	    opt.w.print('-');
+	    w.print('-');
 	else if (e.isPublic())
-	    opt.w.print('+');
+	    w.print('+');
 	else if (e.isProtected())
-	    opt.w.print('#');
+	    w.print('#');
 	else if (e.isPackagePrivate())
-	    opt.w.print('~');
-	opt.w.print(' ');
+	    w.print('~');
+	w.print(' ');
     }
 
     /** Print the method parameter p */
     private void parameter(Options opt, Parameter p[]) {
 	for (int i = 0; i < p.length; i++) {
-	    opt.w.print(p[i].name());
+	    w.print(p[i].name());
 	    typeAnnotation(opt, p[i].type());
 	    if (i + 1 < p.length)
-		opt.w.print(", ");
+		w.print(", ");
 	}
     }
 
     /** Print a a basic type t */
     private void type(Options opt, Type t) {
 	if (opt.showQualified)
-	    opt.w.print(t.qualifiedTypeName());
+	    w.print(t.qualifiedTypeName());
 	else
-	    opt.w.print(t.typeName());
+	    w.print(t.typeName());
 	typeParameters(opt, t.asParameterizedType());
     }
 
@@ -207,22 +208,22 @@ class ClassGraph {
 	if (t == null)
 	    return;
 	Type args[] = t.typeArguments();
-	opt.w.print("\\<");
+	w.print("\\<");
 	for (int i = 0; i < args.length; i++) {
 	    type(opt, args[i]);
 	    if (i != args.length - 1)
-		opt.w.print(", ");
+		w.print(", ");
 	}
-	opt.w.print("\\>");
+	w.print("\\>");
     }
 
     /** Annotate an field/argument with its type t */
     private void typeAnnotation(Options opt, Type t) {
 	if (t.typeName().equals("void"))
 	    return;
-	opt.w.print(" : ");
+	w.print(" : ");
 	type(opt, t);
-	opt.w.print(t.dimension());
+	w.print(t.dimension());
     }
 
     /** Print the class's attributes fd */
@@ -231,11 +232,11 @@ class ClassGraph {
 	    if (hidden(f))
 		continue;
 	    visibility(opt, f);
-	    opt.w.print(f.name());
+	    w.print(f.name());
 	    if (opt.showType)
 		typeAnnotation(opt, f.type());
-	    opt.w.print("\\l");
-	    opt.w.print(tagvalue(f, "", 'r'));
+	    w.print("\\l");
+	    w.print(tagvalue(f, "", 'r'));
 	}
     }
 
@@ -251,15 +252,15 @@ class ClassGraph {
 	    if (hidden(cd))
 		continue;
 	    visibility(opt, cd);
-	    opt.w.print(cd.name());
+	    w.print(cd.name());
 	    if (opt.showType) {
-		opt.w.print("(");
+		w.print("(");
 		parameter(opt, cd.parameters());
-		opt.w.print(")");
+		w.print(")");
 	    } else
-		opt.w.print("()");
-	    opt.w.print("\\l");
-	    opt.w.print(tagvalue(cd, "", 'r'));
+		w.print("()");
+	    w.print("\\l");
+	    w.print(tagvalue(cd, "", 'r'));
 	}
     }
 
@@ -269,29 +270,29 @@ class ClassGraph {
 	    if (hidden(md))
 		continue;
 	    visibility(opt, md);
-	    opt.w.print(md.name());
+	    w.print(md.name());
 	    if (opt.showType) {
-		opt.w.print("(");
+		w.print("(");
 		parameter(opt, md.parameters());
-		opt.w.print(")");
+		w.print(")");
 		typeAnnotation(opt, md.returnType());
 	    } else
-		opt.w.print("()");
-	    opt.w.print("\\l");
-	    opt.w.print(tagvalue(md, "", 'r'));
+		w.print("()");
+	    w.print("\\l");
+	    w.print(tagvalue(md, "", 'r'));
 	}
     }
 
     /** Print the common class node's properties */
     private void nodeProperties(Options opt, String s) {
 	if (opt.nodeFillColor != null)
-	    opt.w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
-	opt.w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
-	opt.w.print(", fontsize=" + opt.nodeFontSize);
+	    w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
+	w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
+	w.print(", fontsize=" + opt.nodeFontSize);
 	String url = classToUrl(s);
 	if (url != null)
-	    opt.w.print(", URL=\"" + url + "\"");
-	opt.w.println("];");
+	    w.print(", URL=\"" + url + "\"");
+	w.println("];");
     }
 
     /**
@@ -385,9 +386,9 @@ class ClassGraph {
 	if (toPrint && !hidden(c) && (!c.isEnum() || opt.showEnumerations)) {
 	    // Associate classname's alias
 	    String r = className;
-	    opt.w.println("\t// " + r);
+	    w.println("\t// " + r);
 	    // Create label
-	    opt.w.print("\t" + ci.name + " [");
+	    w.print("\t" + ci.name + " [");
 	    r = stereotype(opt, c, 'n') + escapeLG(qualifiedName(opt, r));
 	    if (c.isInterface())
 		r = guilWrap(opt, "interface") + " \\n" + r;
@@ -400,27 +401,27 @@ class ClassGraph {
 		(opt.showConstructors && c.constructors().length > 0);
 	    r += tagvalue(c, "\\n", 'r');
 	    if (showMembers)
-		opt.w.print("label=\"{" + r + "\\n|");
+		w.print("label=\"{" + r + "\\n|");
 	    else
-		opt.w.print("label=\"" + r + "\"");
+		w.print("label=\"" + r + "\"");
 	    if (opt.showAttributes)
 		attributes(opt, c.fields());
 	    if (c.isEnum() && opt.showEnumConstants) {
 		for (FieldDoc fd : c.enumConstants()) {
-		    opt.w.print(fd.name());
-		    opt.w.print("\\l");
+		    w.print(fd.name());
+		    w.print("\\l");
 		}
 	    }
 	    if (showMembers)
-		opt.w.print("|");
+		w.print("|");
 	    if (opt.showConstructors && !c.isEnum())
 		operations(opt, c.constructors());
 	    if (opt.showOperations && !c.isEnum())
 		operations(opt, c.methods());
 	    if (showMembers)
-		opt.w.print("}\"");
+		w.print("}\"");
 	    // Use ariali [sic] for gif output of abstract classes
-	    opt.w.print(", fontname=\"" +
+	    w.print(", fontname=\"" +
 		(c.isAbstract() ?
 		 opt.nodeFontAbstractName :
 		 opt.nodeFontName) + "\"");
@@ -473,8 +474,8 @@ class ClassGraph {
 	    
 	    if(hidden(destName))
 		continue;
-	    opt.w.println("\t// " + from + " " + tagname + " " +destName);
-	    opt.w.println("\t" + name + " -> " + nodeName + " [" +
+	    w.println("\t// " + from + " " + tagname + " " +destName);
+	    w.println("\t" + name + " -> " + nodeName + " [" +
 		"taillabel=\"" + t[0] + "\", " +
 		"label=\"" + guillemize(opt, t[1]) + "\", " +
 		"headlabel=\"" + t[2] + "\", " +
@@ -500,18 +501,18 @@ class ClassGraph {
 	    !s.toString().equals("java.lang.Object") &&
 	    !c.isEnum() &&
 	    !hidden(s.asClassDoc()))
-		opt.w.println("\t//" + c + " extends " + s + "\n" +
+		w.println("\t//" + c + " extends " + s + "\n" +
 		    "\t" + getNodeName(s.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty];");
 
 	// Print generalizations (through @extends tags)
 	for (Tag tag : c.tags("extends"))
 	    if (!hidden(tag.text()))
-		opt.w.println("\t//" + c + " extends " + tag.text() + "\n" +
+		w.println("\t//" + c + " extends " + tag.text() + "\n" +
 		    "\t" + getNodeName(tag.text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
 	// Print realizations (Java interfaces)
 	for (Type iface : c.interfaceTypes())
 	    if (!hidden(iface.asClassDoc()))
-		opt.w.println("\t" + getNodeName(iface.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];" +
+		w.println("\t" + getNodeName(iface.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];" +
 		    "\t//" + c + " implements " + iface.asClassDoc());
 	// Print other associations
 	relation(opt, "assoc", c, cs, "arrowhead=none");
@@ -534,9 +535,9 @@ class ClassGraph {
 		    Options opt = optionProvider.getOptionsFor(className);
 		    if(opt.matchesHideExpression(className))
 			continue;
-		    opt.w.println("\t// " + className);
-		    opt.w.print("\t" + info.name + "[label=\"" + escapeLG(qualifiedName(opt, className)) + "\"");
-		    opt.w.print(", fontname=\"" + opt.nodeFontName + "\"");
+		    w.println("\t// " + className);
+		    w.print("\t" + info.name + "[label=\"" + escapeLG(qualifiedName(opt, className)) + "\"");
+		    w.print(", fontname=\"" + opt.nodeFontName + "\"");
 		    nodeProperties(opt, className);
 		}
 	    }
@@ -605,5 +606,38 @@ class ClassGraph {
 		return mapEntry.getValue();
 	}
 	return null;
+    }
+    
+    /** Dot prologue 
+     * @throws IOException */
+    public void prologue() throws IOException {
+	Options opt = optionProvider.getGlobalOptions();
+	FileOutputStream fos = new FileOutputStream(new File(opt.outputDirectory, opt.outputFileName));
+	w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, opt.outputEncoding)));
+	w.println(
+	    "#!/usr/local/bin/dot\n" +
+	    "#\n" +
+	    "# Class diagram \n" +
+	    "# Generated by UmlGraph version " +
+	    Version.VERSION + " (http://www.spinellis.gr/sw/umlgraph)\n" +
+	    "#\n\n" +
+	    "digraph G {\n" +
+	    "\tedge [fontname=\"" + opt.edgeFontName +
+	    "\",fontsize=10,labelfontname=\"" + opt.edgeFontName +
+	    "\",labelfontsize=10];\n" +
+	    "\tnode [fontname=\"" + opt.nodeFontName +
+	    "\",fontsize=10,shape=record];"
+	);
+	if (opt.horizontal)
+	    w.println("\trankdir=LR;\n\tranksep=1;");
+	if (opt.bgColor != null)
+	    w.println("\tbgcolor=\"" + opt.bgColor + "\";\n");
+    }
+
+    /** Dot epilogue */
+    public void epilogue() {
+	w.println("}\n");
+	w.flush();
+	w.close();
     }
 }
