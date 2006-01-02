@@ -36,26 +36,29 @@ import com.sun.javadoc.Tag;
  * class diagram out of it.
  * @author wolf
  * 
+ * @depend - - - Options
+ * 
  */
 class View implements OptionProvider {
     Map<Pattern, String[][]> optionOverrides = new LinkedHashMap<Pattern, String[][]>();
     ClassDoc viewDoc;
-    Options baseOptions;
+    OptionProvider provider;
+    List<String[]> globalOptions;
 
     /**
      * Builds a view given the class that contains its definition
      * @param c
      * @throws PatternSyntaxException
      */
-    public View(ClassDoc c, Options generalOptions) throws PatternSyntaxException {
+    public View(ClassDoc c, OptionProvider provider) throws PatternSyntaxException {
 	this.viewDoc = c;
-	this.baseOptions = (Options) generalOptions.clone();
+	this.provider = provider;
 	Tag[] tags = c.tags();
 	String currPattern = null;
 	// parse options, get the global ones, and build a map of the
 	// pattern matched overrides
 	List<String[]> patternOptions = new ArrayList<String[]>();
-	List<String[]> globalOptions = new ArrayList<String[]>();
+	globalOptions = new ArrayList<String[]>();
 	for (int i = 0; i < tags.length; i++) {
 	    if (tags[i].name().equals("@match")) {
 		if (currPattern != null) {
@@ -79,34 +82,6 @@ class View implements OptionProvider {
 	    String[][] options = patternOptions.toArray(new String[patternOptions.size()][]);
 	    optionOverrides.put(Pattern.compile(currPattern), options);
 	}
-	
-	// apply the view global options
-	boolean outputSet = false;
-	for (String[] opts : globalOptions) {
-	    if (opts[0].equals("-output"))
-		outputSet = true;
-	    baseOptions.setOption(opts);
-	}
-	if (!outputSet)
-	    baseOptions.setOption(new String[] { "-output", viewDoc.name() + ".dot" });
-    }
-
-    /**
-     * Applies local view overrides
-     */
-    private void applyOverrides(Options o, String className) {
-	for (Iterator<Map.Entry<Pattern, String[][]>> iter = optionOverrides.entrySet().iterator(); iter
-		.hasNext();) {
-	    Map.Entry<Pattern, String[][]> mapEntry = iter.next();
-	    Pattern regex = mapEntry.getKey();
-	    Matcher matcher = regex.matcher(className);
-	    if (matcher.matches()) {
-		String[][] overrides = mapEntry.getValue(); 
-		for (int i = 0; i < overrides.length; i++) {
-		    o.setOption(overrides[i]);
-		}
-	    }
-	}
     }
 
     // ---------------------------------------------------------------- 
@@ -114,19 +89,56 @@ class View implements OptionProvider {
     // ---------------------------------------------------------------- 
 
     public Options getOptionsFor(ClassDoc cd) {
-	Options localOpt = (Options) baseOptions.clone();
+	Options localOpt = getGlobalOptions();
+	overrideForClass(localOpt, cd);
 	localOpt.setOptions(cd);
-	applyOverrides(localOpt, cd.toString());
 	return localOpt;
     }
 
     public Options getOptionsFor(String name) {
-	Options localOpt = (Options) baseOptions.clone();
-	applyOverrides(localOpt, name);
+	Options localOpt = getGlobalOptions();
+	overrideForClass(localOpt, name);
 	return localOpt;
     }
 
     public Options getGlobalOptions() {
-	return baseOptions;
+	Options go = provider.getGlobalOptions();
+	
+	boolean outputSet = false;
+	for (String[] opts : globalOptions) {
+	    if (opts[0].equals("-output"))
+		outputSet = true;
+	    go.setOption(opts);
+	}
+	if (!outputSet)
+	    go.setOption(new String[] { "-output", viewDoc.name() + ".dot" });
+	
+	return go;
     }
+
+    public void overrideForClass(Options opt, ClassDoc cd) {
+	provider.overrideForClass(opt, cd);
+	overrideForClass_(opt, cd.toString());
+    }
+
+    public void overrideForClass(Options opt, String className) {
+	provider.overrideForClass(opt, className);
+	overrideForClass_(opt, className);
+    }
+
+    private void overrideForClass_(Options opt, String className) {
+	for (Iterator<Map.Entry<Pattern, String[][]>> iter = optionOverrides.entrySet().iterator(); iter
+		.hasNext();) {
+	    Map.Entry<Pattern, String[][]> mapEntry = iter.next();
+	    Pattern regex = mapEntry.getKey();
+	    Matcher matcher = regex.matcher(className);
+	    if (matcher.matches()) {
+		String[][] overrides = mapEntry.getValue();
+		for (int i = 0; i < overrides.length; i++) {
+		    opt.setOption(overrides[i]);
+		}
+	    }
+	}
+    }
+
 }
