@@ -37,38 +37,56 @@ public class BasicTest {
     static PrintWriter pw = new PrintWriter(System.out);
 
     public static void main(String[] args) throws IOException {
-	List<String> different = new ArrayList<String>(); 
-	
-	File outFolder = new File(testDestFolder);
-        if (!outFolder.exists())
-            outFolder.mkdirs();
-	
-        performBasicTests(different);
-        performViewTests(different, outFolder);
+	List<String> different = new ArrayList<String>();
 
-        if (different.size() > 0) {
-            System.out.println("ERROR, some files are not structurally equal:");
-            for (String className : different) {
+	File outFolder = new File(testDestFolder);
+	if (!outFolder.exists())
+	    outFolder.mkdirs();
+
+	performBasicTests(different);
+	performViewTests(different, outFolder);
+
+	if (different.size() > 0) {
+	    System.out.println("ERROR, some files are not structurally equal or some files are missing:");
+	    for (String className : different) {
 		System.out.println(className);
 	    }
-        } else {
-            System.out.println("GOOD, all files are structurally equal");
-        }
+	} else {
+	    System.out.println("GOOD, all files are structurally equal");
+	}
     }
-    
-    private static void performViewTests(List<String> differences, File outFolder) throws IOException {
-	String[] options = new String[] { "-docletpath", "build", "-private",
-		"-d", outFolder.getAbsolutePath(), "-sourcepath", "testdata/java", "-subpackages", "gr.spinellis", "-views" };
+
+    private static void performViewTests(List<String> differences, File outFolder)
+	    throws IOException {
+	String[] options = new String[] { "-docletpath", "build", "-private", "-d",
+		outFolder.getAbsolutePath(), "-sourcepath", "testdata/java", "-subpackages",
+		"gr.spinellis", "-views" };
 	runDoclet(options);
-	
-	String[] javaFiles = new File(testSourceFolder, "gr/spinellis/views").list(new JavaFilter());
+
+	String[] javaFiles = new File(testSourceFolder, "gr/spinellis/views")
+		.list(new JavaFilter());
 	for (int i = 0; i < javaFiles.length; i++) {
 	    String viewName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
 	    File dotFile = new File(testDestFolder, viewName + ".dot");
 	    String dotPath = dotFile.getAbsolutePath();
-	    String refPath = new File(testRefFolder, viewName + ".dot").getAbsolutePath();
-	    if(!dotFilesEqual(dotPath, refPath)) {
-		differences.add(dotFile.getName());
+	    File refFile = new File(testRefFolder, viewName + ".dot");
+	    String refPath = refFile.getAbsolutePath();
+	    if (viewName.contains("Abstract")) {
+		// make sure abstract views are not generated
+		if (dotFile.exists()) {
+		    pw.println("Error, abstract view " + viewName + " has been generated");
+		    differences.add(dotFile.getName() + " should not be there");
+		}
+	    } else {
+		if(!dotFile.exists()) {
+		    pw.println("Error, output file " + dotFile + " has not been generated");
+		    differences.add(dotFile.getName() + " has not been generated");
+		} else if(!refFile.exists()) {
+		    pw.println("Error, reference file " + refFile + " is not available");
+		    differences.add(refFile.getName() + " reference is not available");
+		} else if (!dotFilesEqual(dotPath, refPath)) {
+		    differences.add(dotFile.getName());
+		}
 	    }
 	}
     }
@@ -76,37 +94,38 @@ public class BasicTest {
     private static boolean performBasicTests(List<String> differences) throws IOException {
 	String[] javaFiles = new File(testSourceFolder).list(new JavaFilter());
 	boolean equal = true;
-        for (int i = 0; i < javaFiles.length; i++) {
-            String javaFileName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
-            String outFileName = javaFileName + ".dot";
+	for (int i = 0; i < javaFiles.length; i++) {
+	    String javaFileName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
+	    String outFileName = javaFileName + ".dot";
 	    File dotFile = new File(testDestFolder, outFileName);
 	    dotFile.delete();
-            String dotPath = dotFile.getAbsolutePath();
-            String refPath = new File(testRefFolder, outFileName).getAbsolutePath();
-            String javaPath = new File(testSourceFolder, javaFiles[i]).getAbsolutePath();
-            String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden", "-private", "-d", testDestFolder,
-                    "-output", outFileName, javaPath };
+	    String dotPath = dotFile.getAbsolutePath();
+	    String refPath = new File(testRefFolder, outFileName).getAbsolutePath();
+	    String javaPath = new File(testSourceFolder, javaFiles[i]).getAbsolutePath();
+	    String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden",
+		    "-private", "-d", testDestFolder, "-output", outFileName, javaPath };
 
-            runDoclet(options);
-            if(!dotFilesEqual(dotPath, refPath)) {
-        	differences.add(dotFile.getName());
-            }
-        }
+	    runDoclet(options);
+	    if (!dotFilesEqual(dotPath, refPath)) {
+		differences.add(dotFile.getName());
+	    }
+	}
 	return equal;
     }
 
     private static void runDoclet(String[] options) {
-	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw, "gr.spinellis.umlgraph.doclet.UmlGraph", options);
+	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw,
+		"gr.spinellis.umlgraph.doclet.UmlGraph", options);
     }
 
     private static boolean dotFilesEqual(String dotPath, String refPath) throws IOException {
-	System.out.println("Performing diff:\nout:" + dotPath + "\nref:" + refPath);
+	pw.println("Performing diff:\nout:" + dotPath + "\nref:" + refPath);
 	DotDiff differ = new DotDiff(new File(dotPath), new File(refPath));
 	boolean equal = differ.graphEquals();
 	if (equal) {
-	    System.out.println("File contents are structurally equal");
+	    pw.println("File contents are structurally equal");
 	} else {
-	    System.out.println("File contents are structurally not equal");
+	    pw.println("File contents are structurally not equal");
 	    printList("# Lines in out but not in ref", differ.getExtraLines1());
 	    printList("# Lines in ref but not in out", differ.getExtraLines2());
 	    printList("# Nodes in out but not in ref", differ.getNodes1());
@@ -114,16 +133,16 @@ public class BasicTest {
 	    printList("# Arcs in out but not in ref", differ.getArcs1());
 	    printList("# Arcs in ref but not in out", differ.getArcs2());
 	}
-	System.out.println("\n\n");
+	pw.println("\n\n");
 	return equal;
     }
 
     private static void printList(String message, List extraOut) {
-        if (extraOut.size() > 0) {
-            System.out.println(message);
-            for (Object o : extraOut) {
-                System.out.println(o);
-            }
-        }
+	if (extraOut.size() > 0) {
+	    pw.println(message);
+	    for (Object o : extraOut) {
+		pw.println(o);
+	    }
+	}
     }
 }
