@@ -74,9 +74,10 @@ public class UmlGraph {
      * Builds and outputs a single graph according to the view overrides
      */
     private static void buildGraph(RootDoc root, OptionProvider op) throws IOException {
+	Options opt = op.getGlobalOptions();
 	ClassDoc[] classes = root.classes();
 
-	ClassGraph c = new ClassGraph(root.specifiedPackages(), op);
+	ClassGraph c = new ClassGraph(root, op);
 	c.prologue();
 	for (int i = 0; i < classes.length; i++) {
 	    c.printClass(classes[i]);
@@ -84,6 +85,10 @@ public class UmlGraph {
 	for (int i = 0; i < classes.length; i++) {
 	    c.printRelations(classes[i]);
 	}
+	if(opt.inferAssociations)
+            c.printInferredRelations(classes);
+        if(opt.inferDependencies)
+            c.printInferredDependencies(classes);
 
 	c.printExtraClasses(root);
 	c.epilogue();

@@ -20,6 +20,9 @@
 
 package gr.spinellis.umlgraph.doclet;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Class's dot-comaptible alias name (for fully qualified class names)
  * and printed information
@@ -34,6 +37,12 @@ class ClassInfo {
     boolean nodePrinted;
     /** True if the class class node is hidden */
     boolean hidden;
+    /** 
+     * The list of classes that share a relation with this one. Contains
+     * all the classes linked with a bi-directional relation , and the ones 
+     * referred by a directed relation 
+     */
+    Set<String> relatedClasses = new HashSet<String>();
 
     ClassInfo(boolean p, boolean h) {
 	nodePrinted = p;
@@ -41,10 +50,20 @@ class ClassInfo {
 	name = "c" + (new Integer(classNumber)).toString();
 	classNumber++;
     }
+    
+    public void addRelation(String dest) {
+	relatedClasses.add(dest);
+    }
+    
+    public boolean isRelated(String dest) {
+	return relatedClasses.contains(dest);
+    }
 
     /** Start numbering from zero. */
     public static void reset() {
 	classNumber = 0;
     }
+
+    
 }
 
