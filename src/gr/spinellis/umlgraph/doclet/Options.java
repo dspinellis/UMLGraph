@@ -34,6 +34,7 @@ import java.util.regex.PatternSyntaxException;
  */
 class Options implements Cloneable, OptionProvider {
     private Vector<Pattern> hidePatterns;
+    private Vector<Pattern> hideInferPatterns;
     // PrintWriter w;
     boolean showQualified;
     boolean showAttributes;
@@ -66,6 +67,8 @@ class Options implements Cloneable, OptionProvider {
     String guilOpen = "\u00ab";
     /** Guillemot right (close) */
     String guilClose = "\u00bb";
+    boolean inferAssociations;
+    boolean inferDependencies;
 
     Options() {
 	showQualified = false;
@@ -95,6 +98,9 @@ class Options implements Cloneable, OptionProvider {
 	useGuillemot = true;
 	findViews = false;
 	viewName = null;
+	inferAssociations = false;
+	inferDependencies = false;
+	hideInferPatterns = new Vector<Pattern>();
     }
 
     public Object clone() {
@@ -136,7 +142,9 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-all") ||
            option.equals("-noguillemot") ||
            option.equals("-hideall") ||
-           option.equals("-views"))
+           option.equals("-views") ||
+           option.equals("-inferAssociations") ||
+           option.equals("-inferDependencies"))
 
             return 1;
         else if(option.equals("-nodefillcolor") ||
@@ -288,6 +296,14 @@ class Options implements Cloneable, OptionProvider {
 	    outputDirectory = opt[1];
 	} else if (opt[0].equals("-!d")) {
 	    outputDirectory = ".";
+	} else if(opt[0].equals("-inferassoc")) {
+	    inferAssociations = true;
+	} else if(opt[0].equals("-!inferassoc")) {
+	    inferAssociations = false;
+	} else if(opt[0].equals("-inferdep")) {
+	    inferDependencies = true;
+	} else if(opt[0].equals("-!inferdep")) {
+	    inferDependencies = false;
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if needed.
     }
@@ -325,7 +341,21 @@ class Options implements Cloneable, OptionProvider {
 	}
 	return false;
     }
-
+    
+    /**
+     * Check if the supplied string matches an entity specified with
+     * the -hideinfer parameter
+     * @param s
+     * @return
+     */
+    public boolean machesHideInferExpression(String s) {
+        for (Pattern hidePattern : hideInferPatterns) {
+            Matcher m = hidePattern.matcher(s);
+	    if (m.find())
+		return true;
+	}
+        return false;
+    }
     
     // ---------------------------------------------------------------- 
     // OptionProvider methods
