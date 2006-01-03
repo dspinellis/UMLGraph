@@ -24,9 +24,7 @@ import com.sun.javadoc.*;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import java.util.regex.*;
 
 /**
  * Class graph generation engine
@@ -38,6 +36,14 @@ import java.util.regex.PatternSyntaxException;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 class ClassGraph {
+    private static Map<String, String> associationMap = new HashMap<String, String>();
+    static {
+	associationMap.put("assoc", "arrowhead=none");
+	associationMap.put("navassoc", "arrowhead=open");
+	associationMap.put("has", "arrowhead=none, arrowtail=ediamond");
+	associationMap.put("composed", "arrowhead=none, arrowtail=diamond");
+	associationMap.put("depend", "arrowhead=open, style=dashed");
+    }
     private Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
     private String apiDocRoot;
     private Map<Pattern, String> apiDocMap = new HashMap<Pattern, String>();
@@ -49,16 +55,20 @@ class ClassGraph {
     private Set<String> specifiedPackages;
     private OptionProvider optionProvider;
     private PrintWriter w;
+    private ClassDoc collectionClassDoc;
+    private ClassDoc mapClassDoc;
 
     /**
      * Create a new ClassGraph.  The packages passed as an
      * argument are the ones specified on the command line.
      * Local URLs will be generated for these packages.
      */
-    public ClassGraph(PackageDoc[] packages, OptionProvider optionProvider) throws IOException {
+    public ClassGraph(RootDoc root, OptionProvider optionProvider) throws IOException {
 	this.optionProvider = optionProvider;
+	this.collectionClassDoc = root.classNamed("java.util.Collection");
+	this.mapClassDoc = root.classNamed("java.util.Map");
 	specifiedPackages = new HashSet<String>();
-	for (PackageDoc p : packages)
+	for (PackageDoc p : root.specifiedPackages())
 	    specifiedPackages.add(p.name());
 	Options opt = optionProvider.getGlobalOptions();
 	apiDocRoot = fixApiDocRoot(opt.apiDocRoot);
@@ -452,40 +462,53 @@ class ClassGraph {
      * Print all relations for a given's class's tag
      * @param tagname the tag containing the given relation
      * @param from the source class
-     * @param name the source class internal name
+     * @param fromName the source class internal name
      * @param edgetype the dot edge specification
      */
-    private void relation(Options opt, String tagname, ClassDoc from, String name, String edgetype) {
+    private void relation(Options opt, String tagname, ClassDoc from, String fromName) {
 	for (Tag tag : from.tags(tagname)) {
 	    String t[] = StringUtil.tokenize(tag.text());    // l-src label l-dst target
 	    if (t.length != 4) {
 		System.err.println("Error in " + from + "\n" + tagname + " expects four fields (l-src label l-dst target): " + tag.text());
 		return;
 	    }
-	    String destName = t[3];
-	    String nodeName = null;
+	    String dest = t[3];
+	    String destName = null;
 	    ClassDoc to = from.findClass(t[3]);
 	    if(to != null) {
-		destName = to.toString();
-		nodeName = getNodeName(destName);
+		dest = to.toString();
+		destName = getNodeName(dest);
 	    } else {
-		nodeName = getNodeName(t[3]);
+		destName = getNodeName(t[3]);
 	    }
 	    
-	    if(hidden(destName))
+	    if(hidden(dest))
 		continue;
-	    w.println("\t// " + from + " " + tagname + " " +destName);
-	    w.println("\t" + name + " -> " + nodeName + " [" +
-		"taillabel=\"" + t[0] + "\", " +
-		"label=\"" + guillemize(opt, t[1]) + "\", " +
-		"headlabel=\"" + t[2] + "\", " +
-		"fontname=\"" + opt.edgeFontName + "\", " +
-		"fontcolor=\"" + opt.edgeFontColor + "\", " +
-		"fontsize=" + opt.edgeFontSize + ", " +
-		"color=\"" + opt.edgeColor + "\", " +
-		edgetype + "];"
-	    );
+	    relation(opt, tagname, from.toString(), fromName, dest, destName, t[0], t[1], t[2]);
 	}
+    }
+
+    private void relation(Options opt, String tagname, String from, String fromName, 
+	    String dest, String destName, String tailLabel, String label, String headLabel) {
+	// print relation
+	String edgetype = associationMap.get(tagname);
+	w.println("\t// " + from + " " + tagname + " " + dest);
+	w.println("\t" + fromName + " -> " + destName + " [" +
+    	"taillabel=\"" + tailLabel + "\", " +
+    	"label=\"" + guillemize(opt, label) + "\", " +
+    	"headlabel=\"" + headLabel + "\", " +
+    	"fontname=\"" + opt.edgeFontName + "\", " +
+    	"fontcolor=\"" + opt.edgeFontColor + "\", " +
+    	"fontsize=" + opt.edgeFontSize + ", " +
+    	"color=\"" + opt.edgeColor + "\", " +
+    	edgetype + "];"
+    	);
+	
+	// update relation info
+	getClassInfo(from).addRelation(dest);
+	if(!tagname.equals("navassoc") && !tagname.equals("depend"))
+	    getClassInfo(dest).addRelation(from);
+	
     }
 
     /** Print a class's relations */
@@ -493,6 +516,7 @@ class ClassGraph {
 	Options opt = optionProvider.getOptionsFor(c);
 	if (hidden(c))
 	    return;
+	String className = c.toString();
 	String cs = getNodeName(c);
 
 	// Print generalization (through the Java superclass)
@@ -500,26 +524,35 @@ class ClassGraph {
 	if (s != null &&
 	    !s.toString().equals("java.lang.Object") &&
 	    !c.isEnum() &&
-	    !hidden(s.asClassDoc()))
+	    !hidden(s.asClassDoc())) {
+	    	ClassDoc sc = s.asClassDoc();
 		w.println("\t//" + c + " extends " + s + "\n" +
-		    "\t" + getNodeName(s.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty];");
+		    "\t" + getNodeName(sc) + " -> " + cs + " [dir=back,arrowtail=empty];");
+		getClassInfo(className).addRelation(sc.toString());
+	}
 
 	// Print generalizations (through @extends tags)
 	for (Tag tag : c.tags("extends"))
-	    if (!hidden(tag.text()))
+	    if (!hidden(tag.text())) {
 		w.println("\t//" + c + " extends " + tag.text() + "\n" +
 		    "\t" + getNodeName(tag.text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
+		getClassInfo(className).addRelation(tag.text());
+	    }
 	// Print realizations (Java interfaces)
-	for (Type iface : c.interfaceTypes())
-	    if (!hidden(iface.asClassDoc()))
-		w.println("\t" + getNodeName(iface.asClassDoc()) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];" +
-		    "\t//" + c + " implements " + iface.asClassDoc());
+	for (Type iface : c.interfaceTypes()) {
+	    ClassDoc ic = iface.asClassDoc();
+	    if (!hidden(ic)) {
+		w.println("\t" + getNodeName(ic) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];" +
+		    "\t//" + c + " implements " + ic);
+		getClassInfo(className).addRelation(ic.toString());
+	    }
+	}
 	// Print other associations
-	relation(opt, "assoc", c, cs, "arrowhead=none");
-	relation(opt, "navassoc", c, cs, "arrowhead=open");
-	relation(opt, "has", c, cs, "arrowhead=none, arrowtail=ediamond");
-	relation(opt, "composed", c, cs, "arrowhead=none, arrowtail=diamond");
-	relation(opt, "depend", c, cs, "arrowhead=open, style=dashed");
+	relation(opt, "assoc", c, cs);
+	relation(opt, "navassoc", c, cs);
+	relation(opt, "has", c, cs);
+	relation(opt, "composed", c, cs);
+	relation(opt, "depend", c, cs);
     }
 
     /** Print classes that were parts of relationships, but not parsed by javadoc */
@@ -542,6 +575,145 @@ class ClassGraph {
 		}
 	    }
 	}
+    }
+    
+    /**
+     * Prints associations recovered from the fields of a class. An association is inferred only
+     * if another relation between the two classes is not already in the graph.
+     * @param classes
+     */    
+    public void printInferredRelations(ClassDoc[] classes) {
+        for (ClassDoc c : classes) {
+            Options opt = optionProvider.getOptionsFor(c);
+            
+            // check if the source is excluded from inference
+            String sourceName = c.toString();
+            if(hidden(c) || opt.machesHideInferExpression(sourceName))
+                continue;
+            
+            for (FieldDoc field : c.fields()) {
+        	// skip primitives
+                FieldRelationInfo fri = getFieldRelationInfo(field);
+                if(fri == null)
+                    continue;
+                
+                // check if the destination is excluded from inference
+                String dest = fri.cd.toString();
+                Options destOpt = optionProvider.getOptionsFor(fri.cd);
+                if(hidden(fri.cd) || destOpt.machesHideInferExpression(dest))
+                    continue;
+
+                String destAdornment = fri.multiple ? "*": "";
+                relation(opt, "navassoc", sourceName, getNodeName(c), dest, getNodeName(dest), "", "", destAdornment); 
+            }
+        }
+    }
+    
+    /**
+     * Prints dependencies recovered from the methods of a class. A
+     * dependency is inferred only if another relation between the two
+     * classes is not already in the graph.
+     * @param classes
+     */    
+    public void printInferredDependencies(ClassDoc[] classes) {
+	for (ClassDoc c : classes) {
+	    Options opt = optionProvider.getOptionsFor(c);
+
+	    String sourceName = c.toString();
+	    if (hidden(c) || opt.machesHideInferExpression(sourceName))
+		continue;
+
+	    Set<Type> types = new HashSet<Type>();
+	    // harvest method return and parameter types
+	    for (MethodDoc method : c.methods()) {
+		
+		types.add(method.returnType());
+		for (Parameter parameter : method.parameters()) {
+		    types.add(parameter.type());
+		}
+	    }
+	    // and the field types
+	    for (FieldDoc field : c.fields()) {
+		types.add(field.type());
+	    }
+	    // finally, see if there are some type parameters
+	    if(c.asParameterizedType() != null) {
+		ParameterizedType pt = c.asParameterizedType();
+		types.addAll(Arrays.asList(pt.typeArguments()));
+	    }
+
+	    // compute dependencies
+	    for (Type type : types) {
+		// skip primitives and type variables, as well as dependencies
+		// on the source class
+		if(type.isPrimitive() || type instanceof WildcardType || type instanceof TypeVariable || c.equals(type.asClassDoc()))
+		    continue;
+
+		// check if the destination is excluded from inference
+		ClassDoc fc = type.asClassDoc();
+		String destName = fc.toString();
+		Options destOpt = optionProvider.getOptionsFor(fc);
+		if (hidden(fc) || destOpt.machesHideInferExpression(destName))
+		    continue;
+
+		// if source and dest are not already linked, add a
+		// dependency
+		if (!getClassInfo(sourceName).isRelated(destName)) {
+		    relation(opt, "depend", sourceName, getNodeName(sourceName), destName,
+			    getNodeName(destName), "", "", "");
+		}
+	    }
+
+	}
+    }
+
+    
+    private FieldRelationInfo getFieldRelationInfo(FieldDoc field) {
+	Type type = field.type();
+	if(type.isPrimitive() || type instanceof WildcardType || type instanceof TypeVariable)
+	    return null;
+	
+	if (type.dimension().endsWith("[]")) {
+	    return new FieldRelationInfo(type.asClassDoc(), true);
+	}
+	
+	Type[] argTypes = getInterfaceTypeArguments(collectionClassDoc, type);
+	if(argTypes != null && argTypes.length == 1) {
+	    return new FieldRelationInfo(argTypes[0].asClassDoc(), true);
+	}
+	argTypes = getInterfaceTypeArguments(mapClassDoc, type);
+	if(argTypes != null && argTypes.length == 2) {
+	    return new FieldRelationInfo(argTypes[1].asClassDoc(), true);
+	} 
+
+	return new FieldRelationInfo(type.asClassDoc(), false);
+    }
+    
+    private Type[] getInterfaceTypeArguments(ClassDoc iface, Type t) {
+	if (t instanceof ParameterizedType) {
+	    ParameterizedType pt = (ParameterizedType) t;
+	    if (iface.equals(t.asClassDoc())) {
+		return pt.typeArguments();
+	    } else {
+		for (Type pti : pt.interfaceTypes()) {
+		    Type[] result = getInterfaceTypeArguments(iface, pti);
+		    if (result != null)
+			return result;
+		}
+		if (pt.superclassType() != null)
+		    return getInterfaceTypeArguments(iface, pt.superclassType());
+	    }
+	} else if (t instanceof ClassDoc) {
+	    ClassDoc cd = (ClassDoc) t;
+	    for (Type pti : cd.interfaceTypes()) {
+		Type[] result = getInterfaceTypeArguments(iface, pti);
+		if (result != null)
+		    return result;
+	    }
+	    if (cd.superclassType() != null)
+		return getInterfaceTypeArguments(iface, cd.superclassType());
+	}
+	return null;
     }
 
     /** Removes the template specs from a class name. */
@@ -639,5 +811,15 @@ class ClassGraph {
 	w.println("}\n");
 	w.flush();
 	w.close();
+    }
+    
+    private static class FieldRelationInfo {
+	ClassDoc cd;
+	boolean multiple;
+
+	public FieldRelationInfo(ClassDoc cd, boolean multiple) {
+	    this.cd = cd;
+	    this.multiple = multiple;
+	}
     }
 }
