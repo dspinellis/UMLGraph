@@ -68,9 +68,7 @@ public class BasicTest {
 	for (int i = 0; i < javaFiles.length; i++) {
 	    String viewName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
 	    File dotFile = new File(testDestFolder, viewName + ".dot");
-	    String dotPath = dotFile.getAbsolutePath();
 	    File refFile = new File(testRefFolder, viewName + ".dot");
-	    String refPath = refFile.getAbsolutePath();
 	    if (viewName.contains("Abstract")) {
 		// make sure abstract views are not generated
 		if (dotFile.exists()) {
@@ -78,16 +76,20 @@ public class BasicTest {
 		    differences.add(dotFile.getName() + " should not be there");
 		}
 	    } else {
-		if(!dotFile.exists()) {
-		    pw.println("Error, output file " + dotFile + " has not been generated");
-		    differences.add(dotFile.getName() + " has not been generated");
-		} else if(!refFile.exists()) {
-		    pw.println("Error, reference file " + refFile + " is not available");
-		    differences.add(refFile.getName() + " reference is not available");
-		} else if (!dotFilesEqual(dotPath, refPath)) {
-		    differences.add(dotFile.getName());
-		}
+		compare(differences, dotFile, refFile);
 	    }
+	}
+    }
+
+    private static void compare(List<String> differences, File dotFile, File refFile) throws IOException {
+	if(!dotFile.exists()) {
+	    pw.println("Error, output file " + dotFile + " has not been generated");
+	    differences.add(dotFile.getName() + " has not been generated");
+	} else if(!refFile.exists()) {
+	    pw.println("Error, reference file " + refFile + " is not available");
+	    differences.add(refFile.getName() + " reference is not available");
+	} else if (!dotFilesEqual(dotFile.getAbsolutePath(), refFile.getAbsolutePath())) {
+	    differences.add(dotFile.getName());
 	}
     }
 
@@ -99,16 +101,13 @@ public class BasicTest {
 	    String outFileName = javaFileName + ".dot";
 	    File dotFile = new File(testDestFolder, outFileName);
 	    dotFile.delete();
-	    String dotPath = dotFile.getAbsolutePath();
-	    String refPath = new File(testRefFolder, outFileName).getAbsolutePath();
+	    File refFile = new File(testRefFolder, outFileName);
 	    String javaPath = new File(testSourceFolder, javaFiles[i]).getAbsolutePath();
 	    String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden",
 		    "-private", "-d", testDestFolder, "-output", outFileName, javaPath };
 
 	    runDoclet(options);
-	    if (!dotFilesEqual(dotPath, refPath)) {
-		differences.add(dotFile.getName());
-	    }
+	    compare(differences, dotFile, refFile);
 	}
 	return equal;
     }
