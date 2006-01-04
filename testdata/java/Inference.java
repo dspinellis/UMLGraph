@@ -10,10 +10,14 @@ import java.util.Map;
  * @opt attributes
  * @opt operations
  * @opt types
+ * @opt collpackages java.util.*
  * @hidden
  */
 class UMLOptions {}
 
+/**
+ * @opt inferassoctype has 
+ */
 class A {
     B first;
     B second;
@@ -27,7 +31,7 @@ class B {
 class C {
     List<A> collectionOfA;
     ArrayList<B> collectionOfB;
-    Map<String, B> mapOfB;
+    Map<String, D> mapOfD;
     C[] childs;
     List anOpaqueList;
 }
@@ -38,6 +42,9 @@ class MyFunnyList<T, V> extends ArrayList<T> {
 
 class MyList extends MyFunnyList<A, B> {}
 
+/**
+ * @opt inferassoctype composed
+ */
 class D {
     MyList anotherListOfA;
 }
