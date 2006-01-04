@@ -34,8 +34,6 @@ import java.util.regex.PatternSyntaxException;
  */
 class Options implements Cloneable, OptionProvider {
     private Vector<Pattern> hidePatterns;
-    private Vector<Pattern> hideInferPatterns;
-    // PrintWriter w;
     boolean showQualified;
     boolean showAttributes;
     boolean showEnumerations;
@@ -67,8 +65,11 @@ class Options implements Cloneable, OptionProvider {
     String guilOpen = "\u00ab";
     /** Guillemot right (close) */
     String guilClose = "\u00bb";
-    boolean inferAssociations;
+    boolean inferRelationships;
     boolean inferDependencies;
+    boolean useImports;
+    String inferRelationshipType;
+    private Vector<Pattern> collPackages;
 
     Options() {
 	showQualified = false;
@@ -98,9 +99,11 @@ class Options implements Cloneable, OptionProvider {
 	useGuillemot = true;
 	findViews = false;
 	viewName = null;
-	inferAssociations = false;
+	inferRelationships = false;
 	inferDependencies = false;
-	hideInferPatterns = new Vector<Pattern>();
+	useImports = false;
+	inferRelationshipType = "navassoc";
+	collPackages = new Vector<Pattern>();
     }
 
     public Object clone() {
@@ -110,8 +113,9 @@ class Options implements Cloneable, OptionProvider {
 	} catch (CloneNotSupportedException e) {
 	    // Should not happen
 	}
-	// deep clone the hide patterns
+	// deep clone the hide and collection patterns
 	clone.hidePatterns = new Vector<Pattern>(hidePatterns);
+	clone.collPackages= new Vector<Pattern>(collPackages);
 	return clone;
     }
 
@@ -143,8 +147,9 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-noguillemot") ||
            option.equals("-hideall") ||
            option.equals("-views") ||
-           option.equals("-inferAssociations") ||
-           option.equals("-inferDependencies"))
+           option.equals("-inferrel") ||
+           option.equals("-useimports") ||
+           option.equals("-inferdep"))
 
             return 1;
         else if(option.equals("-nodefillcolor") ||
@@ -163,7 +168,10 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-apidocroot") ||
            option.equals("-apidocmap") ||
            option.equals("-d") ||
-           option.equals("-view"))
+           option.equals("-view") ||
+           option.equals("-inferassoctype") ||
+           option.equals("-collpackages")
+           )
             return 2;
         else
             return 0;
@@ -296,14 +304,34 @@ class Options implements Cloneable, OptionProvider {
 	    outputDirectory = opt[1];
 	} else if (opt[0].equals("-!d")) {
 	    outputDirectory = ".";
-	} else if(opt[0].equals("-inferassoc")) {
-	    inferAssociations = true;
-	} else if(opt[0].equals("-!inferassoc")) {
-	    inferAssociations = false;
+	} else if(opt[0].equals("-inferrel")) {
+	    inferRelationships = true;
+	} else if(opt[0].equals("-!inferrel")) {
+	    inferRelationships = false;
+	} else if(opt[0].equals("-inferreltype")) {
+	    if(ClassGraph.associationMap.containsKey(opt[1])) {
+		inferRelationshipType = opt[1]; 
+	    } else {
+		System.err.println("Unknown association type " + opt[1]);
+	    }
+	} else if(opt[0].equals("-!inferreltype")) {
+	    inferRelationshipType = "navassoc";
 	} else if(opt[0].equals("-inferdep")) {
 	    inferDependencies = true;
 	} else if(opt[0].equals("-!inferdep")) {
 	    inferDependencies = false;
+	} else if(opt[0].equals("-useimports")) {
+	    useImports = true;
+	} else if(opt[0].equals("-!useimports")) {
+	    useImports = false;
+	} else if (opt[0].equals("-collpackages")) {
+	    try {
+		collPackages.add(Pattern.compile(opt[1]));
+	    } catch (PatternSyntaxException e) {
+		System.err.println("Skipping invalid pattern " + opt[1]);
+	    }
+	} else if (opt[0].equals("-!collpackages")) {
+	    collPackages.clear();
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if needed.
     }
@@ -343,18 +371,17 @@ class Options implements Cloneable, OptionProvider {
     }
     
     /**
-     * Check if the supplied string matches an entity specified with
-     * the -hideinfer parameter
-     * @param s
-     * @return
+     * Check if the supplied string matches an entity specified
+     * with the -hide parameter.
+     * @return true if the string matches.
      */
-    public boolean machesHideInferExpression(String s) {
-        for (Pattern hidePattern : hideInferPatterns) {
-            Matcher m = hidePattern.matcher(s);
+    public boolean matchesCollPackageExpression(String s) {
+	for (Pattern collPattern : collPackages) {
+	    Matcher m = collPattern.matcher(s);
 	    if (m.find())
 		return true;
 	}
-        return false;
+	return false;
     }
     
     // ---------------------------------------------------------------- 
