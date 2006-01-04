@@ -85,7 +85,7 @@ public class UmlGraph {
 	for (int i = 0; i < classes.length; i++) {
 	    c.printRelations(classes[i]);
 	}
-	if(opt.inferAssociations)
+	if(opt.inferRelationships)
             c.printInferredRelations(classes);
         if(opt.inferDependencies)
             c.printInferredDependencies(classes);
