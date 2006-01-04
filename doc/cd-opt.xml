@@ -63,10 +63,10 @@ inside abstract class nodes.
 <dt>-bgcolor</dt><dd>Specify the graph's background color.
 </dd>
 <dt>-hide</dt><dd>Specify entities to hide from the graph.
-Matching is done against the end of each entity's name.
-For instance, "<code>-hide Widget</code>" would hide "<code>com.foo.widgets.Widget</code>" and
+Matching is done using a non-anchored regular match.
+For instance, "<code>-hide (Big|\.)Widget</code>" would hide "<code>com.foo.widgets.Widget</code>" and
 "<code>com.foo.widgets.BigWidget</code>". Can also be used without arguments,
-in this case it will hide everything (useful in the context of views 
+in this case it will hide everything (useful in the context of views
 to selectively unhide some portions of the graph, see the view chapter for
 further details).
 </dd>
