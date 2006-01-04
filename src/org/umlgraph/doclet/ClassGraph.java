@@ -36,7 +36,7 @@ import java.util.regex.*;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 class ClassGraph {
-    private static Map<String, String> associationMap = new HashMap<String, String>();
+    public static Map<String, String> associationMap = new HashMap<String, String>();
     static {
 	associationMap.put("assoc", "arrowhead=none");
 	associationMap.put("navassoc", "arrowhead=open");
@@ -588,10 +588,10 @@ class ClassGraph {
             
             // check if the source is excluded from inference
             String sourceName = c.toString();
-            if(hidden(c) || opt.machesHideInferExpression(sourceName))
+            if(hidden(c))
                 continue;
             
-            for (FieldDoc field : c.fields()) {
+            for (FieldDoc field : c.fields(false)) {
         	// skip primitives
                 FieldRelationInfo fri = getFieldRelationInfo(field);
                 if(fri == null)
@@ -599,12 +599,11 @@ class ClassGraph {
                 
                 // check if the destination is excluded from inference
                 String dest = fri.cd.toString();
-                Options destOpt = optionProvider.getOptionsFor(fri.cd);
-                if(hidden(fri.cd) || destOpt.machesHideInferExpression(dest))
+                if(hidden(fri.cd))
                     continue;
 
                 String destAdornment = fri.multiple ? "*": "";
-                relation(opt, "navassoc", sourceName, getNodeName(c), dest, getNodeName(dest), "", "", destAdornment); 
+                relation(opt, opt.inferRelationshipType, sourceName, getNodeName(c), dest, getNodeName(dest), "", "", destAdornment); 
             }
         }
     }
@@ -620,40 +619,43 @@ class ClassGraph {
 	    Options opt = optionProvider.getOptionsFor(c);
 
 	    String sourceName = c.toString();
-	    if (hidden(c) || opt.machesHideInferExpression(sourceName))
+	    if (hidden(c))
 		continue;
 
 	    Set<Type> types = new HashSet<Type>();
 	    // harvest method return and parameter types
-	    for (MethodDoc method : c.methods()) {
-		
+	    for (MethodDoc method : c.methods(false)) {
 		types.add(method.returnType());
 		for (Parameter parameter : method.parameters()) {
 		    types.add(parameter.type());
 		}
 	    }
 	    // and the field types
-	    for (FieldDoc field : c.fields()) {
+	    for (FieldDoc field : c.fields(false)) {
 		types.add(field.type());
 	    }
-	    // finally, see if there are some type parameters
-	    if(c.asParameterizedType() != null) {
+	    // see if there are some type parameters
+	    if (c.asParameterizedType() != null) {
 		ParameterizedType pt = c.asParameterizedType();
 		types.addAll(Arrays.asList(pt.typeArguments()));
 	    }
+	    // and finally check for explicitly imported classes (this
+	    // assumes there are no unused imports...)
+	    if(opt.useImports)
+		types.addAll(Arrays.asList(c.importedClasses()));
 
 	    // compute dependencies
 	    for (Type type : types) {
 		// skip primitives and type variables, as well as dependencies
 		// on the source class
-		if(type.isPrimitive() || type instanceof WildcardType || type instanceof TypeVariable || c.equals(type.asClassDoc()))
+		if (type.isPrimitive() || type instanceof WildcardType
+			|| type instanceof TypeVariable || c.equals(type.asClassDoc()))
 		    continue;
 
 		// check if the destination is excluded from inference
 		ClassDoc fc = type.asClassDoc();
 		String destName = fc.toString();
-		Options destOpt = optionProvider.getOptionsFor(fc);
-		if (hidden(fc) || destOpt.machesHideInferExpression(destName))
+		if (hidden(fc))
 		    continue;
 
 		// if source and dest are not already linked, add a
@@ -666,7 +668,6 @@ class ClassGraph {
 
 	}
     }
-
     
     private FieldRelationInfo getFieldRelationInfo(FieldDoc field) {
 	Type type = field.type();
@@ -677,14 +678,17 @@ class ClassGraph {
 	    return new FieldRelationInfo(type.asClassDoc(), true);
 	}
 	
-	Type[] argTypes = getInterfaceTypeArguments(collectionClassDoc, type);
-	if(argTypes != null && argTypes.length == 1) {
-	    return new FieldRelationInfo(argTypes[0].asClassDoc(), true);
+	Options opt = optionProvider.getOptionsFor(type.asClassDoc());
+	if (opt.matchesCollPackageExpression(type.qualifiedTypeName())) {
+	    Type[] argTypes = getInterfaceTypeArguments(collectionClassDoc, type);
+	    if (argTypes != null && argTypes.length == 1) {
+		return new FieldRelationInfo(argTypes[0].asClassDoc(), true);
+	    }
+	    argTypes = getInterfaceTypeArguments(mapClassDoc, type);
+	    if (argTypes != null && argTypes.length == 2) {
+		return new FieldRelationInfo(argTypes[1].asClassDoc(), true);
+	    }
 	}
-	argTypes = getInterfaceTypeArguments(mapClassDoc, type);
-	if(argTypes != null && argTypes.length == 2) {
-	    return new FieldRelationInfo(argTypes[1].asClassDoc(), true);
-	} 
 
 	return new FieldRelationInfo(type.asClassDoc(), false);
     }
