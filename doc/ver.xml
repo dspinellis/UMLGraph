@@ -23,6 +23,7 @@ parameters -d, -view, -views (Andrea Aime)</li>
 <li> Centralized option handling in the Option class (even for command line
      arguments) (Andrea Aime).</li>
 </ul>
+</dd>
 
 <dt>Version 4.1 2005/11/15</dt><dd>
 <ul>
