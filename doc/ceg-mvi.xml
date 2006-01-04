@@ -189,7 +189,7 @@ public class Overview extends BaseView {
 }
 </fmtcode>
 
-<a href="dcbp-overview-full.png"><img src="dbcp-overview-small.png" alt="Overview"/></a>
+<a href="dbcp-overview-full.png"><img src="dbcp-overview-small.png" alt="Overview"/></a>
 
 <p/>The <code>CommonsDbcp</code> view concentrates on the content of org.apache.commons.dbcp
 package, hiding other packages and subpackages available in the sources
@@ -213,7 +213,7 @@ package org.apache.commons;
 public class CommonsDbcp extends BaseView {}
 </fmtcode>
 
-<a href="dcbp-full.png"><img src="dbcp-small.png" alt="Overview"/></a>
+<a href="dbcp-full.png"><img src="dbcp-small.png" alt="Overview"/></a>
 
 <p/>Finally, the <code>Statement</code> view shows only the Statement related
 classes and their dependencies.
