@@ -70,16 +70,31 @@ in this case it will hide everything (useful in the context of views
 to selectively unhide some portions of the graph, see the view chapter for
 further details).
 </dd>
-<dt>-hideall</dt><dd>Hide all entities from the graph.
-Used with views to show only a specific
-subset of classes in each class diagram.
-</dd>
 <dt>-d</dt><dd>Destination folder for .dot files generated from views.
 </dd>
-<dt>-view</dt><dd>Specify the fully qualified name of a class that contains a view definition.
-Only the class diagram specified by this view will be generated.
+<dt>-view</dt><dd>Specify the fully qualified name of a class that contains
+a view definition. Only the class diagram specified by this view will be generated. 
+<br/>See the views chapter for more details.
 </dd>
 <dt>-views</dt><dd>Generate a class diagram for every view found in the source path.
+</dd>
+<dt>-inferrel</dt><dd>Try to automatically infer relationships between classes by inspecting
+field values. See the class diagram inference chapter for further details. Disabled by default.
+</dd>
+<dt>-inferreltype</dt><dd>The type of relationship inferred when -inferrel is activated. 
+Defaults to "navassoc" (see the class modelling chapter for a list of relationship types).
+</dd>
+<dt>-inferdep</dt><dd>Try to automatically infer dependencies between classes by inspecting
+methods and fields. See the class diagram inference chapter for more details. Disabled by default.
+</dd>
+<dt>-useimports</dt><dd>Will also use imports to infer dependencies. 
+Disabled by default, since it does not work properly if there are multiple
+classes in the same source file (will add dependencies to every class in
+the source file).
+</dd>
+<dt>-collpackages</dt><dd>Specify the classes that will be treated as
+containers for one to many relationships when inference is enabled. 
+Matching is done using a non-anchored regular match. Empty by default.
 </dd>
 <dt>-apidocroot</dt><dd>Specify the URL that should be used as the "root" for local classes.
 This URL will be used as a prefix, to which the page name for the local class or
@@ -113,7 +128,8 @@ a tripple specifying hue-saturation-brightness as values 0-1
 or a tripple specifying red-green-blue values as hexadecimal
 digits prefixed by a # (e.g. "#ff8020").
 The symbolic color names are derived from the X Windows System;
-you can find a complete list in the Graphviz documentation.
+you can find a complete list in the 
+<a href="http://www.graphviz.org/doc/info/colors.html">Graphviz documentation</a>
 <p />
 Font names are passed directly to the dot graph generation back-end.
 In general the Postcript standard names Times, Helvetica, Courier, and
