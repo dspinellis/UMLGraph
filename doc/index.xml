@@ -8,6 +8,7 @@
 <ch><ti>Class Diagram Options</ti><fi>cd-opt</fi></ch>
 <ch><ti>Class Diagram Example: Generalisation Relationships</ti><fi>ceg-gen</fi></ch>
 <ch><ti>Class Diagram Example: Advanced Relationships</ti><fi>ceg-adv</fi></ch>
+<ch><ti>Class Diagram Example: Relationships Inference</ti><fi>ceg-infer</fi></ch>
 <ch><ti>Class Diagram Example: Schema</ti><fi>ceg-schema</fi></ch>
 <ch><ti>Class Diagram Example: Element Visibility</ti><fi>ceg-ev</fi></ch>
 <ch><ti>Class Diagram Example: Association Types</ti><fi>ceg-at</fi></ch>

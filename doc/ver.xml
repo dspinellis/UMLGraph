@@ -7,10 +7,14 @@
 <ul>
 <li> Correct the handling of qualified class names following
 the extends keyword (Arnaud Rogues).</li>
+<li> Relationship inference support. When enabled UMLGraph will try to
+     compute relationships and dependecies by field/method/import 
+     statements examination. (Andrea Aime)
+</li>
 <li> Standard class lookup for association targets. The target can be
      specified by name without the need to include the full package
      information, imports and standard visibility rules will be applied
-     to determine the actual class
+     to determine the actual class (Andrea Aime)
 </li>
 <li> A <em>views</em> feature provides the ability to specify package-based
 option overrides in UMLOptions like classes,

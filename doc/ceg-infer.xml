@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+<table>
+<tr><td>
+<fmtcode ext="java">
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+/**
+ * @opt inferrel
+ * @opt collpackages java.util.*
+ * @opt inferdep
+ * @opt hide java.*
+ * @hidden
+ */
+class UMLOptions {}
+
+class Person {
+    House[] houses;
+    List<Dog> dogs;
+    
+    public Room getFavouriteRoom(House house) {}
+}
+
+/**
+ * @opt inferreltype composed
+ */
+class House {
+    Map<String, Room> nameRoomMap;
+}
+
+class Room {}
+
+class Dog {
+    Person owner;
+}
+
+</fmtcode>
+</td><td>
+<img src="infer.png" alt="UML diagram with relationship inference" />
+</td></tr></table>
+
+<p/>In this diagram we enabled both relationship and dependency inference.<br/>
+To make sure Person.dogs and Person.friends are interpreted as one to many relationship 
+the <code>collpackage</code> option has to be specified.
+</notes>
