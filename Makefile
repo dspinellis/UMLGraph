@@ -2,7 +2,7 @@
 # $Id$
 #
 
-VERSION=4.2
+VERSION?=4.2
 TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
 TARBALL=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
@@ -25,7 +25,11 @@ OTHERSRC=index.html build.xml Makefile
 # Files to tag
 ALLTAG=$(DOCLETSRC) $(TESTSRC) $(PICFILE) $(README) $(OTHERSRC)
 # Documentation location (release)
-export DOC=doc
+ifeq ($(VERSION),snapshot)
+	DOC=snapshot-doc
+else
+	DOC=doc
+endif
 
 JARFILE=lib/UmlGraph.jar
 
@@ -47,7 +51,7 @@ $(TARBALL): $(JARFILE) docs Makefile
 	$(LF) $(README) >$(DISTDIR)/$(README)
 	$(LF) $(PICFILE) >$(DISTDIR)/lib/$(PICFILE)
 	cp $(JARFILE) $(DISTDIR)/lib
-	cp $(WEBDIR)/doc/* $(DISTDIR)/doc
+	cp $(WEBDIR)/$(DOC)/* $(DISTDIR)/doc
 	cp build.xml $(DISTDIR)
 	tar cf - src testdata/{java,dot-ref} javadoc --exclude='*/RCS' | tar -C $(DISTDIR) -xvf -
 	$(LF) $(PICFILE) >$(DISTDIR)/src/$(PICFILE)
@@ -55,7 +59,7 @@ $(TARBALL): $(JARFILE) docs Makefile
 	zip -r $(ZIPBALL) $(DISTDIR)
 
 docs:
-	(cd doc && make)
+	(cd doc && make DOC=$(DOC))
 	ant javadocs
 
 $(JARFILE): $(DOCLETSRC)

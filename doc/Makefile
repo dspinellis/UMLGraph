@@ -9,7 +9,7 @@ DESTDIR=/dds/pubs/web/home/sw/umlgraph
 THREAD=/dds/pubs/courses/intro/thread.pl
 GIF := $(shell sed -n 's/.*<img *src *= *"\([^.]*\.gif\)".*/\1/p' *.xml)
 XML := $(wildcard *.xml)
-DOC?=testdoc
+DOC?=doc
 
 .SUFFIXES:.java .dot .ps .gif .pic .eps .png
 
