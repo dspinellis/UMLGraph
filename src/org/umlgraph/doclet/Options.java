@@ -148,6 +148,7 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-hideall") ||
            option.equals("-views") ||
            option.equals("-inferrel") ||
+           option.equals("-inferreltype") ||
            option.equals("-useimports") ||
            option.equals("-inferdep"))
 
