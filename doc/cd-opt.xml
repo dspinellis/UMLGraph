@@ -4,7 +4,9 @@
 A number of command-line options contol the operation of UMLGraph
 class diagram generator:
 <dl>
-<dt>-output</dt><dd>Specify the output file name (default <code>graph.dot</code>).
+<dt>-output</dt><dd>Specify the output file (default <code>graph.dot</code>).
+If the output directory is provided, -output can only specify a file name, otherwise
+a full path is accepted as well.
 </dd>
 <dt>-d</dt><dd>Specify the output directory (defaults to the current directory).
 </dd>
@@ -70,7 +72,7 @@ in this case it will hide everything (useful in the context of views
 to selectively unhide some portions of the graph, see the view chapter for
 further details).
 </dd>
-<dt>-d</dt><dd>Destination folder for .dot files generated from views.
+<dt>-d</dt><dd>Destination folder for .dot files. Especially useful when generating multiple diagrams.
 </dd>
 <dt>-view</dt><dd>Specify the fully qualified name of a class that contains
 a view definition. Only the class diagram specified by this view will be generated. 
