@@ -32,4 +32,7 @@ Note that when you pass the <code>packagenames</code> option to
 located in it) is ignored.
 In such cases you should include the <code>UMLOptions</code> class
 within a named package.
+
+<p/>Please also note that the above invocation will generated a single class
+diagram. If multiple view generation is required the "-views" param should be added.
 </notes>
