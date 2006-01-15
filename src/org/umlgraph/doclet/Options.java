@@ -91,7 +91,7 @@ class Options implements Cloneable, OptionProvider {
 	nodeFillColor = null;
 	bgColor = null;
 	outputFileName = "graph.dot";
-	outputDirectory= ".";
+	outputDirectory= null;
 	outputEncoding = "ISO-8859-1";
 	hidePatterns = new Vector<Pattern>();
 	apiDocMapFileName = null;
@@ -145,10 +145,10 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-types") ||
            option.equals("-all") ||
            option.equals("-noguillemot") ||
-           option.equals("-hideall") ||
+           option.equals("-enumconstants") ||
+           option.equals("-enumerations") ||
            option.equals("-views") ||
            option.equals("-inferrel") ||
-           option.equals("-inferreltype") ||
            option.equals("-useimports") ||
            option.equals("-inferdep"))
 
@@ -170,7 +170,7 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-apidocmap") ||
            option.equals("-d") ||
            option.equals("-view") ||
-           option.equals("-inferassoctype") ||
+           option.equals("-inferreltype") ||
            option.equals("-collpackages")
            )
             return 2;
@@ -304,7 +304,7 @@ class Options implements Cloneable, OptionProvider {
 	} else if (opt[0].equals("-d")) {
 	    outputDirectory = opt[1];
 	} else if (opt[0].equals("-!d")) {
-	    outputDirectory = ".";
+	    outputDirectory = null;
 	} else if(opt[0].equals("-inferrel")) {
 	    inferRelationships = true;
 	} else if(opt[0].equals("-!inferrel")) {
