@@ -788,7 +788,16 @@ class ClassGraph {
      * @throws IOException */
     public void prologue() throws IOException {
 	Options opt = optionProvider.getGlobalOptions();
-	FileOutputStream fos = new FileOutputStream(new File(opt.outputDirectory, opt.outputFileName));
+	// prepare output file. Use the output file name as a full path unless the output
+	// directory is specified
+	File file = null;
+	if(opt.outputDirectory != null)
+	    file = new File(opt.outputDirectory, opt.outputFileName);
+	else
+	    file = new File(opt.outputFileName);
+	FileOutputStream fos = new FileOutputStream(file);
+	
+	// print plologue
 	w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, opt.outputEncoding)));
 	w.println(
 	    "#!/usr/local/bin/dot\n" +
