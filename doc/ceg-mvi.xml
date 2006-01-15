@@ -15,17 +15,20 @@ The general syntax for defining a view is:
  * @opt [!]viewOption1
  * @opt [!]viewOption2
  * ...
- * @match regularExpression1
+ * @match matchtype regularExpression1
  * @opt [!]option1.1 [argument]
  * @opt [!]option1.2 [argument]
  * ...
- * @match regularExpression2
+ * @match matchtype regularExpression2
  * @opt [!]option2.1 [argument]
  * @opt [!]option2.2 [argument]
  * ... 
  */
 </fmtcode>
 
+At the moment UMLGraph supports only the 'class' match type, in the future
+other types of match will be added (tags, implemented interfaces, 
+superclasses, just to name a few possibilities).<br/>
 The view options are applied to every class in the view (so they are the
 global options for this class diagram).<br/>
 The regular expression will be used to match a single class, a group of 
@@ -133,6 +136,12 @@ dot -Tpng -o root-small.png Overview.dot
 dot -Tpng -o root.png DetailedView.dot
 </fmtcode>
 
+The javadoc invocation asks UMLGraph to build a diagram for every view (-views)
+contained in the RootViews.java file. Notably, there's no class RootViews
+in the source file: this is not needed to make javadoc work on a single
+class. Respecting the java rules for file and class naming is anyway advised
+in any real situation.
+
 <h2>Example: per package views</h2>
 
 Views are especially interesting in big projects, since they allow to
@@ -157,26 +166,26 @@ package org.apache.commons;
 
 /**
  * @view
- * @opt inferassoc
+ * @opt inferrel
  * @opt inferdep
  * @opt useimports
  * 
- * @match .*
+ * @match class .*
  * @opt nodefillcolor LightGray
  * 
- * @match org.apache.commons.*
+ * @match class org.apache.commons.*
  * @opt nodefillcolor PaleGreen
  * 
- * @match org.apache.commons.dbcp.*
+ * @match class org.apache.commons.dbcp.*
  * @opt nodefillcolor LemonChiffon
  * 
- * @match java.*|org.xml.*
+ * @match class java.*|org.xml.*
  * @opt hide
  * 
- * @match java.sql.*
+ * @match class java.sql.*
  * @opt !hide
  * 
- * @match java.sql\.(Ref|Time|Timestamp|Array|Date|Time|Clob|Blob|SQLException|.*MetaData.*|SQLWarning)
+ * @match class java.sql\.(Ref|Time|Timestamp|Array|Date|Time|Clob|Blob|SQLException|.*MetaData.*|SQLWarning)
  * @opt hide
  */
 public abstract class BaseView {
@@ -201,13 +210,13 @@ package org.apache.commons;
 /**
  * @view
  * 
- * @match org.apache.commons.*
+ * @match class org.apache.commons.*
  * @opt hide
  * 
- * @match org.apache.commons.dbcp..*
+ * @match class org.apache.commons.dbcp..*
  * @opt !hide
  * 
- * @match org.apache.commons.dbcp..*\..*
+ * @match class org.apache.commons.dbcp..*\..*
  * @opt hide
  */
 public class CommonsDbcp extends BaseView {}
@@ -224,13 +233,13 @@ package org.apache.commons;
 /**
  * @view
  * 
- * @match org.apache.commons.*
+ * @match class org.apache.commons.*
  * @opt hide
  * 
- * @match org.apache.commons.dbcp\..*Statement.*
+ * @match class org.apache.commons.dbcp\..*Statement.*
  * @opt !hide
  * 
- * @match org.apache.commons.dbcp..*\..*
+ * @match class org.apache.commons.dbcp..*\..*
  * @opt hide
  */
 public class Statement extends BaseView {
