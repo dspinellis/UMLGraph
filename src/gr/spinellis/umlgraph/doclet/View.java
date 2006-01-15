@@ -61,12 +61,23 @@ class View implements OptionProvider {
 	globalOptions = new ArrayList<String[]>();
 	for (int i = 0; i < tags.length; i++) {
 	    if (tags[i].name().equals("@match")) {
+		// store the current pattern and its options
 		if (currPattern != null) {
 		    String[][] options = patternOptions
 			    .toArray(new String[patternOptions.size()][]);
 		    optionOverrides.put(Pattern.compile(currPattern), options);
 		}
-		currPattern = tags[i].text();
+		// start gathering data for the new patters
+		String[] strings = StringUtil.tokenize(tags[i].text());
+		if(strings.length < 2) {
+		    System.err.println("Skipping uncomplete @match tag, type missing. ");
+		    currPattern = null;
+		} else if(!strings[0].equals("class")) {
+		    System.err.println("Skipping @match tag, unknown match type (only 'class' is supported for the moment). ");
+		    currPattern = null;
+		} else {
+		    currPattern = strings[1];
+		}
 		patternOptions.clear();
 	    } else if (tags[i].name().equals("@opt")) {
 		String[] opts = StringUtil.tokenize(tags[i].text());
