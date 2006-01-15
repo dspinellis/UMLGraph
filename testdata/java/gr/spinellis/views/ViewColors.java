@@ -3,9 +3,9 @@ package gr.spinellis.views;
 /**
  * @view
 
- * @match .*
+ * @match class .*
  * @opt nodefillcolor gray
- * @match gr.spinellis.*
+ * @match class gr.spinellis.*
  * @opt nodefillcolor yellow
  */
 public class ViewColors {

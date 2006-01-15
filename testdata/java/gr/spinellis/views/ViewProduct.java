@@ -4,7 +4,7 @@ package gr.spinellis.views;
  * @view
  * @opt hide
  * 
- * @match gr.spinellis.product.* 
+ * @match class gr.spinellis.product.* 
  * @opt !hide 
  * @opt attributes
  */

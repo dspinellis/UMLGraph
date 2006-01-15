@@ -4,9 +4,9 @@ package gr.spinellis.views;
  * @view
  * @opt hide
  *  
- * @match gr.spinellis.product.* 
+ * @match class gr.spinellis.product.* 
  * @opt !hide
- * @match gr.spinellis.*
+ * @match class gr.spinellis.*
  * @opt nodefillcolor LemonChiffon 
  */
 public abstract class ViewAbstract {
