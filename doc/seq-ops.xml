@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!-- $Id$ -->
 <notes>
 The following calls can be used to define a sequence diagram.
@@ -31,12 +31,12 @@ The following calls can be used to define a sequence diagram.
 <dt>create_message(from_object,to_object,object_label);</dt>
 	<dd>Has from_object create the to_object, labeled
 	with object_label.
-	The message is labeled with the <code>&laquo;create&raquo;</code> stereotype.
+	The message is labeled with the <code>«create»</code> stereotype.
 	Can also be written as <code>cmessage</code>.
 	</dd>
 <dt>destroy_message(from_object,to_object);</dt>
 	<dd>Sends a message
-	labeled with the <code>&laquo;destroy&raquo;</code> stereotype
+	labeled with the <code>«destroy»</code> stereotype
 	from the from_object to the to_object.
 	The object to_object is marked as destroyed, with an X at the
 	end of its lifeline.
