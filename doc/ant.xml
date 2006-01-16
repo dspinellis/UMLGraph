@@ -26,13 +26,17 @@ like the following.
        </apply>
    </target>
 </fmtcode>
-Note that when you pass the <code>packagenames</code> option to
+<h2>Notes</h2>
+<ul>
+<li>When you pass the <code>packagenames</code> option to
 <em>javadoc</em>, the default (unnamed) package (and the
 <code>UMLOptions</code> class
 located in it) is ignored.
 In such cases you should include the <code>UMLOptions</code> class
-within a named package.
+within a named package.</li>
 
-<p/>Please also note that the above invocation will generated a single class
-diagram. If multiple view generation is required the "-views" param should be added.
+<li>The above invocation will generated a single class
+diagram. If multiple view generation is required you should add
+the <code>views</code> option.</li>
+</ul>
 </notes>
