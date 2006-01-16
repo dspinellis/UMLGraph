@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+Documenting a big project often requires multiple diagrams:
+each to show a specific and limited portion of the system.
+Each diagram is usually composed of few classes, possibily using a different detail level.<p/>
+The <code>@view</code> tag, marks a special class used to describe a single class diagram.
+Similarly to UMLOptions, the view can define its own general options,
+but allows to define <em>overrides</em> that allow to adopt different options
+for different classes based on regular expressions matching.
+The general syntax for defining a view is:
+<fmtcode ext="java">
+/**
+ * @view
+ * @opt [!]viewOption1
+ * @opt [!]viewOption2
+ * ...
+ * @match matchtype regularExpression1
+ * @opt [!]option1.1 [argument]
+ * @opt [!]option1.2 [argument]
+ * ...
+ * @match matchtype regularExpression2
+ * @opt [!]option2.1 [argument]
+ * @opt [!]option2.2 [argument]
+ * ...
+ */
+</fmtcode>
+
+At the moment UMLGraph supports only the 'class' match type, in the future
+other types of match will be added (tags, implemented interfaces,
+superclasses, just to name a few possibilities).<br/>
+The view options are applied to every class in the view (so they are the
+global options for this class diagram).<br/>
+The regular expression will be used to match a single class, a group of
+classes, or a package, and the options that follow will be applied to
+those classes. <br/>
+Multiple matches will be evaluted in the order of specification.<br/>
+Refer to the <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html">Pattern</a>
+class documentation for details on a proper regular expression specification.
+
+<p/>Each view will generate a .dot file whose name is the name of the view,
+unless the "output" option is specified to override it.
+
+<h2>View inheritance</h2>
+
+View classes can inherit from other view classes, allowing views to
+share a set of common matches. The standard java inheritance mechanism
+is used to specify inheritance.<br/>
+Abstract view classes won't be used to generate diagrams, the common
+idiom is to declare a base abstract view to share common options and
+overrides, and have concrete view classes that extend for diagram generation.
+
+</notes>

@@ -6,6 +6,7 @@
 <ch><ti>Class Diagram Operations</ti><fi>cd-oper</fi></ch>
 <ch><ti>Class Modelling</ti><fi>cd-model</fi></ch>
 <ch><ti>Class Diagram Options</ti><fi>cd-opt</fi></ch>
+<ch><ti>Class Diagram Views</ti><fi>views</fi></ch>
 <ch><ti>Class Diagram Example: Generalisation Relationships</ti><fi>ceg-gen</fi></ch>
 <ch><ti>Class Diagram Example: Advanced Relationships</ti><fi>ceg-adv</fi></ch>
 <ch><ti>Class Diagram Example: Relationships Inference</ti><fi>ceg-infer</fi></ch>
@@ -16,7 +17,8 @@
 <ch><ti>Class Diagram Example: Class Stereotypes and Tagged Values</ti><fi>ceg-ster</fi></ch>
 <ch><ti>Class Diagram Example: Colors, Global and Local Options</ti><fi>ceg-color</fi></ch>
 <ch><ti>Class Diagram Example: Multiple Views Through Command-Line Options</ti><fi>ceg-mv</fi></ch>
-<ch><ti>Class Diagram Example: Multiple Views Using the Built-in Support</ti><fi>ceg-mvi</fi></ch>
+<ch><ti>Class Diagram Example: Views With Different Specification Details</ti><fi>ceg-view-details</fi></ch>
+<ch><ti>Class Diagram Example: Views for Different Packages</ti><fi>ceg-view-packages</fi></ch>
 <ch><ti>Running the Doclet from Ant</ti><fi>ant</fi></ch>
 <ch><ti>Sequence Diagrams</ti><fi>seq-intro</fi></ch>
 <ch><ti>Syntax of Sequence Diagram Definitions</ti><fi>seq-syntax</fi></ch>
