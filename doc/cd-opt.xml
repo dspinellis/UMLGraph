@@ -72,8 +72,6 @@ in this case it will hide everything (useful in the context of views
 to selectively unhide some portions of the graph, see the view chapter for
 further details).
 </dd>
-<dt>-d</dt><dd>Destination folder for .dot files. Especially useful when generating multiple diagrams.
-</dd>
 <dt>-view</dt><dd>Specify the fully qualified name of a class that contains
 a view definition. Only the class diagram specified by this view will be generated. 
 <br/>See the views chapter for more details.
