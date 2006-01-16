@@ -1,4 +1,5 @@
 <?xml version="1.0" ?>
+<!-- $Id$ -->
 <notes>
 To run the UMLGraph doclet from <em>ant</em>, use a rule,
 like the following.
