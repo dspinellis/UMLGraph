@@ -6,10 +6,10 @@ PIC2PLOT=/app/plotutils/bin/pic2plot
 NETPBM=/app/netpbm/bin
 GS=/app/gs
 DESTDIR=/dds/pubs/web/home/sw/umlgraph
-THREAD=/dds/pubs/courses/intro/thread.pl
+NOTETOOLS=/dds/pubs/courses/tools
 GIF := $(shell sed -n 's/.*<img *src *= *"\([^.]*\.gif\)".*/\1/p' *.xml)
 XML := $(wildcard *.xml)
-DOC?=doc
+DOC?=snapshot-doc
 
 .SUFFIXES:.java .dot .ps .gif .pic .eps .png
 
@@ -42,7 +42,8 @@ DOC?=doc
 
 
 all: sequence.pic $(GIF) $(XML)
-	echo "Drawing UML Diagrams with UMLGraph" | perl $(THREAD) -n -h html -r -p ../index.html index ${DESTDIR}/${DOC}
+	sh $(NOTETOOLS)/coursebib.sh bib
+	echo "Drawing UML Diagrams with UMLGraph" | perl $(NOTETOOLS)/thread.pl -n -h html -r -p ../index.html index ${DESTDIR}/${DOC}
 
 sequence.pic: ../sequence.pic
 	perl -p -e 'BEGIN {binmode(STDOUT);} s/\r//' $< >$@
