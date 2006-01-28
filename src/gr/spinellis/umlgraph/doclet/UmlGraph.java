@@ -114,7 +114,7 @@ public class UmlGraph {
 		System.out.println(viewClass + " is an abstract view, no output will be generated!");
 		return null;
 	    }
-	    return new View[] { buildView(viewClass, opt) };
+	    return new View[] { buildView(root, viewClass, opt) };
 	} else if (opt.findViews) {
 	    List<View> views = new ArrayList<View>();
 	    ClassDoc[] classes = root.classes();
@@ -122,7 +122,7 @@ public class UmlGraph {
 	    // find view classes
 	    for (int i = 0; i < classes.length; i++) {
 		if (classes[i].tags("view").length > 0 && !classes[i].isAbstract()) {
-		    views.add(buildView(classes[i], opt));
+		    views.add(buildView(root, classes[i], opt));
 		}
 	    }
 	    
@@ -135,12 +135,12 @@ public class UmlGraph {
     /**
      * Builds a view along with its parent views, recursively 
      */
-    private static View buildView(ClassDoc viewClass, OptionProvider provider) {
+    private static View buildView(RootDoc root, ClassDoc viewClass, OptionProvider provider) {
 	ClassDoc superClass = viewClass.superclass();
 	if(superClass == null || superClass.tags("view").length == 0)
-	    return new View(viewClass, provider);
+	    return new View(root, viewClass, provider);
 	
-	return new View(viewClass, buildView(superClass, provider));
+	return new View(root, viewClass, buildView(root, superClass, provider));
     }
 
     /** Option checking */
