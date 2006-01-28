@@ -18,15 +18,14 @@
 package gr.spinellis.umlgraph.doclet;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.RootDoc;
 import com.sun.javadoc.Tag;
 
 /**
@@ -37,63 +36,83 @@ import com.sun.javadoc.Tag;
  * @author wolf
  * 
  * @depend - - - Options
+ * @depend - - - ClassMatcher
+ * @depend - - - InterfaceMatcher
+ * @depend - - - PatternMatcher
+ * @depend - - - SubclassMatcher
  * 
  */
 class View implements OptionProvider {
-    Map<Pattern, String[][]> optionOverrides = new LinkedHashMap<Pattern, String[][]>();
+    Map<ClassMatcher, List<String[]>> optionOverrides = new LinkedHashMap<ClassMatcher, List<String[]>>();
     ClassDoc viewDoc;
     OptionProvider provider;
     List<String[]> globalOptions;
+    RootDoc root;
 
     /**
      * Builds a view given the class that contains its definition
-     * @param c
-     * @throws PatternSyntaxException
      */
-    public View(ClassDoc c, OptionProvider provider) throws PatternSyntaxException {
+    public View(RootDoc root, ClassDoc c, OptionProvider provider) {
 	this.viewDoc = c;
 	this.provider = provider;
+	this.root = root;
 	Tag[] tags = c.tags();
-	String currPattern = null;
+	ClassMatcher currMatcher = null;
 	// parse options, get the global ones, and build a map of the
 	// pattern matched overrides
-	List<String[]> patternOptions = new ArrayList<String[]>();
 	globalOptions = new ArrayList<String[]>();
 	for (int i = 0; i < tags.length; i++) {
 	    if (tags[i].name().equals("@match")) {
-		// store the current pattern and its options
-		if (currPattern != null) {
-		    String[][] options = patternOptions
-			    .toArray(new String[patternOptions.size()][]);
-		    optionOverrides.put(Pattern.compile(currPattern), options);
+		currMatcher = buildMatcher(tags[i].text());
+		if(currMatcher != null) {
+		    optionOverrides.put(currMatcher, new ArrayList<String[]>());
 		}
-		// start gathering data for the new patters
-		String[] strings = StringUtil.tokenize(tags[i].text());
-		if(strings.length < 2) {
-		    System.err.println("Skipping uncomplete @match tag, type missing. ");
-		    currPattern = null;
-		} else if(!strings[0].equals("class")) {
-		    System.err.println("Skipping @match tag, unknown match type (only 'class' is supported for the moment). ");
-		    currPattern = null;
-		} else {
-		    currPattern = strings[1];
-		}
-		patternOptions.clear();
 	    } else if (tags[i].name().equals("@opt")) {
 		String[] opts = StringUtil.tokenize(tags[i].text());
 		opts[0] = "-" + opts[0];
-		if (currPattern == null) {
+		if (currMatcher == null) {
 		    globalOptions.add(opts);
 		} else {
-		    patternOptions.add(opts);
+		    optionOverrides.get(currMatcher).add(opts);
 		}
 	    }
 	}
-	if (currPattern != null) {
-	    String[][] options = patternOptions.toArray(new String[patternOptions.size()][]);
-	    optionOverrides.put(Pattern.compile(currPattern), options);
-	}
     }
+    
+    /**
+     * Factory method that builds the appropriate matcher for @match tags
+     */
+    private ClassMatcher buildMatcher(String tagText) {
+	// check there are at least @match <type> and a parameter
+	String[] strings = StringUtil.tokenize(tagText);
+	if (strings.length < 2) {
+	    System.err.println("Skipping uncomplete @match tag, type missing: " + tagText + " in view " + viewDoc);
+	    return null;
+	}
+	
+	try {
+	    if (strings[0].equals("class")) {
+		return new PatternMatcher(Pattern.compile(strings[1]));
+	    } else if (strings[0].equals("context")) {
+		return new ContextMatcher(root, Pattern.compile(strings[1]), getGlobalOptions());
+	    } else if (strings[0].equals("interface")) {
+		return new InterfaceMatcher(root, Pattern.compile(strings[1]));
+	    } else if (strings[0].equals("subclass")) {
+		return new SubclassMatcher(root, Pattern.compile(strings[1]));
+	    } else {
+		System.err.println("Skipping @match tag, unknown match type, in view " + viewDoc);
+	    }
+	} catch (PatternSyntaxException pse) {
+	    System.err.println("Skipping @match tag due to invalid regular expression '" + tagText
+		    + "'" + " in view " + viewDoc);
+	} catch (Exception e) {
+	    System.err.println("Skipping @match tag due to an internal error '" + tagText
+		    + "'" + " in view " + viewDoc);
+	    e.printStackTrace();
+	}
+	return null;
+    }
+    
 
     // ---------------------------------------------------------------- 
     // OptionProvider methods
@@ -129,24 +148,21 @@ class View implements OptionProvider {
 
     public void overrideForClass(Options opt, ClassDoc cd) {
 	provider.overrideForClass(opt, cd);
-	overrideForClass_(opt, cd.toString());
+	for (ClassMatcher cm : optionOverrides.keySet()) {
+	    if(cm.matches(cd)) {
+		for (String[] override : optionOverrides.get(cm)) {
+		    opt.setOption(override);
+		}
+	    }
+	}
     }
 
     public void overrideForClass(Options opt, String className) {
 	provider.overrideForClass(opt, className);
-	overrideForClass_(opt, className);
-    }
-
-    private void overrideForClass_(Options opt, String className) {
-	for (Iterator<Map.Entry<Pattern, String[][]>> iter = optionOverrides.entrySet().iterator(); iter
-		.hasNext();) {
-	    Map.Entry<Pattern, String[][]> mapEntry = iter.next();
-	    Pattern regex = mapEntry.getKey();
-	    Matcher matcher = regex.matcher(className);
-	    if (matcher.matches()) {
-		String[][] overrides = mapEntry.getValue();
-		for (int i = 0; i < overrides.length; i++) {
-		    opt.setOption(overrides[i]);
+	for (ClassMatcher cm : optionOverrides.keySet()) {
+	    if(cm.matches(className)) {
+		for (String[] override : optionOverrides.get(cm)) {
+		    opt.setOption(override);
 		}
 	    }
 	}
