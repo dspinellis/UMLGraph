@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+Views are special classes that allow the generation of a custom class
+diagram based on a set of diagram global options and a set of option
+overrides for classes matching user specified conditions.
+
+The <code>@view</code> tag, marks a class used to describe a single class diagram.
+The general syntax for defining a view is:
+<fmtcode ext="java">
+/**
+ * @view
+ * @opt viewOption1
+ * @opt viewOption2
+ * ...
+ * @match matchtype regularExpression
+ * @opt option1.1 [argument]
+ * @opt option1.2 [argument]
+ * ...
+ * @match matchtype regularExpression
+ * @opt option2.1 [argument]
+ * @opt option2.2 [argument]
+ * ... 
+ */
+</fmtcode>
+
+The @match tags allow to specify option overrides for classes that satisfy
+the match condition. The match types are:
+<ul>
+<li><i>class</i>: matches class names using a regular expression.</li>
+<li><i>subclass</i>: first looks for the base classes using the specified
+regular expression, then matches the whole inheritance hierarchy of these
+classes. The base classes are included in the match as well.</li>
+<li><i>interface</i>: first looks for interfaces using the specified
+regular expression, then matches every class that implements them, 
+either directly or indirectly. The interfaces are included in the match
+as well.</li>
+<li><i>context</i>: looks for classes using a regular expression, 
+then matches every class that's directly connected to them.</li>
+</ul>
+
+<p/>The <i>class</i> match type is intended to be used with a regular
+expression, the others are usually performed against a class/interface
+name rather than a real regular expression, but the syntax allows for
+a regular expression to retain some flexibility (for example, a regular
+expression can be used to match multiple classes, as in "(A|B|C)").<br/>
+Refer to the <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html">Pattern</a> 
+API docs for details on regular expression specifications.
+
+<p/>Matches will be evaluted in the order of specification, each applying
+its overrides to the current options. This means that options for a 
+specific class are built in the following order, where each item overrides
+only the options specified locally, leaving the other options intact:
+<ul>
+<li>Command line options</li>
+<li>UMLOptions options</li>
+<li>View options</li>
+<li>Match overrides, in the order they are specified, and only for
+the classes that satisfy the match conditions</li>
+</ul>
+
+<p/>Each view will generate a .dot file whose name is the name of the view,
+unless the "output" option is specified to override it. Along with the "-views"
+parameter on the command line, this allows for multiple views to be generated
+in a single doclet invocation.
+
+<h2>View inheritance</h2>
+
+View classes can inherit from other view classes, allowing views to
+share a set of common matches. The standard java inheritance mechanism
+is used to specify inheritance.<br/>
+Abstract view classes won't be used to generate diagrams, the common
+idiom is to declare a base abstract view to share common options and
+overrides, and have concrete view classes that extend for diagram generation.
+
+<p/>When using view inheritance the option building order is:
+<ul>
+<li>Command line options</li>
+<li>UMLOptions options</li>
+<li>Base view options</li>
+<li>View options</li>
+<li>Base view match overrides</li>
+<li>View match overrides</li>
+</ul>

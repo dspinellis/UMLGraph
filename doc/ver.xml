@@ -16,9 +16,9 @@ the extends keyword (Arnaud Rogues).</li>
      information, imports and standard visibility rules will be applied
      to determine the actual class (Andrea Aime)
 </li>
-<li> A <em>views</em> feature provides the ability to specify package-based
-option overrides in UMLOptions like classes,
-and to generate multiple diagrams out of a code base in a single pass.
+<li> A <em>views</em> feature provides the ability to specify 
+option overrides for classes satisfying specific conditions
+and to generate multiple diagrams in a single doclet invocation.
 See the new tags @view, @match and the command line
 parameters -d, -view, -views (Andrea Aime)</li>
 <li> Options can be reset to their default value using the "@opt !option" 
