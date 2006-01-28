@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BasicTest {
@@ -63,10 +64,13 @@ public class BasicTest {
 		"gr.spinellis", "-views" };
 	runDoclet(options);
 
-	String[] javaFiles = new File(testSourceFolder, "gr/spinellis/views")
-		.list(new JavaFilter());
-	for (int i = 0; i < javaFiles.length; i++) {
-	    String viewName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
+	List<String> viewFiles = new ArrayList<String>(); 
+	viewFiles.addAll(getViewList(new File(testSourceFolder, "gr/spinellis/basic/views")));
+	viewFiles.addAll(getViewList(new File(testSourceFolder, "gr/spinellis/context/views")));
+	viewFiles.addAll(getViewList(new File(testSourceFolder, "gr/spinellis/iface/views")));
+	viewFiles.addAll(getViewList(new File(testSourceFolder, "gr/spinellis/subclass/views")));
+	for (String fileName : viewFiles) {
+	    String viewName = fileName.substring(0, fileName.length() - 5);
 	    File dotFile = new File(testDestFolder, viewName + ".dot");
 	    File refFile = new File(testRefFolder, viewName + ".dot");
 	    if (viewName.contains("Abstract")) {
@@ -79,6 +83,10 @@ public class BasicTest {
 		compare(differences, dotFile, refFile);
 	    }
 	}
+    }
+
+    private static List<String> getViewList(File viewFolder) {
+	return Arrays.asList(viewFolder.list(new JavaFilter()));
     }
 
     private static void compare(List<String> differences, File dotFile, File refFile) throws IOException {
