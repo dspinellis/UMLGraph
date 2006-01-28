@@ -1,4 +1,4 @@
-package gr.spinellis.product;
+package gr.spinellis.basic.product;
 import java.util.*;
 
 /**

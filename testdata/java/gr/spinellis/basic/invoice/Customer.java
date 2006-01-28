@@ -1,4 +1,4 @@
-package gr.spinellis.invoice;
+package gr.spinellis.basic.invoice;
 
 public class Customer {
     String name;

@@ -1,10 +1,11 @@
-package gr.spinellis.views;
+package gr.spinellis.basic.views;
 
 /**
  * @view
- * @opt hide java.*
- * 
- * @match class gr.spinellis.*
+ * @opt hide
+ *
+ * @match class gr.spinellis.basic.*
+ * @opt !hide
  * @opt attributes 
  * @opt nodefontsize 16 
  * @opt nodefillcolor yellow

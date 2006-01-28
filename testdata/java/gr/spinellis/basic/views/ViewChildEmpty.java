@@ -1,4 +1,4 @@
-package gr.spinellis.views;
+package gr.spinellis.basic.views;
 
 /**
  * @view

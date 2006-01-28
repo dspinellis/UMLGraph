@@ -1,11 +1,11 @@
-package gr.spinellis.invoice;
+package gr.spinellis.basic.invoice;
 
 import java.util.List;
-import gr.spinellis.product.*;
+import gr.spinellis.basic.product.*;
 
 /**
- * @composed 1 - * gr.spinellis.invoice.InvoiceItem
- * @assoc * - 1 gr.spinellis.invoice.Customer
+ * @composed 1 - * InvoiceItem
+ * @assoc * - 1 Customer
  */
 public class Invoice {
     public double total;

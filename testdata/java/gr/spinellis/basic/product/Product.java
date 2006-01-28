@@ -1,7 +1,7 @@
-package gr.spinellis.product;
+package gr.spinellis.basic.product;
 
 /**
- * @assoc * - 1 gr.spinellis.product.Category
+ * @assoc * - 1 Category
  */
 public class Product {
 
