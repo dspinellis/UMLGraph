@@ -36,6 +36,8 @@ import java.util.regex.*;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 class ClassGraph {
+    protected static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
+    protected static final char FILE_SEPARATOR = '/';
     public static Map<String, String> associationMap = new HashMap<String, String>();
     static {
 	associationMap.put("assoc", "arrowhead=none");
@@ -44,19 +46,14 @@ class ClassGraph {
 	associationMap.put("composed", "arrowhead=none, arrowtail=diamond");
 	associationMap.put("depend", "arrowhead=open, style=dashed");
     }
-    private Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
-    private String apiDocRoot;
-    private Map<Pattern, String> apiDocMap = new HashMap<Pattern, String>();
-
-    private static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
-
-    private static final char FILE_SEPARATOR = '/';
-
-    private Set<String> specifiedPackages;
-    private OptionProvider optionProvider;
-    private PrintWriter w;
-    private ClassDoc collectionClassDoc;
-    private ClassDoc mapClassDoc;
+    protected Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
+    protected String apiDocRoot;
+    protected Map<Pattern, String> apiDocMap = new HashMap<Pattern, String>();
+    protected Set<String> specifiedPackages;
+    protected OptionProvider optionProvider;
+    protected PrintWriter w;
+    protected ClassDoc collectionClassDoc;
+    protected ClassDoc mapClassDoc;
 
     /**
      * Create a new ClassGraph.  The packages passed as an
@@ -358,7 +355,7 @@ class ClassGraph {
 	return opt.matchesHideExpression(c.toString());
     }
     
-    private ClassInfo getClassInfo(String className) {
+    protected ClassInfo getClassInfo(String className) {
 	return classnames.get(removeTemplate(className));
     }
     
@@ -584,30 +581,40 @@ class ClassGraph {
      */    
     public void printInferredRelations(ClassDoc[] classes) {
         for (ClassDoc c : classes) {
-            Options opt = optionProvider.getOptionsFor(c);
-            
-            // check if the source is excluded from inference
-            String sourceName = c.toString();
-            if(hidden(c))
-                continue;
-            
-            for (FieldDoc field : c.fields(false)) {
-        	// skip primitives
-                FieldRelationInfo fri = getFieldRelationInfo(field);
-                if(fri == null)
-                    continue;
-                
-                // check if the destination is excluded from inference
-                String dest = fri.cd.toString();
-                if(hidden(fri.cd))
-                    continue;
-
-                String destAdornment = fri.multiple ? "*": "";
-                relation(opt, opt.inferRelationshipType, sourceName, getNodeName(c), dest, getNodeName(dest), "", "", destAdornment); 
-            }
+            printInferredRelations(c);
         }
     }
     
+    /**
+     * Prints associations recovered from the fields of a class. An association is inferred only
+     * if another relation between the two classes is not already in the graph.
+     * @param classes
+     */  
+    public void printInferredRelations(ClassDoc c) {
+	Options opt = optionProvider.getOptionsFor(c);
+
+	// check if the source is excluded from inference
+	String sourceName = c.toString();
+	if (hidden(c))
+	    return;
+
+	for (FieldDoc field : c.fields(false)) {
+	    // skip primitives
+	    FieldRelationInfo fri = getFieldRelationInfo(field);
+	    if (fri == null)
+		continue;
+
+	    // check if the destination is excluded from inference
+	    String dest = fri.cd.toString();
+	    if (hidden(fri.cd))
+		continue;
+
+	    String destAdornment = fri.multiple ? "*" : "";
+	    relation(opt, opt.inferRelationshipType, sourceName, getNodeName(c), dest,
+		    getNodeName(dest), "", "", destAdornment);
+	}
+    }
+
     /**
      * Prints dependencies recovered from the methods of a class. A
      * dependency is inferred only if another relation between the two
@@ -616,56 +623,66 @@ class ClassGraph {
      */    
     public void printInferredDependencies(ClassDoc[] classes) {
 	for (ClassDoc c : classes) {
-	    Options opt = optionProvider.getOptionsFor(c);
+	    printInferredDependencies(c);
+	}
+    }
+    
+    /**
+     * Prints dependencies recovered from the methods of a class. A
+     * dependency is inferred only if another relation between the two
+     * classes is not already in the graph.
+     * @param classes
+     */  
+    public void printInferredDependencies(ClassDoc c) {
+	Options opt = optionProvider.getOptionsFor(c);
 
-	    String sourceName = c.toString();
-	    if (hidden(c))
+	String sourceName = c.toString();
+	if (hidden(c))
+	    return;
+
+	Set<Type> types = new HashSet<Type>();
+	// harvest method return and parameter types
+	for (MethodDoc method : c.methods(false)) {
+	    types.add(method.returnType());
+	    for (Parameter parameter : method.parameters()) {
+		types.add(parameter.type());
+	    }
+	}
+	// and the field types
+	for (FieldDoc field : c.fields(false)) {
+	    types.add(field.type());
+	}
+	// see if there are some type parameters
+	if (c.asParameterizedType() != null) {
+	    ParameterizedType pt = c.asParameterizedType();
+	    types.addAll(Arrays.asList(pt.typeArguments()));
+	}
+	// and finally check for explicitly imported classes (this
+	// assumes there are no unused imports...)
+	if (opt.useImports)
+	    types.addAll(Arrays.asList(c.importedClasses()));
+
+	// compute dependencies
+	for (Type type : types) {
+	    // skip primitives and type variables, as well as dependencies
+	    // on the source class
+	    if (type.isPrimitive() || type instanceof WildcardType || type instanceof TypeVariable
+		    || c.equals(type.asClassDoc()))
 		continue;
 
-	    Set<Type> types = new HashSet<Type>();
-	    // harvest method return and parameter types
-	    for (MethodDoc method : c.methods(false)) {
-		types.add(method.returnType());
-		for (Parameter parameter : method.parameters()) {
-		    types.add(parameter.type());
-		}
-	    }
-	    // and the field types
-	    for (FieldDoc field : c.fields(false)) {
-		types.add(field.type());
-	    }
-	    // see if there are some type parameters
-	    if (c.asParameterizedType() != null) {
-		ParameterizedType pt = c.asParameterizedType();
-		types.addAll(Arrays.asList(pt.typeArguments()));
-	    }
-	    // and finally check for explicitly imported classes (this
-	    // assumes there are no unused imports...)
-	    if(opt.useImports)
-		types.addAll(Arrays.asList(c.importedClasses()));
+	    // check if the destination is excluded from inference
+	    ClassDoc fc = type.asClassDoc();
+	    String destName = fc.toString();
+	    if (hidden(fc))
+		continue;
 
-	    // compute dependencies
-	    for (Type type : types) {
-		// skip primitives and type variables, as well as dependencies
-		// on the source class
-		if (type.isPrimitive() || type instanceof WildcardType
-			|| type instanceof TypeVariable || c.equals(type.asClassDoc()))
-		    continue;
-
-		// check if the destination is excluded from inference
-		ClassDoc fc = type.asClassDoc();
-		String destName = fc.toString();
-		if (hidden(fc))
-		    continue;
-
-		// if source and dest are not already linked, add a
-		// dependency
-		if (!getClassInfo(sourceName).isRelated(destName)) {
-		    relation(opt, "depend", sourceName, getNodeName(sourceName), destName,
-			    getNodeName(destName), "", "", "");
-		}
+	    // if source and dest are not already linked, add a
+	    // dependency
+	    if (!getClassInfo(sourceName).isRelated(destName)) {
+		relation(opt, "depend", sourceName, getNodeName(sourceName), destName,
+			getNodeName(destName), "", "", "");
 	    }
-
+	    
 	}
     }
     
