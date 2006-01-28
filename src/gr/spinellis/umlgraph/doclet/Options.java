@@ -180,6 +180,11 @@ class Options implements Cloneable, OptionProvider {
     
     /** Set the options based on a lingle option and its arguments */
     void setOption(String[] opt) {
+	if(!opt[0].equals("-hide") && optionLength(opt[0]) > opt.length) {
+	    System.err.println("Skipping option '" + opt[0] + "', missing argument");
+	    return;
+	}
+	
 	if(opt[0].equals("-qualify")) {
 	    showQualified = true;
 	} else if (opt[0].equals("-!qualify")) {
