@@ -68,6 +68,7 @@ class Options implements Cloneable, OptionProvider {
     boolean inferRelationships;
     boolean inferDependencies;
     boolean useImports;
+    boolean verbose2;
     String inferRelationshipType;
     private Vector<Pattern> collPackages;
 
@@ -102,6 +103,7 @@ class Options implements Cloneable, OptionProvider {
 	inferRelationships = false;
 	inferDependencies = false;
 	useImports = false;
+	verbose2 = false;
 	inferRelationshipType = "navassoc";
 	collPackages = new Vector<Pattern>();
     }
@@ -119,7 +121,7 @@ class Options implements Cloneable, OptionProvider {
 	return clone;
     }
 
-    /** Most verbose output */
+    /** Most complete output */
     public void setAll() {
 	showAttributes = true;
 	showEnumerations = true;
@@ -150,6 +152,7 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-views") ||
            option.equals("-inferrel") ||
            option.equals("-useimports") ||
+           option.equals("-verbose2") ||
            option.equals("-inferdep"))
 
             return 1;
@@ -178,7 +181,7 @@ class Options implements Cloneable, OptionProvider {
             return 0;
     }
     
-    /** Set the options based on a lingle option and its arguments */
+    /** Set the options based on a single option and its arguments */
     void setOption(String[] opt) {
 	if(!opt[0].equals("-hide") && optionLength(opt[0]) > opt.length) {
 	    System.err.println("Skipping option '" + opt[0] + "', missing argument");
@@ -328,6 +331,8 @@ class Options implements Cloneable, OptionProvider {
 	    inferDependencies = false;
 	} else if(opt[0].equals("-useimports")) {
 	    useImports = true;
+	} else if(opt[0].equals("-verbose2")) {
+	    verbose2 = true;
 	} else if(opt[0].equals("-!useimports")) {
 	    useImports = false;
 	} else if (opt[0].equals("-collpackages")) {

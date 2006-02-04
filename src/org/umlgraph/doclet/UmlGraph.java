@@ -42,10 +42,11 @@ import com.sun.javadoc.RootDoc;
 public class UmlGraph {
     /** Entry point */
     public static boolean start(RootDoc root) throws IOException {
-	System.out.println("UMLGraph doclet started");
 	Options opt = new Options();
 	opt.setOptions(root.options());
 	opt.setOptions(findUMLOptions(root));
+	if (opt.verbose2)
+		System.out.println("UMLGraph doclet started");
 
 	View[] views = buildViews(opt, root);
 	if(views == null)
@@ -58,7 +59,8 @@ public class UmlGraph {
 	    }
 	}
 
-	System.out.println("Class diagram generation complete");
+	if (opt.verbose2)
+	    System.out.println("Class diagram generation complete");
 	return true;
     }
     
@@ -75,8 +77,9 @@ public class UmlGraph {
      * Builds and outputs a single graph according to the view overrides
      */
     private static void buildGraph(RootDoc root, OptionProvider op) throws IOException {
-	System.out.println("Building " + op.getDisplayName());
 	Options opt = op.getGlobalOptions();
+	if (opt.verbose2)
+	    System.out.println("Building " + op.getDisplayName());
 	ClassDoc[] classes = root.classes();
 
 	ClassGraph c = new ClassGraph(root, op);

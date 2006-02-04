@@ -92,6 +92,10 @@ Disabled by default, since it does not work properly if there are multiple
 classes in the same source file (will add dependencies to every class in
 the source file).
 </dd>
+<dt>-verbose2</dt><dd>Will print on the standard output details regarding
+the progress of graph generation.
+(Note that -verbose is a javadoc option with a different meaning).
+</dd>
 <dt>-collpackages</dt><dd>Specify the classes that will be treated as
 containers for one to many relationships when inference is enabled. 
 Matching is done using a non-anchored regular match. Empty by default.
