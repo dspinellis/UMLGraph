@@ -1,4 +1,4 @@
-rem @echo off
+@echo off
 
 rem Run UMLGraph on the specified base file name
 
