@@ -31,4 +31,10 @@ public interface OptionProvider {
      * Gets a base Options and applies the overrides for the specified class 
      */
     public void overrideForClass(Options opt, String className);
+
+    /**
+     * Returns user displayable name for this option provider.
+     * <p>Will be used to provide progress feedback on the console
+     */
+    public String getDisplayName();
 }

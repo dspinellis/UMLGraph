@@ -415,6 +415,10 @@ class Options implements Cloneable, OptionProvider {
     public void overrideForClass(Options opt, String className) {
 	// nothing to do
     }
+
+    public String getDisplayName() {
+	return "general class diagram";
+    }
     
 }
 

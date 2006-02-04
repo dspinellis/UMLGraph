@@ -168,4 +168,8 @@ class View implements OptionProvider {
 	}
     }
 
+    public String getDisplayName() {
+	return "view " + viewDoc.name();
+    }
+
 }
