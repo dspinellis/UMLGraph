@@ -20,11 +20,38 @@
 
 package gr.spinellis.umlgraph.doclet;
 
-import com.sun.javadoc.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.ConstructorDoc;
+import com.sun.javadoc.Doc;
+import com.sun.javadoc.FieldDoc;
+import com.sun.javadoc.MethodDoc;
+import com.sun.javadoc.PackageDoc;
+import com.sun.javadoc.Parameter;
+import com.sun.javadoc.ParameterizedType;
+import com.sun.javadoc.ProgramElementDoc;
+import com.sun.javadoc.RootDoc;
+import com.sun.javadoc.Tag;
+import com.sun.javadoc.Type;
+import com.sun.javadoc.TypeVariable;
+import com.sun.javadoc.WildcardType;
 
 /**
  * Class graph generation engine
@@ -38,6 +65,11 @@ import java.util.regex.*;
 class ClassGraph {
     protected static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
     protected static final char FILE_SEPARATOR = '/';
+    protected static final int ALIGN_LEFT = 1;
+    protected static final int ALIGN_CENTER = 2;
+    protected static final int ALIGN_RIGHT = 3;
+    protected static final int FONT_NORMAL = 100;
+    protected static final int FONT_ABSTRACT = 101;
     public static Map<String, String> associationMap = new HashMap<String, String>();
     static {
 	associationMap.put("assoc", "arrowhead=none");
@@ -54,6 +86,8 @@ class ClassGraph {
     protected PrintWriter w;
     protected ClassDoc collectionClassDoc;
     protected ClassDoc mapClassDoc;
+    protected String linePostfix;
+    protected String linePrefix;
 
     /**
      * Create a new ClassGraph.  The packages passed as an
@@ -64,10 +98,20 @@ class ClassGraph {
 	this.optionProvider = optionProvider;
 	this.collectionClassDoc = root.classNamed("java.util.Collection");
 	this.mapClassDoc = root.classNamed("java.util.Map");
+	
 	specifiedPackages = new HashSet<String>();
 	for (PackageDoc p : root.specifiedPackages())
 	    specifiedPackages.add(p.name());
+	
 	Options opt = optionProvider.getGlobalOptions();
+	if (opt.compact) {
+	    linePrefix = "";
+	    linePostfix = "";
+	} else {
+	    linePrefix = "\t";
+	    linePostfix = "\n";
+	}
+	
 	apiDocRoot = fixApiDocRoot(opt.apiDocRoot);
 	String mapFileName = opt.apiDocMapFileName;
  	if (mapFileName != null) {
@@ -128,17 +172,6 @@ class ClassGraph {
 	return r;
     }
 
-    /** Escape &lt; and &gt; characters in the string with a backslash. */
-    private String escapeLG(String s) {
-	StringBuffer r = new StringBuffer(s);
-	for (int i = 0; i < r.length(); i++)
-	    switch (r.charAt(i)) {
-	    case '<':
-	    case '>':
-		r.insert(i++, '\\');
-	    }
-	return r.toString();
-    }
 
     /**
      * Convert &lt; and &gt; characters in the string to the respective guillemot characters.
@@ -176,61 +209,69 @@ class ClassGraph {
      * Print the visibility adornment of element e prefixed by
      * any stereotypes
      */
-    private void visibility(Options opt, ProgramElementDoc e) {
-	w.print(stereotype(opt, e, 'l'));
+    private String visibility(Options opt, ProgramElementDoc e) {
+	// stereotype(opt, e, ALIGN_LEFT);
 	if (!opt.showVisibility)
-	    return;
+	    return " ";
 	if (e.isPrivate())
-	    w.print('-');
+	    return "- ";
 	else if (e.isPublic())
-	    w.print('+');
+	    return "+ ";
 	else if (e.isProtected())
-	    w.print('#');
+	    return "# ";
 	else if (e.isPackagePrivate())
-	    w.print('~');
-	w.print(' ');
+	    return "~ ";
+	else
+	    return " ";
     }
 
     /** Print the method parameter p */
-    private void parameter(Options opt, Parameter p[]) {
+    private String parameter(Options opt, Parameter p[]) {
+	String par = "";
 	for (int i = 0; i < p.length; i++) {
-	    w.print(p[i].name());
-	    typeAnnotation(opt, p[i].type());
+	    par += p[i].name() + typeAnnotation(opt, p[i].type());
 	    if (i + 1 < p.length)
-		w.print(", ");
+		par += ", ";
 	}
+	return par;
     }
 
     /** Print a a basic type t */
-    private void type(Options opt, Type t) {
+    private String type(Options opt, Type t) {
+	String type = "";
 	if (opt.showQualified)
-	    w.print(t.qualifiedTypeName());
+	    type = t.qualifiedTypeName();
 	else
-	    w.print(t.typeName());
-	typeParameters(opt, t.asParameterizedType());
+	    type = t.typeName();
+	type += typeParameters(opt, t.asParameterizedType());
+	return type;
     }
 
     /** Print the parameters of the parameterized type t */
-    private void typeParameters(Options opt, ParameterizedType t) {
+    private String typeParameters(Options opt, ParameterizedType t) {
+	String tp = "";
 	if (t == null)
-	    return;
+	    return tp;
 	Type args[] = t.typeArguments();
-	w.print("\\<");
+	tp += "&lt;";
 	for (int i = 0; i < args.length; i++) {
-	    type(opt, args[i]);
+	    tp += type(opt, args[i]);
 	    if (i != args.length - 1)
-		w.print(", ");
+		tp += ", ";
 	}
-	w.print("\\>");
+	tp += "&gt;";
+	return tp;
     }
 
     /** Annotate an field/argument with its type t */
-    private void typeAnnotation(Options opt, Type t) {
+    private String typeAnnotation(Options opt, Type t) {
+	String ta = "";
 	if (t.typeName().equals("void"))
-	    return;
-	w.print(" : ");
-	type(opt, t);
-	w.print(t.dimension());
+	    return ta;
+	ta += " : ";
+	ta += type(opt, t);
+	ta += t.dimension();
+	return ta;
     }
 
     /** Print the class's attributes fd */
@@ -238,12 +279,13 @@ class ClassGraph {
 	for (FieldDoc f : fd) {
 	    if (hidden(f))
 		continue;
-	    visibility(opt, f);
-	    w.print(f.name());
+	    String att = "";
+	    stereotype(opt, f, ALIGN_LEFT);
+	    att = visibility(opt, f) + f.name();
 	    if (opt.showType)
-		typeAnnotation(opt, f.type());
-	    w.print("\\l");
-	    w.print(tagvalue(f, "", 'r'));
+		att += typeAnnotation(opt, f.type());
+	    tableLine(ALIGN_LEFT, att);
+	    tagvalue(f);
 	}
     }
 
@@ -258,16 +300,15 @@ class ClassGraph {
 	for (ConstructorDoc cd : m) {
 	    if (hidden(cd))
 		continue;
-	    visibility(opt, cd);
-	    w.print(cd.name());
+	    stereotype(opt, cd, ALIGN_LEFT);
+	    String cs = visibility(opt, cd) + cd.name();
 	    if (opt.showType) {
-		w.print("(");
-		parameter(opt, cd.parameters());
-		w.print(")");
-	    } else
-		w.print("()");
-	    w.print("\\l");
-	    w.print(tagvalue(cd, "", 'r'));
+		cs += "(" + parameter(opt, cd.parameters()) + ")";
+	    } else {
+		cs += "()";
+	    }
+	    tableLine(ALIGN_LEFT, cs);
+	    tagvalue(cd);
 	}
     }
 
@@ -276,29 +317,24 @@ class ClassGraph {
 	for (MethodDoc md : m) {
 	    if (hidden(md))
 		continue;
-	    visibility(opt, md);
-	    w.print(md.name());
+	    stereotype(opt, md, ALIGN_LEFT);
+	    String op = visibility(opt, md) + md.name();
 	    if (opt.showType) {
-		w.print("(");
-		parameter(opt, md.parameters());
-		w.print(")");
-		typeAnnotation(opt, md.returnType());
-	    } else
-		w.print("()");
-	    w.print("\\l");
-	    w.print(tagvalue(md, "", 'r'));
+		op += "(" + parameter(opt, md.parameters()) + ")" + typeAnnotation(opt, md.returnType());
+	    } else {
+		op += "()";
+	    }
+	    tableLine(opt, ALIGN_LEFT, op, md.isAbstract() ? FONT_ABSTRACT : FONT_NORMAL);
+	    
+	    tagvalue(md);
 	}
     }
 
     /** Print the common class node's properties */
-    private void nodeProperties(Options opt, String s) {
-	if (opt.nodeFillColor != null)
-	    w.print(", style=filled, fillcolor=\"" + opt.nodeFillColor + "\"");
+    private void nodeProperties(Options opt) {
+	w.print(", fontname=\"" + opt.nodeFontName + "\"");
 	w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 	w.print(", fontsize=" + opt.nodeFontSize);
-	String url = classToUrl(s);
-	if (url != null)
-	    w.print(", URL=\"" + url + "\"");
 	w.println("];");
     }
 
@@ -308,39 +344,34 @@ class ClassGraph {
      * @param prevterm the termination string for the previous element
      * @param term the termination character for each tagged value
      */
-    private static String tagvalue(Doc c, String prevterm, char term) {
-	String r;
+    private void tagvalue(Doc c) {
 	Tag tags[] = c.tags("tagvalue");
-	if (tags.length > 0)
-	    r = prevterm;
-	else
-	    r = "";
+	if (tags.length == 0)
+	    return;
+	
 	for (Tag tag : tags) {
 	    String t[] = StringUtil.tokenize(tag.text());
 	    if (t.length != 2) {
 		System.err.println("@tagvalue expects two fields: " + tag.text());
-		return ("");
+		continue;
 	    }
-	    r += "\\{" + t[0] + " = " + t[1] + "\\}\\" + term;
+	    tableLine(ALIGN_RIGHT, "{" + t[0] + " = " + t[1] + "}");
 	}
-	return (r);
     }
 
     /**
      * Return as a string the stereotypes associated with c
      * terminated by the escape character term
      */
-    private String stereotype(Options opt, Doc c, char term) {
-	String r = "";
+    private void stereotype(Options opt, Doc c, int align) {
 	for (Tag tag : c.tags("stereotype")) {
 	    String t[] = StringUtil.tokenize(tag.text());
 	    if (t.length != 1) {
 		System.err.println("@stereotype expects one field: " + tag.text());
-		return ("");
+		continue;
 	    }
-	    r += guilWrap(opt, t[0]) + " \\" + term;
+	    tableLine(align, guilWrap(opt, t[0]));
 	}
-	return (r);
     }
 
     /** Return true if c has a @hidden tag associated with it */
@@ -395,44 +426,72 @@ class ClassGraph {
 	    String r = className;
 	    w.println("\t// " + r);
 	    // Create label
-	    w.print("\t" + ci.name + " [");
-	    r = stereotype(opt, c, 'n') + escapeLG(qualifiedName(opt, r));
+	    w.print("\t" + ci.name + " [label=");
+	    externalTableStart(opt, c.qualifiedName());
+	    innerTableStart();
 	    if (c.isInterface())
-		r = guilWrap(opt, "interface") + " \\n" + r;
+		tableLine(ALIGN_CENTER, guilWrap(opt, "interface"));
 	    if (c.isEnum())
-		r = guilWrap(opt, "enumeration") + " \\n" + r;
+		tableLine(ALIGN_CENTER, guilWrap(opt, "enumeration"));
+	    stereotype(opt, c, ALIGN_CENTER);
+	    tableLine(opt, ALIGN_CENTER, qualifiedName(opt, r), c.isAbstract() && !c.isInterface() ? FONT_ABSTRACT : FONT_NORMAL);
+	    tagvalue(c);
+	    innerTableEnd();
+	    
 	    boolean showMembers =
 		(opt.showAttributes && c.fields().length > 0) ||
 		(c.isEnum() && opt.showEnumConstants && c.enumConstants().length > 0) ||
 		(opt.showOperations && c.methods().length > 0) ||
 		(opt.showConstructors && c.constructors().length > 0);
-	    r += tagvalue(c, "\\n", 'r');
-	    if (showMembers)
-		w.print("label=\"{" + r + "\\n|");
-	    else
-		w.print("label=\"" + r + "\"");
-	    if (opt.showAttributes)
-		attributes(opt, c.fields());
-	    if (c.isEnum() && opt.showEnumConstants) {
-		for (FieldDoc fd : c.enumConstants()) {
-		    w.print(fd.name());
-		    w.print("\\l");
+	    
+	    if (showMembers) {
+		if (opt.showAttributes) {
+		    innerTableStart();
+		    FieldDoc[] fields = c.fields();
+		    // if there are no fields, print an empty line to generate proper HTML
+		    if (fields.length == 0)
+			tableLine(ALIGN_LEFT, "");
+		    else
+			attributes(opt, c.fields());
+		    innerTableEnd();
+		} else if(!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
+		    // show an emtpy box if we don't show attributes but
+		    // we show operations
+		    innerTableStart();
+		    tableLine(ALIGN_LEFT, "");
+		    innerTableEnd();
+	    	}
+		if (c.isEnum() && opt.showEnumConstants) {
+		    innerTableStart();
+		    FieldDoc[] ecs = c.enumConstants();
+		    // if there are no constants, print an empty line to generate proper HTML		    
+		    if (ecs.length == 0) {
+			tableLine(ALIGN_LEFT, "");
+		    } else {
+			for (FieldDoc fd : c.enumConstants()) {
+			    tableLine(ALIGN_LEFT, fd.name());
+			}
+		    }
+		    innerTableEnd();
+		}
+		if (!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
+		    innerTableStart();
+		    // if there are no operations and constructors, 
+		    // print an empty line to generate proper HTML
+		    if ((!opt.showConstructors || c.constructors().length == 0)
+			    && (!opt.showOperations || c.methods().length == 0)) {
+			tableLine(ALIGN_LEFT, "");
+		    } else {
+			if (opt.showConstructors)
+			    operations(opt, c.constructors());
+			if (opt.showOperations)
+			    operations(opt, c.methods());
+		    }
+		    innerTableEnd();
 		}
 	    }
-	    if (showMembers)
-		w.print("|");
-	    if (opt.showConstructors && !c.isEnum())
-		operations(opt, c.constructors());
-	    if (opt.showOperations && !c.isEnum())
-		operations(opt, c.methods());
-	    if (showMembers)
-		w.print("}\"");
-	    // Use ariali [sic] for gif output of abstract classes
-	    w.print(", fontname=\"" +
-		(c.isAbstract() ?
-		 opt.nodeFontAbstractName :
-		 opt.nodeFontName) + "\"");
-	    nodeProperties(opt, c.qualifiedName());
+	    externalTableEnd();
+	    nodeProperties(opt);
 	    ci.nodePrinted = true;
 	}
 	return ci.name;
@@ -490,7 +549,7 @@ class ClassGraph {
 	// print relation
 	String edgetype = associationMap.get(tagname);
 	w.println("\t// " + from + " " + tagname + " " + dest);
-	w.println("\t" + fromName + " -> " + destName + " [" +
+	w.println("\t" + fromName + ":p -> " + destName + ":p [" +
     	"taillabel=\"" + tailLabel + "\", " +
     	"label=\"" + guillemize(opt, label) + "\", " +
     	"headlabel=\"" + headLabel + "\", " +
@@ -524,7 +583,7 @@ class ClassGraph {
 	    !hidden(s.asClassDoc())) {
 	    	ClassDoc sc = s.asClassDoc();
 		w.println("\t//" + c + " extends " + s + "\n" +
-		    "\t" + getNodeName(sc) + " -> " + cs + " [dir=back,arrowtail=empty];");
+		    "\t" + getNodeName(sc) + ":p -> " + cs + ":p [dir=back,arrowtail=empty];");
 		getClassInfo(className).addRelation(sc.toString());
 	}
 
@@ -532,14 +591,14 @@ class ClassGraph {
 	for (Tag tag : c.tags("extends"))
 	    if (!hidden(tag.text())) {
 		w.println("\t//" + c + " extends " + tag.text() + "\n" +
-		    "\t" + getNodeName(tag.text()) + " -> " + cs + " [dir=back,arrowtail=empty];");
+		    "\t" + getNodeName(tag.text()) + ":p -> " + cs + ":p [dir=back,arrowtail=empty];");
 		getClassInfo(className).addRelation(tag.text());
 	    }
 	// Print realizations (Java interfaces)
 	for (Type iface : c.interfaceTypes()) {
 	    ClassDoc ic = iface.asClassDoc();
 	    if (!hidden(ic)) {
-		w.println("\t" + getNodeName(ic) + " -> " + cs + " [dir=back,arrowtail=empty,style=dashed];" +
+		w.println("\t" + getNodeName(ic) + ":p -> " + cs + ":p [dir=back,arrowtail=empty,style=dashed];" +
 		    "\t//" + c + " implements " + ic);
 		getClassInfo(className).addRelation(ic.toString());
 	    }
@@ -566,9 +625,13 @@ class ClassGraph {
 		    if(opt.matchesHideExpression(className))
 			continue;
 		    w.println("\t// " + className);
-		    w.print("\t" + info.name + "[label=\"" + escapeLG(qualifiedName(opt, className)) + "\"");
-		    w.print(", fontname=\"" + opt.nodeFontName + "\"");
-		    nodeProperties(opt, className);
+		    w.print("\t" + info.name + "[label=");
+		    externalTableStart(opt, className);
+		    innerTableStart();
+		    tableLine(ALIGN_CENTER, className);
+		    innerTableEnd();
+		    externalTableEnd();
+		    nodeProperties(opt);
 		}
 	    }
 	}
@@ -828,7 +891,7 @@ class ClassGraph {
 	    "\",fontsize=10,labelfontname=\"" + opt.edgeFontName +
 	    "\",labelfontsize=10];\n" +
 	    "\tnode [fontname=\"" + opt.nodeFontName +
-	    "\",fontsize=10,shape=record];"
+	    "\",fontsize=10,shape=plaintext];"
 	);
 	if (opt.horizontal)
 	    w.println("\trankdir=LR;\n\tranksep=1;");
@@ -841,6 +904,62 @@ class ClassGraph {
 	w.println("}\n");
 	w.flush();
 	w.close();
+    }
+    
+    private void externalTableStart(Options opt, String name) {
+	String bgcolor = "";
+	if (opt.nodeFillColor != null)
+	    bgcolor = " bgcolor=\""+ opt.nodeFillColor + "\"";
+	String href = "";
+	String url = classToUrl(name);
+	if (url != null)
+	    href = " href=\"" + url + "\"";
+	w.print("<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\" "
+		+ "cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
+    }
+    
+    private void externalTableEnd() {
+	w.print(linePrefix + linePrefix + "</table>>");
+    }
+    
+    private void innerTableStart() {
+	w.print(linePrefix + linePrefix + "<tr><td><table border=\"0\" cellspacing=\"0\" "
+		+ "cellpadding=\"1\">" + linePostfix);
+    }
+    
+    private void innerTableEnd() {
+	w.print(linePrefix + linePrefix + "</table></td></tr>" + linePostfix);
+    }
+    
+    private void tableLine(int align, String text) {
+	tableLine(null, align, text, FONT_NORMAL);
+    }
+    
+    private void tableLine(Options opt, int align, String text, int font) {
+	String open;
+	String close = "</td></tr>";
+	String prefix = linePrefix + linePrefix + linePrefix;
+	if(align == ALIGN_CENTER)
+	    open = prefix + "<tr><td>"; 
+	else if(align == ALIGN_LEFT)
+	    open = prefix + "<tr><td align=\"left\">";
+	else if(align == ALIGN_RIGHT)
+	    open = prefix + "<tr><td align=\"right\">";
+	else
+	    throw new RuntimeException("Unknown alignement type " + align);
+	
+	if(font == FONT_ABSTRACT) { 
+	    open += "<font face=\"" + opt.nodeFontAbstractName + "\">";
+	    close = "</font>" + close;
+	} else if(font != FONT_NORMAL) {
+	    throw new RuntimeException("Unknown font type " + font);
+	}
+	
+	if(text.contains("<")) {
+	    text = text.replace("<", "&lt;").replace(">", "&gt;");
+	}
+	
+	w.print(open + " " + text + " " + close + linePostfix);
     }
     
     private static class FieldRelationInfo {
