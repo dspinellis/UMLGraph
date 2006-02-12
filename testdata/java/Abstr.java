@@ -1,7 +1,16 @@
 // $Id$
 package test;
 
-abstract class AbstractNode {}
+/**
+ * @hidden
+ * @opt operations
+ */
+class UMLOptions{}
+
+abstract class AbstractNode {
+    public abstract void abstractMethod();
+    public int concreteMethod() { return 1; }
+}
 
 /**
  * @composed 1 has * test.AbstractNode
