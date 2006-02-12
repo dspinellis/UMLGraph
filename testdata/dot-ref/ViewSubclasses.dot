@@ -6,24 +6,24 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	// gr.spinellis.subclass.classes.SubOneTwo
-	c577 [label="SubOneTwo", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c578 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> SubOneTwo </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.subclass.classes.SubOneOne
-	c578 [label="SubOneOne", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c579 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> SubOneOne </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.subclass.classes.SubTwo
-	c579 [label="SubTwo", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c580 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> SubTwo </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.subclass.classes.SubOne
-	c580 [label="SubOne", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c581 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> SubOne </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.subclass.classes.Super
-	c581 [label="Super", fontname="Helvetica", style=filled, fillcolor="lemonchiffon", fontcolor="black", fontsize=10.0];
+	c582 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonchiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Super </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//gr.spinellis.subclass.classes.SubOneTwo extends gr.spinellis.subclass.classes.SubOne
-	c580 -> c577 [dir=back,arrowtail=empty];
+	c581:p -> c578:p [dir=back,arrowtail=empty];
 	//gr.spinellis.subclass.classes.SubOneOne extends gr.spinellis.subclass.classes.SubOne
-	c580 -> c578 [dir=back,arrowtail=empty];
+	c581:p -> c579:p [dir=back,arrowtail=empty];
 	//gr.spinellis.subclass.classes.SubTwo extends gr.spinellis.subclass.classes.Super
-	c581 -> c579 [dir=back,arrowtail=empty];
+	c582:p -> c580:p [dir=back,arrowtail=empty];
 	//gr.spinellis.subclass.classes.SubOne extends gr.spinellis.subclass.classes.Super
-	c581 -> c580 [dir=back,arrowtail=empty];
+	c582:p -> c581:p [dir=back,arrowtail=empty];
 }
 

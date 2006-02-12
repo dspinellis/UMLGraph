@@ -6,36 +6,36 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	// gr.spinellis.context.classes.AClient
-	c420 [label="AClient", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c421 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> AClient </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.context.classes.ASubclass
-	c422 [label="ASubclass", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c423 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> ASubclass </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.context.classes.E
-	c423 [label="E", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c424 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> E </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.context.classes.D
-	c425 [label="D", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c426 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> D </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.context.classes.B
-	c428 [label="B", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c429 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> B </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.context.classes.ABaseClass
-	c429 [label="ABaseClass", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c430 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> ABaseClass </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.context.classes.A
-	c430 [label="A", fontname="Helvetica", style=filled, fillcolor="lemonchiffon", fontcolor="black", fontsize=10.0];
+	c431 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonchiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> A </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//gr.spinellis.context.classes.ASubclass extends gr.spinellis.context.classes.A
-	c430 -> c422 [dir=back,arrowtail=empty];
+	c431:p -> c423:p [dir=back,arrowtail=empty];
 	//gr.spinellis.context.classes.A extends gr.spinellis.context.classes.ABaseClass
-	c429 -> c430 [dir=back,arrowtail=empty];
+	c430:p -> c431:p [dir=back,arrowtail=empty];
 	// gr.spinellis.context.classes.D navassoc gr.spinellis.context.classes.A
-	c425 -> c430 [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
+	c426:p -> c431:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
 	// gr.spinellis.context.classes.A navassoc gr.spinellis.context.classes.B
-	c430 -> c428 [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
+	c431:p -> c429:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
 	// gr.spinellis.context.classes.A navassoc javax.swing.JComponent
-	c430 -> c506 [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
+	c431:p -> c507:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
 	// gr.spinellis.context.classes.AClient depend gr.spinellis.context.classes.A
-	c420 -> c430 [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
+	c421:p -> c431:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
 	// gr.spinellis.context.classes.A depend gr.spinellis.context.classes.E
-	c430 -> c423 [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
+	c431:p -> c424:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
 	// javax.swing.JComponent
-	c506 [label="JComponent", fontname="Helvetica-Oblique", fontcolor="black", fontsize=10.0, URL="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/JComponent.html"];
+	c507 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/JComponent.html"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td><font face="Helvetica-Oblique"> JComponent </font></td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }
 

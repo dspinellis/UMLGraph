@@ -6,20 +6,20 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	// gr.spinellis.iface.classes.FarImplementor
-	c531 [label="FarImplementor", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c532 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> FarImplementor </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.iface.classes.DirectImplementor
-	c532 [label="DirectImplementor", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c533 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> DirectImplementor </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.iface.classes.SubSubFace
-	c534 [label="«interface» \nSubSubFace", fontname="Helvetica-Oblique", fontcolor="black", fontsize=10.0];
+	c535 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> &laquo;interface&raquo; </td></tr><tr><td> SubSubFace </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.iface.classes.SubFace
-	c535 [label="«interface» \nSubFace", fontname="Helvetica-Oblique", fontcolor="black", fontsize=10.0];
+	c536 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> &laquo;interface&raquo; </td></tr><tr><td> SubFace </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.iface.classes.Face
-	c536 [label="«interface» \nFace", fontname="Helvetica-Oblique", style=filled, fillcolor="lemonchiffon", fontcolor="black", fontsize=10.0];
-	c534 -> c531 [dir=back,arrowtail=empty,style=dashed];	//gr.spinellis.iface.classes.FarImplementor implements gr.spinellis.iface.classes.SubSubFace
-	c536 -> c532 [dir=back,arrowtail=empty,style=dashed];	//gr.spinellis.iface.classes.DirectImplementor implements gr.spinellis.iface.classes.Face
-	c535 -> c534 [dir=back,arrowtail=empty,style=dashed];	//gr.spinellis.iface.classes.SubSubFace implements gr.spinellis.iface.classes.SubFace
-	c536 -> c535 [dir=back,arrowtail=empty,style=dashed];	//gr.spinellis.iface.classes.SubFace implements gr.spinellis.iface.classes.Face
+	c537 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonchiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> &laquo;interface&raquo; </td></tr><tr><td> Face </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c535:p -> c532:p [dir=back,arrowtail=empty,style=dashed];	//gr.spinellis.iface.classes.FarImplementor implements gr.spinellis.iface.classes.SubSubFace
+	c537:p -> c533:p [dir=back,arrowtail=empty,style=dashed];	//gr.spinellis.iface.classes.DirectImplementor implements gr.spinellis.iface.classes.Face
+	c536:p -> c535:p [dir=back,arrowtail=empty,style=dashed];	//gr.spinellis.iface.classes.SubSubFace implements gr.spinellis.iface.classes.SubFace
+	c537:p -> c536:p [dir=back,arrowtail=empty,style=dashed];	//gr.spinellis.iface.classes.SubFace implements gr.spinellis.iface.classes.Face
 }
 

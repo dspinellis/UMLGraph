@@ -6,18 +6,18 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	// a.b.c.UMLOptions
-	c49 [label="UMLOptions", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c50 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> UMLOptions </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// a.b.c.UserGroup
-	c50 [label="UserGroup", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c51 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> UserGroup </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// a.b.c.User
-	c51 [label="User", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c52 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> User </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// a.b.c.Password
-	c52 [label="Password", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c53 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Password </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// a.b.c.UserGroup assoc a.b.c.User
-	c50 -> c51 [taillabel="*", label="", headlabel="*\n\n+user ", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	c51:p -> c52:p [taillabel="*", label="", headlabel="*\n\n+user ", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 	// a.b.c.User navassoc a.b.c.Password
-	c51 -> c52 [taillabel="1\n\n+owner\r", label="", headlabel="*\n\n+key", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
+	c52:p -> c53:p [taillabel="1\n\n+owner\r", label="", headlabel="*\n\n+key", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
 }
 

@@ -6,24 +6,24 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
-	// gr.spinellis.invoice.InvoiceItem
-	c140 [label="InvoiceItem", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.invoice.Invoice
-	c141 [label="Invoice", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.invoice.Customer
-	c142 [label="Customer", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.product.Product
-	c143 [label="Product", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.product.Category
-	c144 [label="Category", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.invoice.InvoiceItem assoc gr.spinellis.product.Product
-	c140 -> c143 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// gr.spinellis.invoice.Invoice assoc gr.spinellis.invoice.Customer
-	c141 -> c142 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// gr.spinellis.invoice.Invoice composed gr.spinellis.invoice.InvoiceItem
-	c141 -> c140 [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
-	// gr.spinellis.product.Product assoc gr.spinellis.product.Category
-	c143 -> c144 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
+	// gr.spinellis.basic.invoice.InvoiceItem
+	c351 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> InvoiceItem </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.invoice.Invoice
+	c352 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Invoice </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.invoice.Customer
+	c353 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Customer </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.product.Product
+	c354 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Product </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.product.Category
+	c355 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Category </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.invoice.InvoiceItem assoc gr.spinellis.basic.product.Product
+	c351:p -> c354:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	// gr.spinellis.basic.invoice.Invoice assoc gr.spinellis.basic.invoice.Customer
+	c352:p -> c353:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	// gr.spinellis.basic.invoice.Invoice composed gr.spinellis.basic.invoice.InvoiceItem
+	c352:p -> c351:p [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
+	// gr.spinellis.basic.product.Product assoc gr.spinellis.basic.product.Category
+	c354:p -> c355:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 }
 

@@ -6,10 +6,10 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	// Java5
-	c1 [label="{Java5\n|~ state : Java5.States\l+ specifiedPackages : Set\<String\>\l|+ printAll(args : String[])\l}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c107 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Java5 </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left"> ~ state : Java5.States </td></tr><tr><td align="left"> + specifiedPackages : Set&lt;String&gt; </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left"> + printAll(args : String[]) </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// Java5.States
-	c2 [label="{«enumeration» \nStates\n|start\ldash\lcolon\lspace\lopen\lw\lclose\l|}", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c108 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> &laquo;enumeration&raquo; </td></tr><tr><td> States </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left"> start </td></tr><tr><td align="left"> dash </td></tr><tr><td align="left"> colon </td></tr><tr><td align="left"> space </td></tr><tr><td align="left"> open </td></tr><tr><td align="left"> w </td></tr><tr><td align="left"> close </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }
 

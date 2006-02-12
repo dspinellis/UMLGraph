@@ -6,28 +6,28 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
-	// gr.spinellis.invoice.InvoiceItem
-	c0 [label="InvoiceItem", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.invoice.Invoice
-	c1 [label="Invoice", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.invoice.Customer
-	c2 [label="Customer", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.product.Product
-	c3 [label="Product", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.product.Category
-	c4 [label="Category", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.invoice.InvoiceItem assoc gr.spinellis.product.Product
-	c0 -> c3 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// gr.spinellis.invoice.Invoice assoc gr.spinellis.invoice.Customer
-	c1 -> c2 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// gr.spinellis.invoice.Invoice composed gr.spinellis.invoice.InvoiceItem
-	c1 -> c0 [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
-	// gr.spinellis.product.Product assoc gr.spinellis.product.Category
-	c3 -> c4 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// gr.spinellis.product.Category depend java.util.List
-	c4 -> c10 [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
+	// gr.spinellis.basic.invoice.InvoiceItem
+	c156 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> InvoiceItem </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.invoice.Invoice
+	c157 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Invoice </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.invoice.Customer
+	c158 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Customer </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.product.Product
+	c159 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Product </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.product.Category
+	c160 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Category </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.invoice.InvoiceItem assoc gr.spinellis.basic.product.Product
+	c156:p -> c159:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	// gr.spinellis.basic.invoice.Invoice assoc gr.spinellis.basic.invoice.Customer
+	c157:p -> c158:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	// gr.spinellis.basic.invoice.Invoice composed gr.spinellis.basic.invoice.InvoiceItem
+	c157:p -> c156:p [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
+	// gr.spinellis.basic.product.Product assoc gr.spinellis.basic.product.Category
+	c159:p -> c160:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	// gr.spinellis.basic.product.Category depend java.util.List<E>
+	c160:p -> c194:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
 	// java.util.List<E>
-	c10 [label="«interface» \nList\<E\>", fontname="Helvetica-Oblique", style=filled, fillcolor="gray", fontcolor="black", fontsize=10.0, URL="http://java.sun.com/j2se/1.4.2/docs/api/java/util/List.html"];
+	c194 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="gray" href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/List.html"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> &laquo;interface&raquo; </td></tr><tr><td> List&lt;E&gt; </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }
 

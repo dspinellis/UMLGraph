@@ -6,10 +6,10 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	// Base
-	c0 [label="Base", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Test2<B extends Base>
-	c1 [label="Test2\<B extends Base\>", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c48 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Base </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// Test2<B extends a.b.Base>
+	c49 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Test2&lt;B extends Base&gt; </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }
 

@@ -6,24 +6,24 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
-	// gr.spinellis.invoice.InvoiceItem
-	c120 [label="{InvoiceItem\n|product\lquantity\l|}", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=16.0];
-	// gr.spinellis.invoice.Invoice
-	c121 [label="{Invoice\n|total\litems\lcustomer\l|}", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=16.0];
-	// gr.spinellis.invoice.Customer
-	c122 [label="{Customer\n|name\l|}", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=16.0];
-	// gr.spinellis.product.Product
-	c123 [label="{Product\n|name\lstock\lprice\lcategory\l|}", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=16.0];
-	// gr.spinellis.product.Category
-	c124 [label="{Category\n|name\lproducts\l|}", fontname="Helvetica", style=filled, fillcolor="yellow", fontcolor="black", fontsize=16.0];
-	// gr.spinellis.invoice.InvoiceItem assoc gr.spinellis.product.Product
-	c120 -> c123 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// gr.spinellis.invoice.Invoice assoc gr.spinellis.invoice.Customer
-	c121 -> c122 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// gr.spinellis.invoice.Invoice composed gr.spinellis.invoice.InvoiceItem
-	c121 -> c120 [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
-	// gr.spinellis.product.Product assoc gr.spinellis.product.Category
-	c123 -> c124 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
+	// gr.spinellis.basic.invoice.InvoiceItem
+	c273 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> InvoiceItem </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left">  product </td></tr><tr><td align="left">  quantity </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=16.0];
+	// gr.spinellis.basic.invoice.Invoice
+	c274 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Invoice </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left">  total </td></tr><tr><td align="left">  items </td></tr><tr><td align="left">  customer </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=16.0];
+	// gr.spinellis.basic.invoice.Customer
+	c275 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Customer </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left">  name </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=16.0];
+	// gr.spinellis.basic.product.Product
+	c276 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Product </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left">  name </td></tr><tr><td align="left">  stock </td></tr><tr><td align="left">  price </td></tr><tr><td align="left">  category </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=16.0];
+	// gr.spinellis.basic.product.Category
+	c277 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="yellow"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Category </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left">  name </td></tr><tr><td align="left">  products </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=16.0];
+	// gr.spinellis.basic.invoice.InvoiceItem assoc gr.spinellis.basic.product.Product
+	c273:p -> c276:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	// gr.spinellis.basic.invoice.Invoice assoc gr.spinellis.basic.invoice.Customer
+	c274:p -> c275:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	// gr.spinellis.basic.invoice.Invoice composed gr.spinellis.basic.invoice.InvoiceItem
+	c274:p -> c273:p [taillabel="1", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond];
+	// gr.spinellis.basic.product.Product assoc gr.spinellis.basic.product.Category
+	c276:p -> c277:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 }
 

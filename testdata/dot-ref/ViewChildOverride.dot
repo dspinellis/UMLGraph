@@ -6,12 +6,12 @@
 
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=record];
-	// gr.spinellis.product.Product
-	c132 [label="{Product\n|name\lstock\lprice\lcategory\l|}", fontname="Helvetica", style=filled, fillcolor="LemonChiffon", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.product.Category
-	c133 [label="Category", fontname="Helvetica", style=filled, fillcolor="brown", fontcolor="black", fontsize=10.0];
-	// gr.spinellis.product.Product assoc gr.spinellis.product.Category
-	c132 -> c133 [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
+	node [fontname="Helvetica",fontsize=10,shape=plaintext];
+	// gr.spinellis.basic.product.Product
+	c198 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="LemonChiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Product </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left">  name </td></tr><tr><td align="left">  stock </td></tr><tr><td align="left">  price </td></tr><tr><td align="left">  category </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.product.Category
+	c199 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="brown"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td> Category </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	// gr.spinellis.basic.product.Product assoc gr.spinellis.basic.product.Category
+	c198:p -> c199:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 }
 
