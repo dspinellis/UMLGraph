@@ -33,6 +33,23 @@ import java.util.regex.PatternSyntaxException;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 class Options implements Cloneable, OptionProvider {
+    // dot's font platform dependence workaround
+    private static String defaultFont;
+    private static String defaultItalicFont;
+    
+    static {
+	// use an appropriate font depending on the current operating system
+	// (on windows graphviz is unable to locate "Helvetica-Oblique"
+	if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+	    defaultFont = "arial";
+	    defaultItalicFont = "ariali";
+	} else {
+	    defaultFont = "Helvetica";
+	    defaultItalicFont = "Helvetica-Oblique";
+	}
+    }
+    
+    // instance fields
     private Vector<Pattern> hidePatterns;
     boolean showQualified;
     boolean showAttributes;
@@ -62,15 +79,16 @@ class Options implements Cloneable, OptionProvider {
     String viewName;
     String outputDirectory;
     /** Guillemot left (open) */
-    String guilOpen = "\u00ab";
+    String guilOpen = "&laquo;"; // "\u00ab";
     /** Guillemot right (close) */
-    String guilClose = "\u00bb";
+    String guilClose = "&raquo;"; // "\u00bb";
     boolean inferRelationships;
     boolean inferDependencies;
     boolean useImports;
     boolean verbose2;
     String inferRelationshipType;
     private Vector<Pattern> collPackages;
+    public boolean compact;
 
     Options() {
 	showQualified = false;
@@ -81,12 +99,12 @@ class Options implements Cloneable, OptionProvider {
 	showEnumerations = false;
 	showConstructors = false;
 	showType = false;
-	edgeFontName = "Helvetica";
+	edgeFontName = defaultFont;
 	edgeFontColor = "black";
 	edgeColor = "black";
 	edgeFontSize = 10;
-	nodeFontName = "Helvetica";
-	nodeFontAbstractName = "Helvetica-Oblique";
+	nodeFontName = defaultFont;
+	nodeFontAbstractName = defaultItalicFont;
 	nodeFontColor = "black";
 	nodeFontSize = 10;
 	nodeFillColor = null;
@@ -106,6 +124,7 @@ class Options implements Cloneable, OptionProvider {
 	verbose2 = false;
 	inferRelationshipType = "navassoc";
 	collPackages = new Vector<Pattern>();
+	compact = false;
     }
 
     public Object clone() {
@@ -153,7 +172,8 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-inferrel") ||
            option.equals("-useimports") ||
            option.equals("-verbose2") ||
-           option.equals("-inferdep"))
+           option.equals("-inferdep") ||
+           option.equals("-compact"))
 
             return 1;
         else if(option.equals("-nodefillcolor") ||
@@ -241,7 +261,7 @@ class Options implements Cloneable, OptionProvider {
 	} else if(opt[0].equals("-edgefontname")) {
 	    edgeFontName = opt[1];
 	} else if (opt[0].equals("-!edgefontname")) {
-	    edgeFontName = "Helvetica";
+	    edgeFontName = defaultFont;
 	} else if(opt[0].equals("-edgefontsize")) {
 	    edgeFontSize = Integer.parseInt(opt[1]);
 	} else if (opt[0].equals("-!edgefontsize")) {
@@ -253,11 +273,11 @@ class Options implements Cloneable, OptionProvider {
 	} else if(opt[0].equals("-nodefontname")) {
 	    nodeFontName = opt[1];
 	} else if (opt[0].equals("-!nodefontname")) {
-	    nodeFontName = "Helvetica";
+	    nodeFontName = defaultFont;
 	} else if(opt[0].equals("-nodefontabstractname")) {
 	    nodeFontAbstractName = opt[1];
 	} else if (opt[0].equals("-!nodefontabstractname")) {
-	    nodeFontAbstractName = "Helvetica-Oblique";
+	    nodeFontAbstractName = defaultItalicFont;
 	} else if(opt[0].equals("-nodefontsize")) {
 	    nodeFontSize = Integer.parseInt(opt[1]);
 	} else if (opt[0].equals("-!nodefontsize")) {
@@ -343,6 +363,10 @@ class Options implements Cloneable, OptionProvider {
 	    }
 	} else if (opt[0].equals("-!collpackages")) {
 	    collPackages.clear();
+	} else if (opt[0].equals("-compact")) {
+	    compact = true;
+	} else if(opt[0].equals("-!compact")) {
+	    compact = false;
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if needed.
     }
