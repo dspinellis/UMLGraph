@@ -44,6 +44,7 @@ public class BasicTest {
 	if (!outFolder.exists())
 	    outFolder.mkdirs();
 
+	System.setProperty("os.name", "generic"); // don't use windows specific fonts
 	performBasicTests(different);
 	performViewTests(different, outFolder);
 
@@ -60,7 +61,7 @@ public class BasicTest {
     private static void performViewTests(List<String> differences, File outFolder)
 	    throws IOException {
 	String[] options = new String[] { "-docletpath", "build", "-private", "-d",
-		outFolder.getAbsolutePath(), "-sourcepath", "testdata/java", "-subpackages",
+		outFolder.getAbsolutePath(), "-sourcepath", "testdata/java", "-subpackages", "-compact",
 		"gr.spinellis", "-views" };
 	runDoclet(options);
 
@@ -111,7 +112,7 @@ public class BasicTest {
 	    dotFile.delete();
 	    File refFile = new File(testRefFolder, outFileName);
 	    String javaPath = new File(testSourceFolder, javaFiles[i]).getAbsolutePath();
-	    String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden",
+	    String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden", "-compact",
 		    "-private", "-d", testDestFolder, "-output", outFileName, javaPath };
 
 	    runDoclet(options);
