@@ -169,7 +169,7 @@ public class DotDiff {
             if (openBrackedIdx < 0 && closedBracketIdx < 0 || line.startsWith("edge")
                     || line.startsWith("node"))
                 extraLines.add(line);
-            else if (arrowIdx > 0 && arrowIdx < openBrackedIdx) { // that's an
+            else if (arrowIdx > 0 && arrowIdx < openBrackedIdx) { // that's an arc
                 arcLines.add(line);
             } else { // that's a node
                 String attributes = line.substring(openBrackedIdx + 1, closedBracketIdx);
