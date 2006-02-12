@@ -1,14 +1,5 @@
 $Id$
 
-Frederic Barachant wrote:
-I'd like to propose you an enhancement. If it ever works, that might help to get graphs with
-less human work. The enhancement concerns association/navAssociations and java 1.5.
-Would it be possible that 1.5 genericized Collections get automatically tagged as an association?
-For example a 'class Test{Collection<MyType> bla;}' would be a class Test with a non navigable 1-* association
-to a MyType class. Eventually, if MyType had a field referencing a Test, the association would be navigable both ways.
-On the same idea, if MyType had a Collection<Test> the reference would become *-*.
-
-
 Yves Bossel: If I may do some suggestions:
   + I would appreciate to be able to add UML comments to both diagram types.
   + Adding patterns (collaborations ellipse with roles bound to classes) would be welcome into class diagrams.
@@ -16,8 +7,6 @@ Yves Bossel: If I may do some suggestions:
 
 
 Try the http://prefuse.sourceforge.net/ back end for large graphs.
-
-Break into source into separate files per class
 
 Provide a parameter to say how (untagged) data members relate to other
 classes.
@@ -30,14 +19,6 @@ public class A  {
       A myInstance;
   }
 Requires special care for containers and arrays.
-
-Move source into a package:
-	On each file add at the very beginning:
-	package gr.spinellis.umlgraph.core;
-	Move the classes into gr/spinellis/umlgraph/core directory
-	jar cvf UmlGraph.jar gr\spinellis\umlgraph\core\*.class
-	Invoke as javadoc -docletpath UmlGraph.jar -doclet gr.spinellis.umlgraph.core.UmlGraph -output foo in\Abstr.java
-
 
 Add package, note, interface and node icons to graphviz
     (folder) dog-ear =[]         3D box
