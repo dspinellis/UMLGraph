@@ -7,6 +7,10 @@
 <ul>
 <li> Correct the handling of qualified class names following
 the extends keyword (Arnaud Rogues).</li>
+<li> Now using HTML labels in dot files. This allows for a different font
+     in each row of the class nodes. Added options 
+     to control fonts for class names, packages and tags. (Andrea Aime)
+</li>
 <li> Relationship inference support. When enabled UMLGraph will try to
      compute relationships and dependecies by field/method/import 
      statements examination. (Andrea Aime)

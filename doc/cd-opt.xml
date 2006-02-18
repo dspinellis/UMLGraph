@@ -52,6 +52,23 @@ inside abstract class nodes.
 </dd>
 <dt>-nodefontsize</dt><dd>Specify the font size to use inside nodes.
 </dd>
+<dt>-nodefontclassname</dt><dd>Specify the font name to use for the class names.
+</dd>
+<dt>-nodefontclassabstractname</dt><dd>Specify the font name use for the 
+class name of abstract classes.
+</dd>
+<dt>-nodefontclasssize</dt><dd>Specify the font size to use for the class names.
+</dd>
+<dt>-nodefonttagname</dt><dd>Specify the font name to use for the tag names.
+</dd>
+<dt>-nodefonttagsize</dt><dd>Specify the font size to use for the tag names.
+</dd>
+<dt>-nodefontpackagename</dt><dd>Specify the font name to use for the package 
+names (used only when it package name is postfixed, see -postfixpackage).
+</dd>
+<dt>-nodefontpackagesize</dt><dd>Specify the font size to use for the package 
+names (used only when it package name is postfixed, see -postfixpackage).
+</dd>
 <dt>-nodefontcolor</dt><dd>Specify the font color to use inside nodes.
 </dd>
 <dt>-edgefontname</dt><dd>Specify the font name to use for edge labels.
@@ -63,6 +80,10 @@ inside abstract class nodes.
 <dt>-edgecolor</dt><dd>Specify the color for drawing edges.
 </dd>
 <dt>-bgcolor</dt><dd>Specify the graph's background color.
+</dd>
+<dt>-postfixpackage</dt><dd>When using qualified class names, put the
+package name in the line after the class name, in order to reduce the
+width of class nodes.
 </dd>
 <dt>-hide</dt><dd>Specify entities to hide from the graph.
 Matching is done using a non-anchored regular match.
@@ -123,6 +144,11 @@ external classes will just be mapped to the on-line Java API documentation.
 be used to denote special terms like "interface" and stereotype names.
 This is used on some platforms to circumvent problems associated
 with displaying non-ASCII characters.
+</dd>
+<dt>-compact</dt><dd>Generate compact dot files, that is, print html labels
+in a single line instead of "pretty printing" them. Useful if the dot file
+has to be manipulated by an automated tool (e.g., the UMLGraph regression
+test suite).
 </dd>
 </dl>
 <p />
