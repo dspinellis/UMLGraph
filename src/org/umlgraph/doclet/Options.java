@@ -69,11 +69,19 @@ class Options implements Cloneable, OptionProvider {
     String nodeFontColor;
     double nodeFontSize;
     String nodeFillColor;
+    double nodeFontClassSize;
+    String nodeFontClassName;
+    String nodeFontClassAbstractName;
+    double nodeFontTagSize;
+    String nodeFontTagName;
+    double nodeFontPackageSize;
+    String nodeFontPackageName;
     String bgColor;
     String outputFileName;
     String outputEncoding;
     String apiDocMapFileName;
     String apiDocRoot;
+    boolean postfixPackage;
     boolean useGuillemot;
     boolean findViews;
     String viewName;
@@ -103,10 +111,17 @@ class Options implements Cloneable, OptionProvider {
 	edgeFontColor = "black";
 	edgeColor = "black";
 	edgeFontSize = 10;
+	nodeFontColor = "black";
 	nodeFontName = defaultFont;
 	nodeFontAbstractName = defaultItalicFont;
-	nodeFontColor = "black";
 	nodeFontSize = 10;
+	nodeFontClassSize = -1;
+	nodeFontClassName = null;
+	nodeFontClassAbstractName = null;
+	nodeFontTagSize = -1;
+	nodeFontTagName = null;
+	nodeFontPackageSize = -1;
+	nodeFontPackageName = null;
 	nodeFillColor = null;
 	bgColor = null;
 	outputFileName = "graph.dot";
@@ -115,6 +130,7 @@ class Options implements Cloneable, OptionProvider {
 	hidePatterns = new Vector<Pattern>();
 	apiDocMapFileName = null;
 	apiDocRoot = null;
+	postfixPackage = false;
 	useGuillemot = true;
 	findViews = false;
 	viewName = null;
@@ -165,6 +181,7 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-visibility") ||
            option.equals("-types") ||
            option.equals("-all") ||
+           option.equals("-postfixpackage") ||
            option.equals("-noguillemot") ||
            option.equals("-enumconstants") ||
            option.equals("-enumerations") ||
@@ -181,6 +198,13 @@ class Options implements Cloneable, OptionProvider {
            option.equals("-nodefontsize") ||
            option.equals("-nodefontname") ||
            option.equals("-nodefontabstractname") ||
+           option.equals("-nodefontclasssize") ||
+           option.equals("-nodefontclassname") ||
+           option.equals("-nodefontclassabstractname") ||
+   	   option.equals("-nodefonttagsize") ||
+   	   option.equals("-nodefonttagname") ||
+   	   option.equals("-nodefontpackagesize") ||
+   	   option.equals("-nodefontpackagename") ||
            option.equals("-edgefontcolor") ||
            option.equals("-edgecolor") ||
            option.equals("-edgefontsize") ||
@@ -282,6 +306,34 @@ class Options implements Cloneable, OptionProvider {
 	    nodeFontSize = Integer.parseInt(opt[1]);
 	} else if (opt[0].equals("-!nodefontsize")) {
 	    nodeFontSize = 10;
+	} else if(opt[0].equals("-nodefontclassname")) {
+	    nodeFontClassName = opt[1];
+	} else if (opt[0].equals("-!nodefontclassname")) {
+	    nodeFontClassName = null;
+	} else if(opt[0].equals("-nodefontclassabstractname")) {
+	    nodeFontClassAbstractName = opt[1];
+	} else if (opt[0].equals("-!nodefontclassabstractname")) {
+	    nodeFontClassAbstractName = null;
+	} else if(opt[0].equals("-nodefontclasssize")) {
+	    nodeFontClassSize = Integer.parseInt(opt[1]);
+	} else if (opt[0].equals("-!nodefontclasssize")) {
+	    nodeFontClassSize = -1;
+	} else if(opt[0].equals("-nodefonttagname")) {
+	    nodeFontTagName = opt[1];
+	} else if (opt[0].equals("-!nodefonttagname")) {
+	    nodeFontTagName = null;
+	} else if(opt[0].equals("-nodefonttagsize")) {
+	    nodeFontTagSize = Integer.parseInt(opt[1]);
+	} else if (opt[0].equals("-!nodefonttagsize")) {
+	    nodeFontTagSize = -1;
+	} else if(opt[0].equals("-nodefontpackagename")) {
+	    nodeFontPackageName = opt[1];
+	} else if (opt[0].equals("-!nodefontpackagename")) {
+	    nodeFontPackageName = null;
+	} else if(opt[0].equals("-nodefontpackagesize")) {
+	    nodeFontPackageSize = Integer.parseInt(opt[1]);
+	} else if (opt[0].equals("-!nodefontpackagesize")) {
+	    nodeFontPackageSize = -1;
 	} else if(opt[0].equals("-nodefillcolor")) {
 	    nodeFillColor = opt[1];
 	} else if (opt[0].equals("-!nodefillcolor")) {
@@ -365,10 +417,15 @@ class Options implements Cloneable, OptionProvider {
 	    collPackages.clear();
 	} else if (opt[0].equals("-compact")) {
 	    compact = true;
-	} else if(opt[0].equals("-!compact")) {
+	} else if (opt[0].equals("-!compact")) {
 	    compact = false;
+	} else if (opt[0].equals("-postfixpackage")) {
+	    postfixPackage = true;
+	} else if (opt[0].equals("-!postfixpackage")) {
+	    postfixPackage = false;
 	} else
-	    ; // Do nothing, javadoc will handle the option or complain, if needed.
+	    ; // Do nothing, javadoc will handle the option or complain, if
+                // needed.
     }
 
     /** Set the options based on the command line parameters */
@@ -389,7 +446,6 @@ class Options implements Cloneable, OptionProvider {
 	    setOption(opt);
 	}
     }
-
 
     /**
      * Check if the supplied string matches an entity specified

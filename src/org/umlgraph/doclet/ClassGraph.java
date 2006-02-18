@@ -65,11 +65,12 @@ import com.sun.javadoc.WildcardType;
 class ClassGraph {
     protected static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
     protected static final char FILE_SEPARATOR = '/';
-    protected static final int ALIGN_LEFT = 1;
-    protected static final int ALIGN_CENTER = 2;
-    protected static final int ALIGN_RIGHT = 3;
-    protected static final int FONT_NORMAL = 100;
-    protected static final int FONT_ABSTRACT = 101;
+    enum Font {
+	NORMAL, ABSTRACT, CLASS, CLASS_ABSTRACT, TAG, PACKAGE
+    }
+    enum Align {
+	LEFT, CENTER, RIGHT
+    };
     public static Map<String, String> associationMap = new HashMap<String, String>();
     static {
 	associationMap.put("assoc", "arrowhead=none");
@@ -171,6 +172,14 @@ class ClassGraph {
 	}
 	return r;
     }
+    
+    /** Escape &lt; and &gt; characters in the string with a backslash. */
+    private String escapeLG(String s) {
+	if(s.contains("<"))
+	    return s.replace("<", "&lt;").replace(">", "&gt;");
+	else
+	    return s;
+    }
 
 
     /**
@@ -210,7 +219,6 @@ class ClassGraph {
      * any stereotypes
      */
     private String visibility(Options opt, ProgramElementDoc e) {
-	// stereotype(opt, e, ALIGN_LEFT);
 	if (!opt.showVisibility)
 	    return " ";
 	if (e.isPrivate())
@@ -280,12 +288,12 @@ class ClassGraph {
 	    if (hidden(f))
 		continue;
 	    String att = "";
-	    stereotype(opt, f, ALIGN_LEFT);
+	    stereotype(opt, f, Align.LEFT);
 	    att = visibility(opt, f) + f.name();
 	    if (opt.showType)
 		att += typeAnnotation(opt, f.type());
-	    tableLine(ALIGN_LEFT, att);
-	    tagvalue(f);
+	    tableLine(Align.LEFT, att);
+	    tagvalue(opt, f);
 	}
     }
 
@@ -300,15 +308,15 @@ class ClassGraph {
 	for (ConstructorDoc cd : m) {
 	    if (hidden(cd))
 		continue;
-	    stereotype(opt, cd, ALIGN_LEFT);
+	    stereotype(opt, cd, Align.LEFT);
 	    String cs = visibility(opt, cd) + cd.name();
 	    if (opt.showType) {
 		cs += "(" + parameter(opt, cd.parameters()) + ")";
 	    } else {
 		cs += "()";
 	    }
-	    tableLine(ALIGN_LEFT, cs);
-	    tagvalue(cd);
+	    tableLine(Align.LEFT, cs);
+	    tagvalue(opt, cd);
 	}
     }
 
@@ -317,16 +325,16 @@ class ClassGraph {
 	for (MethodDoc md : m) {
 	    if (hidden(md))
 		continue;
-	    stereotype(opt, md, ALIGN_LEFT);
+	    stereotype(opt, md, Align.LEFT);
 	    String op = visibility(opt, md) + md.name();
 	    if (opt.showType) {
 		op += "(" + parameter(opt, md.parameters()) + ")" + typeAnnotation(opt, md.returnType());
 	    } else {
 		op += "()";
 	    }
-	    tableLine(opt, ALIGN_LEFT, op, md.isAbstract() ? FONT_ABSTRACT : FONT_NORMAL);
+	    tableLine(Align.LEFT, op, opt, md.isAbstract() ? Font.ABSTRACT : Font.NORMAL);
 	    
-	    tagvalue(md);
+	    tagvalue(opt, md);
 	}
     }
 
@@ -340,11 +348,12 @@ class ClassGraph {
 
     /**
      * Return as a string the tagged values associated with c
+     * @param opt the Options used to guess font names
      * @param c the Doc entry to look for @tagvalue
      * @param prevterm the termination string for the previous element
      * @param term the termination character for each tagged value
      */
-    private void tagvalue(Doc c) {
+    private void tagvalue(Options opt, Doc c) {
 	Tag tags[] = c.tags("tagvalue");
 	if (tags.length == 0)
 	    return;
@@ -355,7 +364,7 @@ class ClassGraph {
 		System.err.println("@tagvalue expects two fields: " + tag.text());
 		continue;
 	    }
-	    tableLine(ALIGN_RIGHT, "{" + t[0] + " = " + t[1] + "}");
+	    tableLine(Align.RIGHT, "{" + t[0] + " = " + t[1] + "}", opt, Font.TAG);
 	}
     }
 
@@ -363,7 +372,7 @@ class ClassGraph {
      * Return as a string the stereotypes associated with c
      * terminated by the escape character term
      */
-    private void stereotype(Options opt, Doc c, int align) {
+    private void stereotype(Options opt, Doc c, Align align) {
 	for (Tag tag : c.tags("stereotype")) {
 	    String t[] = StringUtil.tokenize(tag.text());
 	    if (t.length != 1) {
@@ -430,12 +439,22 @@ class ClassGraph {
 	    externalTableStart(opt, c.qualifiedName());
 	    innerTableStart();
 	    if (c.isInterface())
-		tableLine(ALIGN_CENTER, guilWrap(opt, "interface"));
+		tableLine(Align.CENTER, guilWrap(opt, "interface"));
 	    if (c.isEnum())
-		tableLine(ALIGN_CENTER, guilWrap(opt, "enumeration"));
-	    stereotype(opt, c, ALIGN_CENTER);
-	    tableLine(opt, ALIGN_CENTER, qualifiedName(opt, r), c.isAbstract() && !c.isInterface() ? FONT_ABSTRACT : FONT_NORMAL);
-	    tagvalue(c);
+		tableLine(Align.CENTER, guilWrap(opt, "enumeration"));
+	    stereotype(opt, c, Align.CENTER);
+	    Font font = c.isAbstract() && !c.isInterface() ? Font.CLASS_ABSTRACT : Font.CLASS;
+	    String qualifiedName = qualifiedName(opt, r);
+	    int idx = qualifiedName.lastIndexOf(".");
+	    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
+		String packageName = qualifiedName.substring(0, idx);
+		String cn = className.substring(idx + 1);
+		tableLine(Align.CENTER, escapeLG(cn), opt, font);
+		tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
+	    } else {
+		tableLine(Align.CENTER, escapeLG(qualifiedName), opt, font);
+	    }
+	    tagvalue(opt, c);
 	    innerTableEnd();
 	    
 	    boolean showMembers =
@@ -450,7 +469,7 @@ class ClassGraph {
 		    FieldDoc[] fields = c.fields();
 		    // if there are no fields, print an empty line to generate proper HTML
 		    if (fields.length == 0)
-			tableLine(ALIGN_LEFT, "");
+			tableLine(Align.LEFT, "");
 		    else
 			attributes(opt, c.fields());
 		    innerTableEnd();
@@ -458,7 +477,7 @@ class ClassGraph {
 		    // show an emtpy box if we don't show attributes but
 		    // we show operations
 		    innerTableStart();
-		    tableLine(ALIGN_LEFT, "");
+		    tableLine(Align.LEFT, "");
 		    innerTableEnd();
 	    	}
 		if (c.isEnum() && opt.showEnumConstants) {
@@ -466,26 +485,26 @@ class ClassGraph {
 		    FieldDoc[] ecs = c.enumConstants();
 		    // if there are no constants, print an empty line to generate proper HTML		    
 		    if (ecs.length == 0) {
-			tableLine(ALIGN_LEFT, "");
+			tableLine(Align.LEFT, "");
 		    } else {
 			for (FieldDoc fd : c.enumConstants()) {
-			    tableLine(ALIGN_LEFT, fd.name());
+			    tableLine(Align.LEFT, fd.name());
 			}
 		    }
 		    innerTableEnd();
 		}
 		if (!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
 		    innerTableStart();
-		    // if there are no operations and constructors, 
-		    // print an empty line to generate proper HTML
-		    if ((!opt.showConstructors || c.constructors().length == 0)
-			    && (!opt.showOperations || c.methods().length == 0)) {
-			tableLine(ALIGN_LEFT, "");
-		    } else {
+		    if ((opt.showConstructors && c.constructors().length > 0)
+			    || (opt.showOperations && c.methods().length > 0)) {
 			if (opt.showConstructors)
 			    operations(opt, c.constructors());
 			if (opt.showOperations)
 			    operations(opt, c.methods());
+		    } else {
+			// if there are no operations nor constructors,
+			// print an empty line to generate proper HTML
+			tableLine(Align.LEFT, "");
 		    }
 		    innerTableEnd();
 		}
@@ -628,7 +647,15 @@ class ClassGraph {
 		    w.print("\t" + info.name + "[label=");
 		    externalTableStart(opt, className);
 		    innerTableStart();
-		    tableLine(ALIGN_CENTER, className);
+		    int idx = className.lastIndexOf(".");
+		    if(opt.postfixPackage && idx > 0 && idx < (className.length() - 1)) {
+			String packageName = className.substring(0, idx);
+			String cn = className.substring(idx + 1);
+			tableLine(Align.CENTER, escapeLG(cn), opt, Font.CLASS);
+			tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
+		    } else {
+			tableLine(Align.CENTER, escapeLG(className), opt, Font.CLASS);
+		    }
 		    innerTableEnd();
 		    externalTableEnd();
 		    nodeProperties(opt);
@@ -931,35 +958,71 @@ class ClassGraph {
 	w.print(linePrefix + linePrefix + "</table></td></tr>" + linePostfix);
     }
     
-    private void tableLine(int align, String text) {
-	tableLine(null, align, text, FONT_NORMAL);
+    private void tableLine(Align align, String text) {
+	tableLine(align, text, null, Font.NORMAL);
     }
     
-    private void tableLine(Options opt, int align, String text, int font) {
+    private void tableLine(Align align, String text, Options opt, Font font) {
 	String open;
 	String close = "</td></tr>";
 	String prefix = linePrefix + linePrefix + linePrefix;
-	if(align == ALIGN_CENTER)
+	if(align == Align.CENTER)
 	    open = prefix + "<tr><td>"; 
-	else if(align == ALIGN_LEFT)
+	else if(align == Align.LEFT)
 	    open = prefix + "<tr><td align=\"left\">";
-	else if(align == ALIGN_RIGHT)
+	else if(align == Align.RIGHT)
 	    open = prefix + "<tr><td align=\"right\">";
 	else
 	    throw new RuntimeException("Unknown alignement type " + align);
 	
-	if(font == FONT_ABSTRACT) { 
-	    open += "<font face=\"" + opt.nodeFontAbstractName + "\">";
-	    close = "</font>" + close;
-	} else if(font != FONT_NORMAL) {
-	    throw new RuntimeException("Unknown font type " + font);
+	text = fontWrap(" " + text + " ", opt, font);
+	w.print(open + text + close + linePostfix);
+    }
+    
+    /**
+     * Wraps the text with the appropriate font according to the specified font type
+     * @param opt
+     * @param text
+     * @param font
+     * @return
+     */
+    private String fontWrap(String text, Options opt, Font font) {
+	if(font == Font.ABSTRACT) { 
+	    return fontWrap(text, opt.nodeFontAbstractName, opt.nodeFontSize);
+	} else if(font == Font.CLASS) {
+	    return fontWrap(text, opt.nodeFontClassName, opt.nodeFontClassSize);
+	} else if(font == Font.CLASS_ABSTRACT) {
+	    String name;
+	    if(opt.nodeFontClassAbstractName == null)
+		name = opt.nodeFontAbstractName;
+	    else
+		name = opt.nodeFontClassAbstractName;
+	    return fontWrap(text, name, opt.nodeFontClassSize);
+	} else if(font == Font.PACKAGE) {
+	    return fontWrap(text, opt.nodeFontPackageName, opt.nodeFontPackageSize);
+	} else if(font == Font.TAG) {
+	    return fontWrap(text, opt.nodeFontTagName, opt.nodeFontTagSize);
+	} else {
+	    return text;
 	}
-	
-	if(text.contains("<")) {
-	    text = text.replace("<", "&lt;").replace(">", "&gt;");
-	}
-	
-	w.print(open + " " + text + " " + close + linePostfix);
+    }
+    
+    /**
+     * Wraps the text with the appropriate font tags when the font name
+     * and size are not void
+     * @param text the text to be wrapped
+     * @param fontName considered void when it's null 
+     * @param fontSize considered void when it's <= 0
+     */
+    private String fontWrap(String text, String fontName, double fontSize) {
+	if(fontName == null && fontSize == -1)
+	    return text;
+	else if(fontName == null)
+	    return "<font point-size=\"" + fontSize + "\">" + text + "</font>";
+	else if(fontSize <= 0)
+	    return "<font face=\"" + fontName + "\">" + text + "</font>";
+	else
+	    return "<font face=\"" + fontName + "\" point-size=\"" + fontSize + "\">" + text + "</font>";
     }
     
     private static class FieldRelationInfo {
