@@ -304,7 +304,8 @@ class ClassGraph {
      */
 
     /** Print the class's constructors m */
-    private void operations(Options opt, ConstructorDoc m[]) {
+    private boolean operations(Options opt, ConstructorDoc m[]) {
+	boolean printed = false;
 	for (ConstructorDoc cd : m) {
 	    if (hidden(cd))
 		continue;
@@ -316,26 +317,32 @@ class ClassGraph {
 		cs += "()";
 	    }
 	    tableLine(Align.LEFT, cs);
+	    printed = true;
 	    tagvalue(opt, cd);
 	}
+	return printed;
     }
 
     /** Print the class's operations m */
-    private void operations(Options opt, MethodDoc m[]) {
+    private boolean operations(Options opt, MethodDoc m[]) {
+	boolean printed = false;
 	for (MethodDoc md : m) {
 	    if (hidden(md))
 		continue;
 	    stereotype(opt, md, Align.LEFT);
 	    String op = visibility(opt, md) + md.name();
 	    if (opt.showType) {
-		op += "(" + parameter(opt, md.parameters()) + ")" + typeAnnotation(opt, md.returnType());
+		op += "(" + parameter(opt, md.parameters()) + ")"
+			+ typeAnnotation(opt, md.returnType());
 	    } else {
 		op += "()";
 	    }
 	    tableLine(Align.LEFT, op, opt, md.isAbstract() ? Font.ABSTRACT : Font.NORMAL);
-	    
+	    printed = true;
+
 	    tagvalue(opt, md);
 	}
+	return printed;
     }
 
     /** Print the common class node's properties */
@@ -384,14 +391,18 @@ class ClassGraph {
     }
 
     /** Return true if c has a @hidden tag associated with it */
-    private boolean hidden(Doc c) {
+    private boolean hidden(ProgramElementDoc c) {
 	Tag tags[] = c.tags("hidden");
 	if (tags.length > 0)
 	    return true;
 	tags = c.tags("view");
 	if (tags.length > 0)
 	    return true;
-	Options opt = optionProvider.getOptionsFor(c.toString());
+    Options opt; 
+    if(c instanceof ClassDoc)
+      opt = optionProvider.getOptionsFor(c.toString());
+    else 
+      opt = optionProvider.getOptionsFor(c.containingClass());
 	return opt.matchesHideExpression(c.toString());
     }
     
@@ -495,17 +506,17 @@ class ClassGraph {
 		}
 		if (!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
 		    innerTableStart();
-		    if ((opt.showConstructors && c.constructors().length > 0)
-			    || (opt.showOperations && c.methods().length > 0)) {
-			if (opt.showConstructors)
-			    operations(opt, c.constructors());
-			if (opt.showOperations)
-			    operations(opt, c.methods());
-		    } else {
+		    boolean printedLines = false;
+		    if (opt.showConstructors)
+			printedLines |= operations(opt, c.constructors());
+		    if (opt.showOperations)
+			printedLines |= operations(opt, c.methods());
+
+		    if (!printedLines)
 			// if there are no operations nor constructors,
 			// print an empty line to generate proper HTML
 			tableLine(Align.LEFT, "");
-		    }
+
 		    innerTableEnd();
 		}
 	    }
