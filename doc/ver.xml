@@ -3,16 +3,24 @@
 <notes>
 <dl>
 
-<dt>Version 4.2 Under development</dt><dd>
+<dt>Version 4.4 Under development</dt><dd>
+<ul>
+</ul>
+
+<dt>Version 4.3 2006/03/03 </dt><dd>
+<ul>
+<li> Now using HTML labels in dot files. This allows for a different font
+     in each row of the class nodes. Added options
+     to control fonts for class names, packages and tags. (Andrea Aime)
+</li>
+</ul>
+
+<dt>Version 4.2 (internal release) </dt><dd>
 <ul>
 <li> Correct the handling of qualified class names following
 the extends keyword (Arnaud Rogues).</li>
-<li> Now using HTML labels in dot files. This allows for a different font
-     in each row of the class nodes. Added options 
-     to control fonts for class names, packages and tags. (Andrea Aime)
-</li>
 <li> Relationship inference support. When enabled UMLGraph will try to
-     compute relationships and dependecies by field/method/import 
+     compute relationships and dependecies by field/method/import
      statements examination. (Andrea Aime)
 </li>
 <li> Standard class lookup for association targets. The target can be
@@ -20,12 +28,12 @@ the extends keyword (Arnaud Rogues).</li>
      information, imports and standard visibility rules will be applied
      to determine the actual class (Andrea Aime)
 </li>
-<li> A <em>views</em> feature provides the ability to specify 
+<li> A <em>views</em> feature provides the ability to specify
 option overrides for classes satisfying specific conditions
 and to generate multiple diagrams in a single doclet invocation.
 See the new tags @view, @match and the command line
 parameters -d, -view, -views (Andrea Aime)</li>
-<li> Options can be reset to their default value using the "@opt !option" 
+<li> Options can be reset to their default value using the "@opt !option"
      syntax (useful for local overrides and in views) (Andrea Aime)</li>
 <li> Javadoc documentation (Andrea Aime).</li>
 <li> Centralized option handling in the Option class (even for command line
