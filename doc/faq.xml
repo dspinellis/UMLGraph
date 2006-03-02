@@ -21,6 +21,7 @@ To update the table of contents execute the following vim command from a registe
 <li> <a href="#autopic">How can I make the UMLGraph doclet generate sequence diagrams?</a></li>
 <li> <a href="#packname">Why the vanity package name?  Why not name the package org.umlgraph?</a></li>
 <li> <a href="#unnamed">Why do the options specified in the <code>UMLOptions</code> class stop working, when I pass the <code>packagenames</code> option to <em>javadoc</em>?</a></li>
+<li> <a href="#tiger">Why doesn't UMLGraph run under Mac OS X?</a></li>
 </ul>
 
 <h2><a name="utfsvg">Why are the SVG diagrams dot generates malformed?</a></h2>
@@ -166,4 +167,10 @@ When you pass the <code>packagenames</code> option to
 located in it) is ignored.
 In such cases you should include the <code>UMLOptions</code> class
 within a named package.
+
+<h2><a name="tiger">Why doesn't UMLGraph run under Mac OS X?</a></h2>
+Make sure you are running Java 1.5 (run <code>java -version</code> to see).
+If you are not running 1.5 you may need to adjust the symbolic links
+in
+<code>/System/Library/Frameworks/JavaVM.framework/Versions</code>.
 </notes>
