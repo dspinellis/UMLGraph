@@ -64,7 +64,7 @@ class name of abstract classes.
 <dt>-nodefonttagsize</dt><dd>Specify the font size to use for the tag names.
 </dd>
 <dt>-nodefontpackagename</dt><dd>Specify the font name to use for the package 
-names (used only when it package name is postfixed, see -postfixpackage).
+names (used only when the package name is postfixed, see -postfixpackage).
 </dd>
 <dt>-nodefontpackagesize</dt><dd>Specify the font size to use for the package 
 names (used only when it package name is postfixed, see -postfixpackage).
