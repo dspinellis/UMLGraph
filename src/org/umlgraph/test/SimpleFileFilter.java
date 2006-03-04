@@ -22,8 +22,14 @@ package gr.spinellis.umlgraph.test;
 import java.io.File;
 import java.io.FilenameFilter;
 
-class JavaFilter implements FilenameFilter {
+class SimpleFileFilter implements FilenameFilter {
+    protected String extension;
+    
+    public SimpleFileFilter(String ext) {
+	this.extension = ext;
+    }
+    
     public boolean accept(File dir, String name) {
-        return name.endsWith(".java");
+        return name.endsWith(extension);
     }
 }

@@ -43,6 +43,9 @@ public class BasicTest {
 	File outFolder = new File(testDestFolder);
 	if (!outFolder.exists())
 	    outFolder.mkdirs();
+	
+	deleteFiles(outFolder, ".dot");
+	deleteFiles(outFolder, ".png");
 
 	System.setProperty("os.name", "generic"); // don't use windows specific fonts
 	performBasicTests(different);
@@ -61,7 +64,7 @@ public class BasicTest {
     private static void performViewTests(List<String> differences, File outFolder)
 	    throws IOException {
 	String[] options = new String[] { "-docletpath", "build", "-private", "-d",
-		outFolder.getAbsolutePath(), "-sourcepath", "testdata/java", "-subpackages", "-compact",
+		outFolder.getAbsolutePath(), "-sourcepath", "testdata/java", "-compact", "-subpackages", 
 		"gr.spinellis", "-views" };
 	runDoclet(options);
 
@@ -87,7 +90,7 @@ public class BasicTest {
     }
 
     private static List<String> getViewList(File viewFolder) {
-	return Arrays.asList(viewFolder.list(new JavaFilter()));
+	return Arrays.asList(viewFolder.list(new SimpleFileFilter(".java")));
     }
 
     private static void compare(List<String> differences, File dotFile, File refFile) throws IOException {
@@ -103,7 +106,7 @@ public class BasicTest {
     }
 
     private static boolean performBasicTests(List<String> differences) throws IOException {
-	String[] javaFiles = new File(testSourceFolder).list(new JavaFilter());
+	String[] javaFiles = new File(testSourceFolder).list(new SimpleFileFilter(".java"));
 	boolean equal = true;
 	for (int i = 0; i < javaFiles.length; i++) {
 	    String javaFileName = javaFiles[i].substring(0, javaFiles[i].length() - 5);
@@ -152,5 +155,11 @@ public class BasicTest {
 		pw.println(o);
 	    }
 	}
+    }
+    
+    private static void deleteFiles(File folder, String extension) {
+	File[] files = folder.listFiles(new SimpleFileFilter(extension));
+	for(File f: files) 
+	    f.delete();
     }
 }
