@@ -4,8 +4,7 @@
 <dl>
 
 <dt>Version 4.4 Under development</dt><dd>
-<ul>
-</ul>
+</dd>
 
 <dt>Version 4.3 2006/03/05 </dt><dd>
 <ul>
@@ -14,6 +13,7 @@
      to control fonts for class names, packages and tags. (Andrea Aime)
 </li>
 </ul>
+</dd>
 
 <dt>Version 4.2 (internal release) </dt><dd>
 <ul>
@@ -269,4 +269,3 @@ bgcolor.
 </dd>
 </dl>
 </notes>
-
