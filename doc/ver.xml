@@ -7,7 +7,7 @@
 <ul>
 </ul>
 
-<dt>Version 4.3 2006/03/03 </dt><dd>
+<dt>Version 4.3 2006/03/05 </dt><dd>
 <ul>
 <li> Now using HTML labels in dot files. This allows for a different font
      in each row of the class nodes. Added options
