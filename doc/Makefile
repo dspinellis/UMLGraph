@@ -21,11 +21,7 @@ DOC?=snapshot-doc
 	dot -Teps -o$@ $<
 
 .dot.gif:
-	dot -Tps $< | \
-	$(GS)/gs -I$(GS) -I$(GS)/fonts -q -r360 -dNOPAUSE -sDEVICE=pnm -sOutputFile=-  - -c quit | \
-	$(NETPBM)/pnmcrop | \
-	$(NETPBM)/pnmscale 0.25 | \
-	$(NETPBM)/ppmtogif >$@
+	dot -Tgif $< -o$@
 
 .pic.eps:
 	perl -p -e 'BEGIN {binmode(STDOUT);} s/\r//' $< | $(PIC2PLOT) -Teps >$@
