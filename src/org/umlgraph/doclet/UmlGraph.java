@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Doc;
 import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.RootDoc;
 
@@ -52,10 +53,10 @@ public class UmlGraph {
 	if(views == null)
 	    return false;
 	if (views.length == 0) {
-	    buildGraph(root, opt);
+	    buildGraph(root, opt, null);
 	} else {
 	    for (int i = 0; i < views.length; i++) {
-		buildGraph(root, views[i]);
+		buildGraph(root, views[i], null);
 	    }
 	}
 
@@ -76,13 +77,13 @@ public class UmlGraph {
     /**
      * Builds and outputs a single graph according to the view overrides
      */
-    private static void buildGraph(RootDoc root, OptionProvider op) throws IOException {
+    public static void buildGraph(RootDoc root, OptionProvider op, Doc contextDoc) throws IOException {
 	Options opt = op.getGlobalOptions();
 	if (opt.verbose2)
 	    System.out.println("Building " + op.getDisplayName());
 	ClassDoc[] classes = root.classes();
 
-	ClassGraph c = new ClassGraph(root, op);
+	ClassGraph c = new ClassGraph(root, op, contextDoc);
 	c.prologue();
 	for (int i = 0; i < classes.length; i++) {
 	    c.printClass(classes[i]);

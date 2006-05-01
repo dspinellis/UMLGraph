@@ -128,7 +128,7 @@ public class ContextMatcher implements ClassMatcher {
     private static class ClassGraphHack extends ClassGraph {
 
 	public ClassGraphHack(RootDoc root, OptionProvider optionProvider) throws IOException {
-	    super(root, optionProvider);
+	    super(root, optionProvider, null);
 	    prologue();
 	}
 

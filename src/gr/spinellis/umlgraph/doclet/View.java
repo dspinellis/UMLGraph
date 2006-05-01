@@ -40,6 +40,7 @@ import com.sun.javadoc.Tag;
  * @depend - - - InterfaceMatcher
  * @depend - - - PatternMatcher
  * @depend - - - SubclassMatcher
+ * @depend - - - ContextMatcher
  * 
  */
 class View implements OptionProvider {

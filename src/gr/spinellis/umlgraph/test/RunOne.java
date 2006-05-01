@@ -36,8 +36,8 @@ public class RunOne {
         if (!outFolder.exists())
             outFolder.mkdirs();
 	
-        runView("gr.spinellis.views.ViewChildEmpty");
-        runSingleClass("foo");
+//        runView("gr.spinellis.views.ViewChildEmpty");
+        runSingleClass("TestHiddenOp");
     }
     
     public static void runView(String viewClass)  {

@@ -56,6 +56,7 @@ import com.sun.javadoc.WildcardType;
 /**
  * Class graph generation engine
  * @depend - - - StringUtil
+ * @depend - - - Options
  * @composed - - * ClassInfo
  * @has - - - OptionProvider
  *
@@ -89,16 +90,26 @@ class ClassGraph {
     protected ClassDoc mapClassDoc;
     protected String linePostfix;
     protected String linePrefix;
-
+    
+    // used only when generating context class diagrams in UMLDoc, to generate the proper
+    // relative links to other classes in the image map
+    protected Doc contextDoc;
+    
+      
     /**
-     * Create a new ClassGraph.  The packages passed as an
-     * argument are the ones specified on the command line.
-     * Local URLs will be generated for these packages.
+     * Create a new ClassGraph.  <p>The packages passed as an
+     * argument are the ones specified on the command line.</p>
+     * <p>Local URLs will be generated for these packages.</p>
+     * @param root The root of docs as provided by the javadoc API
+     * @param optionProvider The main option provider
+     * @param contextDoc The current context for generating relative links, may be a ClassDoc 
+     * 	or a PackageDoc (used by UMLDoc)
      */
-    public ClassGraph(RootDoc root, OptionProvider optionProvider) throws IOException {
+    public ClassGraph(RootDoc root, OptionProvider optionProvider, Doc contextDoc) throws IOException {
 	this.optionProvider = optionProvider;
 	this.collectionClassDoc = root.classNamed("java.util.Collection");
 	this.mapClassDoc = root.classNamed("java.util.Map");
+	this.contextDoc = contextDoc;
 	
 	specifiedPackages = new HashSet<String>();
 	for (PackageDoc p : root.specifiedPackages())
@@ -447,7 +458,7 @@ class ClassGraph {
 	    w.println("\t// " + r);
 	    // Create label
 	    w.print("\t" + ci.name + " [label=");
-	    externalTableStart(opt, c.qualifiedName());
+	    externalTableStart(opt, c.qualifiedName(), classToUrl(c));
 	    innerTableStart();
 	    if (c.isInterface())
 		tableLine(Align.CENTER, guilWrap(opt, "interface"));
@@ -656,7 +667,7 @@ class ClassGraph {
 			continue;
 		    w.println("\t// " + className);
 		    w.print("\t" + info.name + "[label=");
-		    externalTableStart(opt, className);
+		    externalTableStart(opt, className, classToUrl(className));
 		    innerTableStart();
 		    int idx = className.lastIndexOf(".");
 		    if(opt.postfixPackage && idx > 0 && idx < (className.length() - 1)) {
@@ -847,24 +858,76 @@ class ClassGraph {
 	    return name.substring(0, openIdx);
     }
 
-    /** Return true if the class name has been specified in the command line */
+    /**
+     *  Return true if the class name has been specified in the command line.
+     * 	Use this only if the ClassDoc is not available, since this implementation won't handle
+     *  properly inner classes (confuses the containing class as a package)
+     */
     public boolean isSpecifiedPackage(String className) {
 	int idx = className.lastIndexOf(".");
 	String packageName = idx > 0 ? className.substring(0, idx) : className;
 	return specifiedPackages.contains(packageName);
     }
+    
+    /** Return true if the class name has been specified in the command line */
+    public boolean isSpecifiedPackage(ClassDoc cd) {
+	return specifiedPackages.contains(cd.containingPackage().name());
+    }
 
     /** Convert the class name into a corresponding URL */
+    public String classToUrl(ClassDoc cd) {
+	// building relative path for context and package diagrams
+	if(contextDoc != null && isSpecifiedPackage(cd)) {
+	    // determine the context path, relative to the root
+	    String[] contextClassPath = null;
+	    if(contextDoc instanceof ClassDoc) {
+		contextClassPath = ((ClassDoc) contextDoc).containingPackage().name().split("\\.");
+	    } else if(contextDoc instanceof PackageDoc) {
+		contextClassPath = ((PackageDoc) contextDoc).name().split("\\.");
+	    } else {
+		return classToUrl(cd.qualifiedName());
+	    }
+	    
+	    // path, relative to the root, of the destination class
+	    String[] currClassPath = cd.containingPackage().name().split("\\.");
+	    
+	    // compute relative path between the context and the destination
+	    // ... first, compute common part
+	    int i = 0;
+	    while(i < contextClassPath.length && i < currClassPath.length 
+		    && contextClassPath[i].equals(currClassPath[i]))
+		i++;
+	    // ... go up with ".." to reach the common root
+	    StringBuffer buf = new StringBuffer();
+	    if(i == contextClassPath.length) {
+		buf.append(".").append(FILE_SEPARATOR);
+	    } else {
+		for (int j = i; j < currClassPath.length; j++) {
+		    buf.append("..").append(FILE_SEPARATOR);
+		}
+	    }
+	    // ... go down from the common root to the destination
+	    for (int j = i; j < currClassPath.length; j++) {
+		buf.append(currClassPath[j]).append(FILE_SEPARATOR);
+	    }
+	    buf.append(cd.name()).append(".html");
+	    return buf.toString();
+	} else {
+	    return classToUrl(cd.qualifiedName());
+	} 
+    }
+    
+    /** Convert the class name into a corresponding URL */
     public String classToUrl(String className) {
-	String result = null;
-	String docRoot = mapApiDocRoot(className);
-	if (docRoot != null) {
-	    StringBuffer buf = new StringBuffer(docRoot);
-	    buf.append(className.replace('.', FILE_SEPARATOR));
-	    buf.append(".html");
-	    result = buf.toString();
-	}
-	return result;
+        String docRoot = mapApiDocRoot(className);
+        if (docRoot != null) {
+            StringBuffer buf = new StringBuffer(docRoot);
+            buf.append(className.replace('.', FILE_SEPARATOR));
+            buf.append(".html");
+            return buf.toString();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -944,12 +1007,11 @@ class ClassGraph {
 	w.close();
     }
     
-    private void externalTableStart(Options opt, String name) {
+    private void externalTableStart(Options opt, String name, String url) {
 	String bgcolor = "";
 	if (opt.nodeFillColor != null)
 	    bgcolor = " bgcolor=\""+ opt.nodeFillColor + "\"";
 	String href = "";
-	String url = classToUrl(name);
 	if (url != null)
 	    href = " href=\"" + url + "\"";
 	w.print("<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\" "

@@ -97,6 +97,8 @@ class Options implements Cloneable, OptionProvider {
     String inferRelationshipType;
     private Vector<Pattern> collPackages;
     public boolean compact;
+    // internal option, used by UMLDoc to generate relative links between classes
+    boolean relativeLinksForSourcePackages; 
 
     Options() {
 	showQualified = false;
@@ -141,6 +143,7 @@ class Options implements Cloneable, OptionProvider {
 	inferRelationshipType = "navassoc";
 	collPackages = new Vector<Pattern>();
 	compact = false;
+	relativeLinksForSourcePackages = false;
     }
 
     public Object clone() {
