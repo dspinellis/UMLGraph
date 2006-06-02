@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.sun.javadoc.ClassDoc;
@@ -32,13 +35,20 @@ import com.sun.javadoc.RootDoc;
  * the regual expression specified. The context center is computed by regex lookup.
  * Depending on the specified Options, inferred relations and dependencies will
  * be used as well.
+ * <p>
+ * This class needs to perform quite a bit of computations in order to gather
+ * the network of class releationships, so you are allowed to reuse it should
+ * you 
  * @author wolf
  */
 public class ContextMatcher implements ClassMatcher {
     ClassGraphHack cg;
     Pattern pattern;
-    ArrayList<ClassDoc> matched;
+    List<ClassDoc> matched;
+    Set<String> visited = new HashSet<String>();
     Options opt;
+    RootDoc root;
+    boolean keepParentHide;
 
     /**
      * Builds the context matcher
@@ -46,18 +56,35 @@ public class ContextMatcher implements ClassMatcher {
      * @param pattern The pattern that will match the "center" of this
      *                context
      * @param opt The options will be used to decide on inference
+     * @param keepParentHide If true, parent option hide patterns will be
+     *                preserved, so that classes hidden by the options won't
+     *                be shown in the context
      * @throws IOException
      */
-    public ContextMatcher(RootDoc root, Pattern pattern, Options options) throws IOException {
+    public ContextMatcher(RootDoc root, Pattern pattern, Options options, boolean keepParentHide) throws IOException {
 	this.pattern = pattern;
+	this.root = root;
+	this.keepParentHide = keepParentHide;
 	opt = (Options) options.clone();
 	opt.setOption(new String[] {"-!hide"});
 	opt.setOption(new String[] {"-!attributes"});
 	opt.setOption(new String[] {"-!operations"});
 	this.cg = new ClassGraphHack(root, opt);
 
+	setContextCenter(pattern);
+    }
+    
+    /**
+     * Can be used to setup a different pattern for this context matcher.
+     * <p>
+     * This can be used to speed up subsequent matching with the same global
+     * options, since the class network informations will be reused.
+     * @param pattern
+     */
+    public void setContextCenter(Pattern pattern) {
 	// build up the classgraph printing the relations for all of the
 	// classes that make up the "center" of this context
+	this.pattern = pattern;
 	matched = new ArrayList<ClassDoc>();
 	for (ClassDoc cd : root.classes()) {
 	    if (pattern.matcher(cd.toString()).matches()) {
@@ -74,7 +101,13 @@ public class ContextMatcher implements ClassMatcher {
      * @param cd
      */
     private void addToGraph(ClassDoc cd) {
-	cg.printClass(cd);
+	// avoid adding twice the same class, but don't rely on cg.getClassInfo since there
+	// are other ways to add a classInfor than printing the class
+	if(visited.contains(cd.toString()))
+	    return;
+	
+	visited.add(cd.toString());
+	cg.printClass(cd, false);
 	cg.printRelations(cd);
 	if (opt.inferRelationships) {
 	    cg.printInferredRelations(cd);
@@ -88,6 +121,9 @@ public class ContextMatcher implements ClassMatcher {
      * @see gr.spinellis.umlgraph.doclet.ClassMatcher#matches(com.sun.javadoc.ClassDoc)
      */
     public boolean matches(ClassDoc cd) {
+	if (keepParentHide && opt.matchesHideExpression(cd.toString()))
+	    return false;
+
 	// if the class is matched, it's in by default.
 	if (matched.contains(cd))
 	    return true;
