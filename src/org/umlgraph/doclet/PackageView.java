@@ -30,7 +30,7 @@ public class PackageView implements OptionProvider {
     }
 
     public String getDisplayName() {
-	return "Package view for packages" + pd;
+	return "Package view for package " + pd;
     }
 
     public Options getGlobalOptions() {
@@ -55,11 +55,13 @@ public class PackageView implements OptionProvider {
     }
 
     public void overrideForClass(Options opt, ClassDoc cd) {
+	opt.showQualified = false;
 	if (!matcher.matches(cd) || parent.getGlobalOptions().matchesHideExpression(cd.name()))
 	    opt.setOption(new String[] { "-hide" });
     }
 
     public void overrideForClass(Options opt, String className) {
+	opt.showQualified = false;
 	if (!matcher.matches(className))
 	    opt.setOption(new String[] { "-hide" });
     }
