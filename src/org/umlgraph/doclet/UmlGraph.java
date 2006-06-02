@@ -43,13 +43,11 @@ import com.sun.javadoc.RootDoc;
 public class UmlGraph {
     /** Entry point */
     public static boolean start(RootDoc root) throws IOException {
-	Options opt = new Options();
-	opt.setOptions(root.options());
-	opt.setOptions(findUMLOptions(root));
+	Options opt = buildOptions(root);
 	if (opt.verbose2)
 		System.out.println("UMLGraph doclet started");
 
-	View[] views = buildViews(opt, root);
+	View[] views = buildViews(opt, root, root);
 	if(views == null)
 	    return false;
 	if (views.length == 0) {
@@ -63,6 +61,17 @@ public class UmlGraph {
 	if (opt.verbose2)
 	    System.out.println("Class diagram generation complete");
 	return true;
+    }
+
+    /**
+     * Creates the base Options object, that contains both the options specified on the command 
+     * line and the ones specified in the UMLOptions class, if available.
+     */
+    public static Options buildOptions(RootDoc root) {
+	Options opt = new Options();
+	opt.setOptions(root.options());
+	opt.setOptions(findUMLOptions(root));
+	return opt;
     }
     
     private static ClassDoc findUMLOptions(RootDoc root) {
@@ -86,7 +95,7 @@ public class UmlGraph {
 	ClassGraph c = new ClassGraph(root, op, contextDoc);
 	c.prologue();
 	for (int i = 0; i < classes.length; i++) {
-	    c.printClass(classes[i]);
+	    c.printClass(classes[i], true);
 	}
 	for (int i = 0; i < classes.length; i++) {
 	    c.printRelations(classes[i]);
@@ -104,10 +113,14 @@ public class UmlGraph {
     
     /**
      * Builds the views according to the parameters on the command line
+     * @param opt The options
+     * @param srcRootDoc The RootDoc for the source classes
+     * @param viewRootDoc The RootDoc for the view classes (may be
+     *                different, or may be the same as the srcRootDoc)
      */
-    private static View[] buildViews(Options opt, RootDoc root) {
+    public static View[] buildViews(Options opt, RootDoc srcRootDoc, RootDoc viewRootDoc) {
 	if (opt.viewName != null) {
-	    ClassDoc viewClass = root.classNamed(opt.viewName);
+	    ClassDoc viewClass = viewRootDoc.classNamed(opt.viewName);
 	    if(viewClass == null) {
 		System.out.println("View " + opt.viewName + " not found! Exiting without generating any output.");
 		return null;
@@ -120,15 +133,15 @@ public class UmlGraph {
 		System.out.println(viewClass + " is an abstract view, no output will be generated!");
 		return null;
 	    }
-	    return new View[] { buildView(root, viewClass, opt) };
+	    return new View[] { buildView(srcRootDoc, viewClass, opt) };
 	} else if (opt.findViews) {
 	    List<View> views = new ArrayList<View>();
-	    ClassDoc[] classes = root.classes();
+	    ClassDoc[] classes = viewRootDoc.classes();
 	    
 	    // find view classes
 	    for (int i = 0; i < classes.length; i++) {
 		if (classes[i].tags("view").length > 0 && !classes[i].isAbstract()) {
-		    views.add(buildView(root, classes[i], opt));
+		    views.add(buildView(srcRootDoc, classes[i], opt));
 		}
 	    }
 	    
