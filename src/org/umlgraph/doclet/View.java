@@ -43,7 +43,7 @@ import com.sun.javadoc.Tag;
  * @depend - - - ContextMatcher
  * 
  */
-class View implements OptionProvider {
+public class View implements OptionProvider {
     Map<ClassMatcher, List<String[]>> optionOverrides = new LinkedHashMap<ClassMatcher, List<String[]>>();
     ClassDoc viewDoc;
     OptionProvider provider;
@@ -95,7 +95,8 @@ class View implements OptionProvider {
 	    if (strings[0].equals("class")) {
 		return new PatternMatcher(Pattern.compile(strings[1]));
 	    } else if (strings[0].equals("context")) {
-		return new ContextMatcher(root, Pattern.compile(strings[1]), getGlobalOptions());
+		return new ContextMatcher(root, Pattern.compile(strings[1]), getGlobalOptions(), 
+			false);
 	    } else if (strings[0].equals("interface")) {
 		return new InterfaceMatcher(root, Pattern.compile(strings[1]));
 	    } else if (strings[0].equals("subclass")) {
