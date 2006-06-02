@@ -20,7 +20,7 @@
 
 package gr.spinellis.umlgraph.doclet;
 
-import java.io.BufferedWriter;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -411,7 +411,7 @@ class ClassGraph {
 	    return true;
     Options opt; 
     if(c instanceof ClassDoc)
-      opt = optionProvider.getOptionsFor(c.toString());
+      opt = optionProvider.getOptionsFor((ClassDoc) c);
     else 
       opt = optionProvider.getOptionsFor(c.containingClass());
 	return opt.matchesHideExpression(c.toString());
@@ -439,8 +439,14 @@ class ClassGraph {
 
     
 
-    /** Prints the class if needed */
-    public String printClass(ClassDoc c) {
+    /**
+     * Prints the class if needed.
+     * <p>
+     * A class is a rootClass if it's included among the classes returned by
+     * RootDoc.classes(), this information is used to properly compute
+     * relative links in diagrams for UMLDoc
+     */
+    public String printClass(ClassDoc c, boolean rootClass) {
 	ClassInfo ci;
 	boolean toPrint;
 	Options opt = optionProvider.getOptionsFor(c);
@@ -458,7 +464,7 @@ class ClassGraph {
 	    w.println("\t// " + r);
 	    // Create label
 	    w.print("\t" + ci.name + " [label=");
-	    externalTableStart(opt, c.qualifiedName(), classToUrl(c));
+	    externalTableStart(opt, c.qualifiedName(), classToUrl(c, rootClass));
 	    innerTableStart();
 	    if (c.isInterface())
 		tableLine(Align.CENTER, guilWrap(opt, "interface"));
@@ -467,7 +473,12 @@ class ClassGraph {
 	    stereotype(opt, c, Align.CENTER);
 	    Font font = c.isAbstract() && !c.isInterface() ? Font.CLASS_ABSTRACT : Font.CLASS;
 	    String qualifiedName = qualifiedName(opt, r);
-	    int idx = qualifiedName.lastIndexOf(".");
+	    int startTemplate = qualifiedName.indexOf('<');
+	    int idx = 0;
+	    if(startTemplate < 0)
+		idx = qualifiedName.lastIndexOf('.');
+	    else
+		idx = qualifiedName.lastIndexOf('.', startTemplate);
 	    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
 		String packageName = qualifiedName.substring(0, idx);
 		String cn = className.substring(idx + 1);
@@ -611,7 +622,7 @@ class ClassGraph {
     /** Print a class's relations */
     public void printRelations(ClassDoc c) {
 	Options opt = optionProvider.getOptionsFor(c);
-	if (hidden(c))
+	if (hidden(c) || c.name().equals("")) // avoid phantom classes, they may pop up when the source uses annotations
 	    return;
 	String className = c.toString();
 	String cs = getNodeName(c);
@@ -639,8 +650,8 @@ class ClassGraph {
 	for (Type iface : c.interfaceTypes()) {
 	    ClassDoc ic = iface.asClassDoc();
 	    if (!hidden(ic)) {
-		w.println("\t" + getNodeName(ic) + ":p -> " + cs + ":p [dir=back,arrowtail=empty,style=dashed];" +
-		    "\t//" + c + " implements " + ic);
+		w.println("\t//" + c + " implements " + ic + "\n\t" + getNodeName(ic) + ":p -> " + cs + ":p [dir=back,arrowtail=empty,style=dashed];"
+		    );
 		getClassInfo(className).addRelation(ic.toString());
 	    }
 	}
@@ -660,7 +671,7 @@ class ClassGraph {
 	    if (!info.nodePrinted) {
 		ClassDoc c = root.classNamed(className);
 		if(c != null) {
-		    printClass(c);
+		    printClass(c, false);
 		} else {
 		    Options opt = optionProvider.getOptionsFor(className);
 		    if(opt.matchesHideExpression(className))
@@ -711,6 +722,10 @@ class ClassGraph {
 	    return;
 
 	for (FieldDoc field : c.fields(false)) {
+	    // skip statics
+	    if(field.isStatic())
+		continue;
+	    
 	    // skip primitives
 	    FieldRelationInfo fri = getFieldRelationInfo(field);
 	    if (fri == null)
@@ -769,6 +784,12 @@ class ClassGraph {
 	    ParameterizedType pt = c.asParameterizedType();
 	    types.addAll(Arrays.asList(pt.typeArguments()));
 	}
+	// see if type parameters extend something
+	for(TypeVariable tv: c.typeParameters()) {
+	    if(tv.bounds().length > 0 )
+		types.addAll(Arrays.asList(tv.bounds()));
+	}
+	
 	// and finally check for explicitly imported classes (this
 	// assumes there are no unused imports...)
 	if (opt.useImports)
@@ -779,7 +800,7 @@ class ClassGraph {
 	    // skip primitives and type variables, as well as dependencies
 	    // on the source class
 	    if (type.isPrimitive() || type instanceof WildcardType || type instanceof TypeVariable
-		    || c.equals(type.asClassDoc()))
+		    || c.toString().equals(type.asClassDoc().toString()))
 		continue;
 
 	    // check if the destination is excluded from inference
@@ -851,7 +872,7 @@ class ClassGraph {
 
     /** Removes the template specs from a class name. */
     private String removeTemplate(String name) {
-	int openIdx = name.indexOf("<");
+	int openIdx = name.indexOf('<');
 	if(openIdx == -1)
 	    return name;
 	else
@@ -875,9 +896,9 @@ class ClassGraph {
     }
 
     /** Convert the class name into a corresponding URL */
-    public String classToUrl(ClassDoc cd) {
+    public String classToUrl(ClassDoc cd, boolean rootClass) {
 	// building relative path for context and package diagrams
-	if(contextDoc != null && isSpecifiedPackage(cd)) {
+	if(contextDoc != null && rootClass) {
 	    // determine the context path, relative to the root
 	    String[] contextClassPath = null;
 	    if(contextDoc instanceof ClassDoc) {
@@ -979,7 +1000,7 @@ class ClassGraph {
 	FileOutputStream fos = new FileOutputStream(file);
 	
 	// print plologue
-	w = new PrintWriter(new BufferedWriter(new OutputStreamWriter(fos, opt.outputEncoding)));
+	w = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(fos), opt.outputEncoding));
 	w.println(
 	    "#!/usr/local/bin/dot\n" +
 	    "#\n" +
