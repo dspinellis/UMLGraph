@@ -6,6 +6,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.LanguageVersion;
@@ -20,6 +24,10 @@ import com.sun.tools.doclets.standard.Standard;
  * 
  */
 public class UmlDoc {
+    /**
+     * Option check, forwards options to the standard doclet, if that one refuses them,
+     * they are sent to UmlGraph
+     */
     public static int optionLength(String option) {
 	int result = Standard.optionLength(option);
 	if (result != 0)
@@ -28,59 +36,95 @@ public class UmlDoc {
 	    return UmlGraph.optionLength(option);
     }
 
-    public static boolean start(RootDoc root) throws IOException {
-	if (Standard.start(root)) {
+    /**
+     * Standard doclet entry point
+     * @param root
+     * @return
+     */
+    public static boolean start(RootDoc root) {
+	root.printNotice("UmlDoc version 4.4, running the standard doclet");
+	Standard.start(root);
+	root.printNotice("UmlDoc version 4.4, altering javadocs");
+	try {
 	    String outputFolder = findOutputPath(root.options());
 
 	    Options opt = new Options();
 	    opt.setOptions(root.options());
+	    // in javadoc enumerations are always printed
+	    opt.showEnumerations = true;
 	    opt.relativeLinksForSourcePackages = true;
+	    // enable strict matching for hide expressions
+	    opt.strictMatching = true;
 
+	    root = new WrappedRootDot(root);
 	    generatePackageDiagrams(root, opt, outputFolder);
 	    generateContextDiagrams(root, opt, outputFolder);
-	    return true;
-	} else {
+	} catch(Throwable t) {
+	    root.printWarning("Error!");
+	    root.printWarning(t.toString());
+	    t.printStackTrace();
 	    return false;
 	}
+	root.printNotice("UmlDoc version 4.4, exit");
+	return true;
     }
 
+    /**
+     * Standand doclet entry
+     * @return
+     */
     public static LanguageVersion languageVersion() {
 	return Standard.languageVersion();
     }
 
+    /**
+     * Generates the package diagrams for all of the packages that contain classes among those 
+     * returned by RootDoc.class() 
+     */
     private static void generatePackageDiagrams(RootDoc root, Options opt, String outputFolder)
 	    throws IOException {
 	if (opt.verbose2)
-	    System.out.println("Examining packages");
-	for (PackageDoc packageDoc : root.specifiedPackages()) {
-	    if (opt.verbose2)
-		System.out.println("Altering javadocs for pacakge " + packageDoc);
-	    OptionProvider view = new PackageView(outputFolder, packageDoc, root, opt);
-	    UmlGraph.buildGraph(root, view, packageDoc);
-	    runGraphviz(outputFolder, packageDoc.name(), packageDoc.name());
-	    alterHtmlDocs(outputFolder, packageDoc.name(), packageDoc.name(),
-		    "package-summary.html", "</H2>");
+	    root.printNotice("Examining packages");
+	Set<String> packages = new HashSet<String>();
+	for (ClassDoc classDoc : root.classes()) {
+	    PackageDoc packageDoc = classDoc.containingPackage();
+	    if(!packages.contains(packageDoc.name())) {
+		packages.add(packageDoc.name());
+    	    OptionProvider view = new PackageView(outputFolder, packageDoc, root, opt);
+    	    UmlGraph.buildGraph(root, view, packageDoc);
+    	    runGraphviz(outputFolder, packageDoc.name(), packageDoc.name(), root);
+    	    alterHtmlDocs(outputFolder, packageDoc.name(), packageDoc.name(),
+    		    "package-summary.html", Pattern.compile("</H2>"), root);
+	    }
 	}
     }
 
+    /**
+     * Generates the context diagram for a single class
+     */
     private static void generateContextDiagrams(RootDoc root, Options opt, String outputFolder)
 	    throws IOException {
 	if (opt.verbose2)
-	    System.out.println("Examining classes");
+	    root.printNotice("Examining classes");
+	ContextView view = null;
 	for (ClassDoc classDoc : root.classes()) {
-	    if (!isIncluded(classDoc, root.specifiedPackages()))
-		continue;
-	    if (opt.verbose2)
-		System.out.println("Altering class doc for " + classDoc);
-	    ContextView view = new ContextView(outputFolder, classDoc, root, opt);
+	    if(view == null)
+		view = new ContextView(outputFolder, classDoc, root, opt);
+	    else
+		view.setContextCenter(classDoc);
 	    UmlGraph.buildGraph(root, view, classDoc);
-	    runGraphviz(outputFolder, classDoc.containingPackage().name(), classDoc.name());
+	    runGraphviz(outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
 	    alterHtmlDocs(outputFolder, classDoc.containingPackage().name(), classDoc.name(),
-		    classDoc.name() + ".html", classDoc.name() + "</H2>");
+		    classDoc.name() + ".html", Pattern.compile("(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
 	}
     }
 
-    private static void runGraphviz(String outputFolder, String packageName, String name) {
+    /**
+     * Runs Graphviz dot building both a diagram (in png format) and a client side map for it.
+     * <p>
+     * At the moment, it assumes dot.exe is in the classpahth
+     */
+    private static void runGraphviz(String outputFolder, String packageName, String name, RootDoc root) {
 	File dotFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".dot");
 	File pngFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".png");
 	File mapFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".map");
@@ -89,21 +133,29 @@ public class UmlDoc {
 	    String command = "dot -Tcmapx -o" + mapFile.getAbsolutePath() + " -Tpng -o"
 		    + pngFile.getAbsolutePath() + " " + dotFile.getAbsolutePath();
 	    Process p = Runtime.getRuntime().exec(command);
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+	    String line = null;
+	    while((line = reader.readLine()) != null)
+		root.printWarning(line);
 	    int result = p.waitFor();
 	    if (result != 0)
-		System.out.println("Errors running Graphviz on " + dotFile);
+		root.printWarning("Errors running Graphviz on " + dotFile);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
     }
 
-    private static void alterHtmlDocs(String outputFolder, String packageName, String name,
-	    String htmlFileName, String matchLineEnd) throws IOException {
+    /**
+     * Takes an HTML file, looks for the first instance of the specified insertion point, and
+     * inserts the diagram image reference and a client side map in that point.
+     */
+    private static void alterHtmlDocs(String outputFolder, String packageName, String className,
+	    String htmlFileName, Pattern insertPointPattern, RootDoc root) throws IOException {
 	// setup files
 	File output = new File(outputFolder, packageName.replace(".", "/"));
 	File htmlFile = new File(output, htmlFileName);
 	File alteredFile = new File(htmlFile.getAbsolutePath() + ".uml");
-	File mapFile = new File(output, name + ".map");
+	File mapFile = new File(output, className + ".map");
 	if (!htmlFile.exists()) {
 	    System.err.println("Expected file not found: " + htmlFile.getAbsolutePath());
 	    return;
@@ -114,21 +166,22 @@ public class UmlDoc {
 	BufferedReader reader = null;
 	boolean matched = false;
 	try {
-	    writer = new BufferedWriter(new FileWriter(alteredFile));
+	    int BUFSIZE = (int) Math.pow(2, 20); // more or less one megabyte
+	    writer = new BufferedWriter(new FileWriter(alteredFile), BUFSIZE);
 	    reader = new BufferedReader(new FileReader(htmlFile));
 
 	    String line;
 	    while ((line = reader.readLine()) != null) {
 		writer.write(line);
 		writer.newLine();
-		if (!matched && line.endsWith(matchLineEnd)) {
+		if (!matched && insertPointPattern.matcher(line).matches()) {
 		    matched = true;
 		    if (mapFile.exists())
 			insertClientSideMap(mapFile, writer);
 		    else
-			System.out.println("Could not find map file " + mapFile);
-		    writer.write("<div align=\"center\"><img src=\"" + name
-			    + ".png\" alt=\"Package class diagram package " + name
+			root.printWarning("Could not find map file " + mapFile);
+		    writer.write("<div align=\"center\"><img src=\"" + className
+			    + ".png\" alt=\"Package class diagram package " + className
 			    + "\" usemap=\"#G\" border=0/></a></div>");
 		    writer.newLine();
 		}
@@ -145,7 +198,7 @@ public class UmlDoc {
 	    htmlFile.delete();
 	    alteredFile.renameTo(htmlFile);
 	} else {
-	    System.out.println("Error, could not find a line that ends with '" + matchLineEnd
+	    root.printNotice("Warning, could not find a line that matches the pattern '" + insertPointPattern.pattern() 
 		    + "'.\n Class diagram reference not inserted");
 	    alteredFile.delete();
 	}
@@ -168,18 +221,6 @@ public class UmlDoc {
 	    if (reader != null)
 		reader.close();
 	}
-    }
-
-    /**
-     * Return true if the class name has been specified in the command line
-     */
-    private static boolean isIncluded(ClassDoc cd, PackageDoc[] docs) {
-	for (PackageDoc pd : docs) {
-	    for (ClassDoc pcd : pd.allClasses())
-		if (pcd.equals(cd))
-		    return true;
-	}
-	return false;
     }
 
     /**
