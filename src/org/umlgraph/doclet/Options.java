@@ -22,6 +22,7 @@ package gr.spinellis.umlgraph.doclet;
 
 import com.sun.javadoc.*;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,10 +33,12 @@ import java.util.regex.PatternSyntaxException;
  * @version $Revision$
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
-class Options implements Cloneable, OptionProvider {
+public class Options implements Cloneable, OptionProvider {
     // dot's font platform dependence workaround
     private static String defaultFont;
     private static String defaultItalicFont;
+    // reused often, especially in UmlDoc, worth creating just once and reusing
+    private static Pattern allPattern = Pattern.compile(".*");
     
     static {
 	// use an appropriate font depending on the current operating system
@@ -50,7 +53,7 @@ class Options implements Cloneable, OptionProvider {
     }
     
     // instance fields
-    private Vector<Pattern> hidePatterns;
+    Vector<Pattern> hidePatterns;
     boolean showQualified;
     boolean showAttributes;
     boolean showEnumerations;
@@ -77,7 +80,7 @@ class Options implements Cloneable, OptionProvider {
     double nodeFontPackageSize;
     String nodeFontPackageName;
     String bgColor;
-    String outputFileName;
+    public String outputFileName;
     String outputEncoding;
     String apiDocMapFileName;
     String apiDocRoot;
@@ -85,7 +88,7 @@ class Options implements Cloneable, OptionProvider {
     boolean useGuillemot;
     boolean findViews;
     String viewName;
-    String outputDirectory;
+    public String outputDirectory;
     /** Guillemot left (open) */
     String guilOpen = "&laquo;"; // "\u00ab";
     /** Guillemot right (close) */
@@ -96,9 +99,15 @@ class Options implements Cloneable, OptionProvider {
     boolean verbose2;
     String inferRelationshipType;
     private Vector<Pattern> collPackages;
-    public boolean compact;
+    boolean compact;
     // internal option, used by UMLDoc to generate relative links between classes
-    boolean relativeLinksForSourcePackages; 
+    boolean relativeLinksForSourcePackages;
+    // internal option, used by UMLDoc to force strict matching on the class names
+    // and avoid problems with packages in the template declaration making UmlGraph hide 
+    // classes outside of them (for example, class gr.spinellis.Foo<T extends java.io.Serializable>
+    // would have been hidden by the hide pattern "java.*"
+    // TODO: consider making this standard behaviour
+    boolean strictMatching;
 
     Options() {
 	showQualified = false;
@@ -352,7 +361,7 @@ class Options implements Cloneable, OptionProvider {
 	} else if(opt[0].equals("-hide")) {
 	    if(opt.length == 1) {
 		hidePatterns.clear();
-		hidePatterns.add(Pattern.compile(".*"));
+		hidePatterns.add(allPattern);
 	    } else {
 		try {
 		    hidePatterns.add(Pattern.compile(opt[1]));
@@ -457,9 +466,18 @@ class Options implements Cloneable, OptionProvider {
      */
     public boolean matchesHideExpression(String s) {
 	for (Pattern hidePattern : hidePatterns) {
-	    Matcher m = hidePattern.matcher(s);
-	    if (m.find())
+	    // micro-optimization because the "all pattern" is heavily used in UmlDoc
+	    if(hidePattern == allPattern)
 		return true;
+	    
+	    Matcher m = hidePattern.matcher(s);
+	    if (strictMatching) {
+		if (m.matches()) {
+		    return true;
+		}
+	    } else if (m.find()) {
+		return true;
+	    }
 	}
 	return false;
     }
@@ -472,8 +490,13 @@ class Options implements Cloneable, OptionProvider {
     public boolean matchesCollPackageExpression(String s) {
 	for (Pattern collPattern : collPackages) {
 	    Matcher m = collPattern.matcher(s);
-	    if (m.find())
+	    if (strictMatching) {
+		if (m.matches()) {
+		    return true;
+		}
+	    } else if (m.find()) {
 		return true;
+	    }
 	}
 	return false;
     }
@@ -508,5 +531,19 @@ class Options implements Cloneable, OptionProvider {
 	return "general class diagram";
     }
     
+    public String toString() {
+	StringBuffer sb = new StringBuffer();
+	sb.append("UMLGRAPH OPTIONS\n");
+	for(Field f : this.getClass().getDeclaredFields()) {
+	    if(!Modifier.isStatic(f.getModifiers())) {
+		f.setAccessible(true);
+		try {
+		    sb.append(f.getName() + ":" + f.get(this) + "\n");
+		} catch (Exception e) {
+		}
+	    }
+	}
+	return sb.toString();
+    }
 }
 
