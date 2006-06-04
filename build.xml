@@ -67,27 +67,20 @@ class Version { public static String VERSION = "${VERSION}";}
 </target>
 
 <target name="javadocs" depends="compile">
-	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" destdir="${javadoc}" package="true">
+	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" destdir="${javadoc}" private="true">
 		<doclet name="gr.spinellis.umlgraph.doclet.UmlDoc" path="${lib}/UMLGraph.jar">
+			<param name="-inferrel"/>
+			<param name="-inferdep"/>
+			<param name="-hide" value="java.*"/>
+			<param name="-collpackages" value="java.util.*"/>
+			<param name="-qualify"/>
+			<param name="-postfixpackage"/>
+			<param name="-nodefontsize" value="9"/>
+			<param name="-nodefontpackagesize" value="7"/>
+			<param name="-link" value="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/doclet/spec"/>
+			<param name="-link" value="http://java.sun.com/j2se/1.5/docs/api"/>
 		</doclet>
 	</javadoc>
-	
-	<property name="outFolder" location="${javadoc}/gr/spinellis/umlgraph/doclet"/>
-	<property name="dotName" value="umlgraph.dot"/>
-	<property name="dotFile" location="${outFolder}/${dotName}"/>
-	<property name="gifFile" location="${javadoc}/gr/spinellis/umlgraph/doclet/umlgraph.gif"/>
-	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" package="true">
-		<doclet name="gr.spinellis.umlgraph.doclet.UmlGraph" path="${lib}/UMLGraph.jar">
-			<param name="-d" value="${outFolder}"/>
-			<param name="-output" value="${dotName}"/>
-			<param name="-operations"/>
-		</doclet>
-	</javadoc>
-	<exec executable="dot">
-		<arg value="-Tgif"/>
-		<arg value="-o${gifFile}"/>
-		<arg value="${dotFile}"/>
-	</exec>		
 </target>
 	
 </project>
