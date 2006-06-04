@@ -41,13 +41,20 @@ class Version { public static String VERSION = "${VERSION}";}
 
 <target name="test" depends="compile"
 	description="run the regression tests" >
-	 <java classname="gr.spinellis.umlgraph.test.BasicTest" fork="true">
+	<java classname="gr.spinellis.umlgraph.test.BasicTest" fork="true">
          <classpath>
            <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
            <pathelement location="${build}"/>
            <pathelement location="${lib}/UmlGraph.jar"/>
          </classpath>
-       </java>
+    </java>
+	<java classname="gr.spinellis.umlgraph.test.UmlDocTest" fork="true">
+	         <classpath>
+	           <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
+	           <pathelement location="${build}"/>
+	           <pathelement location="${lib}/UmlGraph.jar"/>
+	         </classpath>
+	    </java>
 	<apply executable="dot" dest="${testout}" parallel="false">
 		<arg value="-Tpng"/>
 		<arg value="-o"/>
