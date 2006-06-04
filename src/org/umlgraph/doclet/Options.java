@@ -20,13 +20,26 @@
 
 package gr.spinellis.umlgraph.doclet;
 
-import com.sun.javadoc.*;
-
-import java.lang.reflect.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Tag;
 
 /**
  * Represent the program options
@@ -38,7 +51,8 @@ public class Options implements Cloneable, OptionProvider {
     private static String defaultFont;
     private static String defaultItalicFont;
     // reused often, especially in UmlDoc, worth creating just once and reusing
-    private static Pattern allPattern = Pattern.compile(".*");
+    private static final Pattern allPattern = Pattern.compile(".*");
+    protected static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
     
     static {
 	// use an appropriate font depending on the current operating system
@@ -82,7 +96,7 @@ public class Options implements Cloneable, OptionProvider {
     String bgColor;
     public String outputFileName;
     String outputEncoding;
-    String apiDocMapFileName;
+    Map<Pattern, String> apiDocMap;
     String apiDocRoot;
     boolean postfixPackage;
     boolean useGuillemot;
@@ -139,7 +153,7 @@ public class Options implements Cloneable, OptionProvider {
 	outputDirectory= null;
 	outputEncoding = "ISO-8859-1";
 	hidePatterns = new Vector<Pattern>();
-	apiDocMapFileName = null;
+	apiDocMap = new HashMap<Pattern, String>();
 	apiDocRoot = null;
 	postfixPackage = false;
 	useGuillemot = true;
@@ -165,6 +179,7 @@ public class Options implements Cloneable, OptionProvider {
 	// deep clone the hide and collection patterns
 	clone.hidePatterns = new Vector<Pattern>(hidePatterns);
 	clone.collPackages= new Vector<Pattern>(collPackages);
+	clone.apiDocMap = new HashMap<Pattern, String>(apiDocMap);
 	return clone;
     }
 
@@ -230,7 +245,8 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-d") ||
            option.equals("-view") ||
            option.equals("-inferreltype") ||
-           option.equals("-collpackages")
+           option.equals("-collpackages") ||
+           option.equals("-link")
            )
             return 2;
         else
@@ -372,13 +388,13 @@ public class Options implements Cloneable, OptionProvider {
 	} else if (opt[0].equals("-!hide")) {
 	    hidePatterns.clear();
 	} else if(opt[0].equals("-apidocroot")) {
-	    apiDocRoot = opt[1];
+	    apiDocRoot = fixApiDocRoot(opt[1]);
 	} else if (opt[0].equals("-!apidocroot")) {
 	    apiDocRoot = null;
 	} else if(opt[0].equals("-apidocmap")) {
-	    apiDocMapFileName = opt[1];
+	    setApiDocMapFile(opt[1]);
 	} else if (opt[0].equals("-!apidocmap")) {
-	    apiDocMapFileName = null;
+	    apiDocMap.clear();
 	} else if(opt[0].equals("-noguillemot")) {
 	    guilOpen = "\\<\\<";
 	    guilClose = "\\>\\>";
@@ -435,9 +451,110 @@ public class Options implements Cloneable, OptionProvider {
 	    postfixPackage = true;
 	} else if (opt[0].equals("-!postfixpackage")) {
 	    postfixPackage = false;
+	} else if (opt[0].equals("-link")) {
+	    addApiDocRoots(opt[1]);
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if
                 // needed.
+    }
+
+    /**
+     * Adds api doc roots from a link. The folder reffered by the link should contain a package-list
+     * file that will be parsed in order to add api doc roots to this configuration 
+     * @param packageListUrl
+     */
+    private void addApiDocRoots(String packageListUrl) {
+	BufferedReader br = null;
+	packageListUrl = fixApiDocRoot(packageListUrl);
+	try {
+	    URL url = new URL(packageListUrl + "/package-list");
+	    br = new BufferedReader(new InputStreamReader(url.openStream()));
+	    String line = null;
+	    while((line = br.readLine()) != null) {
+		line = line + ".";
+		Pattern pattern = Pattern.compile(line.replace(".", "\\.") + "[^\\.]*");
+		apiDocMap.put(pattern, packageListUrl);
+	    }
+	} catch(IOException e) {
+	    System.err.println("Errors happened while accessing the package-list file at "
+		    + packageListUrl);
+	} finally {
+	    if(br != null)
+		try {
+		    br.close();
+		} catch (IOException e) {}
+	}
+	
+    }
+    
+    /**
+     * Loads the property file referred by <code>apiDocMapFileName</code> and fills the apiDocMap
+     * accordingly
+     * @param apiDocMapFileName
+     */
+    void setApiDocMapFile(String apiDocMapFileName) {
+	try {
+	    InputStream is = new FileInputStream(apiDocMapFileName);
+	    Properties userMap = new Properties();
+	    userMap.load(is);
+	    for (Map.Entry mapEntry : userMap.entrySet()) {
+		try {
+		    Pattern regex = Pattern.compile((String) mapEntry.getKey());
+		    String thisRoot = (String) mapEntry.getValue();
+		    if (thisRoot != null) {
+			thisRoot = fixApiDocRoot(thisRoot);
+			apiDocMap.put(regex, thisRoot);
+		    } else {
+			System.err.println("No URL for pattern " + mapEntry.getKey());
+		    }
+		} catch (PatternSyntaxException e) {
+		    System.err.println("Skipping bad pattern " + mapEntry.getKey());
+		}
+	    }
+	} catch (FileNotFoundException e) {
+	    System.err.println("File " + apiDocMapFileName + " was not found: " + e);
+	} catch (IOException e) {
+	    System.err.println("Error reading the property api map file " + apiDocMapFileName
+		    + ": " + e);
+	}
+    }
+    
+    /**
+     * Returns the appropriate URL "root" for an external class name.  It will
+     * match the class name against the regular expressions specified in the
+     * <code>apiDocMap</code>; if a match is found, the associated URL
+     * will be returned.
+     *
+     * <b>NOTE:</b> The match order of the match attempts is the one specified by the
+     * constructor of the api doc root, so it depends on the order of "-link" and "-apiDocMap"
+     * parameters.
+     */
+    public String getApiDocRoot(String className) {
+	if(apiDocMap.isEmpty())
+	    apiDocMap.put(Pattern.compile(".*"), DEFAULT_EXTERNAL_APIDOC);
+	
+	for (Map.Entry<Pattern, String> mapEntry : apiDocMap.entrySet()) {
+	    Pattern regex = mapEntry.getKey();
+	    Matcher matcher = regex.matcher(className);
+	    if (matcher.matches())
+		return mapEntry.getValue();
+	}
+	return null;
+    }
+    
+    /** Trim and append a file separator to the string */
+    private String fixApiDocRoot(String str) {
+	String fixed = null;
+	if (str != null) {
+	    fixed = str.trim();
+	    if (fixed.length() > 0) {
+		if (!File.separator.equals("/"))
+		    fixed = fixed.replace(File.separator.charAt(0), '/');
+		if (!fixed.endsWith("/"))
+		    fixed = fixed + "/";
+	    }
+	}
+	return fixed;
     }
 
     /** Set the options based on the command line parameters */
@@ -545,5 +662,6 @@ public class Options implements Cloneable, OptionProvider {
 	}
 	return sb.toString();
     }
+    
 }
 
