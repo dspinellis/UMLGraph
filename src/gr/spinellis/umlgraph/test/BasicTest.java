@@ -52,13 +52,14 @@ public class BasicTest {
 	performViewTests(different, outFolder);
 
 	if (different.size() > 0) {
-	    System.out.println("ERROR, some files are not structurally equal or some files are missing:");
+	    pw.println("ERROR, some files are not structurally equal or some files are missing:");
 	    for (String className : different) {
-		System.out.println(className);
+		pw.println(className);
 	    }
 	} else {
-	    System.out.println("GOOD, all files are structurally equal");
+	    pw.println("GOOD, all files are structurally equal");
 	}
+	pw.flush();
     }
 
     private static void performViewTests(List<String> differences, File outFolder)
@@ -108,7 +109,7 @@ public class BasicTest {
 	    pw.println("Error, reference file " + refFile + " is not available");
 	    differences.add(refFile.getName() + " reference is not available");
 	} else if (!dotFilesEqual(dotFile.getAbsolutePath(), refFile.getAbsolutePath())) {
-	    differences.add(dotFile.getName());
+	    differences.add(dotFile.getName() + " is different from the reference");
 	}
     }
 
