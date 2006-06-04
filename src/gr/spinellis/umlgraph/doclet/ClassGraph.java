@@ -22,21 +22,15 @@ package gr.spinellis.umlgraph.doclet;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.ConstructorDoc;
@@ -64,7 +58,6 @@ import com.sun.javadoc.WildcardType;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 class ClassGraph {
-    protected static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
     protected static final char FILE_SEPARATOR = '/';
     enum Font {
 	NORMAL, ABSTRACT, CLASS, CLASS_ABSTRACT, TAG, PACKAGE
@@ -81,9 +74,7 @@ class ClassGraph {
 	associationMap.put("depend", "arrowhead=open, style=dashed");
     }
     protected Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
-    protected String apiDocRoot;
-    protected Map<Pattern, String> apiDocMap = new HashMap<Pattern, String>();
-    protected Set<String> specifiedPackages;
+    protected Set<String> rootClasses;
     protected OptionProvider optionProvider;
     protected PrintWriter w;
     protected ClassDoc collectionClassDoc;
@@ -105,15 +96,18 @@ class ClassGraph {
      * @param contextDoc The current context for generating relative links, may be a ClassDoc 
      * 	or a PackageDoc (used by UMLDoc)
      */
-    public ClassGraph(RootDoc root, OptionProvider optionProvider, Doc contextDoc) throws IOException {
+    public ClassGraph(RootDoc root, OptionProvider optionProvider, Doc contextDoc) {
 	this.optionProvider = optionProvider;
 	this.collectionClassDoc = root.classNamed("java.util.Collection");
 	this.mapClassDoc = root.classNamed("java.util.Map");
 	this.contextDoc = contextDoc;
 	
-	specifiedPackages = new HashSet<String>();
-	for (PackageDoc p : root.specifiedPackages())
-	    specifiedPackages.add(p.name());
+	// to gather the packages containing specified classes, loop thru them and gather
+	// package definitions. User root.specifiedPackages is not safe, since the user
+	// may specify just a list of classes (human users usually don't, but automated tools do)
+	rootClasses = new HashSet<String>();
+	for (ClassDoc classDoc : root.classes()) 
+	    rootClasses.add(classDoc.qualifiedName());
 	
 	Options opt = optionProvider.getGlobalOptions();
 	if (opt.compact) {
@@ -123,45 +117,9 @@ class ClassGraph {
 	    linePrefix = "\t";
 	    linePostfix = "\n";
 	}
-	
-	apiDocRoot = fixApiDocRoot(opt.apiDocRoot);
-	String mapFileName = opt.apiDocMapFileName;
- 	if (mapFileName != null) {
-	    InputStream is = new FileInputStream(mapFileName);
-	    Properties userMap = new Properties();
-	    userMap.load(is);
-	    for (Map.Entry mapEntry : userMap.entrySet()) {
-		try {
-		    Pattern regex = Pattern.compile((String)mapEntry.getKey());
-		    String thisRoot = (String)mapEntry.getValue();
-		    if (thisRoot != null) {
-			thisRoot = fixApiDocRoot(thisRoot);
-			apiDocMap.put(regex, thisRoot);
-		    } else {
-			System.err.println("No URL for pattern " + mapEntry.getKey());
-		    }
-		} catch (PatternSyntaxException e) {
-		    System.err.println("Skipping bad pattern " + mapEntry.getKey());
-		}
-	    }
-	} else
-	    apiDocMap.put(Pattern.compile(".*"), DEFAULT_EXTERNAL_APIDOC);
     }
 
-    /** Trim and append a file separator to the string */
-    private String fixApiDocRoot(String str) {
-	String fixed = null;
-	if (str != null) {
-	    fixed = str.trim();
-	    if (fixed.length() > 0) {
-		if (!File.separator.equals("/"))
-		    fixed = fixed.replace(File.separator.charAt(0), '/');
-		if (!fixed.endsWith("/"))
-		    fixed = fixed + "/";
-	    }
-	}
-	return fixed;
-    }
+    
 
     /** Return the class's name, possibly by stripping the leading path */
     private String qualifiedName(Options opt, String r) {
@@ -732,10 +690,10 @@ class ClassGraph {
 		continue;
 
 	    // check if the destination is excluded from inference
-	    String dest = fri.cd.toString();
 	    if (hidden(fri.cd))
 		continue;
 
+	    String dest = fri.cd.toString();
 	    String destAdornment = fri.multiple ? "*" : "";
 	    relation(opt, opt.inferRelationshipType, sourceName, getNodeName(c), dest,
 		    getNodeName(dest), "", "", destAdornment);
@@ -879,22 +837,6 @@ class ClassGraph {
 	    return name.substring(0, openIdx);
     }
 
-    /**
-     *  Return true if the class name has been specified in the command line.
-     * 	Use this only if the ClassDoc is not available, since this implementation won't handle
-     *  properly inner classes (confuses the containing class as a package)
-     */
-    public boolean isSpecifiedPackage(String className) {
-	int idx = className.lastIndexOf(".");
-	String packageName = idx > 0 ? className.substring(0, idx) : className;
-	return specifiedPackages.contains(packageName);
-    }
-    
-    /** Return true if the class name has been specified in the command line */
-    public boolean isSpecifiedPackage(ClassDoc cd) {
-	return specifiedPackages.contains(cd.containingPackage().name());
-    }
-
     /** Convert the class name into a corresponding URL */
     public String classToUrl(ClassDoc cd, boolean rootClass) {
 	// building relative path for context and package diagrams
@@ -957,34 +899,17 @@ class ClassGraph {
      * the final diagram to the associated JavaDoc page.
      */
     private String mapApiDocRoot(String className) {
-
 	String root = null;
 	/* If no packages are specified, we use apiDocRoot for all of them. */
-	if (specifiedPackages.isEmpty() || isSpecifiedPackage(className))
-	    root = apiDocRoot;
-	else
-	    root = getExternalApiDocRoot(className);
+	if (rootClasses.contains(className)) {
+	    root = optionProvider.getGlobalOptions().apiDocRoot;
+	} else {
+	    Options globalOptions = optionProvider.getGlobalOptions();
+	    root = globalOptions.getApiDocRoot(className);
+	}
 	return root;
     }
 
-    /**
-     * Returns the appropriate URL "root" for an external class name.  It will
-     * match the class name against the regular expressions specified in the
-     * <code>apiDocMapFileName</doc> file; if a match is found, the associated URL
-     * will be returned.
-     *
-     * <b>NOTE:</b> Currently the order of the match attempts is not specified,
-     * so if more then one regular expression matches the result is undetermined.
-     */
-    public String getExternalApiDocRoot(String className) {
-	for (Map.Entry<Pattern, String> mapEntry : apiDocMap.entrySet()) {
-	    Pattern regex = mapEntry.getKey();
-	    Matcher matcher = regex.matcher(className);
-	    if (matcher.matches())
-		return mapEntry.getValue();
-	}
-	return null;
-    }
     
     /** Dot prologue 
      * @throws IOException */
@@ -993,10 +918,13 @@ class ClassGraph {
 	// prepare output file. Use the output file name as a full path unless the output
 	// directory is specified
 	File file = null;
-	if(opt.outputDirectory != null)
+	if (opt.outputDirectory != null)
 	    file = new File(opt.outputDirectory, opt.outputFileName);
 	else
-	    file = new File(opt.outputFileName);
+	    file = new File(".", opt.outputFileName);
+	// make sure the output directory are there, otherwise create them
+	if(!file.getParentFile().exists())
+	    file.getParentFile().mkdirs();
 	FileOutputStream fos = new FileOutputStream(file);
 	
 	// print plologue
