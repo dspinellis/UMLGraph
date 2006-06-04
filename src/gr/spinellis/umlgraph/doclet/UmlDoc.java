@@ -22,6 +22,8 @@ import com.sun.tools.doclets.standard.Standard;
  * runs the generation of dot files by UMLGraph
  * @author wolf
  * 
+ * @depend - - - WrappedClassDoc
+ * @depend - - - WrappedRootDoc
  */
 public class UmlDoc {
     /**
@@ -57,7 +59,7 @@ public class UmlDoc {
 	    opt.strictMatching = true;
 //	    root.printNotice(opt.toString());
 
-	    root = new WrappedRootDot(root);
+	    root = new WrappedRootDoc(root);
 	    generatePackageDiagrams(root, opt, outputFolder);
 	    generateContextDiagrams(root, opt, outputFolder);
 	} catch(Throwable t) {

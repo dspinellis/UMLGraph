@@ -31,13 +31,12 @@ import com.sun.javadoc.Tag;
  * RootDoc wrapper that provides WrappedClassDoc instances instead of plain ClassDoc in order
  * to optimize the overall performance of UMLDoc.
  * @author wolf
- *
  */
-public class WrappedRootDot implements RootDoc {
+public class WrappedRootDoc implements RootDoc {
     RootDoc wrapped;
-    ClassDoc[] wrappedClassDocs;
+    WrappedClassDoc[] wrappedClassDocs;
     
-    public WrappedRootDot(RootDoc wrapped) {
+    public WrappedRootDoc(RootDoc wrapped) {
 	this.wrapped = wrapped;
 	ClassDoc[] classes = wrapped.classes();
 	wrappedClassDocs = new WrappedClassDoc[classes.length];

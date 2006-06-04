@@ -40,6 +40,8 @@ import com.sun.javadoc.RootDoc;
  * the network of class releationships, so you are allowed to reuse it should
  * you 
  * @author wolf
+ * 
+ * @depend - - - DevNullWriter
  */
 public class ContextMatcher implements ClassMatcher {
     ClassGraphHack cg;

@@ -31,9 +31,9 @@ import com.sun.javadoc.RootDoc;
 
 /**
  * Doclet API implementation
- * @depend - - * OptionProvider
- * @depend - - * Options
- * @depend - - * View
+ * @depend - - - OptionProvider
+ * @depend - - - Options
+ * @depend - - - View
  * @depend - - - ClassGraph
  * @depend - - - Version
  *
