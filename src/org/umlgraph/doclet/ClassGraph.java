@@ -734,8 +734,10 @@ class ClassGraph {
 	    }
 	}
 	// and the field types
-	for (FieldDoc field : c.fields(false)) {
-	    types.add(field.type());
+	if (!opt.inferRelationships) {
+	    for (FieldDoc field : c.fields(false)) {
+		types.add(field.type());
+	    }
 	}
 	// see if there are some type parameters
 	if (c.asParameterizedType() != null) {
