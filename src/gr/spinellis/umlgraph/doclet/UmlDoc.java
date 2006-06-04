@@ -42,9 +42,9 @@ public class UmlDoc {
      * @return
      */
     public static boolean start(RootDoc root) {
-	root.printNotice("UmlDoc version 4.4, running the standard doclet");
+	root.printNotice("UmlDoc version " + Version.VERSION +  ", running the standard doclet");
 	Standard.start(root);
-	root.printNotice("UmlDoc version 4.4, altering javadocs");
+	root.printNotice("UmlDoc version " + Version.VERSION + ", altering javadocs");
 	try {
 	    String outputFolder = findOutputPath(root.options());
 
@@ -55,6 +55,7 @@ public class UmlDoc {
 	    opt.relativeLinksForSourcePackages = true;
 	    // enable strict matching for hide expressions
 	    opt.strictMatching = true;
+//	    root.printNotice(opt.toString());
 
 	    root = new WrappedRootDot(root);
 	    generatePackageDiagrams(root, opt, outputFolder);
@@ -65,7 +66,6 @@ public class UmlDoc {
 	    t.printStackTrace();
 	    return false;
 	}
-	root.printNotice("UmlDoc version 4.4, exit");
 	return true;
     }
 
