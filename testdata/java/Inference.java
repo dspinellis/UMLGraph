@@ -7,6 +7,7 @@ import java.util.Map;
 /**
  * @opt inferassoc
  * @opt inferdep
+ * @opt inferdepinpackage
  * @opt attributes
  * @opt operations
  * @opt types
