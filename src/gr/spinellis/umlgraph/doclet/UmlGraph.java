@@ -44,8 +44,7 @@ public class UmlGraph {
     /** Entry point */
     public static boolean start(RootDoc root) throws IOException {
 	Options opt = buildOptions(root);
-	if (opt.verbose2)
-		System.out.println("UMLGraph doclet started");
+	root.printNotice("UMLGraph doclet version " + Version.VERSION + " started");
 
 	View[] views = buildViews(opt, root, root);
 	if(views == null)
@@ -58,8 +57,6 @@ public class UmlGraph {
 	    }
 	}
 
-	if (opt.verbose2)
-	    System.out.println("Class diagram generation complete");
 	return true;
     }
 
@@ -88,8 +85,7 @@ public class UmlGraph {
      */
     public static void buildGraph(RootDoc root, OptionProvider op, Doc contextDoc) throws IOException {
 	Options opt = op.getGlobalOptions();
-	if (opt.verbose2)
-	    System.out.println("Building " + op.getDisplayName());
+	root.printNotice("Building " + op.getDisplayName());
 	ClassDoc[] classes = root.classes();
 
 	ClassGraph c = new ClassGraph(root, op, contextDoc);

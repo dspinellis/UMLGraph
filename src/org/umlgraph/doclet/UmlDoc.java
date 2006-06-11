@@ -85,8 +85,6 @@ public class UmlDoc {
      */
     private static void generatePackageDiagrams(RootDoc root, Options opt, String outputFolder)
 	    throws IOException {
-	if (opt.verbose2)
-	    root.printNotice("Examining packages");
 	Set<String> packages = new HashSet<String>();
 	for (ClassDoc classDoc : root.classes()) {
 	    PackageDoc packageDoc = classDoc.containingPackage();
@@ -106,8 +104,6 @@ public class UmlDoc {
      */
     private static void generateContextDiagrams(RootDoc root, Options opt, String outputFolder)
 	    throws IOException {
-	if (opt.verbose2)
-	    root.printNotice("Examining classes");
 	ContextView view = null;
 	for (ClassDoc classDoc : root.classes()) {
 	    if(view == null)
