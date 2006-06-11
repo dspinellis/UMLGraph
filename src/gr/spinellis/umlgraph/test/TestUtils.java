@@ -115,11 +115,11 @@ public class TestUtils {
 
     /**
          * Deletes the content of the folder, eventually in a recursive way (but
-         * avoids deleting eventual .cvsignore files)
+         * avoids deleting eventual .cvsignore files and CVS folders)
          */
     public static void cleanFolder(File folder, boolean recurse) {
 	for (File f : folder.listFiles()) {
-	    if (f.isDirectory()) {
+	    if (f.isDirectory() && !f.getName().equals("CVS")) {
 		if (recurse) {
 		    cleanFolder(f, true);
 		    if (f.list().length == 0)
