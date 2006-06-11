@@ -110,6 +110,8 @@ public class Options implements Cloneable, OptionProvider {
     boolean inferRelationships;
     boolean inferDependencies;
     boolean useImports;
+    Visibility inferDendencyVisibility;
+    boolean inferDepInPackage;
     boolean verbose2;
     String inferRelationshipType;
     private Vector<Pattern> collPackages;
@@ -121,7 +123,7 @@ public class Options implements Cloneable, OptionProvider {
     // classes outside of them (for example, class gr.spinellis.Foo<T extends java.io.Serializable>
     // would have been hidden by the hide pattern "java.*"
     // TODO: consider making this standard behaviour
-    boolean strictMatching;
+    boolean strictMatching;    
 
     Options() {
 	showQualified = false;
@@ -161,8 +163,9 @@ public class Options implements Cloneable, OptionProvider {
 	viewName = null;
 	inferRelationships = false;
 	inferDependencies = false;
+	inferDendencyVisibility = Visibility.PRIVATE;
+	inferDepInPackage = false;
 	useImports = false;
-	verbose2 = false;
 	inferRelationshipType = "navassoc";
 	collPackages = new Vector<Pattern>();
 	compact = false;
@@ -215,8 +218,9 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-views") ||
            option.equals("-inferrel") ||
            option.equals("-useimports") ||
-           option.equals("-verbose2") ||
            option.equals("-inferdep") ||
+           option.equals("-inferdepinpackage") ||
+           option.equals("-verbose2") ||
            option.equals("-compact"))
 
             return 1;
@@ -245,6 +249,7 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-d") ||
            option.equals("-view") ||
            option.equals("-inferreltype") ||
+           option.equals("-inferdepvis") ||
            option.equals("-collpackages") ||
            option.equals("-link")
            )
@@ -425,14 +430,25 @@ public class Options implements Cloneable, OptionProvider {
 	    }
 	} else if(opt[0].equals("-!inferreltype")) {
 	    inferRelationshipType = "navassoc";
+	} else if(opt[0].equals("-inferdepvis")) {
+	    Visibility vis = Visibility.parseVisibility(opt[1]);
+	    if(vis == null)
+		System.err.println("Ignoring invalid visibility specification for dependency inference" + vis);
+	    inferDendencyVisibility = Visibility.PRIVATE;
+	} else if(opt[0].equals("-!inferdepvis")) {
+	    inferDendencyVisibility = Visibility.PRIVATE;
+	} else if(opt[0].equals("-!inferreltype")) {
+	    inferRelationshipType = "navassoc";
 	} else if(opt[0].equals("-inferdep")) {
 	    inferDependencies = true;
 	} else if(opt[0].equals("-!inferdep")) {
 	    inferDependencies = false;
+	} else if(opt[0].equals("-inferdepinpackage")) {
+	    inferDepInPackage = true;
+	} else if(opt[0].equals("-!inferdepinpackage")) {
+	    inferDepInPackage = false;
 	} else if(opt[0].equals("-useimports")) {
 	    useImports = true;
-	} else if(opt[0].equals("-verbose2")) {
-	    verbose2 = true;
 	} else if(opt[0].equals("-!useimports")) {
 	    useImports = false;
 	} else if (opt[0].equals("-collpackages")) {
