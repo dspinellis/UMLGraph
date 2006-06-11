@@ -869,42 +869,45 @@ class ClassGraph {
 	// building relative path for context and package diagrams
 	if(contextDoc != null && rootClass) {
 	    // determine the context path, relative to the root
-	    String[] contextClassPath = null;
-	    if(contextDoc instanceof ClassDoc) {
-		contextClassPath = ((ClassDoc) contextDoc).containingPackage().name().split("\\.");
-	    } else if(contextDoc instanceof PackageDoc) {
-		contextClassPath = ((PackageDoc) contextDoc).name().split("\\.");
-	    } else {
-		return classToUrl(cd.qualifiedName());
-	    }
-	    
-	    // path, relative to the root, of the destination class
-	    String[] currClassPath = cd.containingPackage().name().split("\\.");
-	    
-	    // compute relative path between the context and the destination
-	    // ... first, compute common part
-	    int i = 0;
-	    while(i < contextClassPath.length && i < currClassPath.length 
-		    && contextClassPath[i].equals(currClassPath[i]))
-		i++;
-	    // ... go up with ".." to reach the common root
-	    StringBuffer buf = new StringBuffer();
-	    if(i == contextClassPath.length) {
-		buf.append(".").append(FILE_SEPARATOR);
-	    } else {
-		for (int j = i; j < currClassPath.length; j++) {
-		    buf.append("..").append(FILE_SEPARATOR);
+	    String packageName = null;
+	    if (contextDoc instanceof ClassDoc) {
+		    packageName = ((ClassDoc) contextDoc).containingPackage().name();
+		} else if (contextDoc instanceof PackageDoc) {
+		    packageName = ((PackageDoc) contextDoc).name();
+		} else {
+		    return classToUrl(cd.qualifiedName());
 		}
-	    }
-	    // ... go down from the common root to the destination
-	    for (int j = i; j < currClassPath.length; j++) {
-		buf.append(currClassPath[j]).append(FILE_SEPARATOR);
-	    }
-	    buf.append(cd.name()).append(".html");
-	    return buf.toString();
+	    return buildRelativePath(packageName, cd.containingPackage().name()) + cd.name() + ".html";
 	} else {
 	    return classToUrl(cd.qualifiedName());
 	} 
+    }
+
+    protected static String buildRelativePath(String contextPackageName, String classPackageName) {
+	// path, relative to the root, of the destination class
+	String[] contextClassPath = contextPackageName.split("\\.");
+	String[] currClassPath = classPackageName.split("\\.");
+
+	// compute relative path between the context and the destination
+	// ... first, compute common part
+	int i = 0;
+	while (i < contextClassPath.length && i < currClassPath.length
+		&& contextClassPath[i].equals(currClassPath[i]))
+	    i++;
+	// ... go up with ".." to reach the common root
+	StringBuffer buf = new StringBuffer();
+	if (i == contextClassPath.length) {
+	    buf.append(".").append(FILE_SEPARATOR);
+	} else {
+	    for (int j = i; j < contextClassPath.length; j++) {
+		buf.append("..").append(FILE_SEPARATOR);
+	    }
+	}
+	// ... go down from the common root to the destination
+	for (int j = i; j < currClassPath.length; j++) {
+	    buf.append(currClassPath[j]).append(FILE_SEPARATOR);
+	}
+	return buf.toString();
     }
     
     /** Convert the class name into a corresponding URL */
