@@ -26,9 +26,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -727,7 +729,7 @@ class ClassGraph {
 
 	Set<Type> types = new HashSet<Type>();
 	// harvest method return and parameter types
-	for (MethodDoc method : c.methods(false)) {
+	for (MethodDoc method : filterByVisibility(c.methods(false), opt.inferDendencyVisibility)) {
 	    types.add(method.returnType());
 	    for (Parameter parameter : method.parameters()) {
 		types.add(parameter.type());
@@ -735,7 +737,7 @@ class ClassGraph {
 	}
 	// and the field types
 	if (!opt.inferRelationships) {
-	    for (FieldDoc field : c.fields(false)) {
+	    for (FieldDoc field : filterByVisibility(c.fields(false), opt.inferDendencyVisibility)) {
 		types.add(field.type());
 	    }
 	}
@@ -768,6 +770,11 @@ class ClassGraph {
 	    String destName = fc.toString();
 	    if (hidden(fc))
 		continue;
+	    
+	    // check if source and destination are in the same package and if we are allowed
+	    // to infer dependencies between classes in the same package
+	    if(!opt.inferDepInPackage && c.containingPackage().equals(fc.containingPackage()))
+		continue;
 
 	    // if source and dest are not already linked, add a
 	    // dependency
@@ -779,6 +786,24 @@ class ClassGraph {
 	}
     }
     
+    /**
+     * Returns all program element docs that have a visibility greater or
+     * equal than the specified level
+     */
+    private <T extends ProgramElementDoc> List<T> filterByVisibility(T[] docs, Visibility visibility) {
+	if (visibility == Visibility.PRIVATE)
+	    return Arrays.asList(docs);
+
+	List<T> filtered = new ArrayList<T>();
+	for (T doc : docs) {
+	    if (Visibility.get(doc).compareTo(visibility) > 0)
+		filtered.add(doc);
+	}
+	return filtered;
+    }
+
+
+
     private FieldRelationInfo getFieldRelationInfo(FieldDoc field) {
 	Type type = field.type();
 	if(type.isPrimitive() || type instanceof WildcardType || type instanceof TypeVariable)
