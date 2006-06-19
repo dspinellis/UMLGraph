@@ -133,10 +133,6 @@ The following Perl invocation is such a filter:
 <fmtcode ext="sh">
 perl -p -e "BEGIN {binmode(STDOUT);} s/\r//"
 </fmtcode>
-You can remove the CR characters in-place by running:
-<fmtcode ext="sh">
-perl -pi.bak -e "BEGIN {binmode(STDOUT);} s/\r//" FILENAME.pic
-</fmtcode>
 In addition, <em>pic2plot</em> appears to require that the last input file
 be properly terminated (with a newline).
 Apparently, some Windows editors may leave the last line unterminated,
