@@ -19,6 +19,7 @@
 <li>Support the -link flag in the same way as the standard doclet, in order to populate
     the api doc map, used to generate image maps with links to associated external classes.
 </li>
+<li> Filter-out the static initializer method from classes</li>
 </ul>
 </dd>
 

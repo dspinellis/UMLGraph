@@ -300,6 +300,9 @@ class ClassGraph {
 	for (MethodDoc md : m) {
 	    if (hidden(md))
 		continue;
+	    // Filter-out static initializer method
+	    if (md.name().equals("<clinit>") && md.isStatic() && md.isPackagePrivate())
+		continue;
 	    stereotype(opt, md, Align.LEFT);
 	    String op = visibility(opt, md) + md.name();
 	    if (opt.showType) {
