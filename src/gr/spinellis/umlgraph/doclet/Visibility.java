@@ -28,13 +28,7 @@ import com.sun.javadoc.ProgramElementDoc;
  * 
  */
 public enum Visibility {
-    PRIVATE("private"), PACKAGE("package"), PROTECTED("protected"), PUBLIC("public");
-
-    private String name;
-
-    private Visibility(String name) {
-	this.name = name;
-    }
+    PRIVATE, PACKAGE, PROTECTED, PUBLIC;
 
     public static Visibility get(ProgramElementDoc doc) {
 	if (doc.isPrivate())
@@ -46,13 +40,5 @@ public enum Visibility {
 	else
 	    return PUBLIC;
 
-    }
-
-    public static Visibility parseVisibility(String vis) {
-	for (Visibility v : Visibility.values()) {
-	    if (v.name.equalsIgnoreCase(vis))
-		return v;
-	}
-	return null;
     }
 }

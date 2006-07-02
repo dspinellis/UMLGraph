@@ -20,8 +20,9 @@
 
 package gr.spinellis.umlgraph.doclet;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class's dot-comaptible alias name (for fully qualified class names)
@@ -42,7 +43,7 @@ class ClassInfo {
      * all the classes linked with a bi-directional relation , and the ones 
      * referred by a directed relation 
      */
-    Set<String> relatedClasses = new HashSet<String>();
+    Map<String, RelationPattern> relatedClasses = new HashMap<String, RelationPattern>();
 
     ClassInfo(boolean p, boolean h) {
 	nodePrinted = p;
@@ -51,12 +52,17 @@ class ClassInfo {
 	classNumber++;
     }
     
-    public void addRelation(String dest) {
-	relatedClasses.add(dest);
+    public void addRelation(String dest, RelationType rt, RelationDirection d) {
+	RelationPattern ri = relatedClasses.get(dest);
+	if(ri == null) {
+	    ri = new RelationPattern(RelationDirection.NONE);
+	    relatedClasses.put(dest, ri);
+	}
+	ri.addRelation(rt, d);
     }
     
-    public boolean isRelated(String dest) {
-	return relatedClasses.contains(dest);
+    public RelationPattern getRelation(String dest) {
+	return relatedClasses.get(dest);
     }
 
     /** Start numbering from zero. */

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * @opt inferassoc
+ * @opt inferrel
  * @opt inferdep
  * @opt inferdepinpackage
  * @opt attributes
@@ -17,7 +17,7 @@ import java.util.Map;
 class UMLOptions {}
 
 /**
- * @opt inferassoctype has 
+ * @opt inferreltype has 
  */
 class A {
     B first;

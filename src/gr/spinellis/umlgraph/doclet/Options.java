@@ -109,11 +109,12 @@ public class Options implements Cloneable, OptionProvider {
     String guilClose = "&raquo;"; // "\u00bb";
     boolean inferRelationships;
     boolean inferDependencies;
+    RelationPattern contextRelationPattern;
     boolean useImports;
     Visibility inferDendencyVisibility;
     boolean inferDepInPackage;
     boolean verbose2;
-    String inferRelationshipType;
+    RelationType inferRelationshipType;
     private Vector<Pattern> collPackages;
     boolean compact;
     // internal option, used by UMLDoc to generate relative links between classes
@@ -161,12 +162,13 @@ public class Options implements Cloneable, OptionProvider {
 	useGuillemot = true;
 	findViews = false;
 	viewName = null;
+	contextRelationPattern = new RelationPattern(RelationDirection.BOTH);
 	inferRelationships = false;
 	inferDependencies = false;
 	inferDendencyVisibility = Visibility.PRIVATE;
 	inferDepInPackage = false;
 	useImports = false;
-	inferRelationshipType = "navassoc";
+	inferRelationshipType = RelationType.NAVASSOC;
 	collPackages = new Vector<Pattern>();
 	compact = false;
 	relativeLinksForSourcePackages = false;
@@ -220,6 +222,7 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-useimports") ||
            option.equals("-inferdep") ||
            option.equals("-inferdepinpackage") ||
+           option.equals("-fullContext") ||
            option.equals("-verbose2") ||
            option.equals("-compact"))
 
@@ -251,9 +254,10 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-inferreltype") ||
            option.equals("-inferdepvis") ||
            option.equals("-collpackages") ||
-           option.equals("-link")
-           )
+           option.equals("-link"))
             return 2;
+        else if(option.equals("-contextPattern"))
+            return 3;
         else
             return 0;
     }
@@ -423,22 +427,23 @@ public class Options implements Cloneable, OptionProvider {
 	} else if(opt[0].equals("-!inferrel")) {
 	    inferRelationships = false;
 	} else if(opt[0].equals("-inferreltype")) {
-	    if(ClassGraph.associationMap.containsKey(opt[1])) {
-		inferRelationshipType = opt[1]; 
-	    } else {
-		System.err.println("Unknown association type " + opt[1]);
-	    }
+		try {
+		    inferRelationshipType = RelationType.valueOf(opt[1].toUpperCase());
+		} catch(IllegalArgumentException e) {
+		    System.err.println("Unknown association type " + opt[1]);
+		}
 	} else if(opt[0].equals("-!inferreltype")) {
-	    inferRelationshipType = "navassoc";
+	    inferRelationshipType = RelationType.NAVASSOC;
 	} else if(opt[0].equals("-inferdepvis")) {
-	    Visibility vis = Visibility.parseVisibility(opt[1]);
-	    if(vis == null)
-		System.err.println("Ignoring invalid visibility specification for dependency inference" + vis);
-	    inferDendencyVisibility = Visibility.PRIVATE;
+	    try {
+		Visibility vis = Visibility.valueOf(opt[1].toUpperCase());
+		inferDendencyVisibility = vis;
+	    } catch(IllegalArgumentException e) {
+		System.err.println("Ignoring invalid visibility specification for " +
+				"dependency inference: " + opt[1]);
+	    }
 	} else if(opt[0].equals("-!inferdepvis")) {
 	    inferDendencyVisibility = Visibility.PRIVATE;
-	} else if(opt[0].equals("-!inferreltype")) {
-	    inferRelationshipType = "navassoc";
 	} else if(opt[0].equals("-inferdep")) {
 	    inferDependencies = true;
 	} else if(opt[0].equals("-!inferdep")) {
@@ -469,6 +474,20 @@ public class Options implements Cloneable, OptionProvider {
 	    postfixPackage = false;
 	} else if (opt[0].equals("-link")) {
 	    addApiDocRoots(opt[1]);
+	} else if(opt[0].equals("-contextPattern")) {
+	    RelationDirection d; RelationType rt;
+	    try {
+		d = RelationDirection.valueOf(opt[2].toUpperCase());
+		if(opt[1].equalsIgnoreCase("all")) {
+		    contextRelationPattern = new RelationPattern(d);
+		} else {
+		    rt = RelationType.valueOf(opt[1].toUpperCase());
+		    contextRelationPattern.addRelation(rt, d);
+		}
+	    } catch(IllegalArgumentException e) {
+		
+	    }
+		
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if
                 // needed.

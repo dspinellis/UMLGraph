@@ -97,6 +97,9 @@ public class View implements OptionProvider {
 	    } else if (strings[0].equals("context")) {
 		return new ContextMatcher(root, Pattern.compile(strings[1]), getGlobalOptions(), 
 			false);
+	    } else if (strings[0].equals("outgoingContext")) {
+		return new ContextMatcher(root, Pattern.compile(strings[1]), getGlobalOptions(), 
+			false);
 	    } else if (strings[0].equals("interface")) {
 		return new InterfaceMatcher(root, Pattern.compile(strings[1]));
 	    } else if (strings[0].equals("subclass")) {

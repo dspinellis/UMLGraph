@@ -32,13 +32,13 @@ import com.sun.javadoc.RootDoc;
 
 /**
  * Matches classes that are directly connected to one of the classes matched by
- * the regual expression specified. The context center is computed by regex lookup.
- * Depending on the specified Options, inferred relations and dependencies will
- * be used as well.
+ * the regual expression specified. The context center is computed by regex
+ * lookup. Depending on the specified Options, inferred relations and
+ * dependencies will be used as well.
  * <p>
  * This class needs to perform quite a bit of computations in order to gather
  * the network of class releationships, so you are allowed to reuse it should
- * you 
+ * you
  * @author wolf
  * 
  * @depend - - - DevNullWriter
@@ -61,6 +61,10 @@ public class ContextMatcher implements ClassMatcher {
      * @param keepParentHide If true, parent option hide patterns will be
      *                preserved, so that classes hidden by the options won't
      *                be shown in the context
+     * @param fullContext If true, all the classes related to the context
+     *                center will be included, otherwise it will match only
+     *                the classes referred with an outgoing relation from
+     *                the context center
      * @throws IOException
      */
     public ContextMatcher(RootDoc root, Pattern pattern, Options options, boolean keepParentHide) throws IOException {
@@ -68,14 +72,14 @@ public class ContextMatcher implements ClassMatcher {
 	this.root = root;
 	this.keepParentHide = keepParentHide;
 	opt = (Options) options.clone();
-	opt.setOption(new String[] {"-!hide"});
-	opt.setOption(new String[] {"-!attributes"});
-	opt.setOption(new String[] {"-!operations"});
+	opt.setOption(new String[] { "-!hide" });
+	opt.setOption(new String[] { "-!attributes" });
+	opt.setOption(new String[] { "-!operations" });
 	this.cg = new ClassGraphHack(root, opt);
 
 	setContextCenter(pattern);
     }
-    
+
     /**
      * Can be used to setup a different pattern for this context matcher.
      * <p>
@@ -103,11 +107,12 @@ public class ContextMatcher implements ClassMatcher {
      * @param cd
      */
     private void addToGraph(ClassDoc cd) {
-	// avoid adding twice the same class, but don't rely on cg.getClassInfo since there
+	// avoid adding twice the same class, but don't rely on cg.getClassInfo
+        // since there
 	// are other ways to add a classInfor than printing the class
-	if(visited.contains(cd.toString()))
+	if (visited.contains(cd.toString()))
 	    return;
-	
+
 	visited.add(cd.toString());
 	cg.printClass(cd, false);
 	cg.printRelations(cd);
@@ -146,10 +151,8 @@ public class ContextMatcher implements ClassMatcher {
 	for (ClassDoc mcd : matched) {
 	    String mcName = mcd.toString();
 	    ClassInfo ciMatched = cg.getClassInfo(mcName);
-	    if (ciMatched != null && ciMatched.isRelated(name))
-		return true;
-	    ClassInfo ci = cg.getClassInfo(name);
-	    if (ci != null && ci.isRelated(mcName))
+	    RelationPattern rp = ciMatched.getRelation(name);
+	    if (ciMatched != null && rp != null && opt.contextRelationPattern.matchesOne(rp))
 		return true;
 	}
 	return false;
