@@ -67,13 +67,13 @@ class ClassGraph {
     enum Align {
 	LEFT, CENTER, RIGHT
     };
-    public static Map<String, String> associationMap = new HashMap<String, String>();
+    public static Map<RelationType, String> associationMap = new HashMap<RelationType, String>();
     static {
-	associationMap.put("assoc", "arrowhead=none");
-	associationMap.put("navassoc", "arrowhead=open");
-	associationMap.put("has", "arrowhead=none, arrowtail=ediamond");
-	associationMap.put("composed", "arrowhead=none, arrowtail=diamond");
-	associationMap.put("depend", "arrowhead=open, style=dashed");
+	associationMap.put(RelationType.ASSOC, "arrowhead=none");
+	associationMap.put(RelationType.NAVASSOC, "arrowhead=open");
+	associationMap.put(RelationType.HAS, "arrowhead=none, arrowtail=ediamond");
+	associationMap.put(RelationType.COMPOSED, "arrowhead=none, arrowtail=diamond");
+	associationMap.put(RelationType.DEPEND, "arrowhead=open, style=dashed");
     }
     protected Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
     protected Set<String> rootClasses;
@@ -87,7 +87,6 @@ class ClassGraph {
     // used only when generating context class diagrams in UMLDoc, to generate the proper
     // relative links to other classes in the image map
     protected Doc contextDoc;
-    
       
     /**
      * Create a new ClassGraph.  <p>The packages passed as an
@@ -536,7 +535,8 @@ class ClassGraph {
      * @param fromName the source class internal name
      * @param edgetype the dot edge specification
      */
-    private void relation(Options opt, String tagname, ClassDoc from, String fromName) {
+    private void relation(Options opt, RelationType rt, ClassDoc from, String fromName) {
+	String tagname = rt.toString().toLowerCase();
 	for (Tag tag : from.tags(tagname)) {
 	    String t[] = StringUtil.tokenize(tag.text());    // l-src label l-dst target
 	    if (t.length != 4) {
@@ -555,15 +555,15 @@ class ClassGraph {
 	    
 	    if(hidden(dest))
 		continue;
-	    relation(opt, tagname, from.toString(), fromName, dest, destName, t[0], t[1], t[2]);
+	    relation(opt, rt, from.toString(), fromName, dest, destName, t[0], t[1], t[2]);
 	}
     }
 
-    private void relation(Options opt, String tagname, String from, String fromName, 
+    private void relation(Options opt, RelationType rt, String from, String fromName, 
 	    String dest, String destName, String tailLabel, String label, String headLabel) {
 	// print relation
-	String edgetype = associationMap.get(tagname);
-	w.println("\t// " + from + " " + tagname + " " + dest);
+	String edgetype = associationMap.get(rt);
+	w.println("\t// " + from + " " + rt.toString() + " " + dest);
 	w.println("\t" + fromName + ":p -> " + destName + ":p [" +
     	"taillabel=\"" + tailLabel + "\", " +
     	"label=\"" + guillemize(opt, label) + "\", " +
@@ -576,9 +576,11 @@ class ClassGraph {
     	);
 	
 	// update relation info
-	getClassInfo(from).addRelation(dest);
-	if(!tagname.equals("navassoc") && !tagname.equals("depend"))
-	    getClassInfo(dest).addRelation(from);
+	RelationDirection d = RelationDirection.BOTH;
+	if(rt == RelationType.NAVASSOC || rt == RelationType.DEPEND)
+	    d = RelationDirection.OUT;
+	getClassInfo(from).addRelation(dest, rt, d);
+        getClassInfo(dest).addRelation(from, rt, d.inverse());
 	
     }
 
@@ -599,7 +601,8 @@ class ClassGraph {
 	    	ClassDoc sc = s.asClassDoc();
 		w.println("\t//" + c + " extends " + s + "\n" +
 		    "\t" + getNodeName(sc) + ":p -> " + cs + ":p [dir=back,arrowtail=empty];");
-		getClassInfo(className).addRelation(sc.toString());
+		getClassInfo(className).addRelation(sc.toString(), RelationType.EXTENDS, RelationDirection.OUT);
+		getClassInfo(sc.toString()).addRelation(className, RelationType.EXTENDS, RelationDirection.IN);
 	}
 
 	// Print generalizations (through @extends tags)
@@ -607,7 +610,8 @@ class ClassGraph {
 	    if (!hidden(tag.text())) {
 		w.println("\t//" + c + " extends " + tag.text() + "\n" +
 		    "\t" + getNodeName(tag.text()) + ":p -> " + cs + ":p [dir=back,arrowtail=empty];");
-		getClassInfo(className).addRelation(tag.text());
+		getClassInfo(className).addRelation(tag.text(), RelationType.EXTENDS, RelationDirection.OUT);
+		getClassInfo(tag.text()).addRelation(className, RelationType.EXTENDS, RelationDirection.IN);
 	    }
 	// Print realizations (Java interfaces)
 	for (Type iface : c.interfaceTypes()) {
@@ -615,15 +619,16 @@ class ClassGraph {
 	    if (!hidden(ic)) {
 		w.println("\t//" + c + " implements " + ic + "\n\t" + getNodeName(ic) + ":p -> " + cs + ":p [dir=back,arrowtail=empty,style=dashed];"
 		    );
-		getClassInfo(className).addRelation(ic.toString());
+		getClassInfo(className).addRelation(ic.toString(), RelationType.IMPLEMENTS, RelationDirection.OUT);
+		getClassInfo(ic.toString()).addRelation(className, RelationType.IMPLEMENTS, RelationDirection.IN);
 	    }
 	}
 	// Print other associations
-	relation(opt, "assoc", c, cs);
-	relation(opt, "navassoc", c, cs);
-	relation(opt, "has", c, cs);
-	relation(opt, "composed", c, cs);
-	relation(opt, "depend", c, cs);
+	relation(opt, RelationType.ASSOC, c, cs);
+	relation(opt, RelationType.NAVASSOC, c, cs);
+	relation(opt, RelationType.HAS, c, cs);
+	relation(opt, RelationType.COMPOSED, c, cs);
+	relation(opt, RelationType.DEPEND, c, cs);
     }
 
     /** Print classes that were parts of relationships, but not parsed by javadoc */
@@ -779,10 +784,10 @@ class ClassGraph {
 	    if(!opt.inferDepInPackage && c.containingPackage().equals(fc.containingPackage()))
 		continue;
 
-	    // if source and dest are not already linked, add a
-	    // dependency
-	    if (!getClassInfo(sourceName).isRelated(destName)) {
-		relation(opt, "depend", sourceName, getNodeName(sourceName), destName,
+	    // if source and dest are not already linked, add a dependency
+	    RelationPattern rp = getClassInfo(sourceName).getRelation(destName);
+	    if (rp == null || rp.matchesOne(new RelationPattern(RelationDirection.OUT))) {
+		relation(opt, RelationType.DEPEND, sourceName, getNodeName(sourceName), destName,
 			getNodeName(destName), "", "", "");
 	    }
 	    
