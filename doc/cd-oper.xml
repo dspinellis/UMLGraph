@@ -4,7 +4,7 @@
 To use UMLGraph class drawing facility you need to have
 <a href="http://java.sun.com/j2se/javadoc/"><em>javadoc</em></a>
 and
-<a href="http://www.research.att.com/sw/tools/graphviz/">Graphviz</a>
+<a href="http://www.graphviz.org/">Graphviz</a>
 installed on your computer.
 Both programs are freely available, from Sun and AT&amp;T respectively,
 for many platforms including Unix and Windows.
