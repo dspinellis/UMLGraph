@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+UMLDoc is a standard doclet wrapper that allows for mixing togher
+the standard doclet output (javadoc documentation) along with self-generated
+class diagrams for both package and classes.
+
+UMLDoc can be driven by the sum of parameters that can be specified for
+UMLGraph and the standard doclet, each will be passed to the appropriate
+doclet.
+
+Diagram generation is based on the idea of context:
+<ul>
+<li>for packages, the diagram contains all of the classes in the package itself</li>
+<li>for classes, the set of classes somehow related to the current class</li>
+</ul>
+
+The actual content of the diagrams depends on the kind of relations declared on the
+class files (with the UMLGraph javadoc annotations) and/or on the kind of automated
+inference that UMLGraph is allowed to use.
+
+UMLGraph javadocs are now generated with UMLDoc with the following ant target:
+
+<fmtcode ext="xml">
+<target name="javadocs" depends="compile">
+	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" destdir="${javadoc}" 
+	         private="true">
+		<doclet name="gr.spinellis.umlgraph.doclet.UmlDoc" path="${lib}/UMLGraph.jar">
+			<param name="-inferrel"/>
+			<param name="-inferdep"/>
+			<param name="-hide" value="java.*"/>
+			<param name="-collpackages" value="java.util.*"/>
+			<param name="-qualify"/>
+			<param name="-postfixpackage"/>
+			<param name="-nodefontsize" value="9"/>
+			<param name="-nodefontpackagesize" value="7"/>
+			<param name="-link" value="http://java.sun.com/j2se/1.5.0/docs/guide/javadoc/doclet/spec"/>
+			<param name="-link" value="http://java.sun.com/j2se/1.5/docs/api"/>
+		</doclet>
+	</javadoc>
+</target>
+</fmtcode>
+
+Some users did complain about the "furr ball" effect, that is, the problem that some central
+classes do have very big context diagrams. To reduce this, you can avoid dependency inference
+altogheter, or reduce the number of inferred dependencies by using the -inferdepvis options.
+
+If you find that this is not enough and have suggestions on how to improve further it,
+we are eager to listen.
+</notes>

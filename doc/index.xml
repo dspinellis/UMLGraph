@@ -6,6 +6,7 @@
 <ch><ti>Class Diagram Operations</ti><fi>cd-oper</fi></ch>
 <ch><ti>Class Modelling</ti><fi>cd-model</fi></ch>
 <ch><ti>Class Diagram Options</ti><fi>cd-opt</fi></ch>
+<ch><ti>Javadocs and UML class diagrams with UMLDoc</ti><fi>cd-umldoc</fi></ch>
 <ch><ti>Class Diagram Views</ti><fi>views</fi></ch>
 <ch><ti>Class Diagram Example: Generalisation Relationships</ti><fi>ceg-gen</fi></ch>
 <ch><ti>Class Diagram Example: Advanced Relationships</ti><fi>ceg-adv</fi></ch>
