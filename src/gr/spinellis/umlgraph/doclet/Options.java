@@ -111,9 +111,8 @@ public class Options implements Cloneable, OptionProvider {
     boolean inferDependencies;
     RelationPattern contextRelationPattern;
     boolean useImports;
-    Visibility inferDendencyVisibility;
+    Visibility inferDependencyVisibility;
     boolean inferDepInPackage;
-    boolean verbose2;
     RelationType inferRelationshipType;
     private Vector<Pattern> collPackages;
     boolean compact;
@@ -165,7 +164,7 @@ public class Options implements Cloneable, OptionProvider {
 	contextRelationPattern = new RelationPattern(RelationDirection.BOTH);
 	inferRelationships = false;
 	inferDependencies = false;
-	inferDendencyVisibility = Visibility.PRIVATE;
+	inferDependencyVisibility = Visibility.PRIVATE;
 	inferDepInPackage = false;
 	useImports = false;
 	inferRelationshipType = RelationType.NAVASSOC;
@@ -222,8 +221,6 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-useimports") ||
            option.equals("-inferdep") ||
            option.equals("-inferdepinpackage") ||
-           option.equals("-fullContext") ||
-           option.equals("-verbose2") ||
            option.equals("-compact"))
 
             return 1;
@@ -437,13 +434,13 @@ public class Options implements Cloneable, OptionProvider {
 	} else if(opt[0].equals("-inferdepvis")) {
 	    try {
 		Visibility vis = Visibility.valueOf(opt[1].toUpperCase());
-		inferDendencyVisibility = vis;
+		inferDependencyVisibility = vis;
 	    } catch(IllegalArgumentException e) {
 		System.err.println("Ignoring invalid visibility specification for " +
 				"dependency inference: " + opt[1]);
 	    }
 	} else if(opt[0].equals("-!inferdepvis")) {
-	    inferDendencyVisibility = Visibility.PRIVATE;
+	    inferDependencyVisibility = Visibility.PRIVATE;
 	} else if(opt[0].equals("-inferdep")) {
 	    inferDependencies = true;
 	} else if(opt[0].equals("-!inferdep")) {

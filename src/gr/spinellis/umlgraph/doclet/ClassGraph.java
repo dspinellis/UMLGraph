@@ -737,7 +737,7 @@ class ClassGraph {
 
 	Set<Type> types = new HashSet<Type>();
 	// harvest method return and parameter types
-	for (MethodDoc method : filterByVisibility(c.methods(false), opt.inferDendencyVisibility)) {
+	for (MethodDoc method : filterByVisibility(c.methods(false), opt.inferDependencyVisibility)) {
 	    types.add(method.returnType());
 	    for (Parameter parameter : method.parameters()) {
 		types.add(parameter.type());
@@ -745,7 +745,7 @@ class ClassGraph {
 	}
 	// and the field types
 	if (!opt.inferRelationships) {
-	    for (FieldDoc field : filterByVisibility(c.fields(false), opt.inferDendencyVisibility)) {
+	    for (FieldDoc field : filterByVisibility(c.fields(false), opt.inferDependencyVisibility)) {
 		types.add(field.type());
 	    }
 	}
