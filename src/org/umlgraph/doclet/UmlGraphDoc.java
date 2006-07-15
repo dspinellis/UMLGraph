@@ -25,7 +25,7 @@ import com.sun.tools.doclets.standard.Standard;
  * @depend - - - WrappedClassDoc
  * @depend - - - WrappedRootDoc
  */
-public class UmlDoc {
+public class UmlGraphDoc {
     /**
      * Option check, forwards options to the standard doclet, if that one refuses them,
      * they are sent to UmlGraph

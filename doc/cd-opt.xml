@@ -162,7 +162,7 @@ test suite).
 <dt>-link</dt><dd>A clone of the standard doclet 
 <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#link">-link</a>
 option, allows UMLGraph to generate links from class symbols to their external javadoc
-documentation (image maps are automatically generated in UMLDoc, you'll have to generate them
+documentation (image maps are automatically generated in UMLGraphDoc, you'll have to generate them
 manually with graphviz if using UMLGraph).
 </dd>
 </dl>
