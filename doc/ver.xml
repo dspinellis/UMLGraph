@@ -5,7 +5,7 @@
 
 <dt>Version 4.5 Under development</dt><dd></dd>
 
-<dt>Version 4.4 </dt><dd>
+<dt>Version 4.4 2006/07/19 </dt><dd>
 <ul>
 <li>Major new functionality: UmlGraphDoc, a new doclet that can generate context and package
     class diagrams integrated with the standard javadoc output. Uses the same switches
