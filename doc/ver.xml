@@ -3,19 +3,22 @@
 <notes>
 <dl>
 
-<dt>Version 4.4 Under development</dt><dd>
+<dt>Version 4.5 Under development</dt><dd></dd>
+
 <ul>
-<li>Major new functionality: UmlDoc, a new doclet that can generate context and package
+<dt>Version 4.4 </dt><dd>
+<ul>
+<li>Major new functionality: UmlGraphDoc, a new doclet that can generate context and package
     class diagrams integrated with the standard javadoc output. Uses the same switches
     as UmlGraph. (Andrea Aime)</li>
-<li>Removed -vebose2 option, use the standard -quiet option instead to avoid UmlDoc and 
+<li>Removed -verbose2 option, use the standard -quiet option instead to avoid UmlGraphDoc and
     UmlGraph printing notices. (Andrea Aime)</li>
-<li>Added -inferdepvis option, that allows to control which member of a class will be used
+<li>Added a -inferdepvis option that allows to control which member of a class will be used
     for dependency inference. Acceptable values are private, package, protected and public.
     Makes sense when inferring dependencies without using -useimports.</li>
-<li>Added -inferdepinpackage option, that enables dependency inference among classes in the
+<li>Added a -inferdepinpackage option that enables dependency inference among classes in the
     same package. This is disabled by default, since there is no reliable way to infer
-    them, and classes in the same package are supposed to be related anyway.</li>
+    dependencies, and classes in the same package are supposed to be related anyway.</li>
 <li>Support the -link flag in the same way as the standard doclet, in order to populate
     the api doc map, used to generate image maps with links to associated external classes.
 </li>

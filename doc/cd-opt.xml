@@ -108,12 +108,12 @@ Defaults to "navassoc" (see the class modelling chapter for a list of relationsh
 <dt>-inferdep</dt><dd>Try to automatically infer dependencies between classes by inspecting
 methods and fields. See the class diagram inference chapter for more details. Disabled by default.
 </dd>
-<dt>-inferdepinpackage</dt><dd>Allows to enable/disable dependency inference among classes in the
-same package. This option is disabled by default because classes in the same package are supposed
+<dt>-inferdepinpackage</dt><dd>Enable or disable dependency inference among classes in the
+same package. This option is disabled by default, because classes in the same package are supposed
 to be related anyway, and also because there's no working mechanism to actually detect all
 of these dependencies since imports are not required to use classes in the same package.
 </dd>
-<dt>-inferdepvis</dt><dd>Allows to specify the lowest visibility level of elements used to infer 
+<dt>-inferdepvis</dt><dd>Specifies the lowest visibility level of elements used to infer
 dependencies among classes. Possible values are private, package, protected, public, in this
 order. The default value is private. Use higher levels to limit the number of inferred dependencies.
 </dd>
@@ -159,7 +159,7 @@ in a single line instead of "pretty printing" them. Useful if the dot file
 has to be manipulated by an automated tool (e.g., the UMLGraph regression
 test suite).
 </dd>
-<dt>-link</dt><dd>A clone of the standard doclet 
+<dt>-link</dt><dd>A clone of the standard doclet
 <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#link">-link</a>
 option, allows UMLGraph to generate links from class symbols to their external javadoc
 documentation (image maps are automatically generated in UMLGraphDoc, you'll have to generate them

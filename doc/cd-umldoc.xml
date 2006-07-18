@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 <!-- $Id$ -->
 <notes>
-UMLGraphDoc is a standard doclet wrapper that allows for mixing togher
-the standard doclet output (javadoc documentation) along with self-generated
-class diagrams for both package and classes.
+UMLGraphDoc is a standard doclet wrapper that combines
+the standard doclet output (javadoc documentation) along with auto-generated
+class diagrams for both packages and classes.
 
-UMLGraphDoc can be driven by the sum of parameters that can be specified for
-UMLGraph and the standard doclet, each will be passed to the appropriate
+The UMLGraphDoc process is driven by all the parameters that can be specified for
+UMLGraph and the standard doclet; each will be passed to the appropriate
 doclet.
 
 Diagram generation is based on the idea of context:
@@ -41,10 +41,12 @@ UMLGraph javadocs are now generated with UMLGraphDoc with the following ant targ
 </target>
 </fmtcode>
 
-Some users did complain about the "furr ball" effect, that is, the problem that some central
-classes do have very big context diagrams. To reduce this, you can avoid dependency inference
+When generating documentation with UMLGraphDoc you will encounter
+at some point the "fur ball" effect: some central classes that
+have very complex context diagrams.
+To reduce this, you can avoid dependency inference
 altogheter, or reduce the number of inferred dependencies by using the -inferdepvis options.
 
-If you find that this is not enough and have suggestions on how to improve further it,
+If you find that this is not enough and have suggestions on how to improve the situation further,
 we are eager to listen.
 </notes>
