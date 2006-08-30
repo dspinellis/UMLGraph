@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.ConstructorDoc;
@@ -142,12 +143,36 @@ class ClassGraph {
 	}
 	return r;
     }
-    
-    /** Escape &lt; and &gt; characters in the string with a backslash. */
-    private String escapeLG(String s) {
-	if(s.contains("<"))
-	    return s.replace("<", "&lt;").replace(">", "&gt;");
-	else
+
+    /**
+     * Escape &lt;, &gt;, and &amp; characters in the string with
+     * the corresponding HTML entity code.
+     */
+    private String escape(String s) {
+	final Pattern toEscape = Pattern.compile("[&<>]");
+
+	if (toEscape.matcher(s).find()) {
+	    StringBuffer sb = new StringBuffer(s);
+	    for (int i = 0; i < sb.length();) {
+		switch (sb.charAt(i)) {
+		case '&':
+		    sb.replace(i, i + 1, "&amp;");
+		    i += "&amp;".length();
+		    break;
+		case '<':
+		    sb.replace(i, i + 1, "&lt;");
+		    i += "&lt;".length();
+		    break;
+		case '>':
+		    sb.replace(i, i + 1, "&gt;");
+		    i += "&gt;".length();
+		    break;
+		default:
+		    i++;
+		}
+	    }
+	    return sb.toString();
+	} else
 	    return s;
     }
 
@@ -165,7 +190,7 @@ class ClassGraph {
 		break;
 	    case '>':
 		r.replace(i, i + 1, opt.guilClose);
-		i += opt.guilOpen.length();
+		i += opt.guilClose.length();
 		break;
 	    default:
 		i++;
@@ -444,10 +469,10 @@ class ClassGraph {
 	    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
 		String packageName = qualifiedName.substring(0, idx);
 		String cn = className.substring(idx + 1);
-		tableLine(Align.CENTER, escapeLG(cn), opt, font);
+		tableLine(Align.CENTER, escape(cn), opt, font);
 		tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
 	    } else {
-		tableLine(Align.CENTER, escapeLG(qualifiedName), opt, font);
+		tableLine(Align.CENTER, escape(qualifiedName), opt, font);
 	    }
 	    tagvalue(opt, c);
 	    innerTableEnd();
@@ -652,10 +677,10 @@ class ClassGraph {
 		    if(opt.postfixPackage && idx > 0 && idx < (className.length() - 1)) {
 			String packageName = className.substring(0, idx);
 			String cn = className.substring(idx + 1);
-			tableLine(Align.CENTER, escapeLG(cn), opt, Font.CLASS);
+			tableLine(Align.CENTER, escape(cn), opt, Font.CLASS);
 			tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
 		    } else {
-			tableLine(Align.CENTER, escapeLG(className), opt, Font.CLASS);
+			tableLine(Align.CENTER, escape(className), opt, Font.CLASS);
 		    }
 		    innerTableEnd();
 		    externalTableEnd();
