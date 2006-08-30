@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * UmlDoc doclet regression tests
+ * UmlGraphDoc doclet regression tests
  * @author wolf
  * 
  */
@@ -144,12 +144,12 @@ public class UmlDocTest {
     }
 
     /**
-         * Runs the UmlDoc doclet
+         * Runs the UmlGraphDoc doclet
          * @param options
          */
     private static void runDoclet(String[] options) {
 	com.sun.tools.javadoc.Main.execute("UMLDoc test", pw, pw, pw,
-		"gr.spinellis.umlgraph.doclet.UmlDoc", options);
+		"gr.spinellis.umlgraph.doclet.UmlGraphDoc", options);
     }
 
 }

@@ -42,7 +42,7 @@ public class RunDoc {
 
     private static void runDoclet(String[] options) {
 	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw,
-		"gr.spinellis.umlgraph.doclet.UmlDoc", options);
+		"gr.spinellis.umlgraph.doclet.UmlGraphDoc", options);
     }
 
 }
