@@ -4,6 +4,12 @@
 <dl>
 
 <dt>Version 4.5 Under development</dt><dd></dd>
+<ul>
+<li>Correct running of the UmlGraphDoc tests</li>
+<li>Correct the JavaDoc generation (Maxim Butov)</li>
+<li>Correct appearance of generic names (Ivan F. Villanueva B.)</li>
+</ul>
+</dd>
 
 <dt>Version 4.4 2006/07/19 </dt><dd>
 <ul>
