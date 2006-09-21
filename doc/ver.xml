@@ -3,7 +3,7 @@
 <notes>
 <dl>
 
-<dt>Version 4.5 Under development</dt><dd></dd>
+<dt>Version 4.5 Under development</dt><dd>
 <ul>
 <li>Correct running of the UmlGraphDoc tests</li>
 <li>Correct the JavaDoc generation (Maxim Butov)</li>

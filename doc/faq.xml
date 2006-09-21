@@ -22,6 +22,7 @@ To update the table of contents execute the following vim command from a registe
 <li> <a href="#packname">Why the vanity package name?  Why not name the package org.umlgraph?</a></li>
 <li> <a href="#unnamed">Why do the options specified in the <code>UMLOptions</code> class stop working, when I pass the <code>packagenames</code> option to <em>javadoc</em>?</a></li>
 <li> <a href="#tiger">Why doesn't UMLGraph run under Mac OS X?</a></li>
+<li> <a href="#cpp">Can I create UML class diagrams from C++ code?</a></li>
 </ul>
 
 <h2><a name="utfsvg">Why are the SVG diagrams dot generates malformed?</a></h2>
@@ -169,4 +170,10 @@ Make sure you are running Java 1.5 (run <code>java -version</code> to see).
 If you are not running 1.5 you may need to adjust the symbolic links
 in
 <code>/System/Library/Frameworks/JavaVM.framework/Versions</code>.
+
+<h2><a name="cpp">Can I create UML class diagrams from C++ code?</a></h2>
+This <a href="http://www.spinellis.gr/blog/20060921/">blog entry</a> describes
+a simple solution that has worked for me.
+Depending on your requirements YMMV.
+
 </notes>
