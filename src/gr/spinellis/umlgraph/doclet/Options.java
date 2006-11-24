@@ -50,7 +50,7 @@ public class Options implements Cloneable, OptionProvider {
     // dot's font platform dependence workaround
     private static String defaultFont;
     private static String defaultItalicFont;
-    // reused often, especially in UmlDoc, worth creating just once and reusing
+    // reused often, especially in UmlGraphDoc, worth creating just once and reusing
     private static final Pattern allPattern = Pattern.compile(".*");
     protected static final String DEFAULT_EXTERNAL_APIDOC = "http://java.sun.com/j2se/1.4.2/docs/api/";
     
@@ -615,7 +615,7 @@ public class Options implements Cloneable, OptionProvider {
      */
     public boolean matchesHideExpression(String s) {
 	for (Pattern hidePattern : hidePatterns) {
-	    // micro-optimization because the "all pattern" is heavily used in UmlDoc
+	    // micro-optimization because the "all pattern" is heavily used in UmlGraphDoc
 	    if(hidePattern == allPattern)
 		return true;
 	    
