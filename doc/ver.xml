@@ -8,6 +8,7 @@
 <li>Correct running of the UmlGraphDoc tests</li>
 <li>Correct the JavaDoc generation (Maxim Butov)</li>
 <li>Correct appearance of generic names (Ivan F. Villanueva B.)</li>
+<li>UmlGraphDoc now handles filenames with embedded spaces (J&ouml;rn Guy S&uuml;&szlig;)</li>
 </ul>
 </dd>
 

@@ -44,9 +44,9 @@ public class UmlGraphDoc {
      * @return
      */
     public static boolean start(RootDoc root) {
-	root.printNotice("UmlDoc version " + Version.VERSION +  ", running the standard doclet");
+	root.printNotice("UmlGraphDoc version " + Version.VERSION +  ", running the standard doclet");
 	Standard.start(root);
-	root.printNotice("UmlDoc version " + Version.VERSION + ", altering javadocs");
+	root.printNotice("UmlGraphDoc version " + Version.VERSION + ", altering javadocs");
 	try {
 	    String outputFolder = findOutputPath(root.options());
 
@@ -128,8 +128,15 @@ public class UmlGraphDoc {
 	File mapFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".map");
 
 	try {
-	    String command = "dot -Tcmapx -o" + mapFile.getAbsolutePath() + " -Tpng -o"
-		    + pngFile.getAbsolutePath() + " " + dotFile.getAbsolutePath();
+	    /*
+	     * Put filenames inside double quote characters to allow
+	     * (typically Windows) files with embedded whitespace to
+	     * work.  This will still fail with Unix ` and $ characters,
+	     * but it is better than nothing.
+	     */
+	    String command = "dot -Tcmapx -o\"" + mapFile.getAbsolutePath() + "\" -Tpng -o\"" +
+		    pngFile.getAbsolutePath() + "\" \"" +
+		    dotFile.getAbsolutePath() + "\"";
 	    Process p = Runtime.getRuntime().exec(command);
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 	    String line = null;
