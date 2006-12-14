@@ -3,16 +3,21 @@
 <notes>
 <dl>
 
-<dt>Version 4.5 Under development</dt><dd>
+<dt>Version 4.6 Under development </dt><dd>
+<ul>
+</ul>
+</dd>
+
+<dt>Version 4.5 2006-12-14</dt><dd>
 <ul>
 <li>Correct running of the UmlGraphDoc tests</li>
 <li>Correct the JavaDoc generation (Maxim Butov)</li>
 <li>Correct appearance of generic names (Ivan F. Villanueva B.)</li>
-<li>UmlGraphDoc now handles filenames with embedded spaces (J&ouml;rn Guy S&uuml;&szlig;)</li>
+<li>UmlGraphDoc now handles filenames with embedded spaces (reported and tested by J&ouml;rn Guy S&uuml;&szlig; and Christophe DENEUX)</li>
 </ul>
 </dd>
 
-<dt>Version 4.4 2006/07/19 </dt><dd>
+<dt>Version 4.4 2006-07-19 </dt><dd>
 <ul>
 <li>Major new functionality: UmlGraphDoc, a new doclet that can generate context and package
     class diagrams integrated with the standard javadoc output. Uses the same switches
@@ -32,7 +37,7 @@
 </ul>
 </dd>
 
-<dt>Version 4.3 2006/03/05 </dt><dd>
+<dt>Version 4.3 2006-03-05 </dt><dd>
 <ul>
 <li> Now using HTML labels in dot files. This allows for a different font
      in each row of the class nodes. Added options
@@ -67,7 +72,7 @@ parameters -d, -view, -views (Andrea Aime)</li>
 </ul>
 </dd>
 
-<dt>Version 4.1 2005/11/15</dt><dd>
+<dt>Version 4.1 2005-11-15</dt><dd>
 <ul>
 <li> Major source code reorganization to move closer to the Java coding
 conventions.
@@ -87,7 +92,7 @@ Now classes are hidden even when  involved in a relationship with a visible clas
 </ul>
 </dd>
 
-<dt>Version 3.3 2005/10/19</dt><dd>
+<dt>Version 3.3 2005-10-19</dt><dd>
 <ul>
 <li> The sequence diagrams now include support for drawing
 comments and frames. (Contributed by Sebastian Setzer)</li>
@@ -96,7 +101,7 @@ instead of round brackets around stereotypes.</li>
 </ul>
 </dd>
 
-<dt>Version 3.2 2005/07/19</dt><dd>
+<dt>Version 3.2 2005-07-19</dt><dd>
 <ul>
 <li> Display the template arguments of generic classes inside angle brackets.
 Note that according to the UML specification these arguments should
@@ -106,7 +111,7 @@ However, such a display is currently not possible in GraphViz.</li>
 </ul>
 </dd>
 
-<dt>Version 3.1 2005/03/26</dt><dd>
+<dt>Version 3.1 2005-03-26</dt><dd>
 <ul>
 <li> <b>Note that from this version UMLGraph requires Java 1.5.</b></li>
 <li> First step of the Java 1.5 transition; more will follow.</li>
@@ -117,7 +122,7 @@ control the corresponding operation.</li>
 </ul>
 </dd>
 
-<dt>Version 2.10 2004/11/19</dt><dd>
+<dt>Version 2.10 2004-11-19</dt><dd>
 <ul>
 <li> This is the last version compatible with Java 1.4.</li>
 <li> Corrected the interaction between the
@@ -129,14 +134,14 @@ Many thanks to Jonathan Wright for this contribution. </li>
 </ul>
 </dd>
 
-<dt>Version 2.9 2004/10/07</dt><dd>
+<dt>Version 2.9 2004-10-07</dt><dd>
 <ul>
 <li> Class diagrams can now include constructors, through the new
 <code>-constructors</code> option.</li>
 </ul>
 </dd>
 
-<dt>Version 2.8 2004/08/09</dt><dd>
+<dt>Version 2.8 2004-08-09</dt><dd>
 <ul>
 <li> Fixes to support the Maven plugin.</li>
 <li> From this version onward, use the appropriate options to create
@@ -144,7 +149,7 @@ documentation links; no hyperlinks are created by default.</li>
 </ul>
 </dd>
 
-<dt>Version 2.7 2004/08/06</dt><dd>
+<dt>Version 2.7 2004-08-06</dt><dd>
 <ul>
 <li> The -noguillemot option will output round brackets around stereotypes,
 instead of angle brackets.
@@ -153,7 +158,7 @@ The angle brackets appear to be breaking some programs.
 </ul>
 </dd>
 
-<dt>Version 2.6 2004/08/03</dt><dd>
+<dt>Version 2.6 2004-08-03</dt><dd>
 <ul>
 <li> <b>Note that from this version UMLGraph requires Java 1.4.</b></li>
 <li> Documentation example: multiple views from the same source.
@@ -180,20 +185,20 @@ Implementation contributed by Nascif Abousalh-Neto
 </ul>
 </dd>
 
-<dt>Version 2.5 2004/06/15</dt><dd>
+<dt>Version 2.5 2004-06-15</dt><dd>
 The object swimlanes in a sequence diagram
 can now show nested object invocations.
 This very useful and non-trivial change was contributed by Jonathan R. Santos.
 </dd>
 
-<dt>Version 2.4 2004/05/29</dt><dd>
+<dt>Version 2.4 2004-05-29</dt><dd>
 Will now generate local URL hyperlinks for packages specified in
 the command line; and links to the Sun documentation for all
 other packages.
 Many thanks to Nascif Abousalh-Neto for contributing this change.
 </dd>
 
-<dt>Version 2.3 2004/05/27</dt><dd>
+<dt>Version 2.3 2004-05-27</dt><dd>
 <ul>
 <li>
 Remove hardcoded default node and edge fonts.
@@ -207,7 +212,7 @@ Thanks to Alessandro Riva for submitting the corresponding patch.
 </ul>
 </dd>
 
-<dt>Version 2.2 2004/05/25</dt><dd>
+<dt>Version 2.2 2004-05-25</dt><dd>
 SVG class diagrams containing guillemot characters
 for stereotypes
 can now be made valid through a new -outputencoding option.
@@ -216,14 +221,14 @@ Many thanks to Nascif Abousalh-Neto for bringing this problem to
 my attention.
 </dd>
 
-<dt>Version 2.1 2004/05/16</dt><dd>
+<dt>Version 2.1 2004-05-16</dt><dd>
 The guillemot characters used for the create and destroy stereotypes
 are now portable between <em>groff</em> and <em>pic2plot</em>.
 Many thanks to Scott Johnson (Duluth, MN) for recommending the change.
 </dd>
 
 
-<dt>Version 2.0 2004/05/09</dt><dd>
+<dt>Version 2.0 2004-05-09</dt><dd>
 <ul>
 <li> Support for drawing sequence diagrams.</li>
 <li> New distribution format.</li>
@@ -238,7 +243,7 @@ in the README file.
 </ul>
 </dd>
 
-<dt>Version 1.24 2003/07/30</dt><dd>
+<dt>Version 1.24 2003-07-30</dt><dd>
 Changes by Art Hampton (thanks):
 <ul>
 <li> Create the appropriate label for relationship tags when referring to
@@ -253,19 +258,19 @@ becomes more widespread.
 </ul>
 
 </dd>
-<dt>Version 1.23 2003/05/7</dt><dd>
+<dt>Version 1.23 2003-05-7</dt><dd>
 Added <code>-output</code> command-line option, and an <em>ant</em>-based
 build file.
 Modified the dot output to avoid triggering a graphviz bug that made escape codes visible.
 
 </dd>
-<dt>Version 1.20 2003/04/25</dt><dd>
+<dt>Version 1.20 2003-04-25</dt><dd>
 Fixes by Nick Efthymiou (thanks):
 will generate SVG hyperlinks to Javadoc documentation,
 better handling of abstract class fonts,
 and correct listing of interfaces.
 </dd>
-<dt>Version 1.19 2002/09/20</dt><dd>
+<dt>Version 1.19 2002-09-20</dt><dd>
 New options:
 nodefontname,
 nodefontabstractname,
@@ -278,7 +283,7 @@ edgecolor,
 bgcolor.
 
 </dd>
-<dt>Version 1.18 2002/08/26</dt><dd>
+<dt>Version 1.18 2002-08-26</dt><dd>
 <ul>
 <li> Can now specify class-local options.
 </li>
@@ -291,7 +296,7 @@ bgcolor.
 </ul>
 
 </dd>
-<dt>Version 1.15 2002/07/26</dt><dd>First public release.
+<dt>Version 1.15 2002-07-26</dt><dd>First public release.
 </dd>
 </dl>
 </notes>
