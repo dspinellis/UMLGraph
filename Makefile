@@ -4,10 +4,11 @@
 
 VERSION?=4.6
 TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
-TARBALL=UMLGraph-$(VERSION).tar.gz
+BALL_TAR=UMLGraph-$(VERSION).tar
+BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
-WEBDIR=/dds/pubs/web/home/sw/umlgraph
+WEBDIR=/cygdrive/c/dds/pubs/web/home/sw/umlgraph
 DOCLETSRCPATH=src/gr/spinellis/umlgraph/doclet
 DOCLETSRC= \
 	$(DOCLETSRCPATH)/ClassGraph.java \
@@ -38,12 +39,12 @@ LF=perl -p -e 'BEGIN {binmode(STDOUT);} s/\r//'
 
 all: $(JARFILE)
 
-tarball: $(TARBALL)
+tarball: $(BALL_TAR_GZ)
 
 src/gr/spinellis/umlgraph/doclet/Version.java: Makefile
 	ant -DVERSION="$(VERSION)" version
 
-$(TARBALL): $(JARFILE) docs Makefile
+$(BALL_TAR_GZ): $(JARFILE) docs Makefile
 	-cmd /c rd /s/q $(DISTDIR)
 	mkdir $(DISTDIR)
 	mkdir $(DISTDIR)/doc
@@ -55,7 +56,9 @@ $(TARBALL): $(JARFILE) docs Makefile
 	cp build.xml $(DISTDIR)
 	tar cf - src testdata/{java,dot-ref} javadoc --exclude='*/RCS' | tar -C $(DISTDIR) -xvf -
 	$(LF) $(PICFILE) >$(DISTDIR)/src/$(PICFILE)
-	tar cvf - $(DISTDIR) | gzip -c >$(TARBALL)
+	tar cf $(BALL_TAR) $(DISTDIR)
+	rm -f $(BALL_TAR_GZ)
+	gzip $(BALL_TAR)
 	zip -r $(ZIPBALL) $(DISTDIR)
 
 docs:
@@ -68,13 +71,13 @@ $(JARFILE): $(DOCLETSRC)
 test:
 	ant test
 
-web: $(TARBALL) CHECKSUM.MD5
-	cp $(TARBALL) $(ZIPBALL) CHECKSUM.MD5 $(WEBDIR)
+web: $(BALL_TAR_GZ) CHECKSUM.MD5
+	cp $(BALL_TAR_GZ) $(ZIPBALL) CHECKSUM.MD5 $(WEBDIR)
 	cp $(JARFILE) $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
 	tar cf - javadoc | tar -C $(WEBDIR) -xvf -
 	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
 
-CHECKSUM.MD5: $(TARBALL) $(JARFILE)
+CHECKSUM.MD5: $(BALL_TAR_GZ) $(JARFILE)
 	md5 UMLGraph-2.10.* UMLGraph-$(VERSION).* >CHECKSUM.MD5
 	(cd lib ; md5 UmlGraph.jar) >>CHECKSUM.MD5
 
