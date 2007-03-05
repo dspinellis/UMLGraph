@@ -33,11 +33,12 @@ import java.util.List;
  */
 public class UmlDocTest {
 
-    static String testSourceFolder = "testdata/umldoc-src";
+    static final String testSourceFolder = "testdata/umldoc-src";
 
-    static String testDestFolder = "testdata/umldoc-out";
+    static final String testDestFolder = "testdata/umldoc-out";
 
-    static String testRefFolder = "testdata/umldoc-ref";
+    static final String testRefFolder = "testdata/umldoc-ref";
+    static final String doclet = "gr.spinellis.umlgraph.doclet.UmlGraphDoc";
 
     static PrintWriter pw = new PrintWriter(System.out);
 
@@ -148,8 +149,12 @@ public class UmlDocTest {
          * @param options
          */
     private static void runDoclet(String[] options) {
+	pw.print("Run javadoc -doclet " + doclet);
+	for (String o : options)
+	    pw.print(o + " ");
+	pw.println();
 	com.sun.tools.javadoc.Main.execute("UMLDoc test", pw, pw, pw,
-		"gr.spinellis.umlgraph.doclet.UmlGraphDoc", options);
+		doclet, options);
     }
 
 }
