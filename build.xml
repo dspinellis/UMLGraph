@@ -35,7 +35,9 @@ class Version { public static String VERSION = "${VERSION}";}
 
 <target name="compile" depends="init"
 	description="compile the source, build library " >
-	<javac srcdir="${src}" destdir="${build}" debug="true" excludes="gr/spinellis/umlgraph/doclet/RCS/*,gr/spinellis/umlgraph/test/RCS/*"/>
+	<javac srcdir="${src}" destdir="${build}" debug="true" deprecation="true" excludes="gr/spinellis/umlgraph/doclet/RCS/*,gr/spinellis/umlgraph/test/RCS/*">
+		<compilerarg value="-Xlint"/>
+	</javac>
 	<jar basedir="${build}" destfile="${lib}/UmlGraph.jar" includes="gr/spinellis/umlgraph/doclet/*.class"/>
 </target>
 
