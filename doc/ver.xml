@@ -5,6 +5,10 @@
 
 <dt>Version 4.7 Under development </dt><dd>
 <ul>
+<li> Correct the build file for generating the UmlGraph
+javadocs under Unix (Dirk Datzert)</li>
+<li> Correct output of UmlGraphDoc path-relative file names under Windows
+(fix by: Panagiotis Astithas)</li>
 </ul>
 </dd>
 
