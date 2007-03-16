@@ -4,7 +4,6 @@
 
 VERSION?=4.6
 TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
-BALL_TAR=UMLGraph-$(VERSION).tar
 BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
@@ -56,9 +55,7 @@ $(BALL_TAR_GZ): $(JARFILE) docs Makefile
 	cp build.xml $(DISTDIR)
 	tar cf - src testdata/{java,dot-ref} javadoc --exclude='*/RCS' | tar -C $(DISTDIR) -xvf -
 	$(LF) $(PICFILE) >$(DISTDIR)/src/$(PICFILE)
-	tar cf $(BALL_TAR) $(DISTDIR)
-	rm -f $(BALL_TAR_GZ)
-	gzip $(BALL_TAR)
+	tar czf $(BALL_TAR_GZ) $(DISTDIR)
 	zip -r $(ZIPBALL) $(DISTDIR)
 
 docs:
