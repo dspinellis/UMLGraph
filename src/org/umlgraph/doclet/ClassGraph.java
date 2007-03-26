@@ -986,7 +986,8 @@ class ClassGraph {
 	else
 	    file = new File(opt.outputFileName);
 	// make sure the output directory are there, otherwise create them
-	if(!file.getParentFile().exists())
+	if (file.getParentFile() != null
+	    && !file.getParentFile().exists())
 	    file.getParentFile().mkdirs();
 	FileOutputStream fos = new FileOutputStream(file);
 	
