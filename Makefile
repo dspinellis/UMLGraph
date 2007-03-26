@@ -2,7 +2,7 @@
 # $Id$
 #
 
-VERSION?=4.6
+VERSION?=4.7
 TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
 BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
