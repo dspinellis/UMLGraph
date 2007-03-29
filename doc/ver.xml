@@ -3,12 +3,18 @@
 <notes>
 <dl>
 
-<dt>Version 4.7 Under development </dt><dd>
+<dt>Version 4.8 Under development </dt><dd>
+<ul>
+</ul>
+
+<dt>Version 4.7 2007-03-26 </dt><dd>
 <ul>
 <li> Correct the build file for generating the UmlGraph
 javadocs under Unix (Dirk Datzert)</li>
 <li> Correct output of UmlGraphDoc path-relative file names under Windows
 (fix by: Panagiotis Astithas)</li>
+<li> Fix InvocationTargetException when a relative output file name is
+given (reported by: Georgios Gousios)</li>
 </ul>
 </dd>
 
