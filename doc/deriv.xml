@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+Here are other programs or efforts that build on UMLGraph's
+code or ideas.
+<ul>
+<li> <a href="http://lightuml.sourceforge.net/">LightUML</a>
+integrates UMLGraph into <a href="http://www.eclipse.org">Eclipse</a>.</li>
+<li> <a href="http://maven-plugins.sourceforge.net/maven-dotuml-plugin/">Dotuml</a>
+integrates UMLGraph into <a href="http://maven.apache.org/">Maven</a>.</li>
+<li> The <a href="http://www.primordion.com/Xholon/index.html">Xholon</a>
+framework for building loosely-organized systems
+captures object interactions at runtime,
+and creates UML 2.0 sequence diagrams using UMLGraph.</li>
+<li> <a href="http://ruby-uml.rubyforge.org/">ruby-uml</a>
+traces aspects of an application
+using UMLGraph to generate sequence and class diagrams.</li>
+<li> The Politecnico Di Torino SoftEng group has extended UMLGraph into
+the <a href="http://softeng.polito.it/projects/XUG/">XUG</a>
+reverse engineering tool.</li>
+<li> Adam Feuer's
+<a href="http://www.python.org/pypi/PyUMLGraph">PyUMLGraph</a>
+system applies the concept to Python programs.</li>
+<li> The <a href="http://jbrugge.com/glean/">Glean</a>
+framework for generating feedback on a team's source code
+supports the scripting of UMLGraph.</li>
+<li> W. Goesgens has <a href="http://wiki.ioslo.net/dokuwiki/graphviz#plugging_umlgraph_infront_of_graphviz">documented here</a> a way to use
+UMLGraph diagrams in
+<a href="http://wiki.splitbrain.org/wiki:dokuwiki">DokuWiki</a>.</li>
+</ul>
+</notes>
