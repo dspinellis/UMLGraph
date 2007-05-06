@@ -32,7 +32,7 @@ To update the table of contents execute the following vim command from a registe
 Assuming that you diagram's description is in the file Diag.java,
 issue the commands:
 <fmtcode ext="sh">
-javadoc -docletpath absolute-path-to/UmlGraph.jar -doclet gr.spinellis.umlgraph.doclet.UmlGraph -output Diag.dot Diag.java
+javadoc -docletpath absolute-path-to/UmlGraph.jar -package -doclet gr.spinellis.umlgraph.doclet.UmlGraph -output Diag.dot Diag.java
 dot -Tpng -oDiag.png Diag.dot
 </fmtcode>
 In the above you can change <code>png</code> to another file format,
@@ -72,7 +72,7 @@ ppmtogif >FILENAME.gif
 (David Griffiths reports that he had to add to the <em>gs</em> command
 <code>-sPAPERSIZE=a4</code> or
 <code>-dDEVICEHEIGHTPOINTS=1000</code> to avoid getting
-his resutls chopped-off.)
+his results chopped-off.)
 
 <p />
 One other possibility for converting the sequence diagram into Postscript
