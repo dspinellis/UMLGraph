@@ -25,6 +25,7 @@ To update the table of contents execute the following vim command from a registe
 <li> <a href="#tiger">Why doesn't UMLGraph run under Mac OS X?</a></li>
 <li> <a href="#cpp">Can I create UML class diagrams from C++ code?</a></li>
 <li> <a href="#ClassCastException">How can I get around a UMLGraphDoc crash with a ClassCastException?</a></li>
+<li> <a href="#license">Under what license is UMLGraph distributed?</a></li>
 </ul>
 
 <h2><a name="cmdline">What is the command line sequence to generate a UMLGraph class diagram?</a></h2>
@@ -199,4 +200,15 @@ JBuilder users need to go to Preferences/Build/Ant,
 and tick the box "Use project libraries when running ant" to solve the issue.
 </blockquote>
 
+<h2><a name="license">Under what license is UMLGraph distributed?</a></h2>
+UMLGraph is distributed under the
+<a href="http://www.opensource.org/licenses/bsd-license.html">BSD license</a>
+(see the file LICENSE in the distribution).
+For uniformity with the rest of the web content appearing on this site,
+the web site of UMLGraph appears under a
+<a href="http://creativecommons.org/licenses/by-nc-nd/2.5/">Creative Commons Attribution-NonCommercial-NoDerivs 2.5</a>
+license.
+This affects only the UMLGraph home page; all other material
+(for example the documentation) is also part of the UMLGraph distribution,
+and can therefore be used under the BSD license.
 </notes>

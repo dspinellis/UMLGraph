@@ -21,9 +21,10 @@ TESTSRC = \
 	src/gr/spinellis/umlgraph/test/BasicTest.java
 PICFILE=sequence.pic
 README=README.txt
+LICENSE=LICENSE
 OTHERSRC=index.html build.xml Makefile
 # Files to tag
-ALLTAG=$(DOCLETSRC) $(TESTSRC) $(PICFILE) $(README) $(OTHERSRC)
+ALLTAG=$(DOCLETSRC) $(TESTSRC) $(PICFILE) $(README) $(LICENSE) $(OTHERSRC)
 # Documentation location (release)
 ifeq ($(VERSION),snapshot)
 	DOC=snapshot-doc
@@ -49,6 +50,7 @@ $(BALL_TAR_GZ): $(JARFILE) docs Makefile
 	mkdir $(DISTDIR)/doc
 	mkdir $(DISTDIR)/lib
 	$(LF) $(README) >$(DISTDIR)/$(README)
+	$(LF) $(LICENSE) >$(DISTDIR)/$(LICENSE)
 	$(LF) $(PICFILE) >$(DISTDIR)/lib/$(PICFILE)
 	cp $(JARFILE) $(DISTDIR)/lib
 	cp $(WEBDIR)/$(DOC)/* $(DISTDIR)/doc
