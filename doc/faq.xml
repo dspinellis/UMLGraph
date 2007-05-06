@@ -24,6 +24,7 @@ To update the table of contents execute the following vim command from a registe
 <li> <a href="#unnamed">Why do the options specified in the <code>UMLOptions</code> class stop working, when I pass the <code>packagenames</code> option to <em>javadoc</em>?</a></li>
 <li> <a href="#tiger">Why doesn't UMLGraph run under Mac OS X?</a></li>
 <li> <a href="#cpp">Can I create UML class diagrams from C++ code?</a></li>
+<li> <a href="#ClassCastException">How can I get around a UMLGraphDoc crash with a ClassCastException?</a></li>
 </ul>
 
 <h2><a name="cmdline">What is the command line sequence to generate a UMLGraph class diagram?</a></h2>
@@ -187,5 +188,15 @@ in
 This <a href="http://www.spinellis.gr/blog/20060921/">blog entry</a> describes
 a simple solution that has worked for me.
 Depending on your requirements YMMV.
+
+<h2><a name="ClassCastException">How can I get around a UMLGraphDoc crash with a ClassCastException?</a></h2>
+This happens due to a know <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6442982">javadoc bug</a>.
+By fixing the classpath used for the UNLGraph invocation you can avoid this
+problem.
+Olivier Duysens notes:
+<blockquote>
+JBuilder users need to go to Preferences/Build/Ant,
+and tick the box "Use project libraries when running ant" to solve the issue.
+</blockquote>
 
 </notes>
