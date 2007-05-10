@@ -49,19 +49,16 @@ public class UmlGraph {
 	View[] views = buildViews(opt, root, root);
 	if(views == null)
 	    return false;
-	if (views.length == 0) {
+	if (views.length == 0)
 	    buildGraph(root, opt, null);
-	} else {
-	    for (int i = 0; i < views.length; i++) {
+	else
+	    for (int i = 0; i < views.length; i++)
 		buildGraph(root, views[i], null);
-	    }
-	}
-
 	return true;
     }
 
     /**
-     * Creates the base Options object, that contains both the options specified on the command 
+     * Creates the base Options object, that contains both the options specified on the command
      * line and the ones specified in the UMLOptions class, if available.
      */
     public static Options buildOptions(RootDoc root) {
@@ -70,13 +67,12 @@ public class UmlGraph {
 	opt.setOptions(findUMLOptions(root));
 	return opt;
     }
-    
+
     private static ClassDoc findUMLOptions(RootDoc root) {
 	ClassDoc[] classes = root.classes();
-	for (ClassDoc cd : classes) {
+	for (ClassDoc cd : classes)
 	    if(cd.name().equals("UMLOptions"))
-		    return cd;
-	}
+		return cd;
 	return null;
     }
 
@@ -90,12 +86,10 @@ public class UmlGraph {
 
 	ClassGraph c = new ClassGraph(root, op, contextDoc);
 	c.prologue();
-	for (int i = 0; i < classes.length; i++) {
+	for (int i = 0; i < classes.length; i++)
 	    c.printClass(classes[i], true);
-	}
-	for (int i = 0; i < classes.length; i++) {
+	for (int i = 0; i < classes.length; i++)
 	    c.printRelations(classes[i]);
-	}
 	if(opt.inferRelationships)
             c.printInferredRelations(classes);
         if(opt.inferDependencies)
@@ -105,8 +99,6 @@ public class UmlGraph {
 	c.epilogue();
     }
 
-    
-    
     /**
      * Builds the views according to the parameters on the command line
      * @param opt The options
@@ -133,28 +125,25 @@ public class UmlGraph {
 	} else if (opt.findViews) {
 	    List<View> views = new ArrayList<View>();
 	    ClassDoc[] classes = viewRootDoc.classes();
-	    
+
 	    // find view classes
-	    for (int i = 0; i < classes.length; i++) {
-		if (classes[i].tags("view").length > 0 && !classes[i].isAbstract()) {
+	    for (int i = 0; i < classes.length; i++)
+		if (classes[i].tags("view").length > 0 && !classes[i].isAbstract())
 		    views.add(buildView(srcRootDoc, classes[i], opt));
-		}
-	    }
-	    
+
 	    return views.toArray(new View[views.size()]);
-	} else {
+	} else
 	    return new View[0];
-	}
     }
 
     /**
-     * Builds a view along with its parent views, recursively 
+     * Builds a view along with its parent views, recursively
      */
     private static View buildView(RootDoc root, ClassDoc viewClass, OptionProvider provider) {
 	ClassDoc superClass = viewClass.superclass();
 	if(superClass == null || superClass.tags("view").length == 0)
 	    return new View(root, viewClass, provider);
-	
+
 	return new View(root, viewClass, buildView(root, superClass, provider));
     }
 
@@ -167,6 +156,4 @@ public class UmlGraph {
     public static LanguageVersion languageVersion() {
 	return LanguageVersion.JAVA_1_5;
     }
-
-    
 }
