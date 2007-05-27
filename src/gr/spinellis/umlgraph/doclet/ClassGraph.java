@@ -23,6 +23,7 @@ package gr.spinellis.umlgraph.doclet;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -849,13 +850,12 @@ class ClassGraph {
 	Options opt = optionProvider.getOptionsFor(type.asClassDoc());
 	if (opt.matchesCollPackageExpression(type.qualifiedTypeName())) {
 	    Type[] argTypes = getInterfaceTypeArguments(collectionClassDoc, type);
-	    if (argTypes != null && argTypes.length == 1) {
+	    if (argTypes != null && argTypes.length == 1 && !argTypes[0].isPrimitive())
 		return new FieldRelationInfo(argTypes[0].asClassDoc(), true);
-	    }
+
 	    argTypes = getInterfaceTypeArguments(mapClassDoc, type);
-	    if (argTypes != null && argTypes.length == 2) {
+	    if (argTypes != null && argTypes.length == 2 && !argTypes[1].isPrimitive())
 		return new FieldRelationInfo(argTypes[1].asClassDoc(), true);
-	    }
 	}
 
 	return new FieldRelationInfo(type.asClassDoc(), false);
@@ -978,21 +978,27 @@ class ClassGraph {
      * @throws IOException */
     public void prologue() throws IOException {
 	Options opt = optionProvider.getGlobalOptions();
-	// prepare output file. Use the output file name as a full path unless the output
-	// directory is specified
-	File file = null;
-	if (opt.outputDirectory != null)
-	    file = new File(opt.outputDirectory, opt.outputFileName);
-	else
-	    file = new File(opt.outputFileName);
-	// make sure the output directory are there, otherwise create them
-	if (file.getParentFile() != null
-	    && !file.getParentFile().exists())
-	    file.getParentFile().mkdirs();
-	FileOutputStream fos = new FileOutputStream(file);
-	
+	OutputStream os = null;
+
+	if (opt.outputFileName.equals("-"))
+	    os = System.out;
+	else {
+	    // prepare output file. Use the output file name as a full path unless the output
+	    // directory is specified
+	    File file = null;
+	    if (opt.outputDirectory != null)
+		file = new File(opt.outputDirectory, opt.outputFileName);
+	    else
+		file = new File(opt.outputFileName);
+	    // make sure the output directory are there, otherwise create them
+	    if (file.getParentFile() != null
+		&& !file.getParentFile().exists())
+		file.getParentFile().mkdirs();
+	    os = new FileOutputStream(file);
+	}
+
 	// print plologue
-	w = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(fos), opt.outputEncoding));
+	w = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(os), opt.outputEncoding));
 	w.println(
 	    "#!/usr/local/bin/dot\n" +
 	    "#\n" +
