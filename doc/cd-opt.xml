@@ -5,8 +5,13 @@ A number of command-line options contol the operation of UMLGraph
 class diagram generator:
 <dl>
 <dt>-output</dt><dd>Specify the output file (default <code>graph.dot</code>).
-If the output directory is provided, -output can only specify a file name, otherwise
-a full path is accepted as well.
+If the output directory is provided, -output can only specify a file name,
+otherwise a full path is accepted as well.
+If the filename specified is a dash, then the results are printed on the
+standard output, and can be directly piped into <em>dot</em>.
+Note that, in order to avoid <em>javadoc</em> messages to contaminate
+UMLGraph's output, you must execute UMLGraph directly as a jar,
+not through <em>javadoc</em>.
 </dd>
 <dt>-d</dt><dd>Specify the output directory (defaults to the current directory).
 </dd>
