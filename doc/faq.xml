@@ -26,17 +26,25 @@ To update the table of contents execute the following vim command from a registe
 <li> <a href="#cpp">Can I create UML class diagrams from C++ code?</a></li>
 <li> <a href="#ClassCastException">How can I get around a UMLGraphDoc crash with a ClassCastException?</a></li>
 <li> <a href="#license">Under what license is UMLGraph distributed?</a></li>
+<li> <a href="#classnotfound">Why do I get an exception java.lang.NoClassDefFoundError: com/sun/tools/javadoc/Main?</a></li>
 </ul>
 
 <h2><a name="cmdline">What is the command line sequence to generate a UMLGraph class diagram?</a></h2>
 Assuming that you diagram's description is in the file Diag.java,
-issue the commands:
+issue the command:
 <fmtcode ext="sh">
-javadoc -docletpath absolute-path-to/UmlGraph.jar -package -doclet gr.spinellis.umlgraph.doclet.UmlGraph -output Diag.dot Diag.java
+java -jar path-to/UmlGraph.jar -package -output - Diag.java | dot -Tpng -oDiag.png Diag.dot
+</fmtcode>
+or
+<fmtcode ext="sh">
+javadoc -docletpath path-to/UmlGraph.jar -package -doclet gr.spinellis.umlgraph.doclet.UmlGraph -output Diag.dot Diag.java
 dot -Tpng -oDiag.png Diag.dot
 </fmtcode>
 In the above you can change <code>png</code> to another file format,
 and add more UMLGraph switches before the <code>-option</code> switch.
+<p />
+Note that the first format requires the file <code>tools.jar</code>
+to be in the same directory as <code>UmlGraph.jar</code>.
 
 
 <h2><a name="utfsvg">Why are the SVG diagrams dot generates malformed?</a></h2>
@@ -211,4 +219,14 @@ license.
 This affects only the UMLGraph home page; all other material
 (for example the documentation) is also part of the UMLGraph distribution,
 and can therefore be used under the BSD license.
+
+<h2><a name="classnotfound">Why do I get an exception java.lang.NoClassDefFoundError: com/sun/tools/javadoc/Main?</a></h2>
+This exception will occur when you execute UMLGraph directly as a jar
+(not through<em>javadoc</em>), and the files UmlGraph.jar and tools.jar
+are not in the same directory.
+Either copy UmlGraph.jar in the directory where the tools.jar
+of the JDK distribution is located (and execute UmlGraph.jar from there),
+or copy tools.jar to the directory where UmlGraph.jar is located.
+(The file tools.jar is typically located in the lib directory
+of your JDK distribution.)
 </notes>
