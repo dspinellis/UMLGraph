@@ -2,7 +2,7 @@
 # $Id$
 #
 
-VERSION?=4.7
+VERSION?=4.8
 TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
 BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
@@ -49,12 +49,15 @@ $(BALL_TAR_GZ): $(JARFILE) docs Makefile
 	mkdir $(DISTDIR)
 	mkdir $(DISTDIR)/doc
 	mkdir $(DISTDIR)/lib
+	mkdir $(DISTDIR)/bin
 	$(LF) $(README) >$(DISTDIR)/$(README)
 	$(LF) $(LICENSE) >$(DISTDIR)/$(LICENSE)
 	$(LF) $(PICFILE) >$(DISTDIR)/lib/$(PICFILE)
 	cp $(JARFILE) $(DISTDIR)/lib
 	cp $(WEBDIR)/$(DOC)/* $(DISTDIR)/doc
 	cp build.xml $(DISTDIR)
+	cp umlgraph.bat $(DISTDIR)/bin
+	$(LF) umlgraph >$(DISTDIR)/bin/umlgraph
 	tar cf - src testdata/{java,dot-ref} javadoc --exclude='*/RCS' | tar -C $(DISTDIR) -xvf -
 	$(LF) $(PICFILE) >$(DISTDIR)/src/$(PICFILE)
 	tar czf $(BALL_TAR_GZ) $(DISTDIR)

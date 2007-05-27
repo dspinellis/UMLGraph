@@ -21,6 +21,7 @@
 package gr.spinellis.umlgraph.doclet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +42,11 @@ import com.sun.javadoc.RootDoc;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 public class UmlGraph {
-    /** Entry point */
+
+    private static final String programName = "UmlGraph";
+    private static final String docletName = "gr.spinellis.umlgraph.doclet.UmlGraph";
+
+    /** Entry point through javadoc */
     public static boolean start(RootDoc root) throws IOException {
 	Options opt = buildOptions(root);
 	root.printNotice("UMLGraph doclet version " + Version.VERSION + " started");
@@ -55,6 +60,12 @@ public class UmlGraph {
 	    for (int i = 0; i < views.length; i++)
 		buildGraph(root, views[i], null);
 	return true;
+    }
+
+    public static void main(String args[]) {
+	PrintWriter err = new PrintWriter(System.err);
+        com.sun.tools.javadoc.Main.execute(programName,
+	  err, err, err, docletName, args);
     }
 
     /**
