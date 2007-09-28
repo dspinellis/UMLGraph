@@ -33,18 +33,12 @@ To update the table of contents execute the following vim command from a registe
 Assuming that you diagram's description is in the file Diag.java,
 issue the command:
 <fmtcode ext="sh">
+umlgraph Diag png
 java -jar path-to/UmlGraph.jar -package -output - Diag.java | dot -Tpng -oDiag.png Diag.dot
 </fmtcode>
-or
-<fmtcode ext="sh">
-javadoc -docletpath path-to/UmlGraph.jar -package -doclet gr.spinellis.umlgraph.doclet.UmlGraph -output Diag.dot Diag.java
-dot -Tpng -oDiag.png Diag.dot
-</fmtcode>
 In the above you can change <code>png</code> to another file format,
-and add more UMLGraph switches before the <code>-option</code> switch.
+and add more UMLGraph switches at the end of the line.
 <p />
-Note that the first format requires the file <code>tools.jar</code>
-to be in the same directory as <code>UmlGraph.jar</code>.
 
 
 <h2><a name="utfsvg">Why are the SVG diagrams dot generates malformed?</a></h2>
