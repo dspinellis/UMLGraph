@@ -1,9 +1,8 @@
 #!/bin/sh
 #
 # Unix shell script to run UMLGraph on the specified base file name
-# For this to work the JDK tools.jar file must be located in the
-# same directory as UmlGraph.jar.  You also need to adjust the path
-# of UmlGraph.jar to the actual path where the jar file is installed.
+# For this to work you must adjust the following defintion of
+# UMLGRAPH_HOME to point to the directory where UmlGraph.jar is installed.
 #
 # $Id$
 #
@@ -15,6 +14,10 @@ then
 	echo '(The above will convert MyClass.java into MyClass.png)' 1>&2
 	exit 1
 else
-	java -jar lib/UmlGraph.jar -package $* -output - $1.java |
-	dot -T$2 -o$1.$2
+	BASE=$1
+	FILETYPE=$2
+	shift 2
+	java -classpath "$UMLGRAPH_HOME/UmlGraph.jar:$JAVA_HOME/lib/Tools.jar" \
+	gr.spinellis.umlgraph.doclet.UmlGraph -package $* -output - $BASE.java |
+	dot -T$FILETYPE -o$BASE.$FILETYPE
 fi
