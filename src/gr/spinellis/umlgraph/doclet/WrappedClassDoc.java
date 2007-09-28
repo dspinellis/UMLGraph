@@ -142,11 +142,13 @@ public class WrappedClassDoc implements ClassDoc {
 	return wrapped.getRawCommentText();
     }
 
-    public ClassDoc[] importedClasses() {
+    /** @deprecated */
+    public @Deprecated ClassDoc[] importedClasses() {
 	return wrapped.importedClasses();
     }
 
-    public PackageDoc[] importedPackages() {
+    /** @deprecated */
+    public @Deprecated PackageDoc[] importedPackages() {
 	return wrapped.importedPackages();
     }
 
