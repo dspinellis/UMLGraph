@@ -402,8 +402,8 @@ public class Options implements Cloneable, OptionProvider {
 	} else if (opt[0].equals("-!apidocmap")) {
 	    apiDocMap.clear();
 	} else if(opt[0].equals("-noguillemot")) {
-	    guilOpen = "\\<\\<";
-	    guilClose = "\\>\\>";
+	    guilOpen = "&lt;&lt;";
+	    guilClose = "&gt;&gt;";
 	} else if (opt[0].equals("-!noguillemot")) {
 	    guilOpen = "\u00ab";
 	    guilClose = "\u00bb";
