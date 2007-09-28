@@ -5,6 +5,9 @@
 
 <dt>Version 4.9 Under development </dt><dd>
 <ul>
+<li> Added installation instructions. </li>
+<li> Improved documentation for invoking UmlGraph. </li>
+<li> Command-line scripts for invoking UmlGraph from Windows and Unix. </li>
 <li> Test data is now compatible with the output of the Java 6.0 javadoc</li>
 <li> Java 6.0 deprecated methods are marked in the code as such.</li>
 <li> The -noguillemot option now outputs escaped characters compatible

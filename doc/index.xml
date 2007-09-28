@@ -2,6 +2,7 @@
 <!-- $Id$ -->
 <index>
 <ch><ti>Introduction</ti><fi>intro</fi></ch>
+<ch><ti>Installation</ti><fi>install</fi></ch>
 <ch><ti>Class Diagrams</ti><fi>cd-intro</fi></ch>
 <ch><ti>Class Diagram Operations</ti><fi>cd-oper</fi></ch>
 <ch><ti>Class Modelling</ti><fi>cd-model</fi></ch>
