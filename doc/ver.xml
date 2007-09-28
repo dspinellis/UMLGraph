@@ -8,10 +8,11 @@
 
 <dt>Version 4.9 2007-09-28 </dt><dd>
 <ul>
+<li> <b>Note that from this version UMLGraph requires JDK 6.</b></li>
 <li> Added installation instructions. </li>
 <li> Improved documentation for invoking UmlGraph. </li>
 <li> Command-line scripts for invoking UmlGraph from Windows and Unix. </li>
-<li> Test data is now compatible with the output of the Java 6.0 javadoc</li>
+<li> Test data is now compatible with the output of the JDK 6 javadoc</li>
 <li> Java 6.0 deprecated methods are marked in the code as such.</li>
 <li> The -noguillemot option now outputs escaped characters compatible
 with version 1.13 of Graphviz.
@@ -22,6 +23,7 @@ with version 1.13 of Graphviz.
 
 <dt>Version 4.8 2007-05-10 </dt><dd>
 <ul>
+<li> This is the last version compatible with Java 1.5.</li>
 <li> UmlGraph can now be invoked directly as a jar file. </li>
 <li> Support for sending results to the standard output for piping into <em>dot</em>. </li>
 <li> The distribution includes an example shell script and batch file for
