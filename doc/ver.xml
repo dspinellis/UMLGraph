@@ -3,7 +3,10 @@
 <notes>
 <dl>
 
-<dt>Version 4.9 Under development </dt><dd>
+<dt>Version 4.10 Under development </dt><dd>
+</dd>
+
+<dt>Version 4.9 2007-09-28 </dt><dd>
 <ul>
 <li> Added installation instructions. </li>
 <li> Improved documentation for invoking UmlGraph. </li>
