@@ -7,6 +7,8 @@
 # $Id$
 #
 
+UMLGRAPH_HOME=lib
+
 if [ x$2 = x ]
 then
 	echo usage: umlgraph base_file_name filetype [umlgraph arguments] 1>&2
