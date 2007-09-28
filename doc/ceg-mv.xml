@@ -64,92 +64,52 @@ class DataOperation extends Element {}
 # Author:  Vadim Nasardinov (vadimn@redhat.com)
 # Since:   2004-05-26
 # Version: $Id$
+# See:     http://www.spinellis.gr/sw/umlgraph/doc/ceg-mv.html
 
 # Requires: graphviz
-# Requires: transfig
-# Requires: libxslt
-# Requires: javac
 # Requires: javadoc
 # Requires: JAVA_HOME/lib/tools.jar
 
-.PHONY : clean all build jar dot png debug
+.PHONY : clean all dot png
 
-BUILD=build
+UMLGRAPH  := /var/vadim/binaries/UMLGraph-4.8
+uml_graph := $(UMLGRAPH)/lib/UmlGraph.jar
 
-jar_dir:=$(BUILD)/jars
-diagrams := notes/diagrams
-
-java_files := $(shell find $(diagrams) -name *.java)
+java_files := $(shell find diagrams -name *.java)
 dot_files  := $(subst .java,.dot,$(java_files))
-dot_files  := $(foreach dot, $(dot_files), $(BUILD)/$(dot))
+dot_files  := $(foreach dot, $(dot_files), build/$(dot))
 dot_files  += $(subst .dot,-small.dot,$(dot_files))
 
 png_files := $(subst .dot,.png,$(dot_files))
 
-fig_files := $(shell find $(diagrams) -name *.fig)
-
-png_files += $(subst .fig,.png,$(foreach fig, $(fig_files), $(BUILD)/$(fig)))
-
-
-premade_src_png := $(shell find $(diagrams) -name *.png)
-png_files += $(foreach png, $(premade_src_png), $(BUILD)/$(png))
-
-xml_files:=$(shell find notes -name *.xml)
-html_files:=$(subst notes/,$(BUILD)/notes/,$(xml_files))
-html_files:=$(subst .xml,.html,$(html_files))
-stylesheet:= notes/notes.xsl
-
-javac_dest:=$(BUILD)/classes
-
-classpath:=
-javac=javac -classpath $(JAVA_HOME)/lib/tools.jar -d $(javac_dest)
-
-timestamp:=$(BUILD)/.timestamp
-
-uml_graph:=$(jar_dir)/UmlGraph.jar
-
 jd:=javadoc
 jd_flags := -docletpath $(uml_graph) -doclet gr.spinellis.umlgraph.doclet.UmlGraph -private
-jd_flags += -nodefontname luxisr -nodefontabstractname luxisri
-jd_flags += -edgefontname luxisr
-jd_flags += -nodefontsize 8 -edgefontsize 8
+
+jd_flags += -nodefontsize 9 -edgefontsize 9
 jd_flags += -nodefillcolor LemonChiffon
 detailed_flags := -attributes -operations -types
 
-all: doc
+all: png
 
 clean:
-	rm -rf $(BUILD)
+	rm -rf build
 
-jar: $(uml_graph)
-
-build: $(timestamp)
-
-$(timestamp): src/UmlGraph.java
-	mkdir -p $(javac_dest)
-	$(javac) $?
-	touch $(timestamp)
-
-$(uml_graph): $(timestamp)
-	mkdir -p $(jar_dir)
-	jar cf $(uml_graph) -C $(BUILD)/classes .
-	jar i $(uml_graph)
-
-
-build/%.dot : %.java $(uml_graph)
+build/%.dot : %.java
 	mkdir -p $(dir $@)
 	$(jd) $(jd_flags) $(detailed_flags) -output $@ $<
 
-build/%-small.dot : %.java $(uml_graph)
+build/%-small.dot : %.java
 	mkdir -p $(dir $@)
 	$(jd) $(jd_flags) -output $@ $<
 
-%.png : %.dot $(uml_graph)
+%.png : %.dot
 	dot -Nheight=0.2 -Elabelfontcolor=DarkSlateBlue -Elabelfontsize=8 -Tpng -o $@ $<
 
 build/%.png : %.fig
 	mkdir -p $(dir $@)
 	fig2dev -L png -S 4 $< $@
+
+dot: $(dot_files)
 
 png: $(png_files)
 
@@ -157,13 +117,10 @@ build/%.png : %.png
 	mkdir -p $(dir $@)
 	cp $< $@
 
-build/%.html: %.xml $(stylesheet)
-	mkdir -p $(dir $@)
-	xsltproc -o $@ $(stylesheet) $<
-
-doc: $(html_files) $(png_files)
-
-debug:
-	@echo $(dot_files)
+# Example usage:
+#   make debug-java_files
+#   make debug-png_files
+debug-%:
+	@echo $* is $($*)
 </fmtcode>
 </notes>
