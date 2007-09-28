@@ -1,5 +1,8 @@
 $Id$
 
+Support for comments (once dds's patch gets into Graphviz).
+Suggested by S\'ebastien_Pierre <sebastien@akoha.org>
+
 Add link to MoinMoin sequence to deriv.xml
 
 Yves Bossel: If I may do some suggestions:
