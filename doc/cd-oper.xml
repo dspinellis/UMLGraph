@@ -18,7 +18,7 @@ the resulting graphs may be large and unwieldy.
 <p />
 There are various ways to invoke UmlGraph,
 each providing a different balance between convenience and flexibility.
-<h2>Option 1: Using the Supplied Scipt</h2>
+<h2>Option 1: Using the Supplied Script</h2>
 This is the simplest option.
 If <code>umlgraph</code> (or <code>umlgraph.bat</code>) is correctly
 installed,
