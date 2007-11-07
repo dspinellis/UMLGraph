@@ -46,6 +46,6 @@ complete(O);
 The diagram is drawn from its source code specification using a command
 like:
 <fmtcode ext="sh">
-pictplot -Tgif FILENAME.pic >FILENAME.gif
+pic2plot -Tgif FILENAME.pic >FILENAME.gif
 </fmtcode>
 </notes>
