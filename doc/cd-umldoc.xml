@@ -23,9 +23,9 @@ UMLGraph javadocs are now generated with UmlGraphDoc with the following ant targ
 
 <fmtcode ext="xml">
 <target name="javadocs" depends="compile">
-	<javadoc sourcepath="${src}" packagenames="gr.spinellis.umlgraph.doclet.*" destdir="${javadoc}" 
+	<javadoc sourcepath="${src}" packagenames="org.umlgraph.doclet.*" destdir="${javadoc}" 
 	         private="true">
-		<doclet name="gr.spinellis.umlgraph.doclet.UmlGraphDoc" path="${lib}/UMLGraph.jar">
+		<doclet name="org.umlgraph.doclet.UmlGraphDoc" path="${lib}/UMLGraph.jar">
 			<param name="-inferrel"/>
 			<param name="-inferdep"/>
 			<param name="-hide" value="java.*"/>

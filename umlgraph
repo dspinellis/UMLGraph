@@ -20,6 +20,6 @@ else
 	FILETYPE=$2
 	shift 2
 	java -classpath "$UMLGRAPH_HOME/UmlGraph.jar:$JAVA_HOME/lib/Tools.jar" \
-	gr.spinellis.umlgraph.doclet.UmlGraph -package $* -output - $BASE.java |
+	org.umlgraph.doclet.UmlGraph -package $* -output - $BASE.java |
 	dot -T$FILETYPE -o$BASE.$FILETYPE
 fi

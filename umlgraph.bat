@@ -16,6 +16,6 @@ goto end
 
 :ok
 
-java -classpath "%UMLGRAPH_HOME%\UmlGraph.jar;%JAVA_HOME%\lib\Tools.jar" gr.spinellis.umlgraph.doclet.UmlGraph -package %3 %4 %5 %6 %7 %8 %9 -output - %1.java | dot -T%2 -o%1.%2
+java -classpath "%UMLGRAPH_HOME%\UmlGraph.jar;%JAVA_HOME%\lib\Tools.jar" org.umlgraph.doclet.UmlGraph -package %3 %4 %5 %6 %7 %8 %9 -output - %1.java | dot -T%2 -o%1.%2
 
 :end

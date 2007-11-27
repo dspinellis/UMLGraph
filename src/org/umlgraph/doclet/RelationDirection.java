@@ -1,4 +1,4 @@
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 /**
  * The possibile directions of a relation given a reference class (used in

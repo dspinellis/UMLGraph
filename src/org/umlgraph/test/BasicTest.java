@@ -18,7 +18,7 @@
  *
  */
 
-package gr.spinellis.umlgraph.test;
+package org.umlgraph.test;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,7 +132,7 @@ public class BasicTest {
 
     private static void runDoclet(String[] options) {
 	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw,
-		"gr.spinellis.umlgraph.doclet.UmlGraph", options);
+		"org.umlgraph.doclet.UmlGraph", options);
     }
 
     private static void compare(List<String> differences, File dotFile, File refFile)

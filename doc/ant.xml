@@ -13,7 +13,7 @@ like the following.
            <pathelement path="${src.java.dir}"/>
          </path>
        <javadoc sourcepathref="uml.source.path" packagenames="*" package="true">
-           <doclet name="gr.spinellis.umlgraph.doclet.UmlGraph" path="${basedir}/lib/UMLGraph.jar">
+           <doclet name="org.umlgraph.doclet.UmlGraph" path="${basedir}/lib/UMLGraph.jar">
                <param name="-d" value="${uml.dir}"/>
            </doclet>
        </javadoc>

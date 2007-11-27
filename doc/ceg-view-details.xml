@@ -80,7 +80,7 @@ and by invoking the following commands (assuming UmlGraph.jar is in the
 current directory):
 
 <fmtcode ext="bat">
-javadoc -doclet gr.spinellis.umlgraph.doclet.UmlGraph -private -docletpath UmlGraph.jar -views RootViews.java
+javadoc -doclet org.umlgraph.doclet.UmlGraph -private -docletpath UmlGraph.jar -views RootViews.java
 dot -Tpng -o root-small.png Overview.dot
 dot -Tpng -o root.png DetailedView.dot
 </fmtcode>

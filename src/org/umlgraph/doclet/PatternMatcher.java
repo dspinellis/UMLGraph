@@ -15,7 +15,7 @@
  * $Id$
  *
  */
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -16,7 +16,7 @@
  *
  */
 
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 import com.sun.javadoc.ClassDoc;
 

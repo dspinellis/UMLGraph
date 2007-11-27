@@ -83,7 +83,7 @@ dot_files  += $(subst .dot,-small.dot,$(dot_files))
 png_files := $(subst .dot,.png,$(dot_files))
 
 jd:=javadoc
-jd_flags := -docletpath $(uml_graph) -doclet gr.spinellis.umlgraph.doclet.UmlGraph -private
+jd_flags := -docletpath $(uml_graph) -doclet org.umlgraph.doclet.UmlGraph -private
 
 jd_flags += -nodefontsize 9 -edgefontsize 9
 jd_flags += -nodefillcolor LemonChiffon

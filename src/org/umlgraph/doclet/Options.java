@@ -18,7 +18,7 @@
  *
  */
 
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 import java.io.BufferedReader;
 import java.io.File;

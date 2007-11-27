@@ -45,12 +45,12 @@ and specify the full name of the UmlGraph doclet as an argument to Java.
 This is an invocation example under Windows
 <fmtcode ext="bat">
 java -classpath "lib/UmlGraph.jar;c:\program files\java\jdk1.6.0_02\lib\Tools.jar"
-    gr.spinellis.umlgraph.doclet.UmlGraph -package Test.java
+    org.umlgraph.doclet.UmlGraph -package Test.java
 </fmtcode>
 and under Unix
 <fmtcode ext="sh">
 java -classpath '/usr/share/lib/UmlGraph.jar:/opt/Java-1.6/lib/tools.jar' \
-gr.spinellis.umlgraph.doclet.UmlGraph -package Test.java
+org.umlgraph.doclet.UmlGraph -package Test.java
 </fmtcode>
 </li>
 <li> Place the <code>UmlGraph.jar</code>
@@ -85,13 +85,13 @@ and hyperlinks to the Sun Java API documentation for all other classes.
 Alternatively, you can also run <em>UMLGraph</em> from within <em>javadoc</em>.
 This can be useful if your IDE provides additional support for running <em>javadoc</em>.
 In this case you run
-<em>javadoc</em> with arguments <code>-doclet gr.spinellis.umlgraph.doclet.UmlGraph</code>
+<em>javadoc</em> with arguments <code>-doclet org.umlgraph.doclet.UmlGraph</code>
 <code>-docletpath /path/to/UmlGraph.jar</code>
 and append at the end the file(s) that contain your diagram
 specification.
 Example:
 <fmtcode ext="sh">
-javadoc -docletpath UmlGraph.jar -doclet gr.spinellis.umlgraph.doclet.UmlGraph -private Simple.java
+javadoc -docletpath UmlGraph.jar -doclet org.umlgraph.doclet.UmlGraph -private Simple.java
 </fmtcode>
 
 <h2>Running Dot</h2>

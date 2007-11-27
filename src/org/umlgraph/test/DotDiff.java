@@ -18,7 +18,7 @@
  *
  */
 
-package gr.spinellis.umlgraph.test;
+package org.umlgraph.test;
 
 import java.io.BufferedReader;
 import java.io.File;

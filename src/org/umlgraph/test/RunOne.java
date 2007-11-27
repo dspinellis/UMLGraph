@@ -18,7 +18,7 @@
  *
  */
 
-package gr.spinellis.umlgraph.test;
+package org.umlgraph.test;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -54,7 +54,7 @@ public class RunOne {
     }
 
     private static void runDoclet(String[] options) {
-	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw, "gr.spinellis.umlgraph.doclet.UmlGraph", options);
+	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw, "org.umlgraph.doclet.UmlGraph", options);
     }
 
     

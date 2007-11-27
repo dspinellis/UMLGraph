@@ -1,4 +1,4 @@
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 import java.io.IOException;
 import java.util.regex.Pattern;

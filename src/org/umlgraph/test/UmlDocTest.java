@@ -17,7 +17,7 @@
  * $Id$
  *
  */
-package gr.spinellis.umlgraph.test;
+package org.umlgraph.test;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class UmlDocTest {
     static final String testDestFolder = "testdata/umldoc-out";
 
     static final String testRefFolder = "testdata/umldoc-ref";
-    static final String doclet = "gr.spinellis.umlgraph.doclet.UmlGraphDoc";
+    static final String doclet = "org.umlgraph.doclet.UmlGraphDoc";
 
     static PrintWriter pw = new PrintWriter(System.out);
 

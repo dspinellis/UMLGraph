@@ -1,4 +1,4 @@
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 /**
  * A map from relation types to directions

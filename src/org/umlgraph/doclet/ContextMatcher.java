@@ -16,7 +16,7 @@
  *
  */
 
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -125,7 +125,7 @@ public class ContextMatcher implements ClassMatcher {
     }
 
     /**
-     * @see gr.spinellis.umlgraph.doclet.ClassMatcher#matches(com.sun.javadoc.ClassDoc)
+     * @see org.umlgraph.doclet.ClassMatcher#matches(com.sun.javadoc.ClassDoc)
      */
     public boolean matches(ClassDoc cd) {
 	if (keepParentHide && opt.matchesHideExpression(cd.toString()))
@@ -142,7 +142,7 @@ public class ContextMatcher implements ClassMatcher {
     }
 
     /**
-     * @see gr.spinellis.umlgraph.doclet.ClassMatcher#matches(java.lang.String)
+     * @see org.umlgraph.doclet.ClassMatcher#matches(java.lang.String)
      */
     public boolean matches(String name) {
 	if (pattern.matcher(name).matches())

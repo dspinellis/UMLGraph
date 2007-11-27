@@ -15,7 +15,7 @@
  * $Id$
  *
  */
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

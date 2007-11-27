@@ -2,13 +2,13 @@
 # $Id$
 #
 
-VERSION?=4.9
+VERSION?=5.0
 TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
 BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
 WEBDIR=$(UH)/dds/pubs/web/home/sw/umlgraph
-DOCLETSRCPATH=src/gr/spinellis/umlgraph/doclet
+DOCLETSRCPATH=src/org/umlgraph/doclet
 DOCLETSRC= \
 	$(DOCLETSRCPATH)/ClassGraph.java \
 	$(DOCLETSRCPATH)/ClassInfo.java \
@@ -17,8 +17,8 @@ DOCLETSRC= \
 	$(DOCLETSRCPATH)/UmlGraph.java \
 	$(DOCLETSRCPATH)/Version.java
 TESTSRC = \
-	src/gr/spinellis/umlgraph/test/DotDiff.java \
-	src/gr/spinellis/umlgraph/test/BasicTest.java
+	src/org/umlgraph/test/DotDiff.java \
+	src/org/umlgraph/test/BasicTest.java
 PICFILE=sequence.pic
 README=README.txt
 LICENSE=LICENSE
@@ -41,7 +41,7 @@ all: $(JARFILE)
 
 tarball: $(BALL_TAR_GZ)
 
-src/gr/spinellis/umlgraph/doclet/Version.java: Makefile
+src/org/umlgraph/doclet/Version.java: Makefile
 	ant -DVERSION="$(VERSION)" version
 
 $(BALL_TAR_GZ): $(JARFILE) docs Makefile

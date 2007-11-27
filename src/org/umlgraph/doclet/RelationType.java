@@ -1,4 +1,4 @@
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 /**
  * The type of relation that links two entities

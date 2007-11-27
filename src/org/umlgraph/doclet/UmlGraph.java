@@ -18,7 +18,7 @@
  *
  */
 
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,7 +44,7 @@ import com.sun.javadoc.RootDoc;
 public class UmlGraph {
 
     private static final String programName = "UmlGraph";
-    private static final String docletName = "gr.spinellis.umlgraph.doclet.UmlGraph";
+    private static final String docletName = "org.umlgraph.doclet.UmlGraph";
 
     /** Entry point through javadoc */
     public static boolean start(RootDoc root) throws IOException {

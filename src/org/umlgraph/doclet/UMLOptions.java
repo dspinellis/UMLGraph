@@ -1,4 +1,4 @@
-package gr.spinellis.umlgraph.doclet;
+package org.umlgraph.doclet;
 
 /**
  * Options for UMLGraph class diagram generation
