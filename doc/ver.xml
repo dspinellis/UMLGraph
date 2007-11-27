@@ -123,7 +123,7 @@ parameters -d, -view, -views (Andrea Aime)</li>
 conventions.
 The user-visible change is that the doclet is now invoked as
 <fmtcode ext="sh">
-javadoc -docletpath UmlGraph.jar -doclet org.umlgraph.doclet.UmlGraph
+javadoc -docletpath UmlGraph.jar -doclet gr.spinellis.umlgraph.doclet.UmlGraph
 </fmtcode>
 </li>
 <li> Show package visibility for class members (Olek Poplavskyy). </li>
