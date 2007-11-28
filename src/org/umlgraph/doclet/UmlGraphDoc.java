@@ -147,6 +147,7 @@ public class UmlGraphDoc {
 		root.printWarning("Errors running Graphviz on " + dotFile);
 	} catch (Exception e) {
 	    e.printStackTrace();
+	    System.err.println("Ensure that dot is in your path and that its path does not contain spaces");
 	}
     }
 
