@@ -15,7 +15,7 @@ DOC?=snapshot-doc
 .SUFFIXES:.java .dot .ps .gif .pic .eps .png
 
 .java.dot:
-	javadoc -docletpath ../lib/UmlGraph.jar -doclet gr.spinellis.umlgraph.doclet.UmlGraph -private $<
+	javadoc -docletpath ../lib/UmlGraph.jar -doclet org.umlgraph.doclet.UmlGraph -private $<
 	mv graph.dot $@
 
 .dot.eps:
