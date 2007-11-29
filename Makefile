@@ -22,7 +22,7 @@ TESTSRC = \
 PICFILE=sequence.pic
 README=README.txt
 LICENSE=LICENSE
-OTHERSRC=index.html build.xml Makefile
+OTHERSRC=index.html build.xml Makefile oldversion.html
 # Files to tag
 ALLTAG=$(DOCLETSRC) $(TESTSRC) $(PICFILE) $(README) $(LICENSE) $(OTHERSRC)
 # Documentation location (release)
@@ -74,13 +74,13 @@ test:
 	ant test
 
 web: $(BALL_TAR_GZ) CHECKSUM.MD5
-	cp $(BALL_TAR_GZ) $(ZIPBALL) CHECKSUM.MD5 $(WEBDIR)
+	cp $(BALL_TAR_GZ) $(ZIPBALL) CHECKSUM.MD5 oldversion.html $(WEBDIR)
 	cp $(JARFILE) $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
 	tar cf - javadoc | tar -C $(WEBDIR) -xvf -
 	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
 
 CHECKSUM.MD5: $(BALL_TAR_GZ) $(JARFILE)
-	md5 UMLGraph-2.10.* UMLGraph-$(VERSION).* >CHECKSUM.MD5
+	md5 UMLGraph-2.10.* UMLGraph-4.8.* UMLGraph-$(VERSION).* >CHECKSUM.MD5
 	(cd lib ; md5 UmlGraph.jar) >>CHECKSUM.MD5
 
 tag:
