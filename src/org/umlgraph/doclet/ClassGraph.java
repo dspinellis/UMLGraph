@@ -417,12 +417,12 @@ class ClassGraph {
 	tags = c.tags("view");
 	if (tags.length > 0)
 	    return true;
-    Options opt; 
-    if(c instanceof ClassDoc)
-      opt = optionProvider.getOptionsFor((ClassDoc) c);
-    else 
-      opt = optionProvider.getOptionsFor(c.containingClass());
-	return opt.matchesHideExpression(c.toString());
+	Options opt; 
+	if(c instanceof ClassDoc)
+	  opt = optionProvider.getOptionsFor((ClassDoc) c);
+	else 
+	  opt = optionProvider.getOptionsFor(c.containingClass());
+	    return opt.matchesHideExpression(c.toString());
     }
     
     protected ClassInfo getClassInfo(String className) {
@@ -592,13 +592,16 @@ class ClassGraph {
 	    }
 	    ClassDoc to = from.findClass(t[3]);
 
-	    if(hidden(to))
-		continue;
 
-	    if (to != null)
+	    if (to != null) {
+		if(hidden(to))
+		    continue;
 		relation(opt, rt, from, to, t[0], t[1], t[2]);
-	    else
+	    } else {
+		if(hidden(t[3]))
+		    continue;
 		relation(opt, rt, from, from.toString(), to, t[3], t[0], t[1], t[2]);
+	    }
 	}
     }
 
