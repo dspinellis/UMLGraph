@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+In UMLGraph you can easily add a note (comment) to an element,
+using the <code>@note</code> tag.
+The corresponding text will be split into lines, as specified in the note.
+Multiple tags can be used to add more notes to the same element.
+More complicated, (one to many) relationships can be established
+by creating an element with a note shape, setting its contents
+to its comment text through the <code>@opt commentname</code> tag,
+and associating it with other elements with the <code>@assoc</code>
+tag.
+<table>
+<tr><td>
+<fmtcode ext="java">
+/**
+ * @opt shape node
+ * @note Located in the
+ * machine room
+ * @note Sun Blade 6048
+ * @depend - - - MapLocation
+ * @depend - - - DataMine
+ */
+class Server{}
+
+/** @opt shape component */
+class MapLocation {}
+
+/** @opt shape component */
+class DataMine {}
+
+/**
+ * CPU-munching
+ * components that must
+ * run on this server
+ * @opt shape note
+ * @opt commentname
+ * @assoc - - - MapLocation
+ * @assoc - - - DataMine
+ */
+class munchComment {}
+</fmtcode>
+</td><td>
+<img src="note.gif" alt="UML note example" />
+</td></tr></table>
+
+</notes>

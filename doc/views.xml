@@ -42,7 +42,6 @@ class documentation for details on a proper regular expression specification.
 unless the "output" option is specified to override it.
 
 <h2>View inheritance</h2>
-
 View classes can inherit from other view classes, allowing views to
 share a set of common matches. The standard java inheritance mechanism
 is used to specify inheritance.<br/>

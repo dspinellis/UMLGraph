@@ -5,6 +5,10 @@ The UMLGraph class diagrams allows you to model
 <ul>
 <li>classes (specified as Java classes)
 </li>
+active classes, components, nodes, use cases,
+collaborations, and packages
+(specified as Java classes with an <code>@opt shape</code> tag)
+</li>
 <li>attributes (specified as Java class fields)
 </li>
 <li>operations (specified as Java class methods)

@@ -4,6 +4,9 @@
 <dl>
 
 <dt>Version 5.0 Under development </dt><dd>
+</dd>
+
+<dt>Version 5.0 2007-11-29 </dt><dd>
 <ul>
 <li> All code now lives under <code>org.umlgraph</code>.
 This change requires corresponding modifications to the UMLGraph
@@ -12,9 +15,11 @@ callers.</li>
 usecase, and activeclass.
 These shapes require GraphViz 1.16 or newer.
 </li>
-<li> A new @note tag allows the annotation of elements with comments.
+<li> A new <code>@note</code> tag allows the annotation of elements with comments.
 (Suggested by Sébastien Pierre.)
 </li>
+<li> A new <code>@commentname</code> option allows the naming of elements
+with the text of the <em>javadoc</em> comment.
 </ul>
 </dd>
 

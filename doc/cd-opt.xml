@@ -1,8 +1,12 @@
 <?xml version="1.0" ?>
 <!-- $Id$ -->
 <notes>
-A number of command-line options contol the operation of UMLGraph
-class diagram generator:
+A number of options contol the operation of UMLGraph
+class diagram generator.
+These can be specified on the command line, and most can also
+be specified within the diagram, affecting all or some elements.
+<p/>
+The following options are supported:
 <dl>
 <dt>-output</dt><dd>Specify the output file (default <code>graph.dot</code>).
 If the output directory is provided, -output can only specify a file name,
@@ -48,6 +52,9 @@ types.
 <code>-enumerations</code>
 <code>-enumconstants</code>
 </dd>
+<dt>-commentname</dt><dd>Name the element using the text in the javadoc
+comment, instead of the name of its class.
+</dd>
 <dt>-nodefillcolor</dt><dd>Specify the color to use to fill the shapes.
 </dd>
 <dt>-nodefontname</dt><dd>Specify the font name to use inside nodes.
@@ -90,6 +97,19 @@ names (used only when it package name is postfixed, see -postfixpackage).
 package name in the line after the class name, in order to reduce the
 width of class nodes.
 </dd>
+<dt>-shape</dt><dd>Specify the shape to use for the rendered element(s).
+The following UML shapes are available:
+<ul>
+<li>class (default)</li>
+<li>node</li>
+<li>component</li>
+<li>package</li>
+<li>collaboration</li>
+<li>usecase</li>
+<li>activeclass</li>
+</ul>
+</dd>
+
 <dt>-hide</dt><dd>Specify entities to hide from the graph.
 Matching is done using a non-anchored regular match.
 For instance, "<code>-hide (Big|\.)Widget</code>" would hide "<code>com.foo.widgets.Widget</code>" and
@@ -184,35 +204,4 @@ you can find a complete list in the
 Font names are passed directly to the dot graph generation back-end.
 In general the Postcript standard names Times, Helvetica, Courier, and
 Symbol are safe to use.
-<p />
-Since the options are really a part of the generated graph you
-want in many cases to include them in the diagram specification.
-You can do that by adding <em>javadoc</em> <code>@opt</code> tags in front
-of a class named <code>UMLOptions</code>, as in the following example:
-<fmtcode ext="java">
-/**
- * @opt horizontal
- * @opt all
- * @hidden
- */
-class UMLOptions {}
-</fmtcode>
-
-You can also change the UMLGraph operation on a per-class basis by
-using <code>@opt</code> attributes on individual classes.
-In this case the <code>@opt</code> specification temporarily overrides
-the particular global setting for the class being processed.
-
-<p/>Finally, you can reset an option to its default value by prefixing it
-    with an exclamation mark. For example:
-<fmtcode ext="java">
-/**
- * @opt !attributes
- * @opt !nodefontsize
- */
-class MyClass {}
-</fmtcode>
-
-will disable attribute listing for MyClass, and reset the node font size
-to its default value (10).
 </notes>

@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<!-- $Id$ -->
+<notes>
+Since the options are really a part of the generated graph you
+want in many cases to include them in the diagram specification.
+You can do that by adding <em>javadoc</em> <code>@opt</code> tags in front
+of a class named <code>UMLOptions</code>, as in the following example:
+<fmtcode ext="java">
+/**
+ * @opt horizontal
+ * @opt all
+ * @hidden
+ */
+class UMLOptions {}
+</fmtcode>
+<p>
+Similarly, you can also globally specify options for all the note elements.
+through a class named <code>UMLNoteOptions</code>, as in the following example:
+<fmtcode ext="java">
+/**
+ * @hidden
+ * @opt nodefontcolor "blue"
+ */
+class UMLNoteOptions{}
+</fmtcode>
+<p>
+
+You can also change the UMLGraph operation on a per-class basis by
+using <code>@opt</code> attributes on individual classes.
+In this case the <code>@opt</code> specification temporarily overrides
+the particular global setting for the class being processed.
+
+<p/>Finally, you can reset an option to its default value by prefixing it
+    with an exclamation mark. For example:
+<fmtcode ext="java">
+/**
+ * @opt !attributes
+ * @opt !nodefontsize
+ */
+class MyClass {}
+</fmtcode>
+
+will disable attribute listing for MyClass, and reset the node font size
+to its default value (10).
+</notes>
+
