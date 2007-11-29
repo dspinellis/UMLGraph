@@ -12,6 +12,9 @@ callers.</li>
 usecase, and activeclass.
 These shapes require GraphViz 1.16 or newer.
 </li>
+<li> A new @note tag allows the annotation of elements with comments.
+(Suggested by Sébastien Pierre.)
+</li>
 </ul>
 </dd>
 

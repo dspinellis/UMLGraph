@@ -46,6 +46,9 @@ public class UmlGraph {
     private static final String programName = "UmlGraph";
     private static final String docletName = "org.umlgraph.doclet.UmlGraph";
 
+    /** Options used for commenting nodes */
+    private static Options commentOptions;
+
     /** Entry point through javadoc */
     public static boolean start(RootDoc root) throws IOException {
 	Options opt = buildOptions(root);
@@ -68,21 +71,33 @@ public class UmlGraph {
 	  err, err, err, docletName, args);
     }
 
+    public static Options getCommentOptions() {
+    	return commentOptions;
+    }
+
     /**
-     * Creates the base Options object, that contains both the options specified on the command
+     * Creates the base Options object.
+     * This contains both the options specified on the command
      * line and the ones specified in the UMLOptions class, if available.
+     * Also create the globally accessible commentOptions object.
      */
     public static Options buildOptions(RootDoc root) {
+	commentOptions = new Options();
+	commentOptions.setOptions(root.options());
+	commentOptions.setOptions(findClass(root, "UMLCommentOptions"));
+	commentOptions.shape = "note";
+
 	Options opt = new Options();
 	opt.setOptions(root.options());
-	opt.setOptions(findUMLOptions(root));
+	opt.setOptions(findClass(root, "UMLOptions"));
 	return opt;
     }
 
-    private static ClassDoc findUMLOptions(RootDoc root) {
+    /** Return the ClassDoc for the specified class; null if not found. */
+    private static ClassDoc findClass(RootDoc root, String name) {
 	ClassDoc[] classes = root.classes();
 	for (ClassDoc cd : classes)
-	    if(cd.name().equals("UMLOptions"))
+	    if(cd.name().equals(name))
 		return cd;
 	return null;
     }

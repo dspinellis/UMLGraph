@@ -554,6 +554,22 @@ class ClassGraph {
 	    }
 	    externalTableEnd();
 	    nodeProperties(opt);
+
+	    // If needed, add a note for this node
+	    int ni = 0;
+	    for (Tag t : c.tags("note")) {
+		String noteName = "n" + ni + "c" + ci.name;
+		w.print("\t// Note annotation\n");
+		w.print("\t" + noteName + " [label=");
+		externalTableStart(UmlGraph.getCommentOptions(), c.qualifiedName(), classToUrl(c, rootClass));
+		innerTableStart();
+		tableLine(Align.LEFT, htmlNewline(escape(t.text())), UmlGraph.getCommentOptions(), Font.CLASS);
+		innerTableEnd();
+		externalTableEnd();
+		nodeProperties(UmlGraph.getCommentOptions());
+		w.print("\t" + noteName + " -> " + relationNode(c) + "[arrowhead=none];\n");
+		ni++;
+	    }
 	    ci.nodePrinted = true;
 	}
 	return ci.name;
