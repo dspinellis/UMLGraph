@@ -580,10 +580,9 @@ class ClassGraph {
      * Print all relations for a given's class's tag
      * @param tagname the tag containing the given relation
      * @param from the source class
-     * @param fromName the source class internal name
      * @param edgetype the dot edge specification
      */
-    private void relation(Options opt, RelationType rt, ClassDoc from, String fromName) {
+    private void allRelation(Options opt, RelationType rt, ClassDoc from) {
 	String tagname = rt.toString().toLowerCase();
 	for (Tag tag : from.tags(tagname)) {
 	    String t[] = StringUtil.tokenize(tag.text());    // l-src label l-dst target
@@ -591,28 +590,32 @@ class ClassGraph {
 		System.err.println("Error in " + from + "\n" + tagname + " expects four fields (l-src label l-dst target): " + tag.text());
 		return;
 	    }
-	    String dest = t[3];
-	    String destName = null;
 	    ClassDoc to = from.findClass(t[3]);
-	    if(to != null) {
-		dest = to.toString();
-		destName = getNodeName(dest);
-	    } else {
-		destName = getNodeName(t[3]);
-	    }
-	    
-	    if(hidden(dest))
+
+	    if(hidden(to))
 		continue;
-	    relation(opt, rt, from.toString(), fromName, dest, destName, t[0], t[1], t[2]);
+
+	    if (to != null)
+		relation(opt, rt, from, to, t[0], t[1], t[2]);
+	    else
+		relation(opt, rt, from, from.toString(), to, t[3], t[0], t[1], t[2]);
 	}
     }
 
-    private void relation(Options opt, RelationType rt, String from, String fromName, 
-	    String dest, String destName, String tailLabel, String label, String headLabel) {
+    /**
+     * Print the specified relation
+     * @param from the source class (may be null)
+     * @param fromName the source class's name
+     * @param to the destination class (may be null)
+     * @param toName the destination class's name
+     */
+    private void relation(Options opt, RelationType rt, ClassDoc from, String fromName, 
+	    ClassDoc to, String toName, String tailLabel, String label, String headLabel) {
+
 	// print relation
 	String edgetype = associationMap.get(rt);
-	w.println("\t// " + from + " " + rt.toString() + " " + dest);
-	w.println("\t" + fromName + ":p -> " + destName + ":p [" +
+	w.println("\t// " + fromName + " " + rt.toString() + " " + toName);
+	w.println("\t" + relationNode(from, fromName) + " -> " + relationNode(to, toName) + " [" +
     	"taillabel=\"" + tailLabel + "\", " +
     	"label=\"" + guillemize(opt, label) + "\", " +
     	"headlabel=\"" + headLabel + "\", " +
@@ -627,9 +630,45 @@ class ClassGraph {
 	RelationDirection d = RelationDirection.BOTH;
 	if(rt == RelationType.NAVASSOC || rt == RelationType.DEPEND)
 	    d = RelationDirection.OUT;
-	getClassInfo(from).addRelation(dest, rt, d);
-        getClassInfo(dest).addRelation(from, rt, d.inverse());
-	
+	getClassInfo(fromName).addRelation(toName, rt, d);
+        getClassInfo(toName).addRelation(fromName, rt, d.inverse());
+    }
+
+    /**
+     * Print the specified relation
+     * @param from the source class
+     * @param to the destination class
+     */
+    private void relation(Options opt, RelationType rt, ClassDoc from,
+	    ClassDoc to, String tailLabel, String label, String headLabel) {
+	relation(opt, rt, from, from.toString(), to, to.toString(), tailLabel, label, headLabel);
+    }
+
+
+    /** Return the full name of a relation's node.
+     * This may involve appending the port :p for the standard nodes
+     * whose outline is rendered through an inner table.
+     */
+    private String relationNode(ClassDoc c) {
+	Options opt = optionProvider.getOptionsFor(c);
+	String name = getNodeName(c);
+	return ((opt.shape == null) ? (name + ":p") : name);
+    }
+
+    /** Return the full name of a relation's node c.
+     * This may involve appending the port :p for the standard nodes
+     * whose outline is rendered through an inner table.
+     * @param c the node's class (may be null)
+     * @param cName the node's class name
+     */
+    private String relationNode(ClassDoc c, String cName) {
+	Options opt;
+	if (c == null)
+	    opt = optionProvider.getOptionsFor(cName);
+	else
+	    opt = optionProvider.getOptionsFor(c);
+	String name = getNodeName(cName);
+	return ((opt.shape == null) ? (name + ":p") : name);
     }
 
     /** Print a class's relations */
@@ -638,7 +677,6 @@ class ClassGraph {
 	if (hidden(c) || c.name().equals("")) // avoid phantom classes, they may pop up when the source uses annotations
 	    return;
 	String className = c.toString();
-	String cs = getNodeName(c);
 
 	// Print generalization (through the Java superclass)
 	Type s = c.superclassType();
@@ -648,7 +686,7 @@ class ClassGraph {
 	    !hidden(s.asClassDoc())) {
 	    	ClassDoc sc = s.asClassDoc();
 		w.println("\t//" + c + " extends " + s + "\n" +
-		    "\t" + getNodeName(sc) + ":p -> " + cs + ":p [dir=back,arrowtail=empty];");
+		    "\t" + relationNode(sc) + " -> " + relationNode(c) + " [dir=back,arrowtail=empty];");
 		getClassInfo(className).addRelation(sc.toString(), RelationType.EXTENDS, RelationDirection.OUT);
 		getClassInfo(sc.toString()).addRelation(className, RelationType.EXTENDS, RelationDirection.IN);
 	}
@@ -656,8 +694,9 @@ class ClassGraph {
 	// Print generalizations (through @extends tags)
 	for (Tag tag : c.tags("extends"))
 	    if (!hidden(tag.text())) {
+		ClassDoc from = c.findClass(tag.text());
 		w.println("\t//" + c + " extends " + tag.text() + "\n" +
-		    "\t" + getNodeName(tag.text()) + ":p -> " + cs + ":p [dir=back,arrowtail=empty];");
+		    "\t" + relationNode(from, tag.text()) + " -> " + relationNode(c) + " [dir=back,arrowtail=empty];");
 		getClassInfo(className).addRelation(tag.text(), RelationType.EXTENDS, RelationDirection.OUT);
 		getClassInfo(tag.text()).addRelation(className, RelationType.EXTENDS, RelationDirection.IN);
 	    }
@@ -665,18 +704,19 @@ class ClassGraph {
 	for (Type iface : c.interfaceTypes()) {
 	    ClassDoc ic = iface.asClassDoc();
 	    if (!hidden(ic)) {
-		w.println("\t//" + c + " implements " + ic + "\n\t" + getNodeName(ic) + ":p -> " + cs + ":p [dir=back,arrowtail=empty,style=dashed];"
+		w.println("\t//" + c + " implements " + ic + "\n\t" + 
+		    relationNode(ic) + " -> " + relationNode(c) + " [dir=back,arrowtail=empty,style=dashed];"
 		    );
 		getClassInfo(className).addRelation(ic.toString(), RelationType.IMPLEMENTS, RelationDirection.OUT);
 		getClassInfo(ic.toString()).addRelation(className, RelationType.IMPLEMENTS, RelationDirection.IN);
 	    }
 	}
 	// Print other associations
-	relation(opt, RelationType.ASSOC, c, cs);
-	relation(opt, RelationType.NAVASSOC, c, cs);
-	relation(opt, RelationType.HAS, c, cs);
-	relation(opt, RelationType.COMPOSED, c, cs);
-	relation(opt, RelationType.DEPEND, c, cs);
+	allRelation(opt, RelationType.ASSOC, c);
+	allRelation(opt, RelationType.NAVASSOC, c);
+	allRelation(opt, RelationType.HAS, c);
+	allRelation(opt, RelationType.COMPOSED, c);
+	allRelation(opt, RelationType.DEPEND, c);
     }
 
     /** Print classes that were parts of relationships, but not parsed by javadoc */
@@ -733,7 +773,6 @@ class ClassGraph {
 	Options opt = optionProvider.getOptionsFor(c);
 
 	// check if the source is excluded from inference
-	String sourceName = c.toString();
 	if (hidden(c))
 	    return;
 
@@ -751,10 +790,8 @@ class ClassGraph {
 	    if (hidden(fri.cd))
 		continue;
 
-	    String dest = fri.cd.toString();
 	    String destAdornment = fri.multiple ? "*" : "";
-	    relation(opt, opt.inferRelationshipType, sourceName, getNodeName(c), dest,
-		    getNodeName(dest), "", "", destAdornment);
+	    relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
 	}
     }
 
@@ -823,7 +860,6 @@ class ClassGraph {
 
 	    // check if the destination is excluded from inference
 	    ClassDoc fc = type.asClassDoc();
-	    String destName = fc.toString();
 	    if (hidden(fc))
 		continue;
 	    
@@ -833,10 +869,9 @@ class ClassGraph {
 		continue;
 
 	    // if source and dest are not already linked, add a dependency
-	    RelationPattern rp = getClassInfo(sourceName).getRelation(destName);
+	    RelationPattern rp = getClassInfo(sourceName).getRelation(fc.toString());
 	    if (rp == null || rp.matchesOne(new RelationPattern(RelationDirection.OUT))) {
-		relation(opt, RelationType.DEPEND, sourceName, getNodeName(sourceName), destName,
-			getNodeName(destName), "", "", "");
+		relation(opt, RelationType.DEPEND, c, fc, "", "", "");
 	    }
 	    
 	}
