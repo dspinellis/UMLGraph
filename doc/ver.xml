@@ -8,6 +8,10 @@
 <li> All code now lives under <code>org.umlgraph</code>.
 This change requires corresponding modifications to the UMLGraph
 callers.</li>
+<li> Add support for six new shapes: node, component, package, collaboration,
+usecase, and activeclass.
+These shapes require GraphViz 1.16 or newer.
+</li>
 </ul>
 </dd>
 

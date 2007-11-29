@@ -77,6 +77,7 @@ public class Options implements Cloneable, OptionProvider {
     boolean showVisibility;
     boolean horizontal;
     boolean showType;
+    boolean showComment;
     String edgeFontName;
     String edgeFontColor;
     String edgeColor;
@@ -93,6 +94,7 @@ public class Options implements Cloneable, OptionProvider {
     String nodeFontTagName;
     double nodeFontPackageSize;
     String nodeFontPackageName;
+    String shape;
     String bgColor;
     public String outputFileName;
     String outputEncoding;
@@ -134,6 +136,7 @@ public class Options implements Cloneable, OptionProvider {
 	showEnumerations = false;
 	showConstructors = false;
 	showType = false;
+	showComment = false;
 	edgeFontName = defaultFont;
 	edgeFontColor = "black";
 	edgeColor = "black";
@@ -151,6 +154,7 @@ public class Options implements Cloneable, OptionProvider {
 	nodeFontPackageName = null;
 	nodeFillColor = null;
 	bgColor = null;
+	shape = null;
 	outputFileName = "graph.dot";
 	outputDirectory= null;
 	outputEncoding = "ISO-8859-1";
@@ -211,6 +215,7 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-constructors") ||
            option.equals("-visibility") ||
            option.equals("-types") ||
+           option.equals("-commentname") ||
            option.equals("-all") ||
            option.equals("-postfixpackage") ||
            option.equals("-noguillemot") ||
@@ -240,6 +245,7 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-edgecolor") ||
            option.equals("-edgefontsize") ||
            option.equals("-edgefontname") ||
+           option.equals("-shape") ||
            option.equals("-output") ||
            option.equals("-outputencoding") ||
            option.equals("-bgcolor") ||
@@ -302,6 +308,10 @@ public class Options implements Cloneable, OptionProvider {
 	    showType = true;
 	} else if (opt[0].equals("-!types")) {
 	    showType = false;
+	} else if(opt[0].equals("-commentname")) {
+	    showComment = true;
+	} else if (opt[0].equals("-!commentname")) {
+	    showComment = false;
 	} else if(opt[0].equals("-all")) {
 	    setAll();
 	} else if(opt[0].equals("-bgcolor")) {
@@ -372,6 +382,15 @@ public class Options implements Cloneable, OptionProvider {
 	    nodeFillColor = opt[1];
 	} else if (opt[0].equals("-!nodefillcolor")) {
 	    nodeFillColor = null;
+	} else if(opt[0].equals("-shape")) {
+	    if (graphvizShape(opt[1]) != null)
+		shape = opt[1];
+	    else {
+		System.err.println("Ignoring invalid shape " + opt[1]);
+		shape = null;
+	    }
+	} else if (opt[0].equals("-!shape")) {
+	    shape = null;
 	} else if(opt[0].equals("-output")) {
 	    outputFileName = opt[1];
 	} else if (opt[0].equals("-!output")) {
@@ -694,6 +713,27 @@ public class Options implements Cloneable, OptionProvider {
 	}
 	return sb.toString();
     }
-    
-}
 
+    /**
+     * Return the Graphviz shape corresponding to the specified UML shape
+     * If the shape is return null.
+     */
+    public static String graphvizShape(String s) {
+	if (s.equals("node"))
+	    return "box3d";
+	else if (s.equals("component"))
+	    return "component";
+	else if (s.equals("package"))
+	    return "tab";
+	else if (s.equals("collaboration"))
+	    return "ellipse, style=dashed";
+	else if (s.equals("note"))
+	    return "note";
+	else if (s.equals("usecase"))
+	    return "ellipse";
+	else if (s.equals("activeclass"))
+	    return "box, style=bold";
+	else
+	    return null;
+    }
+}

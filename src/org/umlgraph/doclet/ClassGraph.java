@@ -177,6 +177,24 @@ class ClassGraph {
 	    return s;
     }
 
+    /**
+     * Convert embedded newlines into HTML line breaks
+     */
+    private String htmlNewline(String s) {
+	if (s.indexOf('\n') == -1)
+	    return (s);
+
+	StringBuffer sb = new StringBuffer(s);
+	for (int i = 0; i < sb.length();) {
+	    if (sb.charAt(i) == '\n') {
+		sb.replace(i, i + 1, "<br/>");
+		i += "<br/>".length();
+	    } else
+		i++;
+	}
+	return sb.toString();
+    }
+
 
     /**
      * Convert &lt; and &gt; characters in the string to the respective guillemot characters.
@@ -349,6 +367,8 @@ class ClassGraph {
 	w.print(", fontname=\"" + opt.nodeFontName + "\"");
 	w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 	w.print(", fontsize=" + opt.nodeFontSize);
+	if (opt.shape != null)
+	    w.print(", shape=" + Options.graphvizShape(opt.shape));
 	w.println("];");
     }
 
@@ -467,7 +487,9 @@ class ClassGraph {
 		idx = qualifiedName.lastIndexOf('.');
 	    else
 		idx = qualifiedName.lastIndexOf('.', startTemplate);
-	    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
+	    if (opt.showComment)
+		tableLine(Align.LEFT, htmlNewline(escape(c.commentText())), opt, Font.CLASS);
+	    else if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
 		String packageName = qualifiedName.substring(0, idx);
 		String cn = className.substring(idx + 1);
 		tableLine(Align.CENTER, escape(cn), opt, font);
@@ -1033,8 +1055,9 @@ class ClassGraph {
 	String href = "";
 	if (url != null)
 	    href = " href=\"" + url + "\"";
-	w.print("<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\" "
-		+ "cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
+	w.print("<<table border=\"0\" cellborder=\"" +
+		(opt.shape == null ? "1" : "0") + "\" cellspacing=\"0\" " +
+		"cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
     }
     
     private void externalTableEnd() {
@@ -1058,16 +1081,19 @@ class ClassGraph {
 	String open;
 	String close = "</td></tr>";
 	String prefix = linePrefix + linePrefix + linePrefix;
+	String alignText;
+
 	if(align == Align.CENTER)
-	    open = prefix + "<tr><td>"; 
+	    alignText = "center";
 	else if(align == Align.LEFT)
-	    open = prefix + "<tr><td align=\"left\">";
+	    alignText = "left";
 	else if(align == Align.RIGHT)
-	    open = prefix + "<tr><td align=\"right\">";
+	    alignText = "right";
 	else
 	    throw new RuntimeException("Unknown alignement type " + align);
 	
 	text = fontWrap(" " + text + " ", opt, font);
+	open = "<tr><td align=\"" + alignText + "\" balign=\"" + alignText + "\">";
 	w.print(open + text + close + linePostfix);
     }
     
