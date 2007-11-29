@@ -7,7 +7,7 @@ TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
 BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
-WEBDIR=$(UH)/dds/pubs/web/home/sw/umlgraph
+WEBDIR=$(UH)/dds/pubs/web/home/sw/umlgraph-mirror
 DOCLETSRCPATH=src/org/umlgraph/doclet
 DOCLETSRC= \
 	$(DOCLETSRCPATH)/ClassGraph.java \
