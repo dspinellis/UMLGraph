@@ -85,7 +85,7 @@ public class UmlGraph {
 	commentOptions = new Options();
 	commentOptions.setOptions(root.options());
 	commentOptions.setOptions(findClass(root, "UMLCommentOptions"));
-	commentOptions.shape = "note";
+	commentOptions.shape = new Shape("note");
 
 	Options opt = new Options();
 	opt.setOptions(root.options());

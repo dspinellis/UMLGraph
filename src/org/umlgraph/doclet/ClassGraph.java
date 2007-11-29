@@ -367,8 +367,7 @@ class ClassGraph {
 	w.print(", fontname=\"" + opt.nodeFontName + "\"");
 	w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 	w.print(", fontsize=" + opt.nodeFontSize);
-	if (opt.shape != null)
-	    w.print(", shape=" + Options.graphvizShape(opt.shape));
+	w.print(opt.shape.graphvizAttribute());
 	w.println("];");
     }
 
@@ -671,7 +670,7 @@ class ClassGraph {
     private String relationNode(ClassDoc c) {
 	Options opt = optionProvider.getOptionsFor(c);
 	String name = getNodeName(c);
-	return ((opt.shape == null) ? (name + ":p") : name);
+	return name + opt.shape.landingPort();
     }
 
     /** Return the full name of a relation's node c.
@@ -687,7 +686,7 @@ class ClassGraph {
 	else
 	    opt = optionProvider.getOptionsFor(c);
 	String name = getNodeName(cName);
-	return ((opt.shape == null) ? (name + ":p") : name);
+	return name + opt.shape.landingPort();
     }
 
     /** Print a class's relations */
@@ -1109,9 +1108,10 @@ class ClassGraph {
 	String href = "";
 	if (url != null)
 	    href = " href=\"" + url + "\"";
-	w.print("<<table border=\"0\" cellborder=\"" +
-		(opt.shape == null ? "1" : "0") + "\" cellspacing=\"0\" " +
-		"cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
+
+	w.print("<<table border=\"" + opt.shape.border() +
+	    "\" cellborder=\"" + opt.shape.cellBorder() + "\" cellspacing=\"0\" " +
+	    "cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
     }
     
     private void externalTableEnd() {

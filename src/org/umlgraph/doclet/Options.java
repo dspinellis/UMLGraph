@@ -94,7 +94,7 @@ public class Options implements Cloneable, OptionProvider {
     String nodeFontTagName;
     double nodeFontPackageSize;
     String nodeFontPackageName;
-    String shape;
+    Shape shape;
     String bgColor;
     public String outputFileName;
     String outputEncoding;
@@ -154,7 +154,7 @@ public class Options implements Cloneable, OptionProvider {
 	nodeFontPackageName = null;
 	nodeFillColor = null;
 	bgColor = null;
-	shape = null;
+	shape = new Shape();
 	outputFileName = "graph.dot";
 	outputDirectory= null;
 	outputEncoding = "ISO-8859-1";
@@ -383,14 +383,9 @@ public class Options implements Cloneable, OptionProvider {
 	} else if (opt[0].equals("-!nodefillcolor")) {
 	    nodeFillColor = null;
 	} else if(opt[0].equals("-shape")) {
-	    if (graphvizShape(opt[1]) != null)
-		shape = opt[1];
-	    else {
-		System.err.println("Ignoring invalid shape " + opt[1]);
-		shape = null;
-	    }
+	    shape = new Shape(opt[1]);
 	} else if (opt[0].equals("-!shape")) {
-	    shape = null;
+	    shape = new Shape();
 	} else if(opt[0].equals("-output")) {
 	    outputFileName = opt[1];
 	} else if (opt[0].equals("-!output")) {
@@ -714,26 +709,4 @@ public class Options implements Cloneable, OptionProvider {
 	return sb.toString();
     }
 
-    /**
-     * Return the Graphviz shape corresponding to the specified UML shape
-     * If the shape is return null.
-     */
-    public static String graphvizShape(String s) {
-	if (s.equals("node"))
-	    return "box3d";
-	else if (s.equals("component"))
-	    return "component";
-	else if (s.equals("package"))
-	    return "tab";
-	else if (s.equals("collaboration"))
-	    return "ellipse, style=dashed";
-	else if (s.equals("note"))
-	    return "note";
-	else if (s.equals("usecase"))
-	    return "ellipse";
-	else if (s.equals("activeclass"))
-	    return "box, style=bold";
-	else
-	    return null;
-    }
 }
