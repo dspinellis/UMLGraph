@@ -4,6 +4,9 @@
 <dl>
 
 <dt>Version 5.1 Under development </dt><dd>
+<ul>
+<li> Active classes now appear with a double vertical border, following UML2.</li>
+</ul>
 </dd>
 
 <dt>Version 5.0 2007-11-29 </dt><dd>
@@ -13,7 +16,7 @@ This change requires corresponding modifications to the UMLGraph
 callers.</li>
 <li> Add support for six new shapes: node, component, package, collaboration,
 usecase, and activeclass.
-These shapes require GraphViz 1.16 or newer.
+These shapes require GraphViz 2.16 or newer.
 </li>
 <li> A new <code>@note</code> tag allows the annotation of elements with comments.
 (Suggested by Sébastien Pierre.)

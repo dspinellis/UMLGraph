@@ -471,8 +471,29 @@ class ClassGraph {
 	    w.println("\t// " + r);
 	    // Create label
 	    w.print("\t" + ci.name + " [label=");
+
+	    boolean showMembers =
+		(opt.showAttributes && c.fields().length > 0) ||
+		(c.isEnum() && opt.showEnumConstants && c.enumConstants().length > 0) ||
+		(opt.showOperations && c.methods().length > 0) ||
+		(opt.showConstructors && c.constructors().length > 0);
+	    
 	    externalTableStart(opt, c.qualifiedName(), classToUrl(c, rootClass));
-	    innerTableStart();
+
+	    // Calculate the number of innerTable rows we will emmit
+	    int nRows = 1;
+	    if (showMembers) {
+		if (opt.showAttributes)
+		    nRows++;
+		else if(!c.isEnum() && (opt.showConstructors || opt.showOperations))
+		    nRows++;
+		if (c.isEnum() && opt.showEnumConstants)
+		    nRows++;
+		if (!c.isEnum() && (opt.showConstructors || opt.showOperations))
+		    nRows++;
+	    }
+
+	    firstInnerTableStart(opt, nRows);
 	    if (c.isInterface())
 		tableLine(Align.CENTER, guilWrap(opt, "interface"));
 	    if (c.isEnum())
@@ -497,14 +518,13 @@ class ClassGraph {
 		tableLine(Align.CENTER, escape(qualifiedName), opt, font);
 	    }
 	    tagvalue(opt, c);
-	    innerTableEnd();
+	    firstInnerTableEnd(opt, nRows);
 	    
-	    boolean showMembers =
-		(opt.showAttributes && c.fields().length > 0) ||
-		(c.isEnum() && opt.showEnumConstants && c.enumConstants().length > 0) ||
-		(opt.showOperations && c.methods().length > 0) ||
-		(opt.showConstructors && c.constructors().length > 0);
-	    
+	    /*
+	     * Warning: The boolean expressions guarding innerTableStart()
+	     * in this block, should match those in the code block above
+	     * marked: "Calculate the number of innerTable rows we will emmit"
+	     */
 	    if (showMembers) {
 		if (opt.showAttributes) {
 		    innerTableStart();
@@ -1109,8 +1129,8 @@ class ClassGraph {
 	if (url != null)
 	    href = " href=\"" + url + "\"";
 
-	w.print("<<table border=\"" + opt.shape.border() +
-	    "\" cellborder=\"" + opt.shape.cellBorder() + "\" cellspacing=\"0\" " +
+	w.print("<<table border=\"0\" cellborder=\"" + 
+	    opt.shape.cellBorder() + "\" cellspacing=\"0\" " +
 	    "cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
     }
     
@@ -1123,10 +1143,29 @@ class ClassGraph {
 		+ "cellpadding=\"1\">" + linePostfix);
     }
     
+    /**
+     * Start the first inner table of a class.
+     * @param nRows the total number of rows in this table.
+     */
+    private void firstInnerTableStart(Options opt, int nRows) {
+	w.print(linePrefix + linePrefix + "<tr>" + opt.shape.extraColumn(nRows) +
+		"<td><table border=\"0\" cellspacing=\"0\" " +
+		"cellpadding=\"1\">" + linePostfix);
+    }
+    
     private void innerTableEnd() {
 	w.print(linePrefix + linePrefix + "</table></td></tr>" + linePostfix);
     }
-    
+
+    /**
+     * End the first inner table of a class.
+     * @param nRows the total number of rows in this table.
+     */
+    private void firstInnerTableEnd(Options opt, int nRows) {
+	w.print(linePrefix + linePrefix + "</table></td>" +
+	    opt.shape.extraColumn(nRows) + "</tr>" + linePostfix);
+    }
+
     private void tableLine(Align align, String text) {
 	tableLine(align, text, null, Font.NORMAL);
     }

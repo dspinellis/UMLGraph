@@ -87,8 +87,8 @@ public class Shape {
     }
 
     /** Return the table border required for the shape */
-    String border() {
-	return name.equals("activeclass") ? "2" : "0";
+    String extraColumn(int nRows) {
+	return name.equals("activeclass") ? ("<td rowspan=\"" + nRows + "\"></td>") : "";
     }
 
     /** Return the cell border required for the shape */
