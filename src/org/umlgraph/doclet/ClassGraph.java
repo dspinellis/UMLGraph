@@ -79,6 +79,7 @@ class ClassGraph {
     }
     protected Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
     protected Set<String> rootClasses;
+	protected Map<String, ClassDoc> rootClassdocs = new HashMap<String, ClassDoc>();
     protected OptionProvider optionProvider;
     protected PrintWriter w;
     protected ClassDoc collectionClassDoc;
@@ -109,8 +110,10 @@ class ClassGraph {
 	// package definitions. User root.specifiedPackages is not safe, since the user
 	// may specify just a list of classes (human users usually don't, but automated tools do)
 	rootClasses = new HashSet<String>();
-	for (ClassDoc classDoc : root.classes()) 
+	for (ClassDoc classDoc : root.classes()) {
 	    rootClasses.add(classDoc.qualifiedName());
+		rootClassdocs.put(classDoc.qualifiedName(), classDoc);
+	}
 	
 	Options opt = optionProvider.getGlobalOptions();
 	if (opt.compact) {
@@ -1037,13 +1040,30 @@ class ClassGraph {
 	}
 	return buf.toString();
     }
+	
+	private String getPackageName(String className) {
+		if (this.rootClassdocs.get(className) == null) {
+			return className.substring(0, className.lastIndexOf('.'));
+		} else {
+			return this.rootClassdocs.get(className).containingPackage().name();
+		}
+	}
+	
+	private String getUnqualifiedName(String className) {
+		if (this.rootClassdocs.get(className) == null) {
+			return className.substring(className.lastIndexOf('.') + 1);
+		} else {
+			return this.rootClassdocs.get(className).name();
+		}
+	}
     
     /** Convert the class name into a corresponding URL */
     public String classToUrl(String className) {
         String docRoot = mapApiDocRoot(className);
         if (docRoot != null) {
             StringBuffer buf = new StringBuffer(docRoot);
-            buf.append(className.replace('.', FILE_SEPARATOR));
+            buf.append(getPackageName(className).replace('.', FILE_SEPARATOR) + FILE_SEPARATOR);
+			buf.append(getUnqualifiedName(className));
             buf.append(".html");
             return buf.toString();
         } else {
