@@ -6,6 +6,10 @@
 <dt>Version 5.1 Under development </dt><dd>
 <ul>
 <li> Active classes now appear with a double vertical border, following UML2.</li>
+<li>
+Nested class hyperlinks to Javadoc documentation now work correctly
+(patch submitted by David P. Caldwell).
+</li>
 </ul>
 </dd>
 
