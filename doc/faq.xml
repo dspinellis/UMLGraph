@@ -27,6 +27,7 @@ To update the table of contents execute the following vim command from a registe
 <li> <a href="#ClassCastException">How can I get around a UMLGraphDoc crash with a ClassCastException?</a></li>
 <li> <a href="#license">Under what license is UMLGraph distributed?</a></li>
 <li> <a href="#classnotfound">Why do I get an exception java.lang.NoClassDefFoundError: com/sun/tools/javadoc/Main?</a></li>
+<li> <a href="#truncxml">How can I prevent clipped SVG images in sequence diagrams?</a></li>
 </ul>
 
 <h2><a name="cmdline">What is the command line sequence to generate a UMLGraph class diagram?</a></h2>
@@ -223,4 +224,9 @@ of the JDK distribution is located (and execute UmlGraph.jar from there),
 or copy tools.jar to the directory where UmlGraph.jar is located.
 (The file tools.jar is typically located in the lib directory
 of your JDK distribution.)
+
+<h2><a name="truncxml">How can I prevent clipped SVG images in sequence diagrams?</a></h2>
+This appears to be a limitation of <em>pic2plot</em>.
+You can work around it, by increasing the width and height values appearing
+in the SVG XML file that <em>pic2plot</em> generates.
 </notes>
