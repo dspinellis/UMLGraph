@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: UMLGraph
+Bundle-SymbolicName: org.umlgraph.engine
+Bundle-Version: 5.0.0.qualifier
+Bundle-Vendor: umlgraph.org
+Require-Bundle: org.eclipse.equinox.preferences
+Export-Package: org.umlgraph.engine.options
