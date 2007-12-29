@@ -16,39 +16,40 @@
  *
  */
 
-package org.umlgraph.engine.options;
+package org.umlgraph.engine;
+
+import org.umlgraph.settings.SettingDefinitions;
 
 /**
- * Constants for node options.
+ * Node options.
  */
-public interface NodeOptions {
+public class NodeOptions implements SettingDefinitions {
     /**
      * Specify the color to use to fill the shapes (String).
      */
-    public String FILL_COLOR = "nodeFillColor";
+    public static String nodeFillColor;
 
     /**
      * Specify the font name to use inside nodes (String).
      */
-    public String FONT_NAME = "nodeFontName";
+    public static String nodeFontName;
 
     /**
      * Specify the font size to use inside nodes (int).
      */
-    public String FONT_SIZE = "nodeFontSize";
+    public static int nodeFontSize;
 
     /**
      * Specify the font name to use for the tags (String).
      */
-    public String FONT_NAME_TAG = "nodeTagFontName";
+    public static String nodeTagFontName;
     /**
      * Specify the font size to use for the tags (int).
      */
-    public String FONT_SIZE_TAG = "nodeTagFontSize";
+    public static int nodeTagFontSize;
 
     /**
      * Specify the font color to use inside nodes (String).
      */
-    public String FONT_COLOR = "nodeFontColor";
-
+    public static String nodeFontColor;
 }

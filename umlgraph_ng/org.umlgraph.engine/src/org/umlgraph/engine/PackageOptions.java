@@ -16,22 +16,24 @@
  *
  */
 
-package org.umlgraph.engine.options;
+package org.umlgraph.engine;
+
+import org.umlgraph.settings.SettingDefinitions;
 
 /**
  * Constants for package options.
  */
-public interface PackageOptions {
+public class PackageOptions implements SettingDefinitions {
 
     /**
      * Specify the font name to use for the package names (used only when the
      * package name is postfixed, see -postfixpackage).
      */
-    String FONT_NAME_PACKAGE_NAME = "packageNameFontName";
+    public static String packageNameFontName;
 
     /**
      * Specify the font size to use for the package names (used only when it
      * package name is postfixed, see -postfixpackage).
      */
-    String FONT_SIZE_PACKAGE_NAME = "packageNameFontSize";
+    public static int packageNameFontSize;
 }

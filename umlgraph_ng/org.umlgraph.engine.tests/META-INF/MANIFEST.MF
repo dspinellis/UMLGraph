@@ -5,3 +5,4 @@ Bundle-SymbolicName: org.umlgraph.engine.tests
 Bundle-Version: 1.0.0
 Require-Bundle: org.junit,
  org.umlgraph.engine
+Export-Package: org.umlgraph.engine.tests

@@ -4,7 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.umlgraph.engine.options.SettingKey;
+import org.umlgraph.settings.SettingKey;
 
 public class SettingKeyTests extends TestCase {
     public SettingKeyTests(String name) {

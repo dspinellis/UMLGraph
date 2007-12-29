@@ -16,26 +16,28 @@
  *
  */
 
-package org.umlgraph.engine.options;
+package org.umlgraph.engine;
+
+import org.umlgraph.settings.SettingDefinitions;
 
 /**
  * Constants for edge options.
  */
-public interface EdgeOptions {
+public class EdgeOptions implements SettingDefinitions {
     /**
      * Specify the font name to use for edge labels (String).
      */
-    public String FONT_NAME = "edgeFontName";
+    public static String edgeFontName;
     /**
      * Specify the font size to use for edge labels (int).
      */
-    public String FONT_SIZE = "edgeFontSize";
+    public static int edgeFontSize;
     /**
      * Specify the font color to use for edge labels (String).
      */
-    public String FONT_COLOR = "edgeFontColor";
+    public static String edgeFontColor;
     /**
      * Specify the color for drawing edges.
      */
-    public String COLOR = "edgeColor";
+    public static String edgeColor;
 }

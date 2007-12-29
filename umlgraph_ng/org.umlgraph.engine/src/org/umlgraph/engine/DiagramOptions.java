@@ -16,24 +16,32 @@
  *
  */
 
-package org.umlgraph.engine.options;
+package org.umlgraph.engine;
+
+import org.umlgraph.settings.SettingDefinitions;
 
 /**
  * Generic constants for options applicable to all types of UML diagrams.
  */
-public interface DiagramOptions {
+public class DiagramOptions implements SettingDefinitions {
 
     /**
      * Layout the graph in the horizontal direction (boolean).
      */
-    String HORIZONTAL = "diagramHorizontal";
-    
+    public static boolean diagramHorizontal;
+
     /**
      * Specify the graph's background color.
      */
-    String BACKGROUND_COLOR = "diagramBackgroundColor";
+    public static String diagramBackgroundColor;
 
     /**
-     * Specify entities to hide from the graph. Matching is done using a non-anchored regular match. For instance, "-hide (Big|\.)Widget" would hide "com.foo.widgets.Widget" and "com.foo.widgets.BigWidget". Can also be used without arguments, in this case it will hide everything (useful in the context of views to selectively unhide some portions of the graph, see the view chapter for further details).     */
-    String hide();
+     * Specify entities to hide from the graph. Matching is done using a
+     * non-anchored regular match. For instance, "-hide (Big|\.)Widget" would
+     * hide "com.foo.widgets.Widget" and "com.foo.widgets.BigWidget". Can also
+     * be used without arguments, in this case it will hide everything (useful
+     * in the context of views to selectively unhide some portions of the graph,
+     * see the view chapter for further details).
+     */
+    // TODO String hide();
 }

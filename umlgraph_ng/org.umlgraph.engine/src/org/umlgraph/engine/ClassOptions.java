@@ -16,55 +16,57 @@
  *
  */
 
-package org.umlgraph.engine.options;
+package org.umlgraph.engine;
+
+import org.umlgraph.settings.SettingDefinitions;
 
 /**
  * Constants for class options.
  */
-public interface ClassOptions {
+public class ClassOptions implements SettingDefinitions {
     /**
      * Specify the font name to use inside abstract class nodes (String).
      */
-    String FONT_NAME_ABSTRACT_CLASS = "classAbstractFontName";
+    public static String classAbstractFontName;
 
     /**
      * Specify the font name to use for the class names (String).
      */
-    String FONT_NAME_CLASS_NAME = "classNameFontName";
+    public static String classNameFontName;
 
     /**
      * Specify the font name use for the class name of abstract classes
      * (String).
      */
-    String FONT_NAME_ABSTRACT_CLASS_NAME = "classAbstractNameFontName";
+    public static String classAbstractNameFontName;
     /**
      * Specify the font size to use for the class names (int).
      */
-    String FONT_SIZE_CLASS_NAME = "classNameFontSize";
+    public static int classNameFontSize;
     
     /**
      * Show class attributes (boolean).
      */
-    String SHOW_ATTRIBUTES = "classShowAttributes";
+    public static boolean classShowAttributes;
     /**
      * Show class operations (Java methods)
      */
-    String SHOW_OPERATIONS = "classShowOperations";
+    public static boolean classShowOperations;
     
     /**
      * Adorn class elements according to their visibility (private, public, protected, package) (boolean).
      */
-    String SHOW_VISIBILITY = "classShowVisibility";
+    public static boolean classShowVisibility;
     
     /**
      * Add type information to attributes and operations (boolean)
      */
-    String SHOW_TYPES = "classFeatureTypes";
+    public static boolean classFeatureTypes;
     
     /**
      * For enumerations, also show the values they can take. (boolean) 
      */
-    String SHOW_ENUM_VALUES = "classShowEnumValues";
+    public static boolean classShowEnumValues;
     
     
 }
