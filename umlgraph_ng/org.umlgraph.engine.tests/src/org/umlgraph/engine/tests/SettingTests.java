@@ -88,7 +88,7 @@ public class SettingTests extends TestCase {
 	Settings root = new Settings(TestBasicDefinitions.class);
 	root.set("@option1", "foo");
 	root.set("context1@option2", "bar");
-	root.set("context1/context2@option3", "zoo");
+	root.set("context1/context2@option3", true);
 
 	assertTrue(root.nodeExists(""));
 	assertTrue(root.nodeExists("/"));
@@ -113,7 +113,6 @@ public class SettingTests extends TestCase {
 	Settings root = new Settings(TestBasicDefinitions.class);
 	root.set("@option2", "foo");
 	root.set("context1/@option3", Boolean.FALSE);
-	root.set("context1/@option4", 42);
 	root.set("context1/context2/@option1", "zoo");
 	root.set("context1/context2/@option2", "bar");
 	root.set("context1/context2/@option3", Boolean.TRUE);
