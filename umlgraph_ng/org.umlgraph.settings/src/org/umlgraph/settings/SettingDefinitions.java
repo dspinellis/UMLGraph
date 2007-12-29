@@ -18,11 +18,16 @@ package org.umlgraph.settings;
 
 /**
  * A tag interface for classes defining settings.
- * Classes implementing this interface are expected to
- * define possible settings as public static fields. Names of fields
- * are expected to be unique across different definition classes.
- * In case a default value is desired, Java's field default value 
- * mechanism can be used. 
+ * The contract for SettingDefinitions implementors is:
+ * <ul>
+ * <li>Classes implementing this interface must be public</li>
+ * <li>Each option must be declared as a public static field of a non-primitive type</li>
+ * <li>Default values can be defined using Java's field initialization, 
+ * or by value assignment</li>
+ * <li>Names of fields
+ * are expected to be unique across all different definition classes used
+ * in the same Setting node hierarchy.</li>
+ * </ul>
  */
 public interface SettingDefinitions {
 

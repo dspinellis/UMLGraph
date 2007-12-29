@@ -13,35 +13,35 @@ public class SettingKeyTests extends TestCase {
 
     public void testRoot() {
 	SettingKey key = new SettingKey("/");
-	assertNull(key.getKey());
+	assertNull(key.getOptionName());
 	assertNotNull(key.getNodePath());
 	assertEquals(0, key.getNodePath().length);
     }
 
     public void testRootOption() {
 	SettingKey key = new SettingKey("@option1");
-	assertEquals("option1", key.getKey());
+	assertEquals("option1", key.getOptionName());
 	assertNotNull(key.getNodePath());
 	assertEquals(0, key.getNodePath().length);
     }
 
     public void testFirstLevel() {
 	SettingKey key = new SettingKey("context1");
-	assertNull(key.getKey());
+	assertNull(key.getOptionName());
 	assertEquals(1, key.getNodePath().length);
 	assertEquals("context1", key.getNodePath()[0]);
     }
 
     public void testFirstLevelOption() {
 	SettingKey key = new SettingKey("context1/@option1");
-	assertEquals("option1", key.getKey());
+	assertEquals("option1", key.getOptionName());
 	assertEquals(1, key.getNodePath().length);
 	assertEquals("context1", key.getNodePath()[0]);
     }
 
     public void testSecondLevel() {
 	SettingKey key = new SettingKey("context1/context2");
-	assertNull(key.getKey());
+	assertNull(key.getOptionName());
 	assertEquals(2, key.getNodePath().length);
 	assertEquals("context1", key.getNodePath()[0]);
 	assertEquals("context2", key.getNodePath()[1]);
@@ -49,7 +49,7 @@ public class SettingKeyTests extends TestCase {
 
     public void testSecondLevelOption() {
 	SettingKey key = new SettingKey("context1/context2/@option1");
-	assertEquals("option1", key.getKey());
+	assertEquals("option1", key.getOptionName());
 	assertEquals(2, key.getNodePath().length);
 	assertEquals("context1", key.getNodePath()[0]);
 	assertEquals("context2", key.getNodePath()[1]);
