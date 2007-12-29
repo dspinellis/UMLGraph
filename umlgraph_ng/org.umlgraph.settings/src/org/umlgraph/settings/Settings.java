@@ -17,6 +17,8 @@
 package org.umlgraph.settings;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,23 +45,23 @@ import java.util.Map;
 public class Settings {
 
 	/*
+	 * The child setting nodes.
+	 */
+	private Map<String, Settings> children = new HashMap<String, Settings>();
+
+	/*
 	 * The setting definitions for this setting node hierarchy (only set for the
 	 * root node). The definitions only define the available options and the
 	 * expected types.
 	 */
 	private Class<? extends SettingDefinitions>[] definitions;
 
-	/*
-	 * The child setting nodes.
-	 */
-	private Map<String, Settings> children = new HashMap<String, Settings>();
+	private Settings parent;
 
 	/*
 	 * The setting values defined for this setting node.
 	 */
 	private Map<String, Object> values = new HashMap<String, Object>();
-
-	private Settings parent;
 
 	/**
 	 * Constructs a root settings object.
@@ -85,30 +87,6 @@ public class Settings {
 	}
 
 	/**
-	 * Returns the setting node corresponding to the given path. If the node
-	 * does not exist, returns a new empty node.
-	 * 
-	 * @param path
-	 *            the setting node path
-	 * @return the setting node corresponding to the given path
-	 */
-	public Settings node(String[] path) {
-		return createNode(path, 0);
-	}
-
-	/**
-	 * Returns the setting node corresponding to the given path. If the node
-	 * does not exist, returns a new empty node.
-	 * 
-	 * @param path
-	 *            the setting node path
-	 * @return the setting node corresponding to the given path
-	 */
-	public Settings node(String path) {
-		return node(new SettingKey(path).getNodePath());
-	}
-
-	/**
 	 * Creates a setting node under the given path, or returns the existing one.
 	 */
 	private Settings createNode(String[] path, int start) {
@@ -123,17 +101,15 @@ public class Settings {
 	}
 
 	/**
-	 * Returns whether the given node exists.
+	 * Returns an existing node corresponding to the given path, or
+	 * <code>null</code> if none exists.
+	 * 
+	 * @param path
+	 *            the path of the node to look for
+	 * @return the node found, or <code>null</code>
 	 */
-	public boolean nodeExists(String[] path) {
-		return existingNode(path) != null;
-	}
-
-	/**
-	 * Returns whether the given node exists.
-	 */
-	public boolean nodeExists(String path) {
-		return nodeExists(new SettingKey(path).getNodePath());
+	public Settings existingNode(String path) {
+		return existingNode(new SettingKey(path).getNodePath());
 	}
 
 	/**
@@ -154,15 +130,24 @@ public class Settings {
 	}
 
 	/**
-	 * Returns an existing node corresponding to the given path, or
-	 * <code>null</code> if none exists.
+	 * Finds the field corresponding to the given option name.
 	 * 
-	 * @param path
-	 *            the path of the node to look for
-	 * @return the node found, or <code>null</code>
+	 * @param optionName
+	 * @return
 	 */
-	public Settings existingNode(String path) {
-		return existingNode(new SettingKey(path).getNodePath());
+	private Field findOptionField(String optionName) {
+		if (parent != null)
+			return parent.findOptionField(optionName);
+		for (Class<? extends SettingDefinitions> definitionClass : definitions)
+			try {
+				Field field = definitionClass.getDeclaredField(optionName);
+				if (!field.getType().isPrimitive()
+						&& Modifier.isStatic(field.getModifiers()))
+					return field;
+			} catch (NoSuchFieldException e) {
+				// keep looking...
+			}
+		return null;
 	}
 
 	/**
@@ -190,32 +175,33 @@ public class Settings {
 	}
 
 	/**
-	 * Returns the value for the option with the given name. Falls back to the
-	 * default value, if one is defined.
+	 * Returns the value of the option corresponding to the given path (falls
+	 * back to a default value, if one is defined). This is just a convenience
+	 * method for {@link #get(SettingKey, boolean)}.
 	 * 
-	 * @param optionName
-	 *            the option to search a value for
-	 * @return the value for the given option, or <code>null</code>
+	 * @param path
+	 *            the option path
+	 * @return the value for the given path, or <code>null</code>
 	 */
-	private <T> T searchValue(String optionName) {
-		T ownValue = (T) values.get(optionName);
-		if (ownValue != null)
-			return ownValue;
-		return (T) (parent == null ? getDefaultValue(optionName) : parent
-				.searchValue(optionName));
+	public <T> T get(String path) {
+		return get(new SettingKey(path), true);
 	}
 
 	/**
-	 * Returns whether the given option name is defined for this setting node
-	 * hierarchy.
+	 * Returns the value of the option corresponding to the given path. If
+	 * acceptDefault is <code>true</code> and a value for the option does not
+	 * exist, returns the default value. Otherwise, returns <code>null</code>.
+	 * This is just a convenience method for {@link #get(SettingKey, boolean)}.
 	 * 
-	 * @param optionName
-	 *            the option name
-	 * @return <code>true</code> if an option with the given name is defined,
-	 *         <code>false</code> otherwise
+	 * @param path
+	 *            the option path
+	 * @param acceptDefault
+	 *            whether a default value should be returned
+	 * @return the value for the given path, or <code>null</code>
 	 */
-	private boolean isDefined(String optionName) {
-		return findOptionField(optionName) != null;
+
+	public <T> T get(String path, boolean acceptDefault) {
+		return get(new SettingKey(path), acceptDefault);
 	}
 
 	/**
@@ -238,24 +224,26 @@ public class Settings {
 	}
 
 	/**
-	 * Finds the field corresponding to the given option name.
+	 * Returns the parent settings, or <code>null</code> if this is a root
+	 * setting.
+	 * 
+	 * @return the parent settings, or <code>null</code>
+	 */
+	public Settings getParent() {
+		return parent;
+	}
+
+	/**
+	 * Returns whether the given option name is defined for this setting node
+	 * hierarchy.
 	 * 
 	 * @param optionName
-	 * @return
+	 *            the option name
+	 * @return <code>true</code> if an option with the given name is defined,
+	 *         <code>false</code> otherwise
 	 */
-	private Field findOptionField(String optionName) {
-		if (parent != null)
-			return parent.findOptionField(optionName);
-		for (Class<? extends SettingDefinitions> definitionClass : definitions)
-			try {
-				Field field = definitionClass.getDeclaredField(optionName);
-				if (!field.getType().isPrimitive()
-						&& Modifier.isStatic(field.getModifiers()))
-					return field;
-			} catch (NoSuchFieldException e) {
-				// keep looking...
-			}
-		return null;
+	private boolean isDefined(String optionName) {
+		return findOptionField(optionName) != null;
 	}
 
 	/**
@@ -276,33 +264,57 @@ public class Settings {
 	}
 
 	/**
-	 * Returns the value of the option corresponding to the given path. If
-	 * acceptDefault is <code>true</code> and a value for the option does not
-	 * exist, returns the default value. Otherwise, returns <code>null</code>.
-	 * This is just a convenience method for {@link #get(SettingKey, boolean)}.
+	 * Returns the setting node corresponding to the given path. If the node
+	 * does not exist, returns a new empty node.
 	 * 
 	 * @param path
-	 *            the option path
-	 * @param acceptDefault
-	 *            whether a default value should be returned
-	 * @return the value for the given path, or <code>null</code>
+	 *            the setting node path
+	 * @return the setting node corresponding to the given path
 	 */
-
-	public <T> T get(String path, boolean acceptDefault) {
-		return get(new SettingKey(path), acceptDefault);
+	public Settings node(String path) {
+		return node(new SettingKey(path).getNodePath());
 	}
 
 	/**
-	 * Returns the value of the option corresponding to the given path (falls
-	 * back to a default value, if one is defined). This is just a convenience
-	 * method for {@link #get(SettingKey, boolean)}.
+	 * Returns the setting node corresponding to the given path. If the node
+	 * does not exist, returns a new empty node.
 	 * 
 	 * @param path
-	 *            the option path
-	 * @return the value for the given path, or <code>null</code>
+	 *            the setting node path
+	 * @return the setting node corresponding to the given path
 	 */
-	public <T> T get(String path) {
-		return get(new SettingKey(path), true);
+	public Settings node(String[] path) {
+		return createNode(path, 0);
+	}
+
+	/**
+	 * Returns whether the given node exists.
+	 */
+	public boolean nodeExists(String path) {
+		return nodeExists(new SettingKey(path).getNodePath());
+	}
+
+	/**
+	 * Returns whether the given node exists.
+	 */
+	public boolean nodeExists(String[] path) {
+		return existingNode(path) != null;
+	}
+
+	/**
+	 * Returns the value for the option with the given name. Falls back to the
+	 * default value, if one is defined.
+	 * 
+	 * @param optionName
+	 *            the option to search a value for
+	 * @return the value for the given option, or <code>null</code>
+	 */
+	private <T> T searchValue(String optionName) {
+		T ownValue = (T) values.get(optionName);
+		if (ownValue != null)
+			return ownValue;
+		return (T) (parent == null ? getDefaultValue(optionName) : parent
+				.searchValue(optionName));
 	}
 
 	/**
@@ -342,13 +354,75 @@ public class Settings {
 	}
 
 	/**
-	 * Sets the given option to the default value.
+	 * Sets the value of the given option (or clears it) using an external
+	 * string representation. To accept setting using an external representation,
+	 * the setting type must be String, or any type that has a static valueOf(String)
+	 * factory method (includes all wrappers and enumerations). 
+	 * 
+	 * An empty or blank string as external value corresponds to resetting the value of the
+	 * setting. 
+	 * 
+	 * @param path
+	 *            the option key
+	 * @param externalValue
+	 *            the new value, possibly an empty string, never
+	 *            <code>null</code>
+	 */
+	public void setFromExternal(SettingKey key, String externalValue) {
+		assert externalValue != null;
+		Field field = findOptionField(key.getOptionName());
+		if (field == null)
+			throw new IllegalArgumentException("unknown setting: " + key);
+		externalValue = externalValue.trim();
+		if (externalValue.length() == 0) {
+			// exceptional case - empty external value means resetting the
+			// setting
+			set(key, null);
+			return;
+		}
+		if (field.getType() == String.class) {
+			// exceptional case - for string settings, external value is taken
+			// as is
+			set(key, externalValue);
+			return;
+		}
+		Method valueMethod;
+		try {
+			valueMethod = field.getType().getDeclaredMethod("valueOf",
+					String.class);
+		} catch (NoSuchMethodException e) {
+			throw new UnsupportedOperationException(field.getType().getName()
+					+ " does not support conversion from string");
+		}
+		try {
+			set(key, valueMethod.invoke(null, externalValue));
+		} catch (IllegalAccessException e) {
+			throw new UnsupportedOperationException(
+					field.getType().getName()
+							+ " does not provide a public conversion method from string");
+		} catch (InvocationTargetException e) {
+			throw new UnsupportedOperationException(field.getType().getName()
+					+ " does not accept the given value: " + externalValue);
+		}
+	}
+
+	/**
+	 * Sets the value of the given option (or clears it) using an external
+	 * string representation. To accept setting using an external representation,
+	 * the setting type must be String, or any type that has a static valueOf(String)
+	 * factory method (includes all wrappers and enumerations).
+	 * 
+	 * An empty or blank string as external value corresponds to resetting the value of the
+	 * setting.
 	 * 
 	 * @param path
 	 *            the option path
+	 * @param value
+	 *            the new value, possibly an empty string, never
+	 *            <code>null</code>
 	 */
-	public <T> void setToDefault(String path) {
-		setToDefault(new SettingKey(path));
+	public void setFromExternal(String path, String value) {
+		setFromExternal(new SettingKey(path), value);
 	}
 
 	/**
@@ -365,12 +439,12 @@ public class Settings {
 	}
 
 	/**
-	 * Returns the parent settings, or <code>null</code> if this is a root
-	 * setting.
+	 * Sets the given option to the default value.
 	 * 
-	 * @return the parent settings, or <code>null</code>
+	 * @param path
+	 *            the option path
 	 */
-	public Settings getParent() {
-		return parent;
+	public <T> void setToDefault(String path) {
+		setToDefault(new SettingKey(path));
 	}
 }

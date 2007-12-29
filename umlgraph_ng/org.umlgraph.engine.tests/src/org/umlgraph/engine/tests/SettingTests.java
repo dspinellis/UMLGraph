@@ -7,6 +7,8 @@ import junit.framework.TestSuite;
 import org.umlgraph.settings.SettingDefinitions;
 import org.umlgraph.settings.Settings;
 
+import sun.management.snmp.jvminstr.JvmThreadInstanceEntryImpl.ThreadStateMap;
+
 public class SettingTests extends TestCase {
     public static class TestBasicDefinitions implements SettingDefinitions {
 	public static String option1;
@@ -238,5 +240,80 @@ public class SettingTests extends TestCase {
 	} catch (IllegalStateException ise) {
 	    // expected
 	}
+    }
+
+    public static class TestTypeCompatibility implements SettingDefinitions {
+	public static String option1;
+	public static Boolean option2;
+	public static Integer option3;
+	public static Thread.State option4;
+    }
+    
+    public void testTypeCompatibility() {
+	Settings root = new Settings(TestTypeCompatibility.class);
+
+	root.set("@option1", "hello");
+	try {
+	    root.set("@option1", Boolean.TRUE);
+	    fail("accepted a boolean value for a string setting");
+	} catch (ClassCastException iae) {
+	    // expected
+	}
+	root.set("@option2", Boolean.TRUE);
+	try {
+	    root.set("@option2", "hello");
+	    fail("accepted a string value for a boolean setting");
+	} catch (ClassCastException iae) {
+	    // expected
+	}
+	root.set("@option3", 20);
+	try {
+	    root.set("@option3", Boolean.TRUE);
+	    fail("accepted a boolean value for a int setting");
+	} catch (ClassCastException iae) {
+	    // expected
+	}
+	root.set("@option4", Thread.State.RUNNABLE);
+	try {
+	    root.set("@option4", Boolean.TRUE);
+	    fail("accepted a boolean value for a Thread.State setting");
+	} catch (ClassCastException iae) {
+	    // expected
+	}
+    }
+    
+    public void testSettingFromExternal() {
+	Settings root = new Settings(TestTypeCompatibility.class);
+
+	assertNull(root.get("@option2"));
+	root.setFromExternal("@option2", Boolean.TRUE.toString());
+	assertEquals(Boolean.TRUE, root.get("@option2"));
+	
+	assertNull(root.get("@option3"));
+	root.setFromExternal("@option3", "20");
+	assertEquals(20,  root.get("@option3"));
+
+	assertNull(root.get("@option4"));
+	root.setFromExternal("@option4", Thread.State.RUNNABLE.toString());
+	assertEquals(Thread.State.RUNNABLE, root.get("@option4"));
+    }
+    
+    public void testResettingFromExternal() {
+	Settings root = new Settings(TestTypeCompatibility.class);
+
+	root.set("@option1", "Hello");
+	root.set("@option2", Boolean.TRUE);
+	root.set("@option3", 20);
+	root.set("@option4", Thread.State.TERMINATED);
+	
+	root.setFromExternal("@option1", "");
+	root.setFromExternal("@option2", "");
+	root.setFromExternal("@option3", "");
+	root.setFromExternal("@option4", "");
+	
+	assertNull(root.get("@option1"));
+	assertNull(root.get("@option2"));
+	assertNull(root.get("@option3"));
+	assertNull(root.get("@option4"));
     }
 }
