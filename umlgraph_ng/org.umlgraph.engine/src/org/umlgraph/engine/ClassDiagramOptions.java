@@ -26,30 +26,30 @@ public class ClassDiagramOptions implements SettingDefinitions {
     /**
      * Produce fully-qualified class names.
      */
-    public static boolean classDiagramQualifiedNames;
+    public static Boolean classDiagramQualifiedNames = false;
 
     /**
      * When using qualified class names, put the package name in the line after the class name, in order to reduce the width of class nodes.
      */
-    public static boolean classDiagramPostfixQualifiedNames;
+    public static Boolean classDiagramPostfixQualifiedNames = false;
     
     /**
      * Try to automatically infer dependencies between classes by inspecting operation and attribute types. See the class diagram inference chapter for more details. Disabled by default. 
      */
-    public static boolean classDiagramInferDependency;
+    public static Boolean classDiagramInferDependency = false;
     
     /**
      * Try to automatically infer association relationships between classes by inspecting attribute types. See the class diagram inference chapter for further details. Disabled by default.
      */
-    public static boolean classDiagramInferUsage;
+    public static Boolean classDiagramInferUsage = false;
     
     /**
      * The type of relationship inferred when -inferrel is activated. Defaults to "navassoc" (see the class modelling chapter for a list of relationship types).
      */
-    public static String classDiagramInferAssociationType;
+    public static String classDiagramInferAssociationType = "navassoc";
 
     /**
      * Specifies the lowest visibility level of elements used to infer dependencies among classes. Possible values are private, package, protected, public, in this order. The default value is private. Use higher levels to limit the number of inferred dependencies.  
      */
-    public static String classDiagramInferDependencyVisibility;  
+    public static String classDiagramInferDependencyVisibility = "private";  
 }

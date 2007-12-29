@@ -25,6 +25,12 @@ import org.umlgraph.settings.SettingDefinitions;
  */
 public class DiagramOptions implements SettingDefinitions {
 
+    /** The default font size. */
+    public static final int DEFAULT_FONT_SIZE = 10;
+    
+    /** The default font name. */
+    public static final String DEFAULT_FONT_NAME = "Times";
+
     /**
      * Layout the graph in the horizontal direction (boolean).
      */

@@ -29,11 +29,11 @@ public class PackageOptions implements SettingDefinitions {
      * Specify the font name to use for the package names (used only when the
      * package name is postfixed, see -postfixpackage).
      */
-    public static String packageNameFontName;
+    public static String packageNameFontName = DiagramOptions.DEFAULT_FONT_NAME;
 
     /**
      * Specify the font size to use for the package names (used only when it
      * package name is postfixed, see -postfixpackage).
      */
-    public static int packageNameFontSize;
+    public static Integer packageNameFontSize = DiagramOptions.DEFAULT_FONT_SIZE;
 }

@@ -27,11 +27,11 @@ public class EdgeOptions implements SettingDefinitions {
     /**
      * Specify the font name to use for edge labels (String).
      */
-    public static String edgeFontName;
+    public static String edgeFontName = DiagramOptions.DEFAULT_FONT_NAME;
     /**
      * Specify the font size to use for edge labels (int).
      */
-    public static int edgeFontSize;
+    public static Integer edgeFontSize = DiagramOptions.DEFAULT_FONT_SIZE;
     /**
      * Specify the font color to use for edge labels (String).
      */
