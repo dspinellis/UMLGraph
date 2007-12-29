@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Settings
+Bundle-SymbolicName: org.umlgraph.settings
+Bundle-Version: 5.1.0.qualifier
+Bundle-Vendor: umlgraph.org
+Export-Package: org.umlgraph.settings
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
