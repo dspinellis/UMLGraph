@@ -4,5 +4,12 @@ Bundle-Name: UMLGraph
 Bundle-SymbolicName: org.umlgraph.engine
 Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: umlgraph.org
-Require-Bundle: org.umlgraph.settings;visibility:=reexport
-Export-Package: org.umlgraph.engine
+Require-Bundle: org.umlgraph.settings;visibility:=reexport,
+ org.eclipse.uml2.uml
+Export-Package: org.umlgraph.engine,
+ org.umlgraph.engine.classdiagram,
+ org.umlgraph.engine.classdiagram.dot,
+ org.umlgraph.engine.matching
+Import-Package: org.osgi.framework;version="1.4.0"
+Bundle-Activator: org.umlgraph.engine.Activator
+Eclipse-LazyStart: true

@@ -16,8 +16,9 @@
  *
  */
 
-package org.umlgraph.engine;
+package org.umlgraph.engine.classdiagram;
 
+import org.umlgraph.engine.DiagramOptions;
 import org.umlgraph.settings.SettingDefinitions;
 
 /**
@@ -30,43 +31,43 @@ public class ClassOptions implements SettingDefinitions {
     public static String classAbstractFontName = DiagramOptions.DEFAULT_FONT_NAME;
 
     /**
+     * Specify the font name use for the class name of abstract classes
+     * (String).
+     */
+    public static String classAbstractNameFontName = DiagramOptions.DEFAULT_FONT_NAME;
+
+    /**
+     * Add type information to attributes and operations (boolean)
+     */
+    public static Boolean classFeatureTypes = false;
+    /**
      * Specify the font name to use for the class names (String).
      */
     public static String classNameFontName = DiagramOptions.DEFAULT_FONT_NAME;
 
     /**
-     * Specify the font name use for the class name of abstract classes
-     * (String).
-     */
-    public static String classAbstractNameFontName = DiagramOptions.DEFAULT_FONT_NAME;
-    /**
      * Specify the font size to use for the class names (int).
      */
     public static Integer classNameFontSize = DiagramOptions.DEFAULT_FONT_SIZE;
-    
     /**
      * Show class attributes (boolean).
      */
     public static Boolean classShowAttributes = false;
+
+    /**
+     * For enumerations, also show the values they can take. (boolean)
+     */
+    public static Boolean classShowEnumValues = false;
+
     /**
      * Show class operations (Java methods)
      */
     public static Boolean classShowOperations = false;
-    
+
     /**
-     * Adorn class elements according to their visibility (private, public, protected, package) (boolean).
+     * Adorn class elements according to their visibility (private, public,
+     * protected, package) (boolean).
      */
     public static Boolean classShowVisibility = false;
-    
-    /**
-     * Add type information to attributes and operations (boolean)
-     */
-    public static Boolean classFeatureTypes = false;
-    
-    /**
-     * For enumerations, also show the values they can take. (boolean) 
-     */
-    public static Boolean classShowEnumValues = false;
-    
-    
+
 }

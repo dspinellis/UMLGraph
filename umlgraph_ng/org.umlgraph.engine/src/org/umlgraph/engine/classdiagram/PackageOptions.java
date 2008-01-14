@@ -16,8 +16,9 @@
  *
  */
 
-package org.umlgraph.engine;
+package org.umlgraph.engine.classdiagram;
 
+import org.umlgraph.engine.DiagramOptions;
 import org.umlgraph.settings.SettingDefinitions;
 
 /**

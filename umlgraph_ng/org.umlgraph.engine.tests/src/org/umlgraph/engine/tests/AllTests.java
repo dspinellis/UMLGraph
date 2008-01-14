@@ -8,6 +8,8 @@ public class AllTests {
 	TestSuite allTests = new TestSuite(AllTests.class.getName());
 	allTests.addTest(SettingKeyTests.suite());
 	allTests.addTest(SettingTests.suite());
+	allTests.addTest(TestStandalone.suite());
+	allTests.addTest(ClassDiagramRendererTest.suite());
 	return allTests;
     }
 }

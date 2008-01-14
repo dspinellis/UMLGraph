@@ -30,6 +30,11 @@ public class NodeOptions implements SettingDefinitions {
     public static String nodeFillColor;
 
     /**
+     * Specify the font color to use inside nodes (String).
+     */
+    public static String nodeFontColor;
+
+    /**
      * Specify the font name to use inside nodes (String).
      */
     public static String nodeFontName = DiagramOptions.DEFAULT_FONT_NAME;
@@ -38,18 +43,13 @@ public class NodeOptions implements SettingDefinitions {
      * Specify the font size to use inside nodes (int).
      */
     public static Integer nodeFontSize = DiagramOptions.DEFAULT_FONT_SIZE;
-
     /**
      * Specify the font name to use for the tags (String).
      */
     public static String nodeTagFontName = DiagramOptions.DEFAULT_FONT_NAME;
+
     /**
      * Specify the font size to use for the tags (int).
      */
     public static Integer nodeTagFontSize = DiagramOptions.DEFAULT_FONT_SIZE;
-
-    /**
-     * Specify the font color to use inside nodes (String).
-     */
-    public static String nodeFontColor;
 }

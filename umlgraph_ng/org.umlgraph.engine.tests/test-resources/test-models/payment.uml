@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Package xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xmi:id="_Qs0f4MJKEdyYwNdUIscG9w" name="payment">
+  <packagedElement xmi:type="uml:Class" xmi:id="_VMrWYMJKEdyYwNdUIscG9w" name="PaymentMethod"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_YjVwMMJKEdyYwNdUIscG9w" name="Cheque">
+    <generalization xmi:id="_rb_4QMJKEdyYwNdUIscG9w"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_bvgxQMJKEdyYwNdUIscG9w" name="CreditCard">
+    <generalization xmi:id="_usexkMJKEdyYwNdUIscG9w" general="_VMrWYMJKEdyYwNdUIscG9w"/>
+  </packagedElement>
+</uml:Package>

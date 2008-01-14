@@ -4,5 +4,7 @@ Bundle-Name: Tests Plug-in
 Bundle-SymbolicName: org.umlgraph.engine.tests
 Bundle-Version: 1.0.0
 Require-Bundle: org.junit,
- org.umlgraph.engine
+ org.umlgraph.engine,
+ org.eclipse.uml2.uml,
+ org.eclipse.uml2.uml.resources
 Export-Package: org.umlgraph.engine.tests

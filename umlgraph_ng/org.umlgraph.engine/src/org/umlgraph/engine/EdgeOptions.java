@@ -25,6 +25,14 @@ import org.umlgraph.settings.SettingDefinitions;
  */
 public class EdgeOptions implements SettingDefinitions {
     /**
+     * Specify the color for drawing edges.
+     */
+    public static String edgeColor;
+    /**
+     * Specify the font color to use for edge labels (String).
+     */
+    public static String edgeFontColor;
+    /**
      * Specify the font name to use for edge labels (String).
      */
     public static String edgeFontName = DiagramOptions.DEFAULT_FONT_NAME;
@@ -32,12 +40,4 @@ public class EdgeOptions implements SettingDefinitions {
      * Specify the font size to use for edge labels (int).
      */
     public static Integer edgeFontSize = DiagramOptions.DEFAULT_FONT_SIZE;
-    /**
-     * Specify the font color to use for edge labels (String).
-     */
-    public static String edgeFontColor;
-    /**
-     * Specify the color for drawing edges.
-     */
-    public static String edgeColor;
 }
