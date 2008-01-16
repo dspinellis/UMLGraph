@@ -16,6 +16,6 @@ digraph G {
 	//IrpApplication extends Application
 	c0:p -> c1:p [dir=back,arrowtail=empty];
 	// Main DEPEND IrpApplication
-	c2:p -> c1:p [taillabel="", label="&laquo;friend&raquo;", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
+	c2:p -> c1:p [taillabel="", label="&#171;friend&#187;", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
 }
 

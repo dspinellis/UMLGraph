@@ -105,10 +105,15 @@ public class Options implements Cloneable, OptionProvider {
     boolean findViews;
     String viewName;
     public String outputDirectory;
+    /*
+     * Numeric values are preferable to symbolic here.
+     * Symbolic reportedly fail on MacOSX, and also are
+     * more difficult to verify with XML tools.
+     */
     /** Guillemot left (open) */
-    String guilOpen = "&laquo;"; // "\u00ab";
+    String guilOpen = "&#171;";		// &laquo; \u00ab
     /** Guillemot right (close) */
-    String guilClose = "&raquo;"; // "\u00bb";
+    String guilClose = "&#187;";	// &raquo; \u00bb
     boolean inferRelationships;
     boolean inferDependencies;
     RelationPattern contextRelationPattern;

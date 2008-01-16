@@ -18,7 +18,7 @@ digraph G {
 	// ChannelIterator
 	c21 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ChannelIterator </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// URLStreamHandler
-	c22 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &laquo;interface&raquo; </td></tr><tr><td align="center" balign="center"> URLStreamHandler </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  OpenConnection() </td></tr><tr><td align="left" balign="left">  parseURL() </td></tr><tr><td align="left" balign="left">  setURL() </td></tr><tr><td align="left" balign="left">  toExternalForm() </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c22 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> URLStreamHandler </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  OpenConnection() </td></tr><tr><td align="left" balign="left">  parseURL() </td></tr><tr><td align="left" balign="left">  setURL() </td></tr><tr><td align="left" balign="left">  toExternalForm() </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//SetTopController extends Controller
 	c17:p -> c20:p [dir=back,arrowtail=empty];
 	//SetTopController extends EmbeddedAgent
@@ -28,6 +28,6 @@ digraph G {
 	// SetTopController NAVASSOC PowerManager
 	c20:p -> c19:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
 	// ChannelIterator DEPEND SetTopController
-	c21:p -> c20:p [taillabel="", label="&laquo;friend&raquo;", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
+	c21:p -> c20:p [taillabel="", label="&#171;friend&#187;", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
 }
 

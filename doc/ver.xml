@@ -10,6 +10,12 @@
 Nested class hyperlinks to Javadoc documentation now work correctly
 (patch submitted by David P. Caldwell).
 </li>
+<li>
+The guillemot characters are now output with their Unicode HTML numeric
+escapes instead of their HTML symbolic values.
+This makes the output work correctly on Mac OS X, and also easier
+to validate with XML tools.
+(patch submitted by Joshua Lim).
 </ul>
 </dd>
 
