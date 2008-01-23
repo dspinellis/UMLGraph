@@ -14,27 +14,23 @@
  * $Id$
  *
  */
+
 package org.umlgraph.engine.classdiagram.dot;
 
-import org.eclipse.uml2.uml.InterfaceRealization;
+import org.eclipse.uml2.uml.Dependency;
 import org.umlgraph.engine.classdiagram.ElementRenderer;
 import org.umlgraph.engine.classdiagram.RenderingSession;
 
-public class InterfaceRealizationRenderer implements
-        ElementRenderer<InterfaceRealization> {
+public class DependencyRenderer implements ElementRenderer<Dependency> {
 
-    public void renderObject(InterfaceRealization element,
-            RenderingSession context) {
+    public void renderObject(Dependency element, RenderingSession context) {
         //TODO ClassInfo
-        if (element.getImplementingClassifier().getNearestPackage() != element
-                .getContract().getNearestPackage())
+        //TODO we do no support multiple clients/suppliers at this point 
+        if (element.getSuppliers().get(0).getNearestPackage() != element.getClients().get(0).getNearestPackage())
             return;
         IndentedPrintWriter pw = context.getOutput();
-        pw.println("//" + element.getImplementingClassifier().getName() + " extends "
-                + element.getContract().getName());
-        pw.println(element.getContract().getName() + " -> "
-                + element.getImplementingClassifier().getName()
-                + "[dir=back,arrowtail=empty,style=dashed];");
-
+        pw.println("//" + element.getClients().get(0).getName() + " depends upon " + element.getSuppliers().get(0).getName());
+        pw.println(element.getSuppliers().get(0).getName() + " -> " + element.getClients().get(0).getName() + "[arrowhead=open, style=dashed]");
     }
+
 }
