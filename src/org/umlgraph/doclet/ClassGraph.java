@@ -1149,7 +1149,7 @@ class ClassGraph {
 	if (url != null)
 	    href = " href=\"" + url + "\"";
 
-	w.print("<<table border=\"0\" cellborder=\"" + 
+	w.print("<<table title=\"" + name + "\" border=\"0\" cellborder=\"" + 
 	    opt.shape.cellBorder() + "\" cellspacing=\"0\" " +
 	    "cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
     }
