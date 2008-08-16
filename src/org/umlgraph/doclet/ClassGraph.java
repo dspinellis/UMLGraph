@@ -1128,8 +1128,11 @@ class ClassGraph {
 	    "\tnode [fontname=\"" + opt.nodeFontName +
 	    "\",fontsize=10,shape=plaintext];"
 	);
+
+	w.println("\tnodesep=" + opt.nodeSep + ";");
+	w.println("\tranksep=" + opt.rankSep + ";");
 	if (opt.horizontal)
-	    w.println("\trankdir=LR;\n\tranksep=1;");
+	    w.println("\trankdir=LR;");
 	if (opt.bgColor != null)
 	    w.println("\tbgcolor=\"" + opt.bgColor + "\";\n");
     }

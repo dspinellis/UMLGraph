@@ -104,6 +104,8 @@ public class Options implements Cloneable, OptionProvider {
     boolean useGuillemot;
     boolean findViews;
     String viewName;
+    double nodeSep;
+    double rankSep;
     public String outputDirectory;
     /*
      * Numeric values are preferable to symbolic here.
@@ -180,6 +182,8 @@ public class Options implements Cloneable, OptionProvider {
 	collPackages = new Vector<Pattern>();
 	compact = false;
 	relativeLinksForSourcePackages = false;
+	nodeSep = 0.25;
+	rankSep = 0.5;
     }
 
     public Object clone() {
@@ -262,6 +266,8 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-inferreltype") ||
            option.equals("-inferdepvis") ||
            option.equals("-collpackages") ||
+           option.equals("-nodesep") ||
+           option.equals("-ranksep") ||
            option.equals("-link"))
             return 2;
         else if(option.equals("-contextPattern"))
@@ -504,6 +510,22 @@ public class Options implements Cloneable, OptionProvider {
 		
 	    }
 		
+	} else if (opt[0].equals("-nodesep")) {
+	    try {
+		nodeSep = Double.parseDouble(opt[1]);
+	    } catch (NumberFormatException e) {
+		System.err.println("Skipping invalid nodesep " + opt[1]);
+	    }
+	} else if (opt[0].equals("-!nodesep")) {
+	    nodeSep = 0.25;
+	} else if (opt[0].equals("-ranksep")) {
+	    try {
+		rankSep = Double.parseDouble(opt[1]);
+	    } catch (NumberFormatException e) {
+		System.err.println("Skipping invalid ranksep " + opt[1]);
+	    }
+	} else if (opt[0].equals("-!ranksep")) {
+	    rankSep = 0.5;
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if
                 // needed.
