@@ -58,7 +58,7 @@ $(BALL_TAR_GZ): $(JARFILE) docs Makefile
 	cp build.xml $(DISTDIR)
 	cp umlgraph.bat $(DISTDIR)/bin
 	$(LF) umlgraph >$(DISTDIR)/bin/umlgraph
-	tar cf - src testdata/{java,dot-ref} javadoc --exclude='*/RCS' | tar -C $(DISTDIR) -xvf -
+	tar cf - src testdata/{java,dot-ref} javadoc --exclude='*/CVS' | tar -C $(DISTDIR) -xvf -
 	$(LF) $(PICFILE) >$(DISTDIR)/src/$(PICFILE)
 	tar czf $(BALL_TAR_GZ) $(DISTDIR)
 	zip -r $(ZIPBALL) $(DISTDIR)
@@ -73,8 +73,11 @@ $(JARFILE): $(DOCLETSRC)
 test:
 	ant test
 
+testupdate:
+	sh tools/testupdate.sh
+
 web: $(BALL_TAR_GZ) CHECKSUM.MD5
-	cp $(BALL_TAR_GZ) $(ZIPBALL) CHECKSUM.MD5 oldversion.html $(WEBDIR)
+	cp $(BALL_TAR_GZ) $(ZIPBALL) CHECKSUM.MD5 oldversion.html umlgraph-banner.png $(WEBDIR)
 	cp $(JARFILE) $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
 	tar cf - javadoc | tar -C $(WEBDIR) -xvf -
 	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
