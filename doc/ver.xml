@@ -3,7 +3,10 @@
 <notes>
 <dl>
 
-<dt>Version 5.1 Under development </dt><dd>
+<dt>Version 5.2 Under development </dt><dd>
+</dd>
+
+<dt>Version 5.1 2008-08-27 </dt><dd>
 <ul>
 <li> Active classes now appear with a double vertical border, following UML2.</li>
 <li>Reorganized the documentation of class diagram options.</li>
@@ -22,7 +25,7 @@ Nested class hyperlinks to Javadoc documentation now work correctly.
 <li>
 The guillemot characters are now output with their Unicode HTML numeric
 escapes instead of their HTML symbolic values.
-This makes the output work correctly on Mac OS X, and also easier
+This makes the output work correctly on Mac OS X, and is also easier
 to validate with XML tools.
 (Patch submitted by Joshua Lim.)
 </li>
@@ -31,7 +34,7 @@ UmlGraphDoc now supports Javascript-collapsible UML diagrams.
 A new option <code>-collapsible</code> can be used to enable this
 feature.
 (Patch submitted by Franz Wilhelmstoetter.)
-
+</li>
 </ul>
 </dd>
 
