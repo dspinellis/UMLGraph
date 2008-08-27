@@ -7,12 +7,14 @@
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
+	nodesep=0.25;
+	ranksep=0.5;
 	// gr.spinellis.invoice.InvoiceItem
-	c0 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./InvoiceItem.html"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InvoiceItem </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c0 [label=<<table title="gr.spinellis.invoice.InvoiceItem" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./InvoiceItem.html"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InvoiceItem </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.invoice.Invoice
-	c1 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Invoice.html"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Invoice </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c1 [label=<<table title="gr.spinellis.invoice.Invoice" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Invoice.html"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Invoice </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.invoice.Customer
-	c2 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Customer.html"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Customer </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c2 [label=<<table title="gr.spinellis.invoice.Customer" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Customer.html"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Customer </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.invoice.Invoice NAVASSOC gr.spinellis.invoice.InvoiceItem
 	c1:p -> c0:p [taillabel="", label="", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
 	// gr.spinellis.invoice.Invoice NAVASSOC gr.spinellis.invoice.Customer
