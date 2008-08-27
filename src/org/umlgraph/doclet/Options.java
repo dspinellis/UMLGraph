@@ -235,6 +235,7 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-views") ||
            option.equals("-inferrel") ||
            option.equals("-useimports") ||
+           option.equals("-collapsible") ||
            option.equals("-inferdep") ||
            option.equals("-inferdepinpackage") ||
            option.equals("-compact"))
