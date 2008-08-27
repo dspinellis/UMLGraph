@@ -7,12 +7,14 @@
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
+	nodesep=0.25;
+	ranksep=0.5;
 	// Person
-	c42 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor=".13 .9 1"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Person </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c42 [label=<<table title="Person" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor=".13 .9 1"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Person </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// Employee
-	c43 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor=".13 .9 1"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Employee </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c43 [label=<<table title="Employee" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor=".13 .9 1"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Employee </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// Client
-	c44 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor=".13 .9 1"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Client </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c44 [label=<<table title="Client" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor=".13 .9 1"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Client </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//Employee extends Person
 	c42:p -> c43:p [dir=back,arrowtail=empty];
 	//Client extends Person
