@@ -7,26 +7,28 @@
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
+	nodesep=0.25;
+	ranksep=0.5;
 	// Asset
-	c63 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Asset </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c63 [label=<<table title="Asset" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Asset </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// InterestBearingItem
-	c64 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InterestBearingItem </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c64 [label=<<table title="InterestBearingItem" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InterestBearingItem </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// InsurableItem
-	c65 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InsurableItem </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c65 [label=<<table title="InsurableItem" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InsurableItem </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// BankAccount
-	c66 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> BankAccount </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c66 [label=<<table title="BankAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> BankAccount </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// RealEstate
-	c67 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> RealEstate </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c67 [label=<<table title="RealEstate" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> RealEstate </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// Security
-	c68 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Security </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c68 [label=<<table title="Security" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Security </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// Stock
-	c69 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Stock </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c69 [label=<<table title="Stock" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Stock </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// Bond
-	c70 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Bond </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c70 [label=<<table title="Bond" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Bond </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// CheckingAccount
-	c71 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> CheckingAccount </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c71 [label=<<table title="CheckingAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> CheckingAccount </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// SavingsAccount
-	c72 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> SavingsAccount </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c72 [label=<<table title="SavingsAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> SavingsAccount </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	//BankAccount extends Asset
 	c63:p -> c66:p [dir=back,arrowtail=empty];
 	//BankAccount extends InsurableItem
