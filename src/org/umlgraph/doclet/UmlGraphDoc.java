@@ -214,6 +214,10 @@ public class UmlGraphDoc {
 		    String tag = String.format(UML_DIV_TAG, className);
 		    if (opt.collapsibleDiagrams)
 		    	tag = String.format(EXPANDABLE_UML, tag, "Show UML class diagram", "Hide UML class diagram");
+		    writer.write("<!-- UML diagram added by UMLGraph version " +
+		    		Version.VERSION + 
+				" (http://www.umlgraph.org/) -->");
+		    writer.newLine();
 		    writer.write(tag);
 		    writer.newLine();
 		}
