@@ -1,5 +1,8 @@
 $Id$
 
+Add in UmlGraphDoc support for showing package dependencies.
+See http://java.dzone.com/articles/reverse-engineer-source-code-u#comment-6124
+
 Add link to MoinMoin sequence to deriv.xml
 
 Yves Bossel: If I may do some suggestions:

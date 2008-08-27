@@ -93,7 +93,7 @@ public class UmlGraphDoc {
     	    OptionProvider view = new PackageView(outputFolder, packageDoc, root, opt);
     	    UmlGraph.buildGraph(root, view, packageDoc);
     	    runGraphviz(outputFolder, packageDoc.name(), packageDoc.name(), root);
-    	    alterHtmlDocs(outputFolder, packageDoc.name(), packageDoc.name(),
+    	    alterHtmlDocs(opt, outputFolder, packageDoc.name(), packageDoc.name(),
     		    "package-summary.html", Pattern.compile("</H2>"), root);
 	    }
 	}
@@ -112,7 +112,7 @@ public class UmlGraphDoc {
 		view.setContextCenter(classDoc);
 	    UmlGraph.buildGraph(root, view, classDoc);
 	    runGraphviz(outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
-	    alterHtmlDocs(outputFolder, classDoc.containingPackage().name(), classDoc.name(),
+	    alterHtmlDocs(opt, outputFolder, classDoc.containingPackage().name(), classDoc.name(),
 		    classDoc.name() + ".html", Pattern.compile("(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
 	}
     }
@@ -151,11 +151,35 @@ public class UmlGraphDoc {
 	}
     }
 
+    //Format string for the uml image div tag.
+    private static final String UML_DIV_TAG = 
+	"<div align=\"center\">" +
+	    "<img src=\"%1$s.png\" alt=\"Package class diagram package %1$s\" usemap=\"#G\" border=0/>" +
+	"</div>";
+    
+    //Format string for the java script tag.
+    private static final String EXPANDABLE_UML = 
+	"<script type=\"text/javascript\">\n" + 
+	"function show() {\n" + 
+	"    document.getElementById(\"uml\").innerHTML = \n" + 
+	"        \'<a style=\"font-family:monospace\" href=\"javascript:hide()\">%3$s</a>\' +\n" + 
+	"        \'%1$s\';\n" + 
+	"}\n" + 
+	"function hide() {\n" + 
+	"	document.getElementById(\"uml\").innerHTML = \n" + 
+	"	\'<a style=\"font-family:monospace\" href=\"javascript:show()\">%2$s</a>\' ;\n" + 
+	"}\n" + 
+	"</script>\n" + 
+	"<div id=\"uml\" >\n" + 
+	"	<a href=\"javascript:show()\">\n" + 
+	"	<a style=\"font-family:monospace\" href=\"javascript:show()\">%2$s</a> \n" + 
+	"</div>";
+    
     /**
      * Takes an HTML file, looks for the first instance of the specified insertion point, and
      * inserts the diagram image reference and a client side map in that point.
      */
-    private static void alterHtmlDocs(String outputFolder, String packageName, String className,
+    private static void alterHtmlDocs(Options opt, String outputFolder, String packageName, String className,
 	    String htmlFileName, Pattern insertPointPattern, RootDoc root) throws IOException {
 	// setup files
 	File output = new File(outputFolder, packageName.replace(".", "/"));
@@ -186,9 +210,11 @@ public class UmlGraphDoc {
 			insertClientSideMap(mapFile, writer);
 		    else
 			root.printWarning("Could not find map file " + mapFile);
-		    writer.write("<div align=\"center\"><img src=\"" + className
-			    + ".png\" alt=\"Package class diagram package " + className
-			    + "\" usemap=\"#G\" border=0/></a></div>");
+			
+		    String tag = String.format(UML_DIV_TAG, className);
+		    if (opt.collapsibleDiagrams)
+		    	tag = String.format(EXPANDABLE_UML, tag, "Show UML class diagram", "Hide UML class diagram");
+		    writer.write(tag);
 		    writer.newLine();
 		}
 	    }
@@ -239,5 +265,4 @@ public class UmlGraphDoc {
 	}
 	return ".";
     }
-
 }

@@ -6,6 +6,14 @@
 <dt>Version 5.1 Under development </dt><dd>
 <ul>
 <li> Active classes now appear with a double vertical border, following UML2.</li>
+<li> New class diagram options <code>-nodesep</code> and <code>-ranksep</code>,
+which allow fine control of the generated diagram layout.
+(patch submitted by Trustin Lee).
+</li>
+<li> A class's title will appear as a tooltip in image files that support this
+feature
+(patch submitted by Anthony Callegaro).
+</li>
 <li>
 Nested class hyperlinks to Javadoc documentation now work correctly
 (patch submitted by David P. Caldwell).

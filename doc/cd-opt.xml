@@ -124,6 +124,10 @@ a view definition. Only the class diagram specified by this view will be generat
 </dd>
 <dt>-views</dt><dd>Generate a class diagram for every view found in the source path.
 </dd>
+<dt>-collapsible</dt><dd>Enhance the javadoc HTML files containing UML diagrams
+with Javascript that provides a link for showing the (initially collapsed)
+diagrams.
+</dd>
 <dt>-inferrel</dt><dd>Try to automatically infer relationships between classes by inspecting
 field values. See the class diagram inference chapter for further details. Disabled by default.
 </dd>

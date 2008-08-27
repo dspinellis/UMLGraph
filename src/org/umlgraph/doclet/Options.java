@@ -118,6 +118,7 @@ public class Options implements Cloneable, OptionProvider {
     String guilClose = "&#187;";	// &raquo; \u00bb
     boolean inferRelationships;
     boolean inferDependencies;
+    boolean collapsibleDiagrams;
     RelationPattern contextRelationPattern;
     boolean useImports;
     Visibility inferDependencyVisibility;
@@ -175,6 +176,7 @@ public class Options implements Cloneable, OptionProvider {
 	contextRelationPattern = new RelationPattern(RelationDirection.BOTH);
 	inferRelationships = false;
 	inferDependencies = false;
+	collapsibleDiagrams = false;
 	inferDependencyVisibility = Visibility.PRIVATE;
 	inferDepInPackage = false;
 	useImports = false;
@@ -466,6 +468,10 @@ public class Options implements Cloneable, OptionProvider {
 	    }
 	} else if(opt[0].equals("-!inferdepvis")) {
 	    inferDependencyVisibility = Visibility.PRIVATE;
+	} else if(opt[0].equals("-collapsible")) {
+	    collapsibleDiagrams = true;
+	} else if(opt[0].equals("-!collapsible")) {
+	    collapsibleDiagrams = false;
 	} else if(opt[0].equals("-inferdep")) {
 	    inferDependencies = true;
 	} else if(opt[0].equals("-!inferdep")) {
