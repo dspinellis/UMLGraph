@@ -20,7 +20,6 @@ To update the table of contents execute the following vim command from a registe
 <li> <a href="#cr">Under Windows the output of <em>pic2plot</em> appears empty.  Why?</a></li>
 <li> <a href="#maven">I have a problem with Maven's Dotuml plugin.  Can you help me?</a></li>
 <li> <a href="#autopic">How can I make the UMLGraph doclet generate sequence diagrams?</a></li>
-<li> <a href="#packname">Why the vanity package name?  Why not name the package org.umlgraph?</a></li>
 <li> <a href="#unnamed">Why do the options specified in the <code>UMLOptions</code> class stop working, when I pass the <code>packagenames</code> option to <em>javadoc</em>?</a></li>
 <li> <a href="#tiger">Why doesn't UMLGraph run under Mac OS X?</a></li>
 <li> <a href="#cpp">Can I create UML class diagrams from C++ code?</a></li>
@@ -165,14 +164,6 @@ Have a look at the project's documentation and mailing lists available through
 <h2><a name="autopic">How can I make the UMLGraph doclet generate sequence diagrams?</a></h2>
 You can't.
 You have to write the <em>pic</em> code for the sequence diagrams by hand.
-
-<h2><a name="packname">Why the vanity package name?  Why not name the package org.umlgraph?</a></h2>
-The package names are supposed to be unique.
-If everybody names their project under the org.* namespace there's
-no mechanism for ensuring that the name will be unique,
-unless the developer also registers the corresponding domain name.
-Registering a different domain name for each project is not practical,
-therefore I name the packages I develop using the domain name I own.
 
 <h2><a name="unnamed">Why do the options specified in the <code>UMLOptions</code> class stop working, when I pass the <code>packagenames</code> option to <em>javadoc</em>?</a></h2>
 When you pass the <code>packagenames</code> option to
