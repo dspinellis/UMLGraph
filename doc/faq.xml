@@ -43,7 +43,7 @@ and add more UMLGraph switches at the end of the line.
 
 <h2><a name="utfsvg">Why are the SVG diagrams dot generates malformed?</a></h2>
 UMLGraph uses guillemot characters for representing the angle brackets around
-stereotypes, as in «interface».
+stereotypes, as in &#171;interface&#187;.
 By default these are encoded as ISO-8859-1 characters, which are illegal
 in the UTF-8 output that dot generates for SVG.
 When using dot to generate SVG output, you should also specify
@@ -190,8 +190,10 @@ By fixing the classpath used for the UNLGraph invocation you can avoid this
 problem.
 Olivier Duysens notes:
 <blockquote>
+<p>
 JBuilder users need to go to Preferences/Build/Ant,
 and tick the box "Use project libraries when running ant" to solve the issue.
+</p>
 </blockquote>
 
 <h2><a name="license">Under what license is UMLGraph distributed?</a></h2>

@@ -48,10 +48,10 @@ usecase, and activeclass.
 These shapes require GraphViz 2.16 or newer.
 </li>
 <li> A new <code>@note</code> tag allows the annotation of elements with comments.
-(Suggested by Sébastien Pierre.)
+(Suggested by S&#233;bastien Pierre.)
 </li>
 <li> A new <code>@commentname</code> option allows the naming of elements
-with the text of the <em>javadoc</em> comment.
+with the text of the <em>javadoc</em> comment.</li>
 </ul>
 </dd>
 
@@ -68,7 +68,7 @@ with version 1.13 of Graphviz.
 (reported by Roger Alexander).</li>
 <li> Fix inferred relations of maps to primitive Java types.
 (reported by Przemyslaw Wesolek).</li>
-</ul>
+</ul></dd>
 
 <dt>Version 4.8 2007-05-10 </dt><dd>
 <ul>
@@ -78,6 +78,7 @@ with version 1.13 of Graphviz.
 <li> The distribution includes an example shell script and batch file for
 invoking UmlGraph. </li>
 </ul>
+</dd>
 
 <dt>Version 4.7 2007-03-26 </dt><dd>
 <ul>
@@ -102,7 +103,8 @@ given (reported by: Georgios Gousios)</li>
 <li>Correct running of the UmlGraphDoc tests</li>
 <li>Correct the JavaDoc generation (Maxim Butov)</li>
 <li>Correct appearance of generic names (Ivan F. Villanueva B.)</li>
-<li>UmlGraphDoc now handles filenames with embedded spaces (reported and tested by J&ouml;rn Guy S&uuml;&szlig; and Christophe DENEUX)</li>
+<li>UmlGraphDoc now handles filenames with embedded spaces (reported and tested
+by J&#246;rn Guy S&#252;&#223; and Christophe DENEUX)</li>
 </ul>
 </dd>
 
