@@ -1,21 +1,45 @@
 <?xml version="1.0" ?>
 <!-- $Id$ -->
 <notes>
-The following individuals have contributed useful comments and code.
+<p>
+UMLGraph was developed and is being maintained by
+<a href="http://www.spinellis.gr">Diomidis Spinellis</a>.
+Andrea Aime has contributed the functionality for
+adding UML diagrams to javadoc pages, for inferring relationships,
+and for multiple diagram views.
+</p>
+<p>
+In addition,
+the following individuals have contributed useful comments and code.
 UMLGraph would not be in its current state without their contributions.
 <ul>
 <li>Nascif Abousalh-Neto</li>
-<li>Andrea Aime</li>
+<li>Roger Alexander</li>
+<li>Panagiotis Astithas</li>
 <li>Yves Bossel</li>
+<li>Maxim Butov</li>
+<li>David P. Caldwell</li>
+<li>Anthony Callegaro</li>
+<li>Dirk Datzert</li>
 <li>Nick Efthymiou</li>
+<li>Georgios Gousios</li>
 <li>Antti Hakala</li>
 <li>Art Hampton</li>
 <li>Scott Johnson</li>
+<li>Trustin Lee</li>
+<li>Joshua Lim</li>
 <li>Vadim Nasardinov</li>
+<li>S&#233;bastien Pierre</li>
 <li>Olek Poplavskyy</li>
 <li>Alessandro Riva</li>
 <li>Arnaud Rogues</li>
+<li>Arnaud Rogues</li>
 <li>Jonathan R. Santos</li>
 <li>Sebastian Setzer</li>
+<li>Andreas Studer</li>
+<li>Ivan F. Villanueva B.</li>
+<li>Przemyslaw Wesolek</li>
+<li>Franz Wilhelmstoetter</li>
 </ul>
+</p>
 </notes>
