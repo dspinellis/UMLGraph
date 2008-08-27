@@ -15,8 +15,8 @@ build.xml file.
 If you change the source code, you can run regression tests by
 executing "ant test".
 
-Project home page: http://www.spinellis.gr/sw/umlgraph
+Project home page: http://www.umlgraph.org
 
-Diomidis Spinellis - November 2005
+Diomidis Spinellis - November 2005, August 2008
 
 $Id$
