@@ -4,46 +4,10 @@
 A number of options contol the operation of UMLGraph
 class diagram generator.
 These can be specified on the command line, and most can also
-be specified within the diagram, affecting all or some elements.
+be specified through javadoc tags within the diagram, affecting all or some elements.
 <p/>
-The following options are supported:
+<h2>What Gets Drawn</h2> <!-- {{{1 -->
 <dl>
-<dt>-output</dt><dd>Specify the output file (default <code>graph.dot</code>).
-If the output directory is provided, -output can only specify a file name,
-otherwise a full path is accepted as well.
-If the filename specified is a dash, then the results are printed on the
-standard output, and can be directly piped into <em>dot</em>.
-Note that, in order to avoid <em>javadoc</em> messages to contaminate
-UMLGraph's output, you must execute UMLGraph directly as a jar,
-not through <em>javadoc</em>.
-</dd>
-<dt>-d</dt><dd>Specify the output directory (defaults to the current directory).
-</dd>
-<dt>-outputencoding</dt><dd>Specify the output encoding character set (default <code>ISO-8859-1</code>).
-When using <em>dot</em> to generate SVG diagrams you should specify
-<code>UTF-8</code> as the output encoding, to have guillemots correctly
-appearing in the resulting SVG.
-</dd>
-<dt>-qualify</dt><dd>Produce fully-qualified class names.
-</dd>
-<dt>-horizontal</dt><dd>Layout the graph in the horizontal direction.
-</dd>
-<dt>-attributes</dt><dd>Show class attributes (Java fields)
-</dd>
-<dt>-operations</dt><dd>Show class operations (Java methods)
-</dd>
-<dt>-constructors</dt><dd>Show a class's constructors
-</dd>
-<dt>-visibility</dt><dd>Adorn class elements according to their
-visibility (private, public, protected, package)
-</dd>
-<dt>-types</dt><dd>Add type information to attributes and operations
-</dd>
-<dt>-enumerations</dt><dd>Show enumarations as separate stereotyped primitive
-types.
-</dd>
-<dt>-enumconstants</dt><dd>When showing enumerations, also show the values they can take.
-</dd>
 <dt>-all</dt><dd>Same as
 <code>-attributes</code>
 <code>-operations</code>
@@ -52,87 +16,84 @@ types.
 <code>-enumerations</code>
 <code>-enumconstants</code>
 </dd>
-<dt>-commentname</dt><dd>Name the element using the text in the javadoc
-comment, instead of the name of its class.
-</dd>
-<dt>-nodefillcolor</dt><dd>Specify the color to use to fill the shapes.
-</dd>
-<dt>-nodefontname</dt><dd>Specify the font name to use inside nodes.
-</dd>
-<dt>-nodefontabstractname</dt><dd>Specify the font name to use
-inside abstract class nodes.
-</dd>
-<dt>-nodefontsize</dt><dd>Specify the font size to use inside nodes.
-</dd>
-<dt>-nodefontclassname</dt><dd>Specify the font name to use for the class names.
-</dd>
-<dt>-nodefontclassabstractname</dt><dd>Specify the font name use for the 
-class name of abstract classes.
-</dd>
-<dt>-nodefontclasssize</dt><dd>Specify the font size to use for the class names.
-</dd>
-<dt>-nodefonttagname</dt><dd>Specify the font name to use for the tag names.
-</dd>
-<dt>-nodefonttagsize</dt><dd>Specify the font size to use for the tag names.
-</dd>
-<dt>-nodefontpackagename</dt><dd>Specify the font name to use for the package 
-names (used only when the package name is postfixed, see -postfixpackage).
-</dd>
-<dt>-nodefontpackagesize</dt><dd>Specify the font size to use for the package 
-names (used only when it package name is postfixed, see -postfixpackage).
-</dd>
-<dt>-nodefontcolor</dt><dd>Specify the font color to use inside nodes.
-</dd>
-<dt>-edgefontname</dt><dd>Specify the font name to use for edge labels.
-</dd>
-<dt>-edgefontsize</dt><dd>Specify the font size to use for edge labels.
-</dd>
-<dt>-edgefontcolor</dt><dd>Specify the font color to use for edge labels.
-</dd>
-<dt>-edgecolor</dt><dd>Specify the color for drawing edges.
-</dd>
-<dt>-bgcolor</dt><dd>Specify the graph's background color.
-</dd>
-<dt>-postfixpackage</dt><dd>When using qualified class names, put the
-package name in the line after the class name, in order to reduce the
-width of class nodes.
-</dd>
-<dt>-shape</dt><dd>Specify the shape to use for the rendered element(s).
-The following UML shapes are available:
-<ul>
-<li>class (default)</li>
-<li>node</li>
-<li>component</li>
-<li>package</li>
-<li>collaboration</li>
-<li>usecase</li>
-<li>activeclass</li>
-</ul>
-</dd>
-
+<dt>-attributes</dt><dd>Show class attributes (Java fields) </dd>
+<dt>-commentname</dt><dd>Name the element using the text in the javadoc comment, instead of the name of its class.  </dd>
+<dt>-constructors</dt><dd>Show a class's constructors </dd>
+<dt>-enumconstants</dt><dd>When showing enumerations, also show the values they can take.  </dd>
+<dt>-enumerations</dt><dd>Show enumarations as separate stereotyped primitive types.  </dd>
 <dt>-hide</dt><dd>Specify entities to hide from the graph.
-Matching is done using a non-anchored regular match.
-For instance, "<code>-hide (Big|\.)Widget</code>" would hide "<code>com.foo.widgets.Widget</code>" and
-"<code>com.foo.widgets.BigWidget</code>". Can also be used without arguments,
-in this case it will hide everything (useful in the context of views
-to selectively unhide some portions of the graph, see the view chapter for
-further details).
-</dd>
+ Matching is done using a non-anchored regular match.
+ For instance, "<code>-hide (Big|\.)Widget</code>" would hide "<code>com.foo.widgets.Widget</code>" and
+ "<code>com.foo.widgets.BigWidget</code>". Can also be used without arguments,
+ in this case it will hide everything (useful in the context of views
+ to selectively unhide some portions of the graph, see the view chapter for
+ further details).  </dd>
+<dt>-operations</dt><dd>Show class operations (Java methods) </dd>
+<dt>-qualify</dt><dd>Produce fully-qualified class names.  </dd>
+<dt>-types</dt><dd>Add type information to attributes and operations </dd>
 <dt>-view</dt><dd>Specify the fully qualified name of a class that contains
-a view definition. Only the class diagram specified by this view will be generated. 
-<br/>See the views chapter for more details.
-</dd>
-<dt>-views</dt><dd>Generate a class diagram for every view found in the source path.
-</dd>
-<dt>-collapsible</dt><dd>Enhance the javadoc HTML files containing UML diagrams
-with Javascript that provides a link for showing the (initially collapsed)
-diagrams.
-</dd>
-<dt>-inferrel</dt><dd>Try to automatically infer relationships between classes by inspecting
-field values. See the class diagram inference chapter for further details. Disabled by default.
-</dd>
-<dt>-inferreltype</dt><dd>The type of relationship inferred when -inferrel is activated. 
-Defaults to "navassoc" (see the class modelling chapter for a list of relationship types).
+ a view definition. Only the class diagram specified by this view will be generated. 
+ <br/>See the views chapter for more details.  </dd>
+<dt>-views</dt><dd>Generate a class diagram for every view found in the source path.  </dd>
+<dt>-visibility</dt><dd>Adorn class elements according to their visibility (private, public, protected, package) </dd>
+</dl>
+<h2>Visual Appearance</h2> <!-- {{{1 -->
+<dl>
+<dt>-bgcolor</dt><dd>Specify the graph's background color.  </dd>
+<dt>-collapsible</dt><dd>Enhance the javadoc HTML files containing UML diagrams with Javascript that provides a link for showing the (initially collapsed) diagrams.  </dd>
+<dt>-edgecolor</dt><dd>Specify the color for drawing edges.  </dd>
+<dt>-edgefontcolor</dt><dd>Specify the font color to use for edge labels.  </dd>
+<dt>-edgefontname</dt><dd>Specify the font name to use for edge labels.  </dd>
+<dt>-edgefontsize</dt><dd>Specify the font size to use for edge labels.  </dd>
+<dt>-horizontal</dt><dd>Layout the graph in the horizontal direction.  </dd>
+<dt>-nodefillcolor</dt><dd>Specify the color to use to fill the shapes.  </dd>
+<dt>-nodefontabstractname</dt><dd>Specify the font name to use inside abstract class nodes.  </dd>
+<dt>-nodefontclassabstractname</dt><dd>Specify the font name use for the class name of abstract classes.  </dd>
+<dt>-nodefontclassname</dt><dd>Specify the font name to use for the class names.  </dd>
+<dt>-nodefontclasssize</dt><dd>Specify the font size to use for the class names.  </dd>
+<dt>-nodefontcolor</dt><dd>Specify the font color to use inside nodes.  </dd>
+<dt>-nodefontname</dt><dd>Specify the font name to use inside nodes.  </dd>
+<dt>-nodefontpackagename</dt><dd>Specify the font name to use for the package names (used only when the package name is postfixed, see -postfixpackage).  </dd>
+<dt>-nodefontpackagesize</dt><dd>Specify the font size to use for the package names (used only when it package name is postfixed, see -postfixpackage).  </dd>
+<dt>-nodefontsize</dt><dd>Specify the font size to use inside nodes.  </dd>
+<dt>-nodefonttagname</dt><dd>Specify the font name to use for the tag names.  </dd>
+<dt>-nodefonttagsize</dt><dd>Specify the font size to use for the tag names.  </dd>
+<dt>-nodesep</dt><dd>Specify the horizontal separation between the class nodes (0.25 by default).  Decreasing this can make a diagram more compact.</dd>
+<dt>-noguillemot</dt><dd>Specify that guillemot characters should not be used to denote special terms like "interface" and stereotype names.  This is used on some platforms to circumvent problems associated with displaying non-ASCII characters.  </dd>
+<dt>-postfixpackage</dt><dd>When using qualified class names, put the package name in the line after the class name, in order to reduce the width of class nodes.  </dd>
+<dt>-ranksep</dt><dd>Specify the vertical separation between the class nodes (0.5 by default).  Decreasing this can make a diagram more compact.</dd>
+<dt>-shape</dt><dd>Specify the shape to use for the rendered element(s).
+ The following UML shapes are available:
+ <ul>
+ <li>class (default)</li>
+ <li>node</li>
+ <li>component</li>
+ <li>package</li>
+ <li>collaboration</li>
+ <li>usecase</li>
+ <li>activeclass</li>
+ </ul>
+ </dd>
+ </dl>
+
+<p />
+All colors can be either a symbolic name (e.g. blue),
+a tripple specifying hue-saturation-brightness as values 0-1
+(e.g. ".13 0.9 1"),
+or a tripple specifying red-green-blue values as hexadecimal
+digits prefixed by a # (e.g. "#ff8020").
+The symbolic color names are derived from the X Windows System;
+you can find a complete list in the
+<a href="http://www.graphviz.org/doc/info/colors.html">Graphviz documentation</a>
+<p />
+Font names are passed directly to the dot graph generation back-end.
+In general the Postcript standard names Times, Helvetica, Courier, and
+Symbol are safe to use.
+<h2>Relationship Inference</h2> <!-- {{{1 -->
+<dl>
+<dt>-collpackages</dt><dd>Specify the classes that will be treated as
+containers for one to many relationships when inference is enabled. 
+Matching is done using a non-anchored regular match. Empty by default.
 </dd>
 <dt>-inferdep</dt><dd>Try to automatically infer dependencies between classes by inspecting
 methods and fields. See the class diagram inference chapter for more details. Disabled by default.
@@ -146,18 +107,27 @@ of these dependencies since imports are not required to use classes in the same 
 dependencies among classes. Possible values are private, package, protected, public, in this
 order. The default value is private. Use higher levels to limit the number of inferred dependencies.
 </dd>
+<dt>-inferrel</dt><dd>Try to automatically infer relationships between classes by inspecting
+field values. See the class diagram inference chapter for further details. Disabled by default.
+</dd>
+<dt>-inferreltype</dt><dd>The type of relationship inferred when -inferrel is activated. 
+Defaults to "navassoc" (see the class modelling chapter for a list of relationship types).
+</dd>
 <dt>-useimports</dt><dd>Will also use imports to infer dependencies. 
 Disabled by default, since it does not work properly if there are multiple
 classes in the same source file (will add dependencies to every class in
 the source file).
 </dd>
-<dt>-verbose2</dt><dd>Will print on the standard output details regarding
-the progress of graph generation.
-(Note that -verbose is a javadoc option with a different meaning).
-</dd>
-<dt>-collpackages</dt><dd>Specify the classes that will be treated as
-containers for one to many relationships when inference is enabled. 
-Matching is done using a non-anchored regular match. Empty by default.
+</dl>
+<h2>API Hyperlinks</h2> <!-- {{{1 -->
+<dl>
+<dt>-apidocmap</dt><dd>Specify the file name of the URL mapping table. 
+The is a standard Java property file, where the property name is a regular
+expression (as defined in the java.util.regex package) and the property value is
+an URL "root" as described above.
+This table is used to resolved external class names (class names that do not
+belong to the current package being processed by UMLGraph). If no file is provided,
+external classes will just be mapped to the on-line Java API documentation.
 </dd>
 <dt>-apidocroot</dt><dd>Specify the URL that should be used as the "root" for local classes.
 This URL will be used as a prefix, to which the page name for the local class or
@@ -170,28 +140,6 @@ final class diagram by setting the output to SVG, or by creating an HTML page
 that associates the diagram static image (a .gif or .png) with a client-side
 image map.
 </dd>
-<dt>-apidocmap</dt><dd>Specify the file name of the URL mapping table. 
-The is a standard Java property file, where the property name is a regular
-expression (as defined in the java.util.regex package) and the property value is
-an URL "root" as described above.
-This table is used to resolved external class names (class names that do not
-belong to the current package being processed by UMLGraph). If no file is provided,
-external classes will just be mapped to the on-line Java API documentation.
-</dd>
-<dt>-nodesep</dt><dd>Specify the horizontal separation between the class nodes (0.25
-by default).  Decreasing this can make a diagram more compact.</dd>
-<dt>-ranksep</dt><dd>Specify the vertical separation between the class nodes (0.5
-by default).  Decreasing this can make a diagram more compact.</dd>
-<dt>-noguillemot</dt><dd>Specify that guillemot characters should not
-be used to denote special terms like "interface" and stereotype names.
-This is used on some platforms to circumvent problems associated
-with displaying non-ASCII characters.
-</dd>
-<dt>-compact</dt><dd>Generate compact dot files, that is, print html labels
-in a single line instead of "pretty printing" them. Useful if the dot file
-has to be manipulated by an automated tool (e.g., the UMLGraph regression
-test suite).
-</dd>
 <dt>-link</dt><dd>A clone of the standard doclet
 <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#link">-link</a>
 option, allows UMLGraph to generate links from class symbols to their external javadoc
@@ -199,17 +147,33 @@ documentation (image maps are automatically generated in UMLGraphDoc, you'll hav
 manually with graphviz if using UMLGraph).
 </dd>
 </dl>
-<p />
-All colors can be either a symbolic name (e.g. blue),
-a tripple specifying hue-saturation-brightness as values 0-1
-(e.g. ".13 0.9 1"),
-or a tripple specifying red-green-blue values as hexadecimal
-digits prefixed by a # (e.g. "#ff8020").
-The symbolic color names are derived from the X Windows System;
-you can find a complete list in the 
-<a href="http://www.graphviz.org/doc/info/colors.html">Graphviz documentation</a>
-<p />
-Font names are passed directly to the dot graph generation back-end.
-In general the Postcript standard names Times, Helvetica, Courier, and
-Symbol are safe to use.
+<h2>Operation</h2> <!-- {{{1 -->
+<dl>
+<dt>-compact</dt><dd>Generate compact dot files, that is, print HTML labels
+in a single line instead of "pretty printing" them. Useful if the dot file
+has to be manipulated by an automated tool
+(e.g., the UMLGraph regression test suite).
+</dd>
+<dt>-d</dt><dd>Specify the output directory (defaults to the current directory).
+</dd>
+<dt>-output</dt><dd>Specify the output file (default <code>graph.dot</code>).
+If the output directory is provided, -output can only specify a file name,
+otherwise a full path is accepted as well.
+If the filename specified is a dash, then the results are printed on the
+standard output, and can be directly piped into <em>dot</em>.
+Note that, in order to avoid <em>javadoc</em> messages to contaminate
+UMLGraph's output, you must execute UMLGraph directly as a jar,
+not through <em>javadoc</em>.
+</dd>
+<dt>-outputencoding</dt><dd>Specify the output encoding character set (default <code>ISO-8859-1</code>).
+When using <em>dot</em> to generate SVG diagrams you should specify
+<code>UTF-8</code> as the output encoding, to have guillemots correctly
+appearing in the resulting SVG.
+</dd>
+<dt>-verbose2</dt><dd>Will print on the standard output details regarding
+the progress of graph generation.
+(Note that -verbose is a javadoc option with a different meaning).
+</dd>
+</dl>
+<!-- Footer {{{1 -->
 </notes>

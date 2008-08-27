@@ -6,24 +6,32 @@
 <dt>Version 5.1 Under development </dt><dd>
 <ul>
 <li> Active classes now appear with a double vertical border, following UML2.</li>
+<li>Reorganized the documentation of class diagram options.</li>
 <li> New class diagram options <code>-nodesep</code> and <code>-ranksep</code>,
 which allow fine control of the generated diagram layout.
-(patch submitted by Trustin Lee).
+(Patch submitted by Trustin Lee.)
 </li>
 <li> A class's title will appear as a tooltip in image files that support this
-feature
-(patch submitted by Anthony Callegaro).
+feature.
+(Patch submitted by Anthony Callegaro.)
 </li>
 <li>
-Nested class hyperlinks to Javadoc documentation now work correctly
-(patch submitted by David P. Caldwell).
+Nested class hyperlinks to Javadoc documentation now work correctly.
+(Patch submitted by David P. Caldwell.)
 </li>
 <li>
 The guillemot characters are now output with their Unicode HTML numeric
 escapes instead of their HTML symbolic values.
 This makes the output work correctly on Mac OS X, and also easier
 to validate with XML tools.
-(patch submitted by Joshua Lim).
+(Patch submitted by Joshua Lim.)
+</li>
+<li>
+UmlGraphDoc now supports Javascript-collapsible UML diagrams.
+A new option <code>-collapsible</code> can be used to enable this
+feature.
+(Patch submitted by Franz Wilhelmstoetter.)
+
 </ul>
 </dd>
 
