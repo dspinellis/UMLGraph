@@ -77,10 +77,12 @@ testupdate:
 	sh tools/testupdate.sh
 
 web: $(BALL_TAR_GZ) CHECKSUM.MD5
-	cp $(BALL_TAR_GZ) $(ZIPBALL) CHECKSUM.MD5 oldversion.html umlgraph-banner.png $(WEBDIR)
+	cp $(BALL_TAR_GZ) $(ZIPBALL) CHECKSUM.MD5 $(WEBDIR)
+	(cd web && sh build.sh)
+	cp web/build/*.* $(WEBDIR)
+	sed "s/VERSION/$(VERSION)/g" web/build/download.html >$(WEBDIR)/download.html
 	cp $(JARFILE) $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
 	tar cf - javadoc | tar -C $(WEBDIR) -xvf -
-	sed "s/VERSION/$(VERSION)/g" index.html >$(WEBDIR)/index.html
 
 CHECKSUM.MD5: $(BALL_TAR_GZ) $(JARFILE)
 	md5 UMLGraph-2.10.* UMLGraph-4.8.* UMLGraph-$(VERSION).* >CHECKSUM.MD5
