@@ -21,6 +21,9 @@ reverse engineering tool.</li>
 <li> Adam Feuer's
 <a href="http://www.python.org/pypi/PyUMLGraph">PyUMLGraph</a>
 system applies the concept to Python programs.</li>
+<li> The <a href="http://moinmo.in/">MoinMoin</a> Wiki engine
+uses UMLGraph to provide
+<a href="http://moinmo.in/ParserMarket/UmlSequence">support for UML sequence diagrams</a>.</li>
 <li> The <a href="http://jbrugge.com/glean/">Glean</a>
 framework for generating feedback on a team's source code
 supports the scripting of UMLGraph.</li>
