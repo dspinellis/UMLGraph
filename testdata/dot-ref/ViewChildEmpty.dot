@@ -7,10 +7,12 @@
 digraph G {
 	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
+	nodesep=0.25;
+	ranksep=0.5;
 	// gr.spinellis.basic.product.Product
-	c244 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="LemonChiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Product </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c244 [label=<<table title="gr.spinellis.basic.product.Product" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="LemonChiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Product </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.basic.product.Category
-	c245 [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="LemonChiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Category </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c245 [label=<<table title="gr.spinellis.basic.product.Category" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="LemonChiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Category </td></tr></table></td></tr></table>>, fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// gr.spinellis.basic.product.Product ASSOC gr.spinellis.basic.product.Category
 	c244:p -> c245:p [taillabel="*", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
 }
