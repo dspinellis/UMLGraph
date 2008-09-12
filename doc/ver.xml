@@ -4,6 +4,10 @@
 <dl>
 
 <dt>Version 5.2 Under development </dt><dd>
+<ul>
+<li> Corrected case of the tools.jar filename in the umlgraph shell script.
+(Noted by &#216;yvind Jergan).
+</li>
 </dd>
 
 <dt>Version 5.1 2008-08-27 </dt><dd>

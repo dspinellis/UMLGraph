@@ -19,7 +19,7 @@ else
 	BASE=$1
 	FILETYPE=$2
 	shift 2
-	java -classpath "$UMLGRAPH_HOME/UmlGraph.jar:$JAVA_HOME/lib/Tools.jar" \
+	java -classpath "$UMLGRAPH_HOME/UmlGraph.jar:$JAVA_HOME/lib/tools.jar" \
 	org.umlgraph.doclet.UmlGraph -package $* -output - $BASE.java |
 	dot -T$FILETYPE -o$BASE.$FILETYPE
 fi
