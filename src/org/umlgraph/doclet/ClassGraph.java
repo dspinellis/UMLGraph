@@ -1043,7 +1043,8 @@ class ClassGraph {
 	
 	private String getPackageName(String className) {
 		if (this.rootClassdocs.get(className) == null) {
-			return className.substring(0, className.lastIndexOf('.'));
+			int idx = className.lastIndexOf('.');
+			return idx > 0 ? className.substring(0, idx) : "";
 		} else {
 			return this.rootClassdocs.get(className).containingPackage().name();
 		}
@@ -1051,7 +1052,8 @@ class ClassGraph {
 	
 	private String getUnqualifiedName(String className) {
 		if (this.rootClassdocs.get(className) == null) {
-			return className.substring(className.lastIndexOf('.') + 1);
+			int idx = className.lastIndexOf('.');
+			return idx > 0 ? className.substring(idx + 1) : className;
 		} else {
 			return this.rootClassdocs.get(className).name();
 		}

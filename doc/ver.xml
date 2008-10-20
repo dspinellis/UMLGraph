@@ -6,7 +6,10 @@
 <dt>Version 5.2 Under development </dt><dd>
 <ul>
 <li> Corrected case of the tools.jar filename in the umlgraph shell script.
-(Noted by &#216;yvind Jergan).
+(Reported by &#216;yvind Jergan).
+</li>
+<li> Fixed exception when an unknown class dependency is specified.
+(Reported by Jan Schl&#252;ter).
 </li>
 </dd>
 
