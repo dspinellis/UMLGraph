@@ -106,6 +106,8 @@ public class UmlGraph {
      * Builds and outputs a single graph according to the view overrides
      */
     public static void buildGraph(RootDoc root, OptionProvider op, Doc contextDoc) throws IOException {
+	if(getCommentOptions() == null)
+	    buildOptions(root);
 	Options opt = op.getGlobalOptions();
 	root.printNotice("Building " + op.getDisplayName());
 	ClassDoc[] classes = root.classes();

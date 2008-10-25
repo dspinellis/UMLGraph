@@ -11,6 +11,9 @@
 <li> Fixed exception when an unknown class dependency is specified.
 (Reported by Jan Schl&#252;ter).
 </li>
+<li> Corrected NullPointerException occurring when no global options were
+available.
+(Fix supplied by Bernd Blacha.)
 </dd>
 
 <dt>Version 5.1 2008-08-27 </dt><dd>
