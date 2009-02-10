@@ -24,5 +24,6 @@ a drawing.
 <tr><td>dashwid</td><td>0.05</td><td>Interval for dashed lines</td></tr>
 <tr><td>maxpswid</td><td>11</td><td>Maximum width of picture</td></tr>
 <tr><td>maxpsht</td><td>11</td><td>Maximum height of picture</td></tr>
+<tr><td>underline</td><td>1</td><td>Underline the name of objects</td></tr>
 </table>
 </notes>

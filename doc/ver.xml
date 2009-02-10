@@ -4,6 +4,9 @@
 <dl>
 
 <dt>Version 5.3 Under development </dt><dd>
+<ul>
+<li>Sequence diagrams provide an option to specify whether objects are
+underlined or not.</li>
 </dd>
 
 <dt>Version 5.2 2008-12-03</dt><dd>

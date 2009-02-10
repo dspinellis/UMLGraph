@@ -34,13 +34,14 @@ define comment_default_move {up 0.25 right 0.25};
 comment_default_ht=0.5;
 # Comment width
 comment_default_wid=1;
-
+# Underline object name
+underline=1;
 
 # Create a new object(name,label)
 define object {
 	$1: box $2; move;
 	# Could also underline text with \mk\ul\ul\ul...\rt
-	{
+	if (underline) then {
 		line from $1.w + (.1, -.07) to $1.e + (-.1, -.07);
 	}
 	move to $1.e;
