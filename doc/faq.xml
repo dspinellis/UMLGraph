@@ -27,6 +27,7 @@ To update the table of contents execute the following vim command from a registe
 <li> <a href="#license">Under what license is UMLGraph distributed?</a></li>
 <li> <a href="#classnotfound">Why do I get an exception java.lang.NoClassDefFoundError: com/sun/tools/javadoc/Main?</a></li>
 <li> <a href="#truncxml">How can I prevent clipped SVG images in sequence diagrams?</a></li>
+<li> <a href="#private">How can I instruct UMLGraph to include private fields in its output?</a></li>
 </ul>
 
 <h2><a name="cmdline">What is the command line sequence to generate a UMLGraph class diagram?</a></h2>
@@ -222,4 +223,6 @@ of your JDK distribution.)
 This appears to be a limitation of <em>pic2plot</em>.
 You can work around it, by increasing the width and height values appearing
 in the SVG XML file that <em>pic2plot</em> generates.
+<h2><a name="private">How can I instruct UMLGraph to include private fields in its output?</a></h2>
+You need to pass the <code>-private</code> flag to <em>javadoc</em>.
 </notes>
