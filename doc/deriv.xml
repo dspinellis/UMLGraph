@@ -33,5 +33,7 @@ supports the scripting of UMLGraph.</li>
 <li> W. Goesgens has <a href="http://wiki.ioslo.net/dokuwiki/graphviz#plugging_umlgraph_infront_of_graphviz">documented here</a> a way to use
 UMLGraph diagrams in
 <a href="http://wiki.splitbrain.org/wiki:dokuwiki">DokuWiki</a>.</li>
+<li> Mykhaylo Sorochan has built on top of UMLGraph a
+<a href="http://macroexpand.org/doku.php/articles:uml-sequence-diagram-dsl-txl:start">higher-level domain-specific language for specifying UML sequence diagrams</a>.</li>
 </ul>
 </notes>

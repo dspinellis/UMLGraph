@@ -7,6 +7,7 @@
 <ul>
 <li>Sequence diagrams provide an option to specify whether objects are
 underlined or not.</li>
+</ul>
 </dd>
 
 <dt>Version 5.2 2008-12-03</dt><dd>
@@ -19,7 +20,8 @@ underlined or not.</li>
 </li>
 <li> Corrected NullPointerException occurring when no global options were
 available.
-(Fix supplied by Bernd Blacha.)
+(Fix supplied by Bernd Blacha.)</li>
+</ul>
 </dd>
 
 <dt>Version 5.1 2008-08-27 </dt><dd>

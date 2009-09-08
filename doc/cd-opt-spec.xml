@@ -13,7 +13,7 @@ of a class named <code>UMLOptions</code>, as in the following example:
  */
 class UMLOptions {}
 </fmtcode>
-<p>
+<p />
 Similarly, you can also globally specify options for all the note elements.
 through a class named <code>UMLNoteOptions</code>, as in the following example:
 <fmtcode ext="java">
@@ -23,7 +23,7 @@ through a class named <code>UMLNoteOptions</code>, as in the following example:
  */
 class UMLNoteOptions{}
 </fmtcode>
-<p>
+<p />
 
 You can also change the UMLGraph operation on a per-class basis by
 using <code>@opt</code> attributes on individual classes.
