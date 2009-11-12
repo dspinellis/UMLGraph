@@ -6,7 +6,7 @@
 #
 
 # For each file appearing in top.html
-for file in `awk -F\" '$4 == "menu"{print $6}' top.html`
+for file in `awk -F\" '$4 == "menu"{print $6}' top.html | tr -d '\r'`
 do
 	base=`basename $file .html`
 	(

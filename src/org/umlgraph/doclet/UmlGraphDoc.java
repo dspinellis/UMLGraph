@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
@@ -196,9 +198,10 @@ public class UmlGraphDoc {
 	BufferedReader reader = null;
 	boolean matched = false;
 	try {
-	    int BUFSIZE = (int) Math.pow(2, 20); // more or less one megabyte
-	    writer = new BufferedWriter(new FileWriter(alteredFile), BUFSIZE);
-	    reader = new BufferedReader(new FileReader(htmlFile));
+	    writer = new BufferedWriter(new OutputStreamWriter(new
+		    FileOutputStream(alteredFile), opt.outputEncoding));
+	    reader = new BufferedReader(new InputStreamReader(new
+		    FileInputStream(htmlFile), opt.outputEncoding));
 
 	    String line;
 	    while ((line = reader.readLine()) != null) {

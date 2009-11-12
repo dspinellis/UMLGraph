@@ -7,6 +7,9 @@
 <ul>
 <li>Sequence diagrams provide an option to specify whether objects are
 underlined or not.</li>
+<li>Documentation generated with UMLGraph will process correctly
+non-ASCII characters.
+(Fix contributed by Gunho Kim.)</li>
 </ul>
 </dd>
 
