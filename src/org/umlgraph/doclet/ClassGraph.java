@@ -818,6 +818,9 @@ class ClassGraph {
 	    return;
 
 	for (FieldDoc field : c.fields(false)) {
+	    if(hidden(field))
+		continue;
+
 	    // skip statics
 	    if(field.isStatic())
 		continue;
