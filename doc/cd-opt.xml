@@ -156,6 +156,19 @@ has to be manipulated by an automated tool
 </dd>
 <dt>-d</dt><dd>Specify the output directory (defaults to the current directory).
 </dd>
+<dt>-dotexecutable</dt><dd>Specify the path of the <em>dot</em> executable.
+</dd>
+<dt>-linkoffline</dt><dd>Specify
+links to javadoc-generated documentation for external referenced classes.
+The <code>-linkoffline</code> option takes two arguments:
+the first for the string to be embedded in the <code>href</code>
+links, the second telling it where to find the <code>package-list</code>.
+Example:
+<pre>
+-linkoffline http://developer.android.com/reference file:/home/doc/android/
+</pre>
+See the <em>javadoc</em> documentation for more details.
+</dd>
 <dt>-output</dt><dd>Specify the output file (default <code>graph.dot</code>).
 If the output directory is provided, -output can only specify a file name,
 otherwise a full path is accepted as well.
