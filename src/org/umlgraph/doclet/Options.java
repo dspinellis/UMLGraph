@@ -59,7 +59,7 @@ public class Options implements Cloneable, OptionProvider {
 	// (on windows graphviz is unable to locate "Helvetica-Oblique"
 	if(System.getProperty("os.name").toLowerCase().contains("windows")) {
 	    defaultFont = "arial";
-	    defaultItalicFont = "ariali";
+	    defaultItalicFont = "arial italic";
 	} else {
 	    defaultFont = "Helvetica";
 	    defaultItalicFont = "Helvetica-Oblique";
