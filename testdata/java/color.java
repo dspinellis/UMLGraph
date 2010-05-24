@@ -2,7 +2,7 @@
 
 /**
  * @opt edgecolor "yellow"
- * @opt nodefontname "Times" 
+ * @opt nodefontname Serif
  * @opt bgcolor ".7 .9 1" 
  * @opt nodefillcolor "#a0a0a0" 
  * @opt nodefontsize 14
@@ -11,7 +11,7 @@
 class UMLOptions{}
 
 /** 
- * @opt nodefontname "Helvetica-Bold" 
+ * @opt nodefontname arial bold
  * @opt nodefontcolor "white"
  * @composed - - - Red
  * @composed - - - Green

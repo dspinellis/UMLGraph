@@ -4,14 +4,14 @@ package net.sf.whatever.test;
 /**
  * @hidden
  * @opt postfixpackage
- * @opt edgefontname arialbd
+ * @opt edgefontname arial bold
  * @opt nodefontname arial
  * @opt nodefontsize 9
- * @opt nodefontabstract ariali
- * @opt nodefontclassname arialbd
- * @opt nodefontclassabstractname arialbi
+ * @opt nodefontabstract arial italic
+ * @opt nodefontclassname arial bold
+ * @opt nodefontclassabstractname arial bold italic
  * @opt nodefonttagsize 6
- * @opt nodefonttagname ariali
+ * @opt nodefonttagname arial italic
  * @opt nodefontpackagesize 8
  * @opt operations
  * @opt attributes
