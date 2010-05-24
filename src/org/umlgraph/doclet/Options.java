@@ -275,8 +275,9 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-ranksep") ||
            option.equals("-dotexecutable") ||
            option.equals("-link"))
-            return 2;
-        else if(option.equals("-contextPattern"))
+           return 2;
+	else if(option.equals("-contextPattern") ||
+		option.equals("-linkoffline"))
             return 3;
         else
             return 0;
@@ -506,6 +507,8 @@ public class Options implements Cloneable, OptionProvider {
 	    postfixPackage = false;
 	} else if (opt[0].equals("-link")) {
 	    addApiDocRoots(opt[1]);
+	} else if (opt[0].equals("-linkoffline")) {
+	    addApiDocRootsOffline(opt[1], opt[2]);
 	} else if(opt[0].equals("-contextPattern")) {
 	    RelationDirection d; RelationType rt;
 	    try {
@@ -571,7 +574,35 @@ public class Options implements Cloneable, OptionProvider {
 	}
 	
     }
-    
+
+    /**
+     * Adds api doc roots from an offline link.
+     * The folder specified by packageListUrl should contain the package-list associed with the docUrl folder.
+     * @param docUrl folder containing the javadoc
+     * @param packageListUrl folder containing the package-list
+     */
+    private void addApiDocRootsOffline(String docUrl, String packageListUrl) {
+	BufferedReader br = null;
+	packageListUrl = fixApiDocRoot(packageListUrl);
+	try {
+	    URL url = new URL(packageListUrl + "/package-list");
+	    br = new BufferedReader(new InputStreamReader(url.openStream()));
+	    String line = null;
+	    while((line = br.readLine()) != null) {
+		line = line + ".";
+		Pattern pattern = Pattern.compile(line.replace(".", "\\.") + "[^\\.]*");
+		apiDocMap.put(pattern, fixApiDocRoot(docUrl));
+	    }
+	} catch(IOException e) {
+	    System.err.println("Unable to access the package-list file at " + packageListUrl);
+	} finally {
+	    if (br != null)
+	    try {
+		    br.close();
+	    } catch (IOException e) {}
+	}
+    }
+
     /**
      * Loads the property file referred by <code>apiDocMapFileName</code> and fills the apiDocMap
      * accordingly
