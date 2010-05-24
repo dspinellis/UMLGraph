@@ -52,7 +52,7 @@ public class UmlGraphDoc {
 	try {
 	    String outputFolder = findOutputPath(root.options());
 
-	    Options opt = new Options();
+        Options opt = UmlGraph.buildOptions(root);
 	    opt.setOptions(root.options());
 	    // in javadoc enumerations are always printed
 	    opt.showEnumerations = true;
@@ -94,7 +94,7 @@ public class UmlGraphDoc {
 		packages.add(packageDoc.name());
     	    OptionProvider view = new PackageView(outputFolder, packageDoc, root, opt);
     	    UmlGraph.buildGraph(root, view, packageDoc);
-    	    runGraphviz(outputFolder, packageDoc.name(), packageDoc.name(), root);
+    	    runGraphviz(opt.dotExecutable, outputFolder, packageDoc.name(), packageDoc.name(), root);
     	    alterHtmlDocs(opt, outputFolder, packageDoc.name(), packageDoc.name(),
     		    "package-summary.html", Pattern.compile("</H2>"), root);
 	    }
@@ -113,7 +113,7 @@ public class UmlGraphDoc {
 	    else
 		view.setContextCenter(classDoc);
 	    UmlGraph.buildGraph(root, view, classDoc);
-	    runGraphviz(outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
+	    runGraphviz(opt.dotExecutable, outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
 	    alterHtmlDocs(opt, outputFolder, classDoc.containingPackage().name(), classDoc.name(),
 		    classDoc.name() + ".html", Pattern.compile("(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
 	}
@@ -121,17 +121,18 @@ public class UmlGraphDoc {
 
     /**
      * Runs Graphviz dot building both a diagram (in png format) and a client side map for it.
-     * <p>
-     * At the moment, it assumes dot.exe is in the classpahth
      */
-    private static void runGraphviz(String outputFolder, String packageName, String name, RootDoc root) {
+    private static void runGraphviz(String dotExecutable, String outputFolder, String packageName, String name, RootDoc root) {
+    if (dotExecutable == null) {
+      dotExecutable = "dot";
+    }
 	File dotFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".dot");
 	File pngFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".png");
 	File mapFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".map");
 
 	try {
 	    Process p = Runtime.getRuntime().exec(new String [] {
-		"dot",
+		dotExecutable,
 		"-Tcmapx",
 		"-o",
 		mapFile.getAbsolutePath(),

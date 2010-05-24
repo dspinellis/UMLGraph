@@ -2,7 +2,7 @@
  * Create a graphviz graph based on the classes in the specified java
  * source files.
  *
- * (C) Copyright 2002-2005 Diomidis Spinellis
+ * (C) Copyright 2002-2010 Diomidis Spinellis
  *
  * Permission to use, copy, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted,
@@ -134,6 +134,7 @@ public class Options implements Cloneable, OptionProvider {
     // would have been hidden by the hide pattern "java.*"
     // TODO: consider making this standard behaviour
     boolean strictMatching;    
+    String dotExecutable;
 
     Options() {
 	showQualified = false;
@@ -186,6 +187,7 @@ public class Options implements Cloneable, OptionProvider {
 	relativeLinksForSourcePackages = false;
 	nodeSep = 0.25;
 	rankSep = 0.5;
+    dotExecutable = "dot";
     }
 
     public Object clone() {
@@ -271,6 +273,7 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-collpackages") ||
            option.equals("-nodesep") ||
            option.equals("-ranksep") ||
+           option.equals("-dotexecutable") ||
            option.equals("-link"))
             return 2;
         else if(option.equals("-contextPattern"))
@@ -533,6 +536,8 @@ public class Options implements Cloneable, OptionProvider {
 	    }
 	} else if (opt[0].equals("-!ranksep")) {
 	    rankSep = 0.5;
+    } else if (opt[0].equals("-dotexecutable")) {
+        dotExecutable = opt[1];
 	} else
 	    ; // Do nothing, javadoc will handle the option or complain, if
                 // needed.

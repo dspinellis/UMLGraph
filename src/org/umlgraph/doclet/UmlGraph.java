@@ -2,7 +2,7 @@
  * Create a graphviz graph based on the classes in the specified java
  * source files.
  *
- * (C) Copyright 2002-2005 Diomidis Spinellis
+ * (C) Copyright 2002-2010 Diomidis Spinellis
  *
  * Permission to use, copy, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted,
