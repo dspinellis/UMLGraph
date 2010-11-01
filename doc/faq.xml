@@ -225,4 +225,13 @@ You can work around it, by increasing the width and height values appearing
 in the SVG XML file that <em>pic2plot</em> generates.
 <h2><a name="private">How can I instruct UMLGraph to include private fields in its output?</a></h2>
 You need to pass the <code>-private</code> flag to <em>javadoc</em>.
+Note that
+when processing code that includes annotations
+defined by libraries outside the core J2SE distribution,
+it is a good idea to include the library jars to the classpath.
+Otherwise, <em>javadoc</em> (and concequently UMLGraph)
+will fail to process the input classes correctly.
+This is <a href="http://forums.sun.com/thread.jspa?threadID=5333060&tstart=0">a known issue</a> with <em>javadoc</em>,
+but only manifests in certain occasions when running UMLGraph,
+for example when processing private class fields.
 </notes>
