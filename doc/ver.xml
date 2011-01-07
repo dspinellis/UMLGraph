@@ -1,11 +1,14 @@
 <?xml version="1.0" ?>
 <!-- $Id$ -->
+<!-- vim: spell -->
 <notes>
 <dl>
 
 <dt>Version 5.4 Under development </dt><dd>
 <ul>
 <li>Make the generation of diamond shapes compatible with GraphViz 2.27.
+(Contributed by Soraya Santana de la Fe.)</li>
+<li>Make the maps appearing  sdfs
 (Contributed by Soraya Santana de la Fe.)</li>
 </ul>
 </dd>

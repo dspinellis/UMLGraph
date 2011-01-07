@@ -575,6 +575,7 @@ class ClassGraph {
 		}
 	    }
 	    externalTableEnd();
+	    w.print(", URL=\"" + classToUrl(c, rootClass) + "\"");
 	    nodeProperties(opt);
 
 	    // If needed, add a note for this node
@@ -788,6 +789,8 @@ class ClassGraph {
 		    }
 		    innerTableEnd();
 		    externalTableEnd();
+		    if (className == null || className.length() == 0)
+			w.print(", URL=\"" + classToUrl(className) + "\"");
 		    nodeProperties(opt);
 		}
 	    }
