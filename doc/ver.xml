@@ -3,7 +3,11 @@
 <notes>
 <dl>
 
-<dt>Version 5.4 Under development </dt><dd>
+<dt>Version 5.5 Under development </dt><dd>
+<ul>
+</ul>
+
+<dt>Version 5.4 2011-01-08</dt><dd>
 <ul>
 <li>Make the generation of diamond shapes compatible with GraphViz 2.27.
 (Contributed by Soraya Santana de la Fe.)</li>
