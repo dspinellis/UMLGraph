@@ -231,7 +231,7 @@ defined by libraries outside the core J2SE distribution,
 it is a good idea to include the library jars to the classpath.
 Otherwise, <em>javadoc</em> (and concequently UMLGraph)
 will fail to process the input classes correctly.
-This is <a href="http://forums.sun.com/thread.jspa?threadID=5333060&tstart=0">a known issue</a> with <em>javadoc</em>,
+This is <a href="http://forums.oracle.com/forums/thread.jspa?threadID=1521148">a known issue</a> with <em>javadoc</em>,
 but only manifests in certain occasions when running UMLGraph,
 for example when processing private class fields.
 </notes>
