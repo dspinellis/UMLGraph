@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
+import java.util.TreeSet;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -106,8 +108,16 @@ public class UmlGraphDoc {
      */
     private static void generateContextDiagrams(RootDoc root, Options opt, String outputFolder)
 	    throws IOException {
+        Set<ClassDoc> classDocs = new TreeSet<ClassDoc>(new Comparator<ClassDoc>() {
+            public int compare(ClassDoc cd1, ClassDoc cd2) {
+                return cd1.name().compareTo(cd2.name());
+            }
+        });
+        for (ClassDoc classDoc : root.classes())
+            classDocs.add(classDoc);
+
 	ContextView view = null;
-	for (ClassDoc classDoc : root.classes()) {
+	for (ClassDoc classDoc : classDocs) {
 	    if(view == null)
 		view = new ContextView(outputFolder, classDoc, root, opt);
 	    else

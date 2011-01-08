@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
 <!-- $Id$ -->
-<!-- vim: spell -->
 <notes>
 <dl>
 
@@ -8,8 +7,10 @@
 <ul>
 <li>Make the generation of diamond shapes compatible with GraphViz 2.27.
 (Contributed by Soraya Santana de la Fe.)</li>
-<li>Make the maps appearing  sdfs
-(Contributed by Soraya Santana de la Fe.)</li>
+<li>Make the diagram elements appearing in HTML content clickable.
+(Contributed by Bernd Onasch.)</li>
+<li>Fix to ensure that class images only appear once.
+(Contributed by Zhigang Xie.)</li>
 </ul>
 </dd>
 
