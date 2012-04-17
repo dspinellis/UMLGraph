@@ -98,7 +98,7 @@ public class UmlGraphDoc {
     	    UmlGraph.buildGraph(root, view, packageDoc);
     	    runGraphviz(opt.dotExecutable, outputFolder, packageDoc.name(), packageDoc.name(), root);
     	    alterHtmlDocs(opt, outputFolder, packageDoc.name(), packageDoc.name(),
-    		    "package-summary.html", Pattern.compile("</H2>"), root);
+    		    "package-summary.html", Pattern.compile(".*</[Hh]2>.*"), root);
 	    }
 	}
     }
@@ -125,7 +125,7 @@ public class UmlGraphDoc {
 	    UmlGraph.buildGraph(root, view, classDoc);
 	    runGraphviz(opt.dotExecutable, outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
 	    alterHtmlDocs(opt, outputFolder, classDoc.containingPackage().name(), classDoc.name(),
-		    classDoc.name() + ".html", Pattern.compile("(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
+		    classDoc.name() + ".html", Pattern.compile(".*(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
 	}
     }
 
