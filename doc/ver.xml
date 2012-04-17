@@ -4,6 +4,11 @@
 <dl>
 
 <dt>Version 5.5 Under development </dt><dd>
+<ul>
+<li>Make UMLGraphDoc generation compatible with JDK 7
+(Contributed by Stefano Martina.)</li>
+<li>Various documentation improvements.</li>
+</ul>
 </dd>
 
 <dt>Version 5.4 2011-01-08</dt><dd>
