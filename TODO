@@ -1,5 +1,15 @@
 $Id$
 
+When UMLGraph 2.29 comes out use <i></i> for italic fonts?
+
+http://stackoverflow.com/questions/8609546/umlgraph-not-automatic-integrated-in-javadoc
+
+Support for all UML diagrams: state, use-case, etc.
+
+State diagrams:
+See state-example.dot
+See alsohttp://forrst.com/posts/State_Machine_Dont_abuse_the_if-1fE 
+
 Add in UmlGraphDoc support for showing package dependencies.
 See http://java.dzone.com/articles/reverse-engineer-source-code-u#comment-6124
 
@@ -19,8 +29,6 @@ public class A  {
       A myInstance;
   }
 Requires special care for containers and arrays.
-
-Support for all UML diagrams: state, use-case, etc.
 
 command-line (and global) options for setting all graph attributes
 
