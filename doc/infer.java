@@ -12,6 +12,7 @@ import java.util.Arrays;
  * @opt inferrel
  * @opt collpackages java.util.*
  * @opt inferdep
+ * @opt inferdepinpackage
  * @opt hide java.*
  * @hidden
  */
