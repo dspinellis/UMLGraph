@@ -1,4 +1,11 @@
 /**
+ * @opt nodefontname "Helvetica" 
+ * @opt edgefontname "Helvetica" 
+ * @hidden
+ */
+class UMLOptions{}
+
+/**
  * @opt shape node
  * @note Located in the
  * machine room

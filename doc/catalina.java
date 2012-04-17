@@ -3,6 +3,12 @@
  * $Id$
  */
 
+/**
+ * @opt nodefontname "Arial" 
+ * @hidden
+ */
+class UMLOptions{}
+
 class HttpResponseBase
 	extends ResponseBase
 	implements HttpResponse, HttpServletResponse {}

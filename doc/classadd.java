@@ -4,10 +4,10 @@
  * $Id$
  */
 
-/** 
- * @opt attributes 
- * @opt operations 
- * @opt types 
+/**
+ * @opt attributes
+ * @opt operations
+ * @opt types
  * @hidden
  */
 class UMLOptions {}
@@ -15,8 +15,8 @@ class UMLOptions {}
 /** @hidden */
 class Action {}
 
-/** 
- * @stereotype container 
+/**
+ * @stereotype container
  * @tagvalue version 3.2
  */
 class ActionQueue {

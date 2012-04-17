@@ -16,20 +16,20 @@ Java code.
 Note however that UMLGraph was not originally designed for this purpose;
 the resulting graphs may be large and unwieldy.
 <p />
-There are various ways to invoke UmlGraph,
+There are various ways to invoke UMLGraph,
 each providing a different balance between convenience and flexibility.
 <h2>Option 1: Using the Supplied Script</h2>
 This is the simplest option.
 If <code>umlgraph</code> (or <code>umlgraph.bat</code>) is correctly
 installed,
-you can run UmlGraph by simply specifying the basename of
+you can run UMLGraph by simply specifying the basename of
 the Java file containing the diagram specification and the file type of
 the generated diagram (e.g. gif, ps, png, svg).
 Example:
 <fmtcode ext="sh">
 umlgraph Test png
 </fmtcode>
-Any additional UmlGraph or <em>javadoc</em> arguments can be added at
+Any additional UMLGraph or <em>javadoc</em> arguments can be added at
 the end of the command line.
 This command will read the specification file (e.g. Test.java) and
 generate directly a diagram of the appropriate type
@@ -41,7 +41,7 @@ You can accomplish this in two ways.
 <ol>
 <li>
 Specify the location of <code>tools.jar</code> as a part of Java's classpath
-and specify the full name of the UmlGraph doclet as an argument to Java.
+and specify the full name of the UMLGraph doclet as an argument to Java.
 This is an invocation example under Windows
 <fmtcode ext="bat">
 java -classpath "lib/UmlGraph.jar;c:\program files\java\jdk1.6.0_02\lib\Tools.jar"
@@ -58,7 +58,7 @@ file in a directory that also contains the Java SDK <code>tools.jar</code> file.
 You can accomplish this either by copying <code>UmlGraph.jar</code> to the SDK
 <code>lib</code> directory where <code>tools.jar</code> resides,
 or by copying the JDK <code>tools.jar</code> file into the directory
-where you installed UmlGraph.
+where you installed UMLGraph.
 You then run
 <fmtcode ext="sh">
 java -jar /path/to/UmlGraph.jar yourfile1.java ...
@@ -76,7 +76,7 @@ java -jar /usr/jvm/java-1.5.0/lib/UmlGraph.jar -private Simple.java
 Specifying some packages before the list of source files will designate
 those packages as <em>local</em>.
 When you specify a package list,
-the SVG output UmlGraph generates will contain
+the SVG output UMLgraph generates will contain
 local hyperlinks for the local classes
 and hyperlinks to the Sun Java API documentation for all other classes.
 <p />

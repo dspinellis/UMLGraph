@@ -8,7 +8,7 @@ Running the UmlGraph doclet on the specification will generate
 a
 <a href="http://www.graphviz.org/">Graphviz</a>
 diagram specification that can be automatically processed to
-create Postscript, GIF, SVG, JPEG, fig, or Framemaker drawings.
+create PNG, SVG, EMF, Postscript, GIF, JPEG, fig, or Framemaker drawings.
 <p />
 The following is an example of a specification and the resulting UML class
 diagram:

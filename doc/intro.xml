@@ -34,8 +34,9 @@ Creating models in a declarative, textual notation offers a number of advantages
  It is more difficult for designers to get away, as they often do now, with drawing for a model a nice picture of the implementation they have in mind.</li>
  <li> The declarative representation is also highly malleable, the existing visual structure does not hinder drastic changes, nor is effort wasted on the tidy arrangement of graph nodes a psychological barrier against massive design refactoring.</li>
  <li> Declarative models are also highly automatable: they can be easily generated from even higher-level descriptions by trivial scripts and tools operating on design process inputs such as database schemas, existing code, or structured requirements documents.</li>
- <li> Text macro processors can be used for configuration management, while revision control and team integration activities can utilize the same proven tools and processes that are currently used for managing source code.
- Thus with a tool like CVS or RCS one can keep track of design revisions, create and merge branches, and monitor model changes, while a system like CVS can allow work to be split into teams.</li>
+ <li> With a declarative specification under the programmer's control a macro processors can be used for configuration management, allowing the same model to be used for generating diverse diagrams.</li>
+ <li> Revision control and team integration activities can utilize the same proven tools and processes that are currently used for managing source code.
+ Thus with a tool like Subversion or Git one can keep track of design revisions, create and merge branches, monitor model changes, and split work among a team.</li>
  <li> Finally, the declarative approach can readily utilize existing text processing tools for tasks that a drawing editor system may not provide.</li>
 </ul>
 Consider how your favorite model editor handles the following tasks and how you could handle them using a simple Perl script or a text-processing pipeline applied to the declarative model specification:

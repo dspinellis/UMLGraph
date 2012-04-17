@@ -33,7 +33,7 @@ collaborations, and packages
 <li>dependency relationships (specified using the <em>javadoc</em> <code>@depend</code> tag)
 </li>
 </ul>
-All relationship tags appart from <code>@extends</code> take four arguments:
+All relationship tags apart from <code>@extends</code> take four arguments:
 <ol>
 <li> The source adornments (role, multiplicity, and visibility)
 </li>

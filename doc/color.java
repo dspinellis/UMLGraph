@@ -11,12 +11,13 @@
 class UMLOptions{}
 
 /** 
- * @opt nodefontname "Helvetica-Bold" 
+ * @opt nodefontname "Arial" 
  * @opt nodefontcolor "white"
  * @composed - - - Red
  * @composed - - - Green
  * @composed - - - Blue
  * @opt attributes
+ * @opt operations
  * @opt visibility
  * @opt types
  */
