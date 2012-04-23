@@ -6,5 +6,5 @@ package org.umlgraph.doclet;
  * 
  */
 public enum RelationType {
-    ASSOC, NAVASSOC, HAS, COMPOSED, DEPEND, EXTENDS, IMPLEMENTS;
+    ASSOC, NAVASSOC, HAS, NAVHAS, COMPOSED, NAVCOMPOSED, DEPEND, EXTENDS, IMPLEMENTS;
 }

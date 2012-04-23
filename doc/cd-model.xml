@@ -22,14 +22,12 @@ collaborations, and packages
 </li>
 <li>generalization relationships (specified using the Java <code>extends</code> declaration or (for multiple inheritance) the <em>javadoc</em> <code>@extends</code> tag)
 </li>
-<li>association relationships (specified using the <em>javadoc</em> <code>@assoc</code> tag)
-</li>
-<li>navigatable (directed) association relationships (specified using the <em>javadoc</em> <code>@navassoc</code> tag)
-</li>
-<li>aggregation relationships (specified using the <em>javadoc</em> <code>@has</code> tag)
-</li>
-<li>composition relationships (specified using the <em>javadoc</em> <code>@composed</code> tag)
-</li>
+<li>association relationships (specified using the <em>javadoc</em> <code>@assoc</code> tag) </li>
+<li>navigable (directed) association relationships (specified using the <em>javadoc</em> <code>@navassoc</code> tag) </li>
+<li>aggregation relationships (specified using the <em>javadoc</em> <code>@has</code> tag) </li>
+<li>navigable aggregation relationships (specified using the <em>javadoc</em> <code>@navhas</code> tag) </li>
+<li>composition relationships (specified using the <em>javadoc</em> <code>@composed</code> tag) </li>
+<li>navigable composition relationships (specified using the <em>javadoc</em> <code>@navcomposed</code> tag) </li>
 <li>dependency relationships (specified using the <em>javadoc</em> <code>@depend</code> tag)
 </li>
 </ul>

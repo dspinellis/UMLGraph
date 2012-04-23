@@ -74,7 +74,9 @@ class ClassGraph {
 	associationMap.put(RelationType.ASSOC, "arrowhead=none");
 	associationMap.put(RelationType.NAVASSOC, "arrowhead=open");
 	associationMap.put(RelationType.HAS, "arrowhead=none, arrowtail=ediamond, dir=both");
+	associationMap.put(RelationType.NAVHAS, "arrowhead=open, arrowtail=ediamond, dir=both");
 	associationMap.put(RelationType.COMPOSED, "arrowhead=none, arrowtail=diamond, dir=both");
+	associationMap.put(RelationType.NAVCOMPOSED, "arrowhead=open, arrowtail=diamond, dir=both");
 	associationMap.put(RelationType.DEPEND, "arrowhead=open, style=dashed");
     }
     protected Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
@@ -757,7 +759,9 @@ class ClassGraph {
 	allRelation(opt, RelationType.ASSOC, c);
 	allRelation(opt, RelationType.NAVASSOC, c);
 	allRelation(opt, RelationType.HAS, c);
+	allRelation(opt, RelationType.NAVHAS, c);
 	allRelation(opt, RelationType.COMPOSED, c);
+	allRelation(opt, RelationType.NAVCOMPOSED, c);
 	allRelation(opt, RelationType.DEPEND, c);
     }
 

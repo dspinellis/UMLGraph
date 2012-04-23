@@ -5,6 +5,10 @@
 
 <dt>Version 5.5 Under development </dt><dd>
 <ul>
+<li>Added ability to make aggregate relationships (<code>@has</code> and
+</code>@composed</code>) navigable through the new <code>@navhas</code>
+and <code>@navcomposed</code> relationships.
+(Contributed by Alan Jeffrey.)</li>
 <li>Make UMLGraphDoc generation compatible with JDK 7
 (Contributed by Stefano Martina.)</li>
 <li>Various documentation improvements.</li>
