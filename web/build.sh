@@ -26,3 +26,6 @@ do
 	) >build/$base.html
 	xml val -d /pub/schema/xhtml1-transitional.dtd build/$base.html
 done
+
+# Copy media files
+cp media/* build
