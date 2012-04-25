@@ -16,7 +16,6 @@ If you change the source code, you can run regression tests by
 executing "ant test".
 
 Project home page: http://www.umlgraph.org
+GitHub page: git@github.com:dspinellis/UMLGraph.git
 
-Diomidis Spinellis - November 2005, August 2008
-
-$Id$
+Diomidis Spinellis - November 2005, August 2008, April 2012
