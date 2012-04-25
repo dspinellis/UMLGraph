@@ -3,9 +3,8 @@
 #
 
 ROOT=/cygdrive/c
-PIC2PLOT=$(ROOT)/app/plotutils/bin/pic2plot
-NETPBM=$(ROOT)/app/netpbm/bin
-GS=$(ROOT)/app/gs
+PIC2PLOT=pic2plot
+GS=gs
 DESTDIR=/dds/pubs/web/home/sw/umlgraph-mirror
 NOTETOOLS=/dds/pubs/Courses/tools
 GIF := $(shell sed -n 's/.*<img *src *= *"\([^.]*\.gif\)".*/\1/p' *.xml)
@@ -32,10 +31,10 @@ DOC?=snapshot-doc
 .pic.gif:
 	perl -p -e 'BEGIN {binmode(STDOUT);} s/\r//' $< | \
 	$(PIC2PLOT) -Tps | \
-	$(GS)/gs -I$(GS) -I$(GS)/fonts -q -r360 -dNOPAUSE -sDEVICE=pnm -sOutputFile=-  - -c quit | \
-	$(NETPBM)/pnmcrop | \
-	$(NETPBM)/pnmscale 0.25 | \
-	$(NETPBM)/ppmtogif >$@
+	$(GS) -q -r360 -dNOPAUSE -sDEVICE=pnm -sOutputFile=-  - -c quit | \
+	pnmcrop | \
+	pnmscale 0.25 | \
+	ppmtogif >$@
 
 
 all: sequence.pic $(GIF) $(XML)
