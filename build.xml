@@ -25,7 +25,14 @@
 	<mkdir dir="${javadoc}"/>
 </target>
 
+
 <target name="version">
+	<exec executable="git"
+		outputproperty="VERSION">
+		<arg value="describe"/>
+		<arg value="--abbrev=6"/>
+		<arg value="HEAD"/>
+	</exec>
 	<echo>Version is ${VERSION}</echo>
 	<echo file="src/org/umlgraph/doclet/Version.java">/* Automatically generated file */
 package org.umlgraph.doclet;
@@ -33,7 +40,7 @@ class Version { public static String VERSION = "${VERSION}";}
 	</echo>
 </target>
 
-<target name="compile" depends="init"
+<target name="compile" depends="init,version"
 	description="compile the source, build library " >
 	<javac srcdir="${src}" destdir="${build}" debug="true" deprecation="true" >
 		<compilerarg value="-Xlint"/>

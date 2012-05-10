@@ -2,7 +2,7 @@
 # $Id$
 #
 
-VERSION?=5.4
+VERSION?=$(shell git describe --abbrev=6 HEAD)
 TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
 BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
@@ -40,9 +40,6 @@ LF=perl -p -e 'BEGIN {binmode(STDOUT);} s/\r//'
 all: $(JARFILE)
 
 tarball: $(BALL_TAR_GZ)
-
-src/org/umlgraph/doclet/Version.java: Makefile
-	ant -DVERSION="$(VERSION)" version
 
 $(BALL_TAR_GZ): $(JARFILE) docs Makefile
 	-cmd /c rd /s/q $(DISTDIR)
