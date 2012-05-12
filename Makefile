@@ -61,6 +61,7 @@ $(BALL_TAR_GZ): $(JARFILE) docs Makefile
 	zip -r $(ZIPBALL) $(DISTDIR)
 
 docs:
+	(cd $(UH)/dds/pubs/Courses/tools && make)
 	(cd doc && make DOC=$(DOC))
 	ant javadocs
 
