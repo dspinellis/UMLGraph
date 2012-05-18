@@ -22,7 +22,7 @@ do
 		source=$file
 		cat $file
 	fi
-	sed "s,XDATE,`ident $source | awk '{printf "%s %s", $4, $5}'`," bottom.html
+	sed "s,XDATE,`git log -1 --pretty=%ad $source`," bottom.html
 	) >build/$base.html
 	xml val -d /pub/schema/xhtml1-transitional.dtd build/$base.html
 done
