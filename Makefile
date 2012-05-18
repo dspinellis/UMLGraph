@@ -74,10 +74,15 @@ test:
 testupdate:
 	sh tools/testupdate.sh
 
+# Create only the static HTML pages
+static-web:
+	(cd web && sh build.sh)
+	cp web/build/* $(WEBDIR)
+
 web: $(BALL_TAR_GZ) CHECKSUM.MD5
 	cp $(BALL_TAR_GZ) $(ZIPBALL) CHECKSUM.MD5 $(WEBDIR)
 	(cd web && sh build.sh)
-	cp web/build/*.* $(WEBDIR)
+	cp web/build/* $(WEBDIR)
 	sed "s/VERSION/$(VERSION)/g" web/build/download.html >$(WEBDIR)/download.html
 	cp $(JARFILE) $(WEBDIR)/jars/UmlGraph-$(VERSION).jar
 	tar cf - javadoc | tar -C $(WEBDIR) -xvf -
