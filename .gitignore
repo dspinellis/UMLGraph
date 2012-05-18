@@ -2,6 +2,7 @@
 build
 lib
 javadoc
-UMLGraph-snapshot
-UMLGraph-snapshot.tar.gz
-UMLGraph-snapshot.zip
+UMLGraph-snapshot*
+UMLGraph-R*
+CHECKSUM.MD5
+_vimrc
