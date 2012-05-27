@@ -48,6 +48,7 @@ public class ContextMatcher implements ClassMatcher {
     Pattern pattern;
     List<ClassDoc> matched;
     Set<String> visited = new HashSet<String>();
+    /** The options will be used to decide on inference */
     Options opt;
     RootDoc root;
     boolean keepParentHide;
@@ -57,14 +58,9 @@ public class ContextMatcher implements ClassMatcher {
      * @param root The root doc returned by JavaDoc
      * @param pattern The pattern that will match the "center" of this
      *                context
-     * @param opt The options will be used to decide on inference
      * @param keepParentHide If true, parent option hide patterns will be
      *                preserved, so that classes hidden by the options won't
      *                be shown in the context
-     * @param fullContext If true, all the classes related to the context
-     *                center will be included, otherwise it will match only
-     *                the classes referred with an outgoing relation from
-     *                the context center
      * @throws IOException
      */
     public ContextMatcher(RootDoc root, Pattern pattern, Options options, boolean keepParentHide) throws IOException {
