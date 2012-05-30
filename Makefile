@@ -2,7 +2,7 @@
 # $Id$
 #
 
-VERSION?=$(shell git describe --abbrev=6 HEAD)
+VERSION:=$(shell git describe --abbrev=6 HEAD | sed 's/R//;s/_/./;s/-/./;s/-.*$$/-SNAPSHOT/')
 TAGVERSION=$(shell echo $(VERSION) | sed 's/\./_/g')
 BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
@@ -78,6 +78,7 @@ testupdate:
 static-web:
 	(cd web && sh build.sh)
 	cp web/build/* $(WEBDIR)
+	sed "s/VERSION/$(VERSION)/g" web/build/download.html >$(WEBDIR)/download.html
 
 web: $(BALL_TAR_GZ) CHECKSUM.MD5
 	cp $(BALL_TAR_GZ) $(ZIPBALL) CHECKSUM.MD5 $(WEBDIR)
