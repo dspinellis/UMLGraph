@@ -3,7 +3,13 @@
 <notes>
 <dl>
 
-<dt>Version 5.6 Under development </dt><dd>
+<dt>Version 5.7 Under development </dt><dd>
+</dd>
+
+<dt>Version 5.6 2012-05-31 </dt><dd>
+<ul>
+<li>Maven artifact deployment</li>
+</ul>
 </dd>
 
 <dt>Version 5.5 2012-05-13 </dt><dd>
