@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class's dot-comaptible alias name (for fully qualified class names)
+ * Class's dot-compatible alias name (for fully qualified class names)
  * and printed information
  * @version $Revision$
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
