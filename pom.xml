@@ -21,8 +21,9 @@
   </licenses>
 
   <scm>
-    <url>https://github.com/dspinellis/UMLGraph</url>
+    <url>https://github.com/dspinellis/UMLGraph/</url>
     <connection>scm:git://github.com/dspinellis/UMLGraph.git</connection>
+    <developerConnection>scm:git:git@github.com:dspinellis/UMLGraph.git</developerConnection>
   </scm>
 
   <developers>
