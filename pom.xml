@@ -66,6 +66,22 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+          <docletPath>${project.build.directory}${file.separator}${project.build.finalName}.jar</docletPath>
+          <additionalparam>-inferrel</additionalparam>
+          <additionalparam>-inferdep</additionalparam>
+          <additionalparam>-collapsible</additionalparam>
+          <additionalparam>-hide java.*</additionalparam>
+          <additionalparam>-collpackages</additionalparam>
+          <additionalparam>-qualify</additionalparam>
+          <additionalparam>-postfixpackage</additionalparam>
+          <additionalparam>-nodefontsize 9</additionalparam>
+          <additionalparam>-nodefontpackagesize 7</additionalparam>
+          <additionalparam>-link http://docs.oracle.com/javase/7/docs/jdk/api/javadoc/doclet/</additionalparam>
+          <additionalparam>-link http://download.oracle.com/javase/7/docs/api/</additionalparam>
+          <useStandardDocletOptions>true</useStandardDocletOptions>
+        </configuration>
         <executions>
           <execution>
             <id>attach-javadocs</id>
