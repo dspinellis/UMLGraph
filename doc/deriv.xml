@@ -35,5 +35,8 @@ UMLGraph diagrams in
 <a href="http://wiki.splitbrain.org/wiki:dokuwiki">DokuWiki</a>.</li>
 <li> Mykhaylo Sorochan has built on top of UMLGraph a
 <a href="http://macroexpand.org/doku.php/articles:uml-sequence-diagram-dsl-txl:start">higher-level domain-specific language for specifying UML sequence diagrams</a>.</li>
+<li>
+<a href="http://sketchlet.sourceforge.net/">Sketchlet</a> is using UMLGraph as a widget plugin. You can find a video about the Sketchlet UMLGraph widget usage at <a href="http://www.youtube.com/watch?v=H6lrgSYyzE0">http://www.youtube.com/watch?v=H6lrgSYyzE0</a>.
+</li>
 </ul>
 </notes>
