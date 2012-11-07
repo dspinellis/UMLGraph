@@ -98,7 +98,7 @@ public class UmlGraphDoc {
     	    UmlGraph.buildGraph(root, view, packageDoc);
     	    runGraphviz(opt.dotExecutable, outputFolder, packageDoc.name(), packageDoc.name(), root);
     	    alterHtmlDocs(opt, outputFolder, packageDoc.name(), packageDoc.name(),
-    		    "package-summary.html", Pattern.compile(".*</[Hh]2>.*"), root);
+    		    "package-summary.html", Pattern.compile("(</[Hh]2>)|(<h1 title=\"Package\").*"), root);
 	    }
 	}
     }
