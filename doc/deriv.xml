@@ -38,5 +38,9 @@ UMLGraph diagrams in
 <li>
 <a href="http://sketchlet.sourceforge.net/">Sketchlet</a> is using UMLGraph as a widget plugin. You can find a video about the Sketchlet UMLGraph widget usage at <a href="http://www.youtube.com/watch?v=H6lrgSYyzE0">http://www.youtube.com/watch?v=H6lrgSYyzE0</a>.
 </li>
+<li>
+<a href="http://argouml-graphviz.tigris.org/">argouml-graphviz</a>
+is a plugin to let ArgoUML generate graphviz files.
+</li>
 </ul>
 </notes>
