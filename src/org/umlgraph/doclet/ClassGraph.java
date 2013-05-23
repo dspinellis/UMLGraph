@@ -972,7 +972,7 @@ class ClassGraph {
     private Type[] getInterfaceTypeArguments(ClassDoc iface, Type t) {
 	if (t instanceof ParameterizedType) {
 	    ParameterizedType pt = (ParameterizedType) t;
-	    if (iface.equals(t.asClassDoc())) {
+	    if (iface != null && iface.equals(t.asClassDoc())) {
 		return pt.typeArguments();
 	    } else {
 		for (Type pti : pt.interfaceTypes()) {
