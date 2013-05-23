@@ -83,7 +83,7 @@
 		<arg value="HEAD"/>
 	</exec>
 	<echo>Version is ${VERSION}</echo>
-	<echo file="src/org/umlgraph/doclet/Version.java">/* Automatically generated file */
+	<echo file="src/main/java/org/umlgraph/doclet/Version.java">/* Automatically generated file */
 package org.umlgraph.doclet;
 class Version { public static String VERSION = "${VERSION}";}
 	</echo>
