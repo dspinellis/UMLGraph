@@ -8,7 +8,8 @@ Support for all UML diagrams: state, use-case, etc.
 
 State diagrams:
 See state-example.dot
-See alsohttp://forrst.com/posts/State_Machine_Dont_abuse_the_if-1fE 
+See also http://forrst.com/posts/State_Machine_Dont_abuse_the_if-1fE 
+
 
 Add in UmlGraphDoc support for showing package dependencies.
 See http://java.dzone.com/articles/reverse-engineer-source-code-u#comment-6124
