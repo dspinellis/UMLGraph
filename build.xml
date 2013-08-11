@@ -7,7 +7,7 @@
 </description>
 
 <!-- set global properties for this build -->
-<property name="src" location="src"/>
+<property name="src" location="src/main/java"/>
 <property name="build" location="build"/>
 <property name="javadoc" location="javadoc"/>
 <property name="lib" location="lib"/>

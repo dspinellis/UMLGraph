@@ -8,7 +8,7 @@ BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
 WEBDIR=$(UH)/dds/pubs/web/home/sw/umlgraph-mirror
-DOCLETSRCPATH=src/org/umlgraph/doclet
+DOCLETSRCPATH=src/main/java/org/umlgraph/doclet
 DOCLETSRC= \
 	$(DOCLETSRCPATH)/ClassGraph.java \
 	$(DOCLETSRCPATH)/ClassInfo.java \
@@ -17,8 +17,8 @@ DOCLETSRC= \
 	$(DOCLETSRCPATH)/UmlGraph.java \
 	$(DOCLETSRCPATH)/Version.java
 TESTSRC = \
-	src/org/umlgraph/test/DotDiff.java \
-	src/org/umlgraph/test/BasicTest.java
+	src/main/java/org/umlgraph/test/DotDiff.java \
+	src/main/java/org/umlgraph/test/BasicTest.java
 PICFILE=sequence.pic
 README=README.txt
 LICENSE=LICENSE

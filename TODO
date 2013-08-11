@@ -10,6 +10,9 @@ State diagrams:
 See state-example.dot
 See also http://forrst.com/posts/State_Machine_Dont_abuse_the_if-1fE 
 
+Note that Hierarchically nested states cannot be shown in GraphViz,
+because you can't set shape and labels in cluster, nor can they act
+as edge targets.
 
 Add in UmlGraphDoc support for showing package dependencies.
 See http://java.dzone.com/articles/reverse-engineer-source-code-u#comment-6124
