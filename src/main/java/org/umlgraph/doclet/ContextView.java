@@ -74,27 +74,36 @@ public class ContextView implements OptionProvider {
     }
 
     public Options getOptionsFor(ClassDoc cd) {
+    Options opt;
 	if (globalOptions.matchesHideExpression(cd.toString()) || !matcher.matches(cd)) {
-	    return hideOptions;
+		opt = hideOptions;
 	} else if (cd.equals(this.cd)) {
-	    return centerOptions;
+		opt = centerOptions;
 	} else if(cd.containingPackage().equals(this.cd.containingPackage())){
-	    return packageOptions;
+		opt = packageOptions;
 	} else {
-	    return globalOptions;
+		opt = globalOptions;
 	}
+	Options optionClone = (Options) opt.clone();
+	overrideForClass(optionClone, cd);
+	return optionClone;
     }
 
     public Options getOptionsFor(String name) {
+    Options opt;
 	if (!matcher.matches(name))
-	    return hideOptions;
+		opt = hideOptions;
 	else if (name.equals(cd.name()))
-	    return centerOptions;
+		opt = centerOptions;
 	else
-	    return globalOptions;
+		opt = globalOptions;
+	Options optionClone = (Options) opt.clone();
+	overrideForClass(optionClone, name);
+	return optionClone;
     }
 
     public void overrideForClass(Options opt, ClassDoc cd) {
+    	opt.setOptions(cd);
 	if (opt.matchesHideExpression(cd.toString()) || !matcher.matches(cd))
 	    opt.setOption(HIDE_OPTIONS);
 	if (cd.equals(this.cd))

@@ -55,6 +55,7 @@ public class PackageView implements OptionProvider {
     }
 
     public void overrideForClass(Options opt, ClassDoc cd) {
+	opt.setOptions(cd);
 	opt.showQualified = false;
 	if (!matcher.matches(cd) || parent.getGlobalOptions().matchesHideExpression(cd.name()))
 	    opt.setOption(new String[] { "-hide" });
