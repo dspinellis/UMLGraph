@@ -136,14 +136,14 @@ public class UmlGraphDoc {
       dotExecutable = "dot";
     }
 	File dotFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".dot");
-  File pngFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".svg");
+  File svgFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".svg");
 
 	try {
 	    Process p = Runtime.getRuntime().exec(new String [] {
 		dotExecutable,
     "-Tsvg",
 		"-o",
-		pngFile.getAbsolutePath(),
+		svgFile.getAbsolutePath(),
 		dotFile.getAbsolutePath()
 	    });
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
