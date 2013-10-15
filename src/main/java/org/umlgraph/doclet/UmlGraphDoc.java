@@ -162,7 +162,7 @@ public class UmlGraphDoc {
     //Format string for the uml image div tag.
     private static final String UML_DIV_TAG = 
 	"<div align=\"center\">" +
-	    "<object type=\"image/svg+xml\" data=\"%1$s.svg\" alt=\"Package class diagram package %1$s\" border=0></object>" +
+	    "<object  width=\"100%\" height=\"100%\" type=\"image/svg+xml\" data=\"%1$s.svg\" alt=\"Package class diagram package %1$s\" border=0></object>" +
 	"</div>";
     
     private static final String EXPANDABLE_UML_STYLE = "font-family: Arial,Helvetica,sans-serif;font-size: 1.5em; display: block; width: 250px; height: 20px; background: #009933; padding: 5px; text-align: center; border-radius: 8px; color: white; font-weight: bold;";
