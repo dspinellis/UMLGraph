@@ -845,7 +845,7 @@ class ClassGraph {
 	    RelationPattern rp = getClassInfo(c.toString()).getRelation(fri.cd.toString());
 	    if (rp == null) {
 		String destAdornment = fri.multiple ? "*" : "";
-		relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
+		relation(opt, opt.inferRelationshipType, c, fri.cd, "", " ", destAdornment);
             }
 	}
     }
