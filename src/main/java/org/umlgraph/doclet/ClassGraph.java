@@ -841,8 +841,12 @@ class ClassGraph {
 	    if (hidden(fri.cd))
 		continue;
 
-	    String destAdornment = fri.multiple ? "*" : "";
-	    relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
+	    // if source and dest are not already linked, add a dependency
+	    RelationPattern rp = getClassInfo(c.toString()).getRelation(fri.cd.toString());
+	    if (rp == null) {
+		String destAdornment = fri.multiple ? "*" : "";
+		relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
+            }
 	}
     }
 
