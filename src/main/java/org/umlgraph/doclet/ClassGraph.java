@@ -661,7 +661,7 @@ class ClassGraph {
 	w.println("\t// " + fromName + " " + rt.toString() + " " + toName);
 	w.println("\t" + relationNode(from, fromName) + " -> " + relationNode(to, toName) + " [" +
     	"taillabel=\"" + tailLabel + "\", " +
-    	"label=\"" + guillemize(opt, label) + "\", " +
+    	((label == null || label.isEmpty()) ? "label=\" \"" : "label=\"" + guillemize(opt, label) + "\", ") +
     	"headlabel=\"" + headLabel + "\", " +
     	"fontname=\"" + opt.edgeFontName + "\", " +
     	"fontcolor=\"" + opt.edgeFontColor + "\", " +
@@ -845,7 +845,7 @@ class ClassGraph {
 	    RelationPattern rp = getClassInfo(c.toString()).getRelation(fri.cd.toString());
 	    if (rp == null) {
 		String destAdornment = fri.multiple ? "*" : "";
-		relation(opt, opt.inferRelationshipType, c, fri.cd, "", " ", destAdornment);
+		relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
             }
 	}
     }
