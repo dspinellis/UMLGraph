@@ -860,7 +860,16 @@ class ClassGraph {
 	    printInferredDependencies(c);
 	}
     }
-    
+
+    /** Returns an array representing the imported classes of c.
+     * Disables the deprecation warning, which is output, because the
+     * imported classed are an implementation detail.
+     */
+    @SuppressWarnings( "deprecation" )
+    ClassDoc[] importedClasses(ClassDoc c) {
+        return c.importedClasses();
+    }
+
     /**
      * Prints dependencies recovered from the methods of a class. A
      * dependency is inferred only if another relation between the two
@@ -898,11 +907,11 @@ class ClassGraph {
 	    if(tv.bounds().length > 0 )
 		types.addAll(Arrays.asList(tv.bounds()));
 	}
-	
+
 	// and finally check for explicitly imported classes (this
 	// assumes there are no unused imports...)
 	if (opt.useImports)
-	    types.addAll(Arrays.asList(c.importedClasses()));
+	    types.addAll(Arrays.asList(importedClasses(c)));
 
 	// compute dependencies
 	for (Type type : types) {
