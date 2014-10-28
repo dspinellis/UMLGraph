@@ -6,7 +6,7 @@
   <artifactId>umlgraph</artifactId>
   <packaging>jar</packaging>
   <name>UMLGraph</name>
-  <version>5.7.2-SNAPSHOT</version>
+  <version>5.7.2</version>
   <description>Declarative Drawing of UML Diagrams</description>
   <url>http://www.umlgraph.org</url>
 
@@ -26,7 +26,7 @@
     <url>https://github.com/dspinellis/UMLGraph/</url>
     <connection>scm:git://github.com/dspinellis/UMLGraph.git</connection>
     <developerConnection>scm:git:git@github.com:dspinellis/UMLGraph.git</developerConnection>
-    <tag>R5_7_1</tag>
+    <tag>R5_7_2</tag>
   </scm>
 
   <developers>
