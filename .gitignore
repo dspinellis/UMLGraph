@@ -2,6 +2,7 @@
 build
 lib
 javadoc
+src/main/java/org/umlgraph/doclet/Version.java
 UMLGraph-snapshot*
 UMLGraph-R*
 CHECKSUM.MD5
