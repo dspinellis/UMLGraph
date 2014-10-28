@@ -660,7 +660,7 @@ class ClassGraph {
 	w.println("\t// " + fromName + " " + rt.toString() + " " + toName);
 	w.println("\t" + relationNode(from, fromName) + " -> " + relationNode(to, toName) + " [" +
     	"taillabel=\"" + tailLabel + "\", " +
-    	((label == null || label.isEmpty()) ? "label=\" \"" : "label=\"" + guillemize(opt, label) + "\", ") +
+    	((label == null || label.isEmpty()) ? "label=\"\", " : "label=\"" + guillemize(opt, label) + "\", ") +
     	"headlabel=\"" + headLabel + "\", " +
     	"fontname=\"" + opt.edgeFontName + "\", " +
     	"fontcolor=\"" + opt.edgeFontColor + "\", " +
