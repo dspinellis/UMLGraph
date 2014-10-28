@@ -6,7 +6,7 @@
   <artifactId>umlgraph</artifactId>
   <packaging>jar</packaging>
   <name>UMLGraph</name>
-  <version>5.6.7-SNAPSHOT</version>
+  <version>5.7.1-SNAPSHOT</version>
   <description>Declarative Drawing of UML Diagrams</description>
   <url>http://www.umlgraph.org</url>
 
@@ -83,9 +83,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.1</version>
+        <version>2.5</version>
         <configuration>
-          <preparationGoals>clean verify</preparationGoals>
+	  <autoVersionSubmodules>true</autoVersionSubmodules>
+	  <useReleaseProfile>false</useReleaseProfile>
+	  <releaseProfiles>release</releaseProfiles>
+	  <goals>deploy</goals>
         </configuration>
       </plugin>
       <plugin>
@@ -106,6 +109,20 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.9</version>
         <configuration>
+	  <tags>
+	    <tag>
+	      <name>depend</name>
+	      <placement>X</placement>
+	    </tag>
+	    <tag>
+	      <name>hidden</name>
+	      <placement>X</placement>
+	    </tag>
+	    <tag>
+	      <name>opt</name>
+	      <placement>X</placement>
+	    </tag>
+	  </tags>
           <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
           <docletPath>${project.build.directory}${file.separator}${project.build.finalName}.jar</docletPath>
           <additionalparam>-inferrel</additionalparam>
