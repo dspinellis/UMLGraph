@@ -84,3 +84,6 @@ web: $(BALL_TAR_GZ) CHECKSUM.MD5
 CHECKSUM.MD5: $(BALL_TAR_GZ) $(JARFILE)
 	openssl md5 legacy/UMLGraph-2.10.* legacy/UMLGraph-4.8.* UMLGraph-$(VERSION).* >CHECKSUM.MD5
 	(cd lib ; openssl md5 UmlGraph.jar) >>CHECKSUM.MD5
+
+tags:
+	etags **/*.java
