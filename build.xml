@@ -90,7 +90,8 @@ class Version { public static String VERSION = "${VERSION}";}
 
 <target name="compile" depends="init,version"
 	description="compile the source, build library " >
-	<javac srcdir="${src}" destdir="${build}" debug="true" deprecation="true" >
+	<javac srcdir="${src}" destdir="${build}" debug="true"
+		deprecation="true" includeantruntime="false" >
 		<compilerarg value="-Xlint"/>
 	</javac>
 	<jar basedir="${build}" destfile="${lib}/UmlGraph.jar" includes="org/umlgraph/doclet/*.class">
