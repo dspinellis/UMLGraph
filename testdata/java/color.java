@@ -1,4 +1,3 @@
-// $Id$
 
 /**
  * @opt edgecolor "yellow"

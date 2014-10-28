@@ -4,8 +4,6 @@ rem Windows batch file to run UMLGraph on the specified base file name
 rem For this to work you must adjust the following defintion of
 rem UMLGRAPH_HOME to point to the directory where UmlGraph.jar is installed.
 
-rem $Id$
-
 set UMLGRAPH_HOME=lib
 
 if not "%2" == "" goto ok

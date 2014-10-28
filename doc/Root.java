@@ -1,5 +1,4 @@
 // Author:  Vadim Nasardinov
-// Version: $Id$
 
 import java.util.List;
 import java.util.Map;

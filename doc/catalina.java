@@ -1,6 +1,5 @@
 /*
  * Interface and generalization relationships in Jakarta Catalina
- * $Id$
  */
 
 /**

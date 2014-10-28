@@ -1,7 +1,6 @@
 /*
  * Schema model
  * UML User Guide p. 112
- * $Id$
  */
 
 /** 

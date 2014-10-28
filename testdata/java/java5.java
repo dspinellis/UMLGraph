@@ -1,4 +1,3 @@
-// $Id$
 import java.util.*;
 
 /**

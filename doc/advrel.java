@@ -1,7 +1,6 @@
 /*
  * Advanced relationships
  * UML User Guide p. 137
- * $Id$
  */
 
 /**

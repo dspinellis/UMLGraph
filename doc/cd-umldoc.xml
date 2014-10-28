@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id$ -->
 <notes>
 UmlGraphDoc is a standard doclet wrapper that combines
 the standard doclet output (javadoc documentation) along with auto-generated

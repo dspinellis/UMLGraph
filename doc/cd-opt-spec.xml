@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id$ -->
 <notes>
 Since the options are really a part of the generated graph you
 want in many cases to include them in the diagram specification.

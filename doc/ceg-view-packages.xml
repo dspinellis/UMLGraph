@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id$ -->
 <notes>
 Views are especially interesting in big projects, since they allow to
 generate package specific diagrams and overview diagrams in a quick and

@@ -1,7 +1,6 @@
 /*
  * Class stereotypes and tagged values
  * UML User Guide p. 439
- * $Id$
  */
 
 /** 

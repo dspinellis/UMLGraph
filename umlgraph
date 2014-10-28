@@ -4,7 +4,6 @@
 # For this to work you must adjust the following defintion of
 # UMLGRAPH_HOME to point to the directory where UmlGraph.jar is installed.
 #
-# $Id$
 #
 
 UMLGRAPH_HOME=lib

@@ -1,4 +1,3 @@
-// $Id$
 class Application {}
 
 class IrpApplication extends Application {}

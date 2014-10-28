@@ -1,6 +1,5 @@
 #!/bin/sh
 #
-# $Id$
 #
 # Create the UMLGraph web pages
 #

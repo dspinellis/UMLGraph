@@ -1,6 +1,5 @@
 /*
  * Relationship inference
- * $Id$
  */
 
 import java.util.List;

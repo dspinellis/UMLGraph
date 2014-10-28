@@ -1,4 +1,3 @@
-// $Id$
 
 /**
  * Locally disable an option (test)

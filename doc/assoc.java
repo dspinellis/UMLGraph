@@ -1,4 +1,3 @@
-// $Id$
 
 /**
  * Associations with visibility

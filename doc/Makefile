@@ -1,5 +1,4 @@
 #
-# $Id$
 #
 
 ROOT=/cygdrive/c

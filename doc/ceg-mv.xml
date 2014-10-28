@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id$ -->
 <notes>
 Vadim Nasardinov noted that an advantage of UMLGraph over many
 GUI-oriented UML drawing tools is the ability
@@ -16,7 +15,6 @@ a Makefile illustrates a way to organize this process.
 <h2>Java Description</h2>
 <fmtcode ext="java">
 // Author:  Vadim Nasardinov
-// Version: $Id$
 
 import java.util.List;
 import java.util.Map;
@@ -63,7 +61,6 @@ class DataOperation extends Element {}
 <fmtcode ext="mak">
 # Author:  Vadim Nasardinov (vadimn@redhat.com)
 # Since:   2004-05-26
-# Version: $Id$
 # See:     http://www.spinellis.gr/sw/umlgraph/doc/ceg-mv.html
 
 # Requires: graphviz

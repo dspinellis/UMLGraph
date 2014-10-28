@@ -1,4 +1,3 @@
-// $Id$
 
 /**
  * Attribute and operation visility

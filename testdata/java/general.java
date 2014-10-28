@@ -1,7 +1,6 @@
 /*
  * Generalisation
  * UML User Guide p. 141
- * $Id$
  */
 
 /* Basic categorisations */

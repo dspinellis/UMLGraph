@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id$ -->
 <notes>
 The following diagram, illustrates the operating system calls of
 a typical DNS query.
@@ -17,7 +16,6 @@ drawing facility.
 #
 # DNS query collaboration diagram
 #
-# $Id$
 #
 
 .PS

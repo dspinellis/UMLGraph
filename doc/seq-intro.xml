@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id$ -->
 <notes>
 One specifies a sequence diagram using <em>pic</em> macros to define
 objects and method invocations.

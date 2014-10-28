@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id$ -->
 <notes>
 Views are special classes that allow the generation of a custom class
 diagram based on a set of diagram global options and a set of option

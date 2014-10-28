@@ -6,7 +6,6 @@
 #
 # Diomidis Spinellis. August 2008.
 #
-# $Id$
 #
 
 for i in dot umldoc

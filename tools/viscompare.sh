@@ -7,7 +7,6 @@
 # Example: viscompare.sh Category.dot
 # Example2: for i in `cd dot-ref ; ls *.dot`; do ../viscompare.sh $i; done
 #
-# $Id$
 #
 
 filea=`find . -name $1 | sed -n 1p`

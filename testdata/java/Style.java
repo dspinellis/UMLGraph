@@ -1,4 +1,3 @@
-// $Id$
 package net.sf.whatever.test;
 
 /**
