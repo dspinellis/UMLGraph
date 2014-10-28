@@ -6,7 +6,7 @@
   <artifactId>umlgraph</artifactId>
   <packaging>jar</packaging>
   <name>UMLGraph</name>
-  <version>5.7.1</version>
+  <version>5.7.2-SNAPSHOT</version>
   <description>Declarative Drawing of UML Diagrams</description>
   <url>http://www.umlgraph.org</url>
 
