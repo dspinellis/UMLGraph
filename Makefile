@@ -19,8 +19,6 @@ PICFILE=sequence.pic
 README=README.txt
 LICENSE=LICENSE
 OTHERSRC=index.html build.xml Makefile oldversion.html
-# Files to tag
-ALLTAG=$(DOCLETSRC) $(TESTSRC) $(PICFILE) $(README) $(LICENSE) $(OTHERSRC)
 # Documentation location (release)
 ifeq ($(VERSION),snapshot)
 	DOC=snapshot-doc
@@ -87,6 +85,3 @@ web: $(BALL_TAR_GZ) CHECKSUM.MD5
 CHECKSUM.MD5: $(BALL_TAR_GZ) $(JARFILE)
 	md5 legacy/UMLGraph-2.10.* legacy/UMLGraph-4.8.* UMLGraph-$(VERSION).* >CHECKSUM.MD5
 	(cd lib ; md5 UmlGraph.jar) >>CHECKSUM.MD5
-
-tag:
-	rcs -nV$(TAGVERSION): $(ALLTAG)
