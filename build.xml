@@ -7,6 +7,7 @@
 
 <!-- set global properties for this build -->
 <property name="src" location="src/main/java"/>
+<property name="testsrc" location="src/test"/>
 <property name="build" location="build"/>
 <property name="javadoc" location="javadoc"/>
 <property name="lib" location="lib"/>
@@ -102,7 +103,18 @@ class Version { public static String VERSION = "${VERSION}";}
 	</jar>
 </target>
 
-<target name="test" depends="compile"
+<target name="testcompile" depends="init"
+	description="compile the test code " >
+	<javac srcdir="${testsrc}" destdir="${build}" debug="true"
+		deprecation="true" includeantruntime="false" >
+         <classpath>
+           <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
+         </classpath>
+		<compilerarg value="-Xlint"/>
+	</javac>
+</target>
+
+<target name="test" depends="compile,testcompile"
 	description="run the regression tests" >
 	<java classname="org.umlgraph.test.BasicTest" fork="true">
          <classpath>
