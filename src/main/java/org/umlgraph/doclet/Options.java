@@ -612,7 +612,7 @@ public class Options implements Cloneable, OptionProvider {
 	    InputStream is = new FileInputStream(apiDocMapFileName);
 	    Properties userMap = new Properties();
 	    userMap.load(is);
-	    for (Map.Entry mapEntry : userMap.entrySet()) {
+	    for (Map.Entry<?, ?> mapEntry : userMap.entrySet()) {
 		try {
 		    Pattern regex = Pattern.compile((String) mapEntry.getKey());
 		    String thisRoot = (String) mapEntry.getValue();
