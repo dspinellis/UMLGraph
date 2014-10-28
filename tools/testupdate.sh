@@ -10,12 +10,12 @@
 
 for i in dot umldoc
 do
-	find testdata/$i-ref -type f |
-	grep -v CVS |
+	git ls-files testdata/*-ref |
 	sed "s/\(testdata\/$i-\)ref\(.*\)/\1ref\2 \1out\2/" |
 	while read refname outname
 	do
-		if ! cmp -s $refname $outname
+		if [ -r "$outname" -a -r "$outname" ] && \
+			! cmp -s $refname $outname
 		then
 			cp $outname $refname
 		fi
