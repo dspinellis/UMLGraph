@@ -9,7 +9,6 @@ build
 CHECKSUM.MD5
 javadoc
 lib
-src/main/java/org/umlgraph/doclet/Version.java
 TAGS
 target
 UMLGraph-R*
