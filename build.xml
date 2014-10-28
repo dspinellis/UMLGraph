@@ -94,6 +94,9 @@ class Version { public static String VERSION = "${VERSION}";}
 	<javac srcdir="${src}" destdir="${build}" debug="true"
 		deprecation="true" includeantruntime="false" >
 		<compilerarg value="-Xlint"/>
+		 <classpath>
+		   <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
+		 </classpath>
 	</javac>
 	<jar basedir="${build}" destfile="${lib}/UmlGraph.jar" includes="org/umlgraph/doclet/*.class">
 		<manifest>
