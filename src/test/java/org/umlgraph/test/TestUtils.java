@@ -113,7 +113,7 @@ public class TestUtils {
 	return equal;
     }
 
-    public static void printList(PrintWriter pw, String message, List extraOut) {
+    public static void printList(PrintWriter pw, String message, List<?> extraOut) {
 	if (extraOut.size() > 0) {
 	    pw.println(message);
 	    for (Object o : extraOut) {
