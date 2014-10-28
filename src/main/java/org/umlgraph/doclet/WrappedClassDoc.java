@@ -19,6 +19,7 @@
 
 package org.umlgraph.doclet;
 
+import com.sun.javadoc.AnnotatedType;
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationTypeDoc;
 import com.sun.javadoc.ClassDoc;
@@ -358,4 +359,11 @@ public class WrappedClassDoc implements ClassDoc {
 	return wrapped.typeParamTags();
     }
 
+    public AnnotatedType asAnnotatedType() {
+	return wrapped.asAnnotatedType();
+    }
+
+    public Type getElementType() {
+	return wrapped.getElementType();
+    }
 }
