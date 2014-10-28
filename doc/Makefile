@@ -38,7 +38,7 @@ DOC?=snapshot-doc
 
 all: sequence.pic $(GIF) $(XML)
 	sh $(ROOT)/$(NOTETOOLS)/coursebib.sh bib
-	echo "Drawing UML Diagrams with UMLGraph" | perl $(NOTETOOLS)/thread.pl -n -h html -r -p ../index.html index ${DESTDIR}/${DOC}
+	echo "Drawing UML Diagrams with UMLGraph" | /c/Perl/bin/perl $(NOTETOOLS)/thread.pl -n -h html -r -p ../index.html index ${DESTDIR}/${DOC}
 
 sequence.pic: ../sequence.pic
 	perl -p -e 'BEGIN {binmode(STDOUT);} s/\r//' $< >$@
