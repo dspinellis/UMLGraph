@@ -6,7 +6,7 @@
 #
 #
 
-UMLGRAPH_HOME=lib
+UMLGRAPH_HOME=$(dirname $0)/lib
 
 if [ x$2 = x ]
 then
