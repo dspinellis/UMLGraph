@@ -72,6 +72,14 @@ Example:
 java -jar /usr/jvm/java-1.5.0/lib/UmlGraph.jar -private Simple.java
 </fmtcode>
 <p />
+To generate a diagram of all classes in the package specify as arguments
+to the Java invocation the name of the package and the directory where
+it resides.
+The following example generates a diagram of all UMLGraph classes.
+<fmtcode ext="sh">
+java -classpath ... org.umlgraph.doclet.UmlGraph -sourcepath src/main/java org.umlgraph.doclet
+</fmtcode>
+<p />
 Specifying some packages before the list of source files will designate
 those packages as <em>local</em>.
 When you specify a package list,
