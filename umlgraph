@@ -8,6 +8,13 @@
 
 UMLGRAPH_HOME=lib
 
+# Obtain a classpath path separator that works for Unix and Cygwin
+if  expr "$JAVA_HOME" : '.*:' >/dev/null ; then
+  CPS=';'
+else
+  CPS=':'
+fi
+
 if [ x$2 = x ]
 then
 	echo usage: umlgraph base_file_name filetype [umlgraph arguments] 1>&2
@@ -18,7 +25,7 @@ else
 	BASE=$1
 	FILETYPE=$2
 	shift 2
-	java -classpath "$UMLGRAPH_HOME/UmlGraph.jar:$JAVA_HOME/lib/tools.jar" \
+	java -classpath "$UMLGRAPH_HOME/UmlGraph.jar${CPS}$JAVA_HOME/lib/tools.jar" \
 	org.umlgraph.doclet.UmlGraph -package $* -output - $BASE.java |
 	dot -T$FILETYPE -o$BASE.$FILETYPE
 fi
