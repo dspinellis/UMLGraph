@@ -1,52 +1,12 @@
-"""
-
-description:
-
-    This script allows the declarative specification of uml state diagrams.
-
-    1) use the commands stated below to form a state diagram and save it in a text file
-    2) change your directory to the place where both the script and the text file are located
-    3) provide the arguments as stated below
-    4) at the test-output directory you will find the diagram both in dot format and in pdf.
-
-cmd args:
-
-    argv[1]: input file name. (Mandatory)
-    argv[2]: output file name. (Optional). Defaults to the input file's name
-    argv[3]: view. (Optional). If true the generated pdf opens immediately. Defaults to False
-
-commands:
-
-    state: creates a state
-    arguments: id (mandatory), name (mandatory), events[](optional), style[](optional
-
-    transition: creates a transition
-    arguments: source (mandatory), target (mandatory), label (optional), styling[] (optional)
-
-    initial: the initial node. To be referred as initial
-
-    final: the final node. To be referred as final
-
-    compound_state: creates a subgraph which includes states and transitions
-    arguments: name (optional)
-
-    compound_end: ends the subgraph
-
-    styles: applies styling to the element specified
-    arguments: element (mandatory), styling[] (mandatory)
-
-    note: applies a note to the state specified
-    arguments: node_id (mandatory), note (mandatory)
-
-"""
-
+#!/usr/bin/env python
 
 from graphviz import Digraph
 from pyparsing import *
-import sys
-
+import argparse
+import os
 
 # -----Parser-----
+
 
 LP, RP, LB, RB = map(Suppress, "()[]")  # those will be skipped when iterating
 tokens = "+" + "'" + "=" + "/" + "_"
@@ -65,10 +25,11 @@ rule = OneOrMore(Group(sentence))  # rule: sentence, sentence, ...
 
 
 def add_state(graph, args_list):
-    """
-    Creates the state based on the arguments given
 
-    Args of args_list:
+    """ Creates the state based on the arguments given
+
+    :param args_list:
+
         args_list[0]: Unique identifier for the state inside the source(MANDATORY).
         args_list[1]: Caption to be displayed (defaults to the state id).
         args_list[2]: Events of the state(OPTIONAL).
@@ -88,13 +49,14 @@ def add_state(graph, args_list):
 
 
 def add_transition(graph, args_list):
-    """
-    Creates the transition based on the arguments given
 
-    Args of args_list:
-        args_list[0]: Start state identifier(MANDATORY).
-        args_list[1]: End state identifier(MANDATORY).
-        args_list[2]: Caption to be displayed near the edge(OPTIONAL).
+    """ Creates the transition based on the arguments given
+
+    :param args_list :
+
+        args_list[0]: Source state identifier(MANDATORY).
+        args_list[1]: Target state identifier(MANDATORY).
+        args_list[2]: Caption to be displayed near the transition(OPTIONAL).
         args_list[3]: Any styling to be applied(OPTIONAL).
     """
 
@@ -159,8 +121,8 @@ def compound_state(args_list):
 
 
 def list_to_dict(alist):
-    """
-    takes the list that contains the styling arguments to be applied
+
+    """ Takes the list that contains the styling arguments to be applied
     and turns it to a dictionary which graphviz understands
     """
 
@@ -172,9 +134,16 @@ def list_to_dict(alist):
     return changed_dict
 
 
-# Parses every line of the script and calls an add method depending on that line's action command
-
 def parse_and_draw(graph, script):
+
+    """ Parses every line of the script and calls
+    an add method depending on that line's action command
+
+    :param graph: current graph being used
+
+    :param script: txt file being parsed
+    """
+
     entry = graph
     try:
 
@@ -214,31 +183,45 @@ def parse_and_draw(graph, script):
                 entry.subgraph(graph)
                 graph = entry
 
-        # checks if user wants to view the graph right away
-        if len(sys.argv) == 4:
-            accepted_values = ['true', 'TRUE', 'True']
-            if sys.argv[3] in accepted_values:
-                view = True
-            else:
-                raise Exception("no suitable value for view")
-        else:
-            view = False
-
-        if sys.argv[2]:  # if the user has specified an output file
-            graph.render('test-output/'+str(sys.argv[2])+'.gv', view=view)
-            'test-output/'+str(sys.argv[2])+'.pdf'
-        else:  # else use the input file's name
-            graph.render('test-output/'+str(sys.argv[1])+'.gv', view=view)
-            'test-output/'+str(sys.argv[1])+'.pdf'
+        return graph
 
     except Exception as e:
 
         print "could not draw diagram because: " + str(e)
 
 
-# Reads data from the input file
+def render_graph(cmd_args, graph):
 
-with open(str(sys.argv[1])) as f:
+    """ Renders the graph and generates the output files as specified by the user
+        If an output file is not specified. A pdf is generated using
+        the name of the input file.
+        The extension dot is erased because the format function can't handle it.
+
+    :param cmd_args: contains the input file, the viewing preference and the output file
+    :param graph: graph to render
+    """
+
+    if cmd_args.output is not None:
+        filename, file_extension = os.path.splitext(cmd_args.output)
+
+    else:
+        filename = os.path.splitext(cmd_args.filename)[0]
+        file_extension = 'pdf'
+
+    graph.format = file_extension.replace('.', '')
+
+    graph.render('test-output/' + filename, view=cmd_args.view)
+
+
+# parse cmd arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("filename")
+parser.add_argument("-v", "--view", action="store_true", default=False)
+parser.add_argument("-o", "--output", type=str)
+
+args = parser.parse_args()
+
+with open(args.filename) as f:
     content = f.read().splitlines()
 
 script = "\n".join(content)
@@ -246,4 +229,4 @@ script = "\n".join(content)
 g1 = Digraph('g1', node_attr={'shape': 'box', 'style': 'rounded'})
 g1.body.extend(['rankdir=LR'])  # graph's direction left-->right
 
-parse_and_draw(g1, script)
+render_graph(args, parse_and_draw(g1, script))
