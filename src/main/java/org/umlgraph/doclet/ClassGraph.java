@@ -157,7 +157,7 @@ class ClassGraph {
 	final Pattern toEscape = Pattern.compile("[&<>]");
 
 	if (toEscape.matcher(s).find()) {
-	    StringBuffer sb = new StringBuffer(s);
+	    StringBuilder sb = new StringBuilder(s);
 	    for (int i = 0; i < sb.length();) {
 		switch (sb.charAt(i)) {
 		case '&':
@@ -188,7 +188,7 @@ class ClassGraph {
 	if (s.indexOf('\n') == -1)
 	    return (s);
 
-	StringBuffer sb = new StringBuffer(s);
+	StringBuilder sb = new StringBuilder(s);
 	for (int i = 0; i < sb.length();) {
 	    if (sb.charAt(i) == '\n') {
 		sb.replace(i, i + 1, "<br/>");
@@ -204,7 +204,7 @@ class ClassGraph {
      * Convert &lt; and &gt; characters in the string to the respective guillemot characters.
      */
     private String guillemize(Options opt, String s) {
-	StringBuffer r = new StringBuffer(s);
+	StringBuilder r = new StringBuilder(s);
 	for (int i = 0; i < r.length();)
 	    switch (r.charAt(i)) {
 	    case '<':
@@ -1048,7 +1048,7 @@ class ClassGraph {
 		&& contextClassPath[i].equals(currClassPath[i]))
 	    i++;
 	// ... go up with ".." to reach the common root
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	if (i == contextClassPath.length) {
 	    buf.append(".").append(FILE_SEPARATOR);
 	} else {
@@ -1085,7 +1085,7 @@ class ClassGraph {
     public String classToUrl(String className) {
         String docRoot = mapApiDocRoot(className);
         if (docRoot != null) {
-            StringBuffer buf = new StringBuffer(docRoot);
+            StringBuilder buf = new StringBuilder(docRoot);
             buf.append(getPackageName(className).replace('.', FILE_SEPARATOR) + FILE_SEPARATOR);
 			buf.append(getUnqualifiedName(className));
             buf.append(".html");
