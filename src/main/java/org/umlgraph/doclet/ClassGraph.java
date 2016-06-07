@@ -264,7 +264,7 @@ class ClassGraph {
 
     /** Print a a basic type t */
     private String type(Options opt, Type t) {
-	String type = "";
+	String type;
 	if (opt.showQualified)
 	    type = t.qualifiedTypeName();
 	else
@@ -305,7 +305,7 @@ class ClassGraph {
 	for (FieldDoc f : fd) {
 	    if (hidden(f))
 		continue;
-	    String att = "";
+	    String att;
 	    stereotype(opt, f, Align.LEFT);
 	    att = visibility(opt, f) + f.name();
 	    if (opt.showType)
@@ -506,7 +506,7 @@ class ClassGraph {
 	    Font font = c.isAbstract() && !c.isInterface() ? Font.CLASS_ABSTRACT : Font.CLASS;
 	    String qualifiedName = qualifiedName(opt, r);
 	    int startTemplate = qualifiedName.indexOf('<');
-	    int idx = 0;
+	    int idx;
 	    if(startTemplate < 0)
 		idx = qualifiedName.lastIndexOf('.');
 	    else
@@ -1022,7 +1022,7 @@ class ClassGraph {
 	// building relative path for context and package diagrams
 	if(contextDoc != null && rootClass) {
 	    // determine the context path, relative to the root
-	    String packageName = null;
+	    String packageName;
 	    if (contextDoc instanceof ClassDoc) {
 		    packageName = ((ClassDoc) contextDoc).containingPackage().name();
 		} else if (contextDoc instanceof PackageDoc) {
@@ -1101,7 +1101,7 @@ class ClassGraph {
      * the final diagram to the associated JavaDoc page.
      */
     private String mapApiDocRoot(String className) {
-	String root = null;
+	String root;
 	/* If no packages are specified, we use apiDocRoot for all of them. */
 	if (rootClasses.contains(className)) {
 	    root = optionProvider.getGlobalOptions().apiDocRoot;
@@ -1117,14 +1117,14 @@ class ClassGraph {
      * @throws IOException */
     public void prologue() throws IOException {
 	Options opt = optionProvider.getGlobalOptions();
-	OutputStream os = null;
+	OutputStream os;
 
 	if (opt.outputFileName.equals("-"))
 	    os = System.out;
 	else {
 	    // prepare output file. Use the output file name as a full path unless the output
 	    // directory is specified
-	    File file = null;
+	    File file;
 	    if (opt.outputDirectory != null)
 		file = new File(opt.outputDirectory, opt.outputFileName);
 	    else

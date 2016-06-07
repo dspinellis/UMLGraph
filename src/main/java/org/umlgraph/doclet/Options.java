@@ -556,7 +556,7 @@ public class Options implements Cloneable, OptionProvider {
 	try {
 	    URL url = new URL(packageListUrl + "/package-list");
 	    br = new BufferedReader(new InputStreamReader(url.openStream()));
-	    String line = null;
+	    String line;
 	    while((line = br.readLine()) != null) {
 		line = line + ".";
 		Pattern pattern = Pattern.compile(line.replace(".", "\\.") + "[^\\.]*");
@@ -586,7 +586,7 @@ public class Options implements Cloneable, OptionProvider {
 	try {
 	    URL url = new URL(packageListUrl + "/package-list");
 	    br = new BufferedReader(new InputStreamReader(url.openStream()));
-	    String line = null;
+	    String line;
 	    while((line = br.readLine()) != null) {
 		line = line + ".";
 		Pattern pattern = Pattern.compile(line.replace(".", "\\.") + "[^\\.]*");

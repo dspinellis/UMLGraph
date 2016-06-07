@@ -147,7 +147,7 @@ public class UmlGraphDoc {
 		dotFile.getAbsolutePath()
 	    });
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-	    String line = null;
+	    String line;
 	    while((line = reader.readLine()) != null)
 		root.printWarning(line);
 	    int result = p.waitFor();
