@@ -765,7 +765,7 @@ public class Options implements Cloneable, OptionProvider {
     }
     
     public String toString() {
-	StringBuffer sb = new StringBuffer();
+	StringBuilder sb = new StringBuilder();
 	sb.append("UMLGRAPH OPTIONS\n");
 	for(Field f : this.getClass().getDeclaredFields()) {
 	    if(!Modifier.isStatic(f.getModifiers())) {
