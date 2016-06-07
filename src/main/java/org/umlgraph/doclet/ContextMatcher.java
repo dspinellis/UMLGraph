@@ -169,7 +169,6 @@ public class ContextMatcher implements ClassMatcher {
 	}
 
 	@Override
-	@Override
 	public void prologue() throws IOException {
 	    w = new PrintWriter(new DevNullWriter());
 	}
