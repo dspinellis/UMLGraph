@@ -189,7 +189,8 @@ public class Options implements Cloneable, OptionProvider {
     dotExecutable = "dot";
     }
 
-    public Object clone() {
+    @Override
+	public Object clone() {
 	Options clone = null;
 	try {
 	     clone = (Options) super.clone();

@@ -168,6 +168,8 @@ public class ContextMatcher implements ClassMatcher {
 	    prologue();
 	}
 
+	@Override
+	@Override
 	public void prologue() throws IOException {
 	    w = new PrintWriter(new DevNullWriter());
 	}
@@ -180,14 +182,17 @@ public class ContextMatcher implements ClassMatcher {
      */
     private static class DevNullWriter extends Writer {
 
+	@Override
 	public void write(char[] cbuf, int off, int len) throws IOException {
 	    // nothing to do
 	}
 
+	@Override
 	public void flush() throws IOException {
 	    // nothing to do
 	}
 
+	@Override
 	public void close() throws IOException {
 	    // nothing to do
 	}
