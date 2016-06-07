@@ -3,7 +3,6 @@ package org.umlgraph.doclet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
@@ -137,18 +136,14 @@ public class UmlGraphDoc {
       dotExecutable = "dot";
     }
 	File dotFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".dot");
-	File pngFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".png");
-	File mapFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".map");
+  File svgFile = new File(outputFolder, packageName.replace(".", "/") + "/" + name + ".svg");
 
 	try {
 	    Process p = Runtime.getRuntime().exec(new String [] {
 		dotExecutable,
-		"-Tcmapx",
+    "-Tsvg",
 		"-o",
-		mapFile.getAbsolutePath(),
-		"-Tpng",
-		"-o",
-		pngFile.getAbsolutePath(),
+		svgFile.getAbsolutePath(),
 		dotFile.getAbsolutePath()
 	    });
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -167,25 +162,27 @@ public class UmlGraphDoc {
     //Format string for the uml image div tag.
     private static final String UML_DIV_TAG = 
 	"<div align=\"center\">" +
-	    "<img src=\"%1$s.png\" alt=\"Package class diagram package %1$s\" usemap=\"#G\" border=0/>" +
+	    "<object  width=\"100%\" height=\"100%\" type=\"image/svg+xml\" data=\"%1$s.svg\" alt=\"Package class diagram package %1$s\" border=0></object>" +
 	"</div>";
     
+    private static final String EXPANDABLE_UML_STYLE = "font-family: Arial,Helvetica,sans-serif;font-size: 1.5em; display: block; width: 250px; height: 20px; background: #009933; padding: 5px; text-align: center; border-radius: 8px; color: white; font-weight: bold;";
+
     //Format string for the java script tag.
     private static final String EXPANDABLE_UML = 
 	"<script type=\"text/javascript\">\n" + 
 	"function show() {\n" + 
 	"    document.getElementById(\"uml\").innerHTML = \n" + 
-	"        \'<a style=\"font-family:monospace\" href=\"javascript:hide()\">%3$s</a>\' +\n" + 
+	"        \'<a style=\"" + EXPANDABLE_UML_STYLE + "\" href=\"javascript:hide()\">%3$s</a>\' +\n" +
 	"        \'%1$s\';\n" + 
 	"}\n" + 
 	"function hide() {\n" + 
 	"	document.getElementById(\"uml\").innerHTML = \n" + 
-	"	\'<a style=\"font-family:monospace\" href=\"javascript:show()\">%2$s</a>\' ;\n" + 
+	"	\'<a style=\"" + EXPANDABLE_UML_STYLE + "\" href=\"javascript:show()\">%2$s</a>\' ;\n" +
 	"}\n" + 
 	"</script>\n" + 
 	"<div id=\"uml\" >\n" + 
 	"	<a href=\"javascript:show()\">\n" + 
-	"	<a style=\"font-family:monospace\" href=\"javascript:show()\">%2$s</a> \n" + 
+	"	<a style=\"" + EXPANDABLE_UML_STYLE + "\" href=\"javascript:show()\">%2$s</a> \n" +
 	"</div>";
     
     /**
@@ -198,7 +195,6 @@ public class UmlGraphDoc {
 	File output = new File(outputFolder, packageName.replace(".", "/"));
 	File htmlFile = new File(output, htmlFileName);
 	File alteredFile = new File(htmlFile.getAbsolutePath() + ".uml");
-	File mapFile = new File(output, className + ".map");
 	if (!htmlFile.exists()) {
 	    System.err.println("Expected file not found: " + htmlFile.getAbsolutePath());
 	    return;
@@ -220,10 +216,6 @@ public class UmlGraphDoc {
 		writer.newLine();
 		if (!matched && insertPointPattern.matcher(line).matches()) {
 		    matched = true;
-		    if (mapFile.exists())
-			insertClientSideMap(mapFile, writer);
-		    else
-			root.printWarning("Could not find map file " + mapFile);
 			
 		    String tag = String.format(UML_DIV_TAG, className);
 		    if (opt.collapsibleDiagrams)
@@ -251,25 +243,6 @@ public class UmlGraphDoc {
 	    root.printNotice("Warning, could not find a line that matches the pattern '" + insertPointPattern.pattern() 
 		    + "'.\n Class diagram reference not inserted");
 	    alteredFile.delete();
-	}
-    }
-
-    /**
-     * Reads the map file and outputs in to the specified writer
-     * @throws IOException
-     */
-    private static void insertClientSideMap(File mapFile, BufferedWriter writer) throws IOException {
-	BufferedReader reader = null;
-	try {
-	    reader = new BufferedReader(new FileReader(mapFile));
-	    String line = null;
-	    while ((line = reader.readLine()) != null) {
-		writer.write(line);
-		writer.newLine();
-	    }
-	} finally {
-	    if (reader != null)
-		reader.close();
 	}
     }
 

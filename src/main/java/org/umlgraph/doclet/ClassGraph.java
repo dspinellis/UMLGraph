@@ -1174,7 +1174,7 @@ class ClassGraph {
 	    bgcolor = " bgcolor=\""+ opt.nodeFillColor + "\"";
 	String href = "";
 	if (url != null)
-	    href = " href=\"" + url + "\"";
+	    href = " href=\"" + url + "\" target=\"_parent\"";
 
 	w.print("<<table title=\"" + name + "\" border=\"0\" cellborder=\"" + 
 	    opt.shape.cellBorder() + "\" cellspacing=\"0\" " +
