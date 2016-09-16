@@ -2,7 +2,7 @@ VERSION:=$(shell git describe --abbrev=6 HEAD | sed 's/R//;s/_/./;s/-/./;s/-.*$$
 BALL_TAR_GZ=UMLGraph-$(VERSION).tar.gz
 ZIPBALL=UMLGraph-$(VERSION).zip
 DISTDIR=UMLGraph-$(VERSION)
-WEBDIR=$(UH)/dds/pubs/web/home/sw/umlgraph-mirror
+WEBDIR=$(UH)/dds/pubs/web/home/umlgraph
 DOCLETSRCPATH=src/main/java/org/umlgraph/doclet
 DOCLETSRC= \
 	$(DOCLETSRCPATH)/ClassGraph.java \

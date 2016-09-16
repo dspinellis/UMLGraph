@@ -222,7 +222,7 @@ public class UmlGraphDoc {
 		    	tag = String.format(EXPANDABLE_UML, tag, "Show UML class diagram", "Hide UML class diagram");
 		    writer.write("<!-- UML diagram added by UMLGraph version " +
 		    		Version.VERSION + 
-				" (http://www.umlgraph.org/) -->");
+				" (http://www.spinellis.gr/umlgraph/) -->");
 		    writer.newLine();
 		    writer.write(tag);
 		    writer.newLine();
