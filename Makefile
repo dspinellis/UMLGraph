@@ -65,7 +65,7 @@ test:
 	ant test
 
 testupdate:
-	sh tools/testupdate.sh
+	bash tools/testupdate.sh
 
 # Create only the static HTML pages
 static-web:
