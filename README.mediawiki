@@ -3,8 +3,8 @@
 ''UMLGraph'' allows the declarative specification and drawing of
 UML  diagrams.
 You can browse the system's documentation
-through [http://spinellis.gr/umlgraph/doc/index.html this link],
-or print it through [http://spinellis.gr/umlgraph/doc/indexw.html this link].
+through [http://www.spinellis.gr/umlgraph/doc/index.html this link],
+or print it through [http://www.spinellis.gr/umlgraph/doc/indexw.html this link].
 
 To install the elements required to run ''UMLGraph'', simply copy
 the contents of the ''lib'' directory to a location consistent with
