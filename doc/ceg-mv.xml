@@ -61,7 +61,7 @@ class DataOperation extends Element {}
 <fmtcode ext="mak">
 # Author:  Vadim Nasardinov (vadimn@redhat.com)
 # Since:   2004-05-26
-# See:     http://www.spinellis.gr/sw/umlgraph/doc/ceg-mv.html
+# See:     http://www.spinellis.gr/umlgraph/doc/ceg-mv.html
 
 # Requires: graphviz
 # Requires: javadoc
