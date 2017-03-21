@@ -77,6 +77,7 @@ public class Options implements Cloneable, OptionProvider {
     boolean horizontal;
     boolean showType;
     boolean showComment;
+    boolean autoSize;
     String edgeFontName;
     String edgeFontColor;
     String edgeColor;
@@ -144,6 +145,7 @@ public class Options implements Cloneable, OptionProvider {
 	showEnumerations = false;
 	showConstructors = false;
 	showType = false;
+	autoSize = true;
 	showComment = false;
 	edgeFontName = defaultFont;
 	edgeFontColor = "black";
@@ -221,19 +223,20 @@ public class Options implements Cloneable, OptionProvider {
      * Will return 0 if the option is not supported.
      */
     public static int optionLength(String option) {
-        if(option.equals("-qualify") ||
-           option.equals("-horizontal") ||
-           option.equals("-attributes") ||
-           option.equals("-operations") ||
-           option.equals("-constructors") ||
-           option.equals("-visibility") ||
-           option.equals("-types") ||
-           option.equals("-commentname") ||
+        if(option.equals("-qualify") || option.equals("-!qualify") ||
+           option.equals("-horizontal") || option.equals("-!horizontal") ||
+           option.equals("-attributes") || option.equals("-!attributes") ||
+           option.equals("-enumconstants") || option.equals("-!enumconstants") ||
+           option.equals("-operations") || option.equals("-!operations") ||
+           option.equals("-enumerations") || option.equals("-!enumerations") ||
+           option.equals("-constructors") || option.equals("-!constructors") ||
+           option.equals("-visibility") || option.equals("-!visibility") ||
+           option.equals("-types") || option.equals("-!types") ||
+           option.equals("-autosize") || option.equals("-!autosize") ||
+           option.equals("-commentname") || option.equals("-!commentname") ||
            option.equals("-all") ||
            option.equals("-postfixpackage") ||
            option.equals("-noguillemot") ||
-           option.equals("-enumconstants") ||
-           option.equals("-enumerations") ||
            option.equals("-views") ||
            option.equals("-inferrel") ||
            option.equals("-useimports") ||
@@ -326,6 +329,10 @@ public class Options implements Cloneable, OptionProvider {
 	    showType = true;
 	} else if (opt[0].equals("-!types")) {
 	    showType = false;
+    } else if(opt[0].equals("-autoSize")) {
+        autoSize = true;
+    } else if (opt[0].equals("-!autoSize")) {
+        autoSize = false;
 	} else if(opt[0].equals("-commentname")) {
 	    showComment = true;
 	} else if (opt[0].equals("-!commentname")) {
