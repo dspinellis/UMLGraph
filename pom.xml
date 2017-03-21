@@ -128,6 +128,7 @@
           <docletPath>${project.build.directory}${file.separator}${project.build.finalName}.jar</docletPath>
           <additionalparam>-inferrel</additionalparam>
           <additionalparam>-inferdep</additionalparam>
+          <additionalparam>-autosize</additionalparam>
           <additionalparam>-collapsible</additionalparam>
           <additionalparam>-hide java.*</additionalparam>
           <additionalparam>-collpackages</additionalparam>

@@ -156,6 +156,7 @@ class Version { public static String VERSION = "${VERSION}";}
 		<doclet name="org.umlgraph.doclet.UmlGraphDoc" path="${lib}/UmlGraph.jar">
 			<param name="-inferrel"/>
 			<param name="-inferdep"/>
+			<param name="-autosize"/>
 			<param name="-collapsible"/>
 			<param name="-hide" value="java.*"/>
 			<param name="-collpackages" value="java.util.*"/>
