@@ -39,6 +39,7 @@ be specified through javadoc tags within the diagram, affecting all or some elem
 <h2>Visual Appearance</h2> <!-- {{{1 -->
 <dl>
 <dt>-bgcolor</dt><dd>Specify the graph's background color.  </dd>
+<dt>-autosize</dt><dd>Fits generated graph to the width of the page/window.  Defaults to true.  </dd>
 <dt>-collapsible</dt><dd>Enhance the javadoc HTML files containing UML diagrams with Javascript that provides a link for showing the (initially collapsed) diagrams.  </dd>
 <dt>-edgecolor</dt><dd>Specify the color for drawing edges.  </dd>
 <dt>-edgefontcolor</dt><dd>Specify the font color to use for edge labels.  </dd>
@@ -77,9 +78,9 @@ be specified through javadoc tags within the diagram, affecting all or some elem
 
 <p />
 All colors can be either a symbolic name (e.g. blue),
-a tripple specifying hue-saturation-brightness as values 0-1
+a triple specifying hue-saturation-brightness as values 0-1
 (e.g. ".13 0.9 1"),
-or a tripple specifying red-green-blue values as hexadecimal
+or a triple specifying red-green-blue values as hexadecimal
 digits prefixed by a # (e.g. "#ff8020").
 The symbolic color names are derived from the X Windows System;
 you can find a complete list in the
