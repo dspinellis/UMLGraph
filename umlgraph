@@ -6,7 +6,7 @@
 #
 #
 
-UMLGRAPH_HOME=lib
+UMLGRAPH_HOME=$(dirname $0)/lib
 
 # Obtain a classpath path separator that works for Unix and Cygwin
 if  expr "$JAVA_HOME" : '.*:' >/dev/null ; then
