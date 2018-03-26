@@ -183,10 +183,6 @@ When using <em>dot</em> to generate SVG diagrams you should specify
 <code>UTF-8</code> as the output encoding, to have guillemots correctly
 appearing in the resulting SVG.
 </dd>
-<dt>-verbose2</dt><dd>Will print on the standard output details regarding
-the progress of graph generation.
-(Note that -verbose is a javadoc option with a different meaning).
-</dd>
 </dl>
 <!-- Footer {{{1 -->
 </notes>
