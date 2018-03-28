@@ -79,10 +79,10 @@ public class Shape {
 
     /** Return the shape's GraphViz landing port */
     String landingPort() {
-	if (name.equals("class") || name.equals("activeclass"))
-	    return ":p";
-	else
-	    return "";
+	// if (name.equals("class") || name.equals("activeclass"))
+	//    return ":p";
+	//else
+	return "";
     }
 
     /** Return the table border required for the shape */
