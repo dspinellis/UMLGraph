@@ -1013,8 +1013,17 @@ class ClassGraph {
 	int openIdx = name.indexOf('<');
 	if(openIdx == -1)
 	    return name;
-	else
-	    return name.substring(0, openIdx);
+	StringBuilder buf = new StringBuilder(name.length());
+	for (int i = 0, depth = 0; i < name.length(); i++) {
+		char c = name.charAt(i);
+		if (c == '<')
+			depth++;
+		else if (c == '>')
+			depth--;
+		else if (depth == 0)
+			buf.append(c);
+	}
+	return buf.toString();
     }
 
     /** Convert the class name into a corresponding URL */
