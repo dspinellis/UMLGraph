@@ -623,7 +623,7 @@ class ClassGraph {
      * @param edgetype the dot edge specification
      */
     private void allRelation(Options opt, RelationType rt, ClassDoc from) {
-	String tagname = rt.toString().toLowerCase();
+	String tagname = rt.lower;
 	for (Tag tag : from.tags(tagname)) {
 	    String t[] = StringUtil.tokenize(tag.text());    // l-src label l-dst target
 	    if (t.length != 4) {
