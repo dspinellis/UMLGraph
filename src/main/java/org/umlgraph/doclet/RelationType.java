@@ -6,5 +6,11 @@ package org.umlgraph.doclet;
  * 
  */
 public enum RelationType {
-    ASSOC, NAVASSOC, HAS, NAVHAS, COMPOSED, NAVCOMPOSED, DEPEND, EXTENDS, IMPLEMENTS;
+    ASSOC(), NAVASSOC(), HAS(), NAVHAS(), COMPOSED(), NAVCOMPOSED(), DEPEND(), EXTENDS(), IMPLEMENTS();
+
+    public final String lower;
+
+    private RelationType() {
+        this.lower = toString().toLowerCase();
+    }
 }
