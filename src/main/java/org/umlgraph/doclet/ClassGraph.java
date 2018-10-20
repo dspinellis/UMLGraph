@@ -72,7 +72,13 @@ class ClassGraph {
 	NORMAL, ABSTRACT, CLASS, CLASS_ABSTRACT, TAG, PACKAGE
     }
     enum Align {
-	LEFT, CENTER, RIGHT
+	LEFT, CENTER, RIGHT;
+
+	public final String lower;
+
+	private Align() {
+	    this.lower = toString().toLowerCase();
+	}
     };
     public static Map<RelationType, String> associationMap = new HashMap<RelationType, String>();
     static {
@@ -186,50 +192,41 @@ class ClassGraph {
 
     /** Print the method parameter p */
     private String parameter(Options opt, Parameter p[]) {
-	String par = "";
+	StringBuilder par = new StringBuilder(1000);
 	for (int i = 0; i < p.length; i++) {
-	    par += p[i].name() + typeAnnotation(opt, p[i].type());
+	    par.append(p[i].name() + typeAnnotation(opt, p[i].type()));
 	    if (i + 1 < p.length)
-		par += ", ";
+		par.append(", ");
 	}
-	return par;
+	return par.toString();
     }
 
     /** Print a a basic type t */
     private String type(Options opt, Type t, boolean generics) {
-	String type;
-	if (generics ? opt.showQualifiedGenerics : opt.showQualified)
-	    type = t.qualifiedTypeName();
-	else
-	    type = t.typeName();
-	type += typeParameters(opt, t.asParameterizedType());
-	return type;
+	return ((generics ? opt.showQualifiedGenerics : opt.showQualified) ?//
+		t.qualifiedTypeName() : t.typeName()) //
+		+ typeParameters(opt, t.asParameterizedType());
     }
 
     /** Print the parameters of the parameterized type t */
     private String typeParameters(Options opt, ParameterizedType t) {
-	String tp = "";
 	if (t == null)
-	    return tp;
+	    return "";
+	StringBuffer tp = new StringBuffer(1000).append("&lt;");
 	Type args[] = t.typeArguments();
-	tp += "&lt;";
 	for (int i = 0; i < args.length; i++) {
-	    tp += type(opt, args[i], true);
+	    tp.append(type(opt, args[i], true));
 	    if (i != args.length - 1)
-		tp += ", ";
+		tp.append(", ");
 	}
-	tp += "&gt;";
-	return tp;
+	return tp.append("&gt;").toString();
     }
 
     /** Annotate an field/argument with its type t */
     private String typeAnnotation(Options opt, Type t) {
 	if (t.typeName().equals("void"))
 	    return "";
-	String ta = " : ";
-	ta += type(opt, t, false);
-	ta += t.dimension();
-	return ta;
+	return " : " + type(opt, t, false) + t.dimension();
     }
 
     /** Print the class's attributes fd */
@@ -237,9 +234,8 @@ class ClassGraph {
 	for (FieldDoc f : fd) {
 	    if (hidden(f))
 		continue;
-	    String att;
 	    stereotype(opt, f, Align.LEFT);
-	    att = visibility(opt, f) + f.name();
+	    String att = visibility(opt, f) + f.name();
 	    if (opt.showType)
 		att += typeAnnotation(opt, f.type());
 	    tableLine(Align.LEFT, att);
@@ -373,11 +369,7 @@ class ClassGraph {
     /** Return true if the class name is associated to an hidden class or matches a hide expression */
     private boolean hidden(String s) {
 	ClassInfo ci = getClassInfo(s);
-	Options opt = optionProvider.getOptionsFor(s);
-	if(ci != null)
-	    return ci.hidden || opt.matchesHideExpression(s);
-	else
-	    return opt.matchesHideExpression(s);
+	return (ci != null && ci.hidden) || optionProvider.getOptionsFor(s).matchesHideExpression(s);
     }
 
     
@@ -603,9 +595,7 @@ class ClassGraph {
      * whose outline is rendered through an inner table.
      */
     private String relationNode(ClassDoc c) {
-	Options opt = optionProvider.getOptionsFor(c);
-	String name = getNodeName(c);
-	return name + opt.shape.landingPort();
+	return getNodeName(c) + optionProvider.getOptionsFor(c).shape.landingPort();
     }
 
     /** Return the full name of a relation's node c.
@@ -615,13 +605,8 @@ class ClassGraph {
      * @param cName the node's class name
      */
     private String relationNode(ClassDoc c, String cName) {
-	Options opt;
-	if (c == null)
-	    opt = optionProvider.getOptionsFor(cName);
-	else
-	    opt = optionProvider.getOptionsFor(c);
-	String name = getNodeName(cName);
-	return name + opt.shape.landingPort();
+	Options opt = c == null ? optionProvider.getOptionsFor(cName) : optionProvider.getOptionsFor(c);
+	return getNodeName(cName) + opt.shape.landingPort();
     }
 
     /** Print a class's relations */
@@ -930,7 +915,7 @@ class ClassGraph {
 	// ... go up with ".." to reach the common root
 	StringBuilder buf = new StringBuilder();
 	if (i == contextClassPath.length) {
-	    buf.append(".").append(FILE_SEPARATOR);
+	    buf.append('.').append(FILE_SEPARATOR);
 	} else {
 	    for (int j = i; j < contextClassPath.length; j++) {
 		buf.append("..").append(FILE_SEPARATOR);
@@ -963,16 +948,14 @@ class ClassGraph {
     
     /** Convert the class name into a corresponding URL */
     public String classToUrl(String className) {
-        String docRoot = mapApiDocRoot(className);
-        if (docRoot != null) {
-            StringBuilder buf = new StringBuilder(docRoot);
-            buf.append(getPackageName(className).replace('.', FILE_SEPARATOR) + FILE_SEPARATOR);
-			buf.append(getUnqualifiedName(className));
-            buf.append(".html");
-            return buf.toString();
-        } else {
-            return null;
-        }
+	String docRoot = mapApiDocRoot(className);
+	if (docRoot == null)
+	    return null;
+	return new StringBuilder(docRoot) //
+		.append(getPackageName(className).replace('.', FILE_SEPARATOR)) //
+		.append(FILE_SEPARATOR) //
+		.append(getUnqualifiedName(className)) //
+		.append(".html").toString();
     }
 
     /**
@@ -981,15 +964,11 @@ class ClassGraph {
      * the final diagram to the associated JavaDoc page.
      */
     private String mapApiDocRoot(String className) {
-	String root;
 	/* If no packages are specified, we use apiDocRoot for all of them. */
-	if (rootClasses.contains(className)) {
-	    root = optionProvider.getGlobalOptions().apiDocRoot;
-	} else {
-	    Options globalOptions = optionProvider.getGlobalOptions();
-	    root = globalOptions.getApiDocRoot(className);
-	}
-	return root;
+	if (rootClasses.contains(className))
+	    return optionProvider.getGlobalOptions().apiDocRoot;
+	else
+	    return optionProvider.getGlobalOptions().getApiDocRoot(className);
     }
 
     
@@ -1004,11 +983,7 @@ class ClassGraph {
 	else {
 	    // prepare output file. Use the output file name as a full path unless the output
 	    // directory is specified
-	    File file;
-	    if (opt.outputDirectory != null)
-		file = new File(opt.outputDirectory, opt.outputFileName);
-	    else
-		file = new File(opt.outputFileName);
+	    File file = new File(opt.outputDirectory, opt.outputFileName);
 	    // make sure the output directory are there, otherwise create them
 	    if (file.getParentFile() != null
 		&& !file.getParentFile().exists())
@@ -1049,13 +1024,8 @@ class ClassGraph {
     }
     
     private void externalTableStart(Options opt, String name, String url) {
-	String bgcolor = "";
-	if (opt.nodeFillColor != null)
-	    bgcolor = " bgcolor=\""+ opt.nodeFillColor + "\"";
-	String href = "";
-	if (url != null)
-	    href = " href=\"" + url + "\" target=\"_parent\"";
-
+	String bgcolor = opt.nodeFillColor == null ? "" : (" bgcolor=\"" + opt.nodeFillColor + "\"");
+	String href = url == null ? "" : (" href=\"" + url + "\" target=\"_parent\"");
 	w.print("<<table title=\"" + name + "\" border=\"0\" cellborder=\"" + 
 	    opt.shape.cellBorder() + "\" cellspacing=\"0\" " +
 	    "cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
@@ -1094,27 +1064,13 @@ class ClassGraph {
     private void tableLine(Align align, String text) {
 	tableLine(align, text, null, Font.NORMAL);
     }
-    
-    private void tableLine(Align align, String text, Options opt, Font font) {
-	String open;
-	String close = "</td></tr>";
-	String prefix = linePrefix + linePrefix + linePrefix;
-	String alignText;
 
-	if(align == Align.CENTER)
-	    alignText = "center";
-	else if(align == Align.LEFT)
-	    alignText = "left";
-	else if(align == Align.RIGHT)
-	    alignText = "right";
-	else
-	    throw new RuntimeException("Unknown alignement type " + align);
-	
-	text = fontWrap(" " + text + " ", opt, font);
-	open = "<tr><td align=\"" + alignText + "\" balign=\"" + alignText + "\">";
-	w.print(open + text + close + linePostfix);
+    private void tableLine(Align align, String text, Options opt, Font font) {
+	w.print("<tr><td align=\"" + align.lower + "\" balign=\"" + align.lower + "\">" //
+		+ fontWrap(" " + text + " ", opt, font) //
+		+ "</td></tr>" + linePostfix);
     }
-    
+
     /**
      * Wraps the text with the appropriate font according to the specified font type
      * @param opt
@@ -1128,12 +1084,9 @@ class ClassGraph {
 	} else if(font == Font.CLASS) {
 	    return fontWrap(text, opt.nodeFontClassName, opt.nodeFontClassSize);
 	} else if(font == Font.CLASS_ABSTRACT) {
-	    String name;
-	    if(opt.nodeFontClassAbstractName == null)
-		name = opt.nodeFontAbstractName;
-	    else
-		name = opt.nodeFontClassAbstractName;
-	    return fontWrap(text, name, opt.nodeFontClassSize);
+	    return fontWrap(text,
+		    opt.nodeFontClassAbstractName == null ? opt.nodeFontAbstractName : opt.nodeFontClassAbstractName,
+		    opt.nodeFontClassSize);
 	} else if(font == Font.PACKAGE) {
 	    return fontWrap(text, opt.nodeFontPackageName, opt.nodeFontPackageSize);
 	} else if(font == Font.TAG) {

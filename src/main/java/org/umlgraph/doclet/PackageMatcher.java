@@ -16,10 +16,9 @@ public class PackageMatcher implements ClassMatcher {
     }
 
     public boolean matches(String name) {
-	for (ClassDoc cd : packageDoc.allClasses()) {
+	for (ClassDoc cd : packageDoc.allClasses())
 	    if (cd.qualifiedName().equals(name))
 		return true;
-	}
 	return false;
     }
 

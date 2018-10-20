@@ -26,23 +26,17 @@ public class InterfaceMatcher implements ClassMatcher {
 	
 	// for each interface, recurse, since classes and interfaces 
 	// are treated the same in the doclet API
-	for (ClassDoc iface : cd.interfaces()) {
+	for (ClassDoc iface : cd.interfaces())
 	    if(matches(iface))
 		return true;
-	}
 	
 	// recurse on supeclass, if available
-	if(cd.superclass() != null)
-	    return matches(cd.superclass());
-	
-	return false;
+	return cd.superclass() == null ? false : matches(cd.superclass());
     }
 
     public boolean matches(String name) {
 	ClassDoc cd = root.classNamed(name);
-	if(cd == null)
-	    return false;
-	return matches(cd);
+	return cd == null ? false : matches(cd);
     }
 
 }

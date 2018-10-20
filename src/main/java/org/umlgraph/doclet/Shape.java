@@ -18,16 +18,6 @@
 
 package org.umlgraph.doclet;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doc;
-import com.sun.javadoc.LanguageVersion;
-import com.sun.javadoc.RootDoc;
-
 /**
  * Properties of node shapes
  *
@@ -79,10 +69,7 @@ public class Shape {
 
     /** Return the shape's GraphViz landing port */
     String landingPort() {
-	if (name.equals("class") || name.equals("activeclass"))
-	    return ":p";
-	else
-	    return "";
+	return (name.equals("class") || name.equals("activeclass")) ? ":p" : "";
     }
 
     /** Return the table border required for the shape */

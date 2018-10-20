@@ -288,10 +288,10 @@ public class Options implements Cloneable, OptionProvider {
 	    showType = true;
 	} else if (opt[0].equals("-!types")) {
 	    showType = false;
-    } else if(opt[0].equals("-autoSize")) {
-        autoSize = true;
-    } else if (opt[0].equals("-!autoSize")) {
-        autoSize = false;
+	} else if(opt[0].equals("-autoSize")) {
+	    autoSize = true;
+	} else if (opt[0].equals("-!autoSize")) {
+	    autoSize = false;
 	} else if(opt[0].equals("-commentname")) {
 	    showComment = true;
 	} else if (opt[0].equals("-!commentname")) {
@@ -589,11 +589,10 @@ public class Options implements Cloneable, OptionProvider {
 	    userMap.load(is);
 	    for (Map.Entry<?, ?> mapEntry : userMap.entrySet()) {
 		try {
-		    Pattern regex = Pattern.compile((String) mapEntry.getKey());
 		    String thisRoot = (String) mapEntry.getValue();
 		    if (thisRoot != null) {
 			thisRoot = fixApiDocRoot(thisRoot);
-			apiDocMap.put(regex, thisRoot);
+			apiDocMap.put(Pattern.compile((String) mapEntry.getKey()), thisRoot);
 		    } else {
 			System.err.println("No URL for pattern " + mapEntry.getKey());
 		    }
@@ -614,7 +613,7 @@ public class Options implements Cloneable, OptionProvider {
      * match the class name against the regular expressions specified in the
      * <code>apiDocMap</code>; if a match is found, the associated URL
      * will be returned.
-     *
+     * <p>
      * <b>NOTE:</b> The match order of the match attempts is the one specified by the
      * constructor of the api doc root, so it depends on the order of "-link" and "-apiDocMap"
      * parameters.
@@ -624,9 +623,7 @@ public class Options implements Cloneable, OptionProvider {
 	    apiDocMap.put(Pattern.compile(".*"), DEFAULT_EXTERNAL_APIDOC);
 	
 	for (Map.Entry<Pattern, String> mapEntry : apiDocMap.entrySet()) {
-	    Pattern regex = mapEntry.getKey();
-	    Matcher matcher = regex.matcher(className);
-	    if (matcher.matches())
+	    if (mapEntry.getKey().matcher(className).matches())
 		return mapEntry.getValue();
 	}
 	return null;
@@ -634,16 +631,15 @@ public class Options implements Cloneable, OptionProvider {
     
     /** Trim and append a file separator to the string */
     private String fixApiDocRoot(String str) {
-	String fixed = null;
-	if (str != null) {
-	    fixed = str.trim();
-	    if (fixed.length() > 0) {
-		if (!File.separator.equals("/"))
-		    fixed = fixed.replace(File.separator.charAt(0), '/');
-		if (!fixed.endsWith("/"))
-		    fixed = fixed + "/";
-	    }
-	}
+	if (str == null)
+	    return null;
+	String fixed = str.trim();
+	if (fixed.isEmpty())
+	    return "";
+	if (File.separatorChar != '/')
+	    fixed = fixed.replace(File.separatorChar, '/');
+	if (!fixed.endsWith("/"))
+	    fixed = fixed + "/";
 	return fixed;
     }
 
@@ -678,13 +674,8 @@ public class Options implements Cloneable, OptionProvider {
 		return true;
 	    
 	    Matcher m = hidePattern.matcher(s);
-	    if (strictMatching) {
-		if (m.matches()) {
-		    return true;
-		}
-	    } else if (m.find()) {
+	    if (strictMatching ? m.matches() : m.find())
 		return true;
-	    }
 	}
 	return false;
     }
@@ -697,13 +688,8 @@ public class Options implements Cloneable, OptionProvider {
     public boolean matchesIncludeExpression(String s) {
 	for (Pattern includePattern : includePatterns) {
 	    Matcher m = includePattern.matcher(s);
-	    if (strictMatching) {
-		if (m.matches()) {
-		    return true;
-		}
-	    } else if (m.find()) {
+	    if (strictMatching ? m.matches() : m.find())
 		return true;
-	    }
 	}
 	return false;
     }
@@ -716,13 +702,8 @@ public class Options implements Cloneable, OptionProvider {
     public boolean matchesCollPackageExpression(String s) {
 	for (Pattern collPattern : collPackages) {
 	    Matcher m = collPattern.matcher(s);
-	    if (strictMatching) {
-		if (m.matches()) {
-		    return true;
-		}
-	    } else if (m.find()) {
+	    if (strictMatching ? m.matches() : m.find())
 		return true;
-	    }
 	}
 	return false;
     }

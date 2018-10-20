@@ -16,7 +16,6 @@
  */
 package org.umlgraph.doclet;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.sun.javadoc.ClassDoc;
@@ -38,8 +37,7 @@ public class PatternMatcher implements ClassMatcher {
     }
 
     public boolean matches(String name) {
-	Matcher matcher = pattern.matcher(name);
-	return matcher.matches();
+	return pattern.matcher(name).matches();
     }
 
 }

@@ -91,7 +91,7 @@ public class ContextView implements OptionProvider {
     }
 
     public Options getOptionsFor(String name) {
-    Options opt;
+	Options opt;
 	if (!matcher.matches(name))
 		opt = hideOptions;
 	else if (name.equals(cd.name()))

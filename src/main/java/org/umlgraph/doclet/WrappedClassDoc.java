@@ -281,9 +281,7 @@ public class WrappedClassDoc implements ClassDoc {
     }
 
     public String name() {
-	if (name == null)
-	    name = wrapped.name();
-	return name;
+	return name != null ? name : (name = wrapped.name());
     }
 
     public SourcePosition position() {
@@ -331,9 +329,7 @@ public class WrappedClassDoc implements ClassDoc {
     }
 
     public Tag[] tags() {
-	if (tags == null)
-	    tags = wrapped.tags();
-	return tags;
+	return tags != null ? tags : (tags = wrapped.tags());
     }
 
     public Tag[] tags(String arg0) {
@@ -341,10 +337,7 @@ public class WrappedClassDoc implements ClassDoc {
     }
 
     public String toString() {
-	if (toString == null) {
-	    toString = wrapped.toString();
-	}
-	return toString;
+	return toString != null ? toString : (toString = wrapped.toString());
     }
 
     public String typeName() {

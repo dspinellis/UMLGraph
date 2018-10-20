@@ -66,8 +66,7 @@ public class UmlGraphDoc {
 	    generatePackageDiagrams(root, opt, outputFolder);
 	    generateContextDiagrams(root, opt, outputFolder);
 	} catch(Throwable t) {
-	    root.printWarning("Error!");
-	    root.printWarning(t.toString());
+	    root.printWarning("Error: " + t.toString());
 	    t.printStackTrace();
 	    return false;
 	}

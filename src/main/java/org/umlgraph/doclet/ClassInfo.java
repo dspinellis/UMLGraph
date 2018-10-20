@@ -20,7 +20,6 @@
 package org.umlgraph.doclet;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,7 +46,7 @@ class ClassInfo {
     ClassInfo(boolean p, boolean h) {
 	nodePrinted = p;
 	hidden = h;
-	name = "c" + (new Integer(classNumber)).toString();
+	name = "c" + classNumber;
 	classNumber++;
     }
     
