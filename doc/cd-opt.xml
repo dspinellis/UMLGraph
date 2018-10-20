@@ -27,6 +27,9 @@ be specified through javadoc tags within the diagram, affecting all or some elem
  in this case it will hide everything (useful in the context of views
  to selectively unhide some portions of the graph, see the view chapter for
  further details).  </dd>
+<dt>-include</dt><dd>Match classes to include with a non-anchored match. This is weaker than
+ the <code>-hide</code> option, but can be used to include classes from foreign packages
+ in the package view (which would by default filter to only include package members).</dd>
 <dt>-operations</dt><dd>Show class operations (Java methods) </dd>
 <dt>-qualify</dt><dd>Produce fully-qualified class names.  </dd>
 <dt>-types</dt><dd>Add type information to attributes and operations </dd>

@@ -3,6 +3,11 @@
 <dl>
 
 <dt>Version 5.7 Under development </dt><dd>
+<ul>
+<li>The <code>@opt include</code> option can be used to include classes from
+foreign packages in the package view (unless hidden with <code>@opt hide</code>).</li>
+<li>You can now also use <code>@opt</code> in <code>package-info.java</code>.</li>
+</ul>
 </dd>
 
 <dt>Version 5.6 2012-05-31 </dt><dd>
