@@ -68,49 +68,49 @@ public class Options implements Cloneable, OptionProvider {
     }
     
     // instance fields
-    List<Pattern> hidePatterns;
-    List<Pattern> includePatterns;
-    boolean showQualified;
-    boolean showQualifiedGenerics;
-    boolean showAttributes;
-    boolean showEnumerations;
-    boolean showEnumConstants;
-    boolean showOperations;
-    boolean showConstructors;
-    boolean showVisibility;
+    List<Pattern> hidePatterns = new ArrayList<Pattern>();
+    List<Pattern> includePatterns = new ArrayList<Pattern>();
+    boolean showQualified = false;
+    boolean showQualifiedGenerics = false;
+    boolean showAttributes = false;
+    boolean showEnumerations = false;
+    boolean showEnumConstants = false;
+    boolean showOperations = false;
+    boolean showConstructors = false;
+    boolean showVisibility = false;
     boolean horizontal;
-    boolean showType;
-    boolean showComment;
-    boolean autoSize;
-    String edgeFontName;
-    String edgeFontColor;
-    String edgeColor;
-    double edgeFontSize;
-    String nodeFontName;
-    String nodeFontAbstractName;
-    String nodeFontColor;
-    double nodeFontSize;
-    String nodeFillColor;
-    double nodeFontClassSize;
-    String nodeFontClassName;
-    String nodeFontClassAbstractName;
-    double nodeFontTagSize;
-    String nodeFontTagName;
-    double nodeFontPackageSize;
-    String nodeFontPackageName;
-    Shape shape;
-    String bgColor;
-    public String outputFileName;
-    String outputEncoding;
-    Map<Pattern, String> apiDocMap;
-    String apiDocRoot;
-    boolean postfixPackage;
-    boolean useGuillemot;
-    boolean findViews;
-    String viewName;
-    double nodeSep;
-    double rankSep;
-    public String outputDirectory;
+    boolean showType = false;
+    boolean showComment = false;
+    boolean autoSize = true;
+    String edgeFontName = defaultFont;
+    String edgeFontColor = "black";
+    String edgeColor = "black";
+    double edgeFontSize = 10;
+    String nodeFontName = defaultFont;
+    String nodeFontAbstractName = defaultItalicFont;
+    String nodeFontColor = "black";
+    double nodeFontSize = 10;
+    String nodeFillColor = null;
+    double nodeFontClassSize = -1;
+    String nodeFontClassName = null;
+    String nodeFontClassAbstractName = null;
+    double nodeFontTagSize = -1;
+    String nodeFontTagName = null;
+    double nodeFontPackageSize = -1;
+    String nodeFontPackageName = null;
+    Shape shape = new Shape();
+    String bgColor = null;
+    public String outputFileName = "graph.dot";
+    String outputEncoding = "ISO-8859-1"; // TODO: default to UTF-8 now?
+    Map<Pattern, String> apiDocMap = new HashMap<Pattern, String>();
+    String apiDocRoot = null;
+    boolean postfixPackage = false;
+    boolean useGuillemot = true;
+    boolean findViews = false;
+    String viewName = null;
+    double nodeSep = 0.25;
+    double rankSep = 0.5;
+    public String outputDirectory = null;
     /*
      * Numeric values are preferable to symbolic here.
      * Symbolic reportedly fail on MacOSX, and also are
@@ -120,81 +120,27 @@ public class Options implements Cloneable, OptionProvider {
     String guilOpen = "&#171;";		// &laquo; \u00ab
     /** Guillemot right (close) */
     String guilClose = "&#187;";	// &raquo; \u00bb
-    boolean inferRelationships;
-    boolean inferDependencies;
-    boolean collapsibleDiagrams;
-    RelationPattern contextRelationPattern;
-    boolean useImports;
-    Visibility inferDependencyVisibility;
-    boolean inferDepInPackage;
-    RelationType inferRelationshipType;
-    private List<Pattern> collPackages;
-    boolean compact;
+    boolean inferRelationships = false;
+    boolean inferDependencies = false;
+    boolean collapsibleDiagrams = false;
+    RelationPattern contextRelationPattern = new RelationPattern(RelationDirection.BOTH);
+    boolean useImports = false;
+    Visibility inferDependencyVisibility = Visibility.PRIVATE;
+    boolean inferDepInPackage = false;
+    RelationType inferRelationshipType = RelationType.NAVASSOC;
+    private List<Pattern> collPackages = new ArrayList<Pattern>();
+    boolean compact = false;
     // internal option, used by UMLDoc to generate relative links between classes
-    boolean relativeLinksForSourcePackages;
+    boolean relativeLinksForSourcePackages = false;
     // internal option, used by UMLDoc to force strict matching on the class names
     // and avoid problems with packages in the template declaration making UmlGraph hide 
     // classes outside of them (for example, class gr.spinellis.Foo<T extends java.io.Serializable>
     // would have been hidden by the hide pattern "java.*"
     // TODO: consider making this standard behaviour
-    boolean strictMatching;    
-    String dotExecutable;
+    boolean strictMatching = false;
+    String dotExecutable = "dot";
 
     Options() {
-	showQualified = false;
-	showQualifiedGenerics = false;
-	showAttributes = false;
-	showEnumConstants = false;
-	showOperations = false;
-	showVisibility = false;
-	showEnumerations = false;
-	showConstructors = false;
-	showType = false;
-	autoSize = true;
-	showComment = false;
-	edgeFontName = defaultFont;
-	edgeFontColor = "black";
-	edgeColor = "black";
-	edgeFontSize = 10;
-	nodeFontColor = "black";
-	nodeFontName = defaultFont;
-	nodeFontAbstractName = defaultItalicFont;
-	nodeFontSize = 10;
-	nodeFontClassSize = -1;
-	nodeFontClassName = null;
-	nodeFontClassAbstractName = null;
-	nodeFontTagSize = -1;
-	nodeFontTagName = null;
-	nodeFontPackageSize = -1;
-	nodeFontPackageName = null;
-	nodeFillColor = null;
-	bgColor = null;
-	shape = new Shape();
-	outputFileName = "graph.dot";
-	outputDirectory= null;
-	outputEncoding = "ISO-8859-1";
-	hidePatterns = new ArrayList<Pattern>();
-	includePatterns = new ArrayList<Pattern>();
-	apiDocMap = new HashMap<Pattern, String>();
-	apiDocRoot = null;
-	postfixPackage = false;
-	useGuillemot = true;
-	findViews = false;
-	viewName = null;
-	contextRelationPattern = new RelationPattern(RelationDirection.BOTH);
-	inferRelationships = false;
-	inferDependencies = false;
-	collapsibleDiagrams = false;
-	inferDependencyVisibility = Visibility.PRIVATE;
-	inferDepInPackage = false;
-	useImports = false;
-	inferRelationshipType = RelationType.NAVASSOC;
-	collPackages = new ArrayList<Pattern>();
-	compact = false;
-	relativeLinksForSourcePackages = false;
-	nodeSep = 0.25;
-	rankSep = 0.5;
-    dotExecutable = "dot";
     }
 
     @Override
@@ -203,7 +149,7 @@ public class Options implements Cloneable, OptionProvider {
 	try {
 	     clone = (Options) super.clone();
 	} catch (CloneNotSupportedException e) {
-	    // Should not happen
+	    throw new RuntimeException("Cannot clone?!?", e); // Should not happen
 	}
 	// deep clone the hide and collection patterns
 	clone.hidePatterns = new ArrayList<Pattern>(hidePatterns);
