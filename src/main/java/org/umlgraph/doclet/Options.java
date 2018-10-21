@@ -98,7 +98,7 @@ public class Options implements Cloneable, OptionProvider {
     String nodeFontTagName = null;
     double nodeFontPackageSize = -1;
     String nodeFontPackageName = null;
-    Shape shape = new Shape();
+    Shape shape = Shape.CLASS;
     String bgColor = null;
     public String outputFileName = "graph.dot";
     String outputEncoding = "ISO-8859-1"; // TODO: default to UTF-8 now?
@@ -367,9 +367,9 @@ public class Options implements Cloneable, OptionProvider {
 	} else if (opt[0].equals("-!nodefillcolor")) {
 	    nodeFillColor = null;
 	} else if(opt[0].equals("-shape")) {
-	    shape = new Shape(opt[1]);
+	    shape = Shape.of(opt[1]);
 	} else if (opt[0].equals("-!shape")) {
-	    shape = new Shape();
+	    shape = Shape.CLASS;
 	} else if(opt[0].equals("-output")) {
 	    outputFileName = opt[1];
 	} else if (opt[0].equals("-!output")) {
