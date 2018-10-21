@@ -19,11 +19,18 @@
 
 package org.umlgraph.doclet;
 
+import static org.umlgraph.doclet.StringUtil.escape;
+import static org.umlgraph.doclet.StringUtil.guilWrap;
+import static org.umlgraph.doclet.StringUtil.guillemize;
+import static org.umlgraph.doclet.StringUtil.htmlNewline;
+import static org.umlgraph.doclet.StringUtil.removeTemplate;
+import static org.umlgraph.doclet.StringUtil.tokenize;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -33,7 +40,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.ConstructorDoc;
@@ -157,89 +163,6 @@ class ClassGraph {
 	if (last < r.length())
 	    buf.append(r, last, r.length());
 	return buf.toString();
-    }
-
-    /**
-     * Escape &lt;, &gt;, and &amp; characters in the string with
-     * the corresponding HTML entity code.
-     */
-    private String escape(String s) {
-	final Pattern toEscape = Pattern.compile("[&<>]");
-
-	if (toEscape.matcher(s).find()) {
-	    StringBuilder sb = new StringBuilder(s);
-	    for (int i = 0; i < sb.length();) {
-		switch (sb.charAt(i)) {
-		case '&':
-		    sb.replace(i, i + 1, "&amp;");
-		    i += "&amp;".length();
-		    break;
-		case '<':
-		    sb.replace(i, i + 1, "&lt;");
-		    i += "&lt;".length();
-		    break;
-		case '>':
-		    sb.replace(i, i + 1, "&gt;");
-		    i += "&gt;".length();
-		    break;
-		default:
-		    i++;
-		}
-	    }
-	    return sb.toString();
-	} else
-	    return s;
-    }
-
-    /**
-     * Convert embedded newlines into HTML line breaks
-     */
-    private String htmlNewline(String s) {
-	if (s.indexOf('\n') == -1)
-	    return (s);
-
-	StringBuilder sb = new StringBuilder(s);
-	for (int i = 0; i < sb.length();) {
-	    if (sb.charAt(i) == '\n') {
-		sb.replace(i, i + 1, "<br/>");
-		i += "<br/>".length();
-	    } else
-		i++;
-	}
-	return sb.toString();
-    }
-
-
-    /**
-     * Convert &lt; and &gt; characters in the string to the respective guillemot characters.
-     */
-    private String guillemize(Options opt, String s) {
-	StringBuilder r = new StringBuilder(s);
-	for (int i = 0; i < r.length();)
-	    switch (r.charAt(i)) {
-	    case '<':
-		r.replace(i, i + 1, opt.guilOpen);
-		i += opt.guilOpen.length();
-		break;
-	    case '>':
-		r.replace(i, i + 1, opt.guilClose);
-		i += opt.guilClose.length();
-		break;
-	    default:
-		i++;
-		break;
-	    }
-	return r.toString();
-    }
-
-    /**
-     * Wraps a string in Guillemot (or an ASCII substitute) characters.
-     *
-     * @param str the <code>String</code> to be wrapped.
-     * @return the wrapped <code>String</code>.
-     */
-    private String guilWrap(Options opt, String str) {
-	return opt.guilOpen + str + opt.guilClose;
     }
 
     /**
@@ -397,7 +320,7 @@ class ClassGraph {
 	    return;
 	
 	for (Tag tag : tags) {
-	    String t[] = StringUtil.tokenize(tag.text());
+	    String t[] = tokenize(tag.text());
 	    if (t.length != 2) {
 		System.err.println("@tagvalue expects two fields: " + tag.text());
 		continue;
@@ -412,7 +335,7 @@ class ClassGraph {
      */
     private void stereotype(Options opt, Doc c, Align align) {
 	for (Tag tag : c.tags("stereotype")) {
-	    String t[] = StringUtil.tokenize(tag.text());
+	    String t[] = tokenize(tag.text());
 	    if (t.length != 1) {
 		System.err.println("@stereotype expects one field: " + tag.text());
 		continue;
@@ -628,7 +551,7 @@ class ClassGraph {
     private void allRelation(Options opt, RelationType rt, ClassDoc from) {
 	String tagname = rt.lower;
 	for (Tag tag : from.tags(tagname)) {
-	    String t[] = StringUtil.tokenize(tag.text());    // l-src label l-dst target
+	    String t[] = tokenize(tag.text());    // l-src label l-dst target
 	    if (t.length != 4) {
 		System.err.println("Error in " + from + "\n" + tagname + " expects four fields (l-src label l-dst target): " + tag.text());
 		return;
@@ -1011,24 +934,6 @@ class ClassGraph {
 		return getInterfaceTypeArguments(iface, cd.superclassType());
 	}
 	return null;
-    }
-
-    /** Removes the template specs from a class name. */
-    private String removeTemplate(String name) {
-	int openIdx = name.indexOf('<');
-	if(openIdx == -1)
-	    return name;
-	StringBuilder buf = new StringBuilder(name.length());
-	for (int i = 0, depth = 0; i < name.length(); i++) {
-		char c = name.charAt(i);
-		if (c == '<')
-			depth++;
-		else if (c == '>')
-			depth--;
-		else if (depth == 0)
-			buf.append(c);
-	}
-	return buf.toString();
     }
 
     /** Convert the class name into a corresponding URL */

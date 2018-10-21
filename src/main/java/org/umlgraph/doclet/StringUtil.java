@@ -20,9 +20,11 @@
 package org.umlgraph.doclet;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * String utility functions
+ * 
  * @version $Revision$
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
@@ -62,4 +64,104 @@ class StringUtil {
 	return r.toArray(new String[0]);
     }
 
+    private final static Pattern ESCAPE_BASIC_XML = Pattern.compile("[&<>]");
+
+    /**
+     * Escape &lt;, &gt;, and &amp; characters in the string with the corresponding
+     * HTML entity code.
+     */
+    public static String escape(String s) {
+	if (ESCAPE_BASIC_XML.matcher(s).find()) {
+	    StringBuilder sb = new StringBuilder(s);
+	    for (int i = 0; i < sb.length();) {
+		switch (sb.charAt(i)) {
+		case '&':
+		    sb.replace(i, i + 1, "&amp;");
+		    i += "&amp;".length();
+		    break;
+		case '<':
+		    sb.replace(i, i + 1, "&lt;");
+		    i += "&lt;".length();
+		    break;
+		case '>':
+		    sb.replace(i, i + 1, "&gt;");
+		    i += "&gt;".length();
+		    break;
+		default:
+		    i++;
+		}
+	    }
+	    return sb.toString();
+	} else
+	    return s;
+    }
+
+    /**
+     * Convert embedded newlines into HTML line breaks
+     */
+    public static String htmlNewline(String s) {
+	if (s.indexOf('\n') == -1)
+	    return s;
+
+	StringBuilder sb = new StringBuilder(s);
+	for (int i = 0; i < sb.length();) {
+	    if (sb.charAt(i) == '\n') {
+		sb.replace(i, i + 1, "<br/>");
+		i += "<br/>".length();
+	    } else
+		i++;
+	}
+	return sb.toString();
+    }
+
+    /**
+     * Convert &lt; and &gt; characters in the string to the respective guillemot
+     * characters.
+     */
+    public static String guillemize(Options opt, String s) {
+	StringBuilder r = new StringBuilder(s);
+	for (int i = 0; i < r.length();)
+	    switch (r.charAt(i)) {
+	    case '<':
+		r.replace(i, i + 1, opt.guilOpen);
+		i += opt.guilOpen.length();
+		break;
+	    case '>':
+		r.replace(i, i + 1, opt.guilClose);
+		i += opt.guilClose.length();
+		break;
+	    default:
+		i++;
+		break;
+	    }
+	return r.toString();
+    }
+
+    /**
+     * Wraps a string in Guillemot (or an ASCII substitute) characters.
+     *
+     * @param str the <code>String</code> to be wrapped.
+     * @return the wrapped <code>String</code>.
+     */
+    public static String guilWrap(Options opt, String str) {
+	return opt.guilOpen + str + opt.guilClose;
+    }
+
+    /** Removes the template specs from a class name. */
+    public static String removeTemplate(String name) {
+	int openIdx = name.indexOf('<');
+	if (openIdx == -1)
+	    return name;
+	StringBuilder buf = new StringBuilder(name.length());
+	for (int i = 0, depth = 0; i < name.length(); i++) {
+	    char c = name.charAt(i);
+	    if (c == '<')
+		depth++;
+	    else if (c == '>')
+		depth--;
+	    else if (depth == 0)
+		buf.append(c);
+	}
+	return buf.toString();
+    }
 }
