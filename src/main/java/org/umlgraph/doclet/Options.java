@@ -48,24 +48,9 @@ import com.sun.javadoc.Tag;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 public class Options implements Cloneable, OptionProvider {
-    // dot's font platform dependence workaround
-    private static String defaultFont;
-    private static String defaultItalicFont;
     // reused often, especially in UmlGraphDoc, worth creating just once and reusing
     private static final Pattern allPattern = Pattern.compile(".*");
     protected static final String DEFAULT_EXTERNAL_APIDOC = "http://docs.oracle.com/javase/7/docs/api/";
-    
-    static {
-	// use an appropriate font depending on the current operating system
-	// (on windows graphviz is unable to locate "Helvetica-Oblique"
-	if(System.getProperty("os.name").toLowerCase().contains("windows")) {
-	    defaultFont = "arial";
-	    defaultItalicFont = "arial italic";
-	} else {
-	    defaultFont = "Helvetica";
-	    defaultItalicFont = "Helvetica-Oblique";
-	}
-    }
     
     // instance fields
     List<Pattern> hidePatterns = new ArrayList<Pattern>();
@@ -82,18 +67,17 @@ public class Options implements Cloneable, OptionProvider {
     boolean showType = false;
     boolean showComment = false;
     boolean autoSize = true;
-    String edgeFontName = defaultFont;
+    String edgeFontName = Font.DEFAULT_FONT;
     String edgeFontColor = "black";
     String edgeColor = "black";
     double edgeFontSize = 10;
-    String nodeFontName = defaultFont;
-    String nodeFontAbstractName = defaultItalicFont;
+    String nodeFontName = Font.DEFAULT_FONT;
+    boolean nodeFontAbstractItalic = true;
     String nodeFontColor = "black";
     double nodeFontSize = 10;
     String nodeFillColor = null;
     double nodeFontClassSize = -1;
     String nodeFontClassName = null;
-    String nodeFontClassAbstractName = null;
     double nodeFontTagSize = -1;
     String nodeFontTagName = null;
     double nodeFontPackageSize = -1;
@@ -188,6 +172,7 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-types") || option.equals("-!types") ||
            option.equals("-autosize") || option.equals("-!autosize") ||
            option.equals("-commentname") || option.equals("-!commentname") ||
+           option.equals("-nodefontabstractitalic") || option.equals("-!nodefontabstractitalic") ||
            option.equals("-all") ||
            option.equals("-postfixpackage") ||
            option.equals("-noguillemot") ||
@@ -204,10 +189,8 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-nodefontcolor") ||
            option.equals("-nodefontsize") ||
            option.equals("-nodefontname") ||
-           option.equals("-nodefontabstractname") ||
            option.equals("-nodefontclasssize") ||
            option.equals("-nodefontclassname") ||
-           option.equals("-nodefontclassabstractname") ||
    	   option.equals("-nodefonttagsize") ||
    	   option.equals("-nodefonttagname") ||
    	   option.equals("-nodefontpackagesize") ||
@@ -313,9 +296,9 @@ public class Options implements Cloneable, OptionProvider {
 	} else if(opt[0].equals("-edgefontname")) {
 	    edgeFontName = opt[1];
 	} else if (opt[0].equals("-!edgefontname")) {
-	    edgeFontName = defaultFont;
+	    edgeFontName = Font.DEFAULT_FONT;
 	} else if(opt[0].equals("-edgefontsize")) {
-	    edgeFontSize = Integer.parseInt(opt[1]);
+	    edgeFontSize = Double.parseDouble(opt[1]);
 	} else if (opt[0].equals("-!edgefontsize")) {
 	    edgeFontSize = 10;
 	} else if(opt[0].equals("-nodefontcolor")) {
@@ -325,25 +308,21 @@ public class Options implements Cloneable, OptionProvider {
 	} else if(opt[0].equals("-nodefontname")) {
 	    nodeFontName = opt[1];
 	} else if (opt[0].equals("-!nodefontname")) {
-	    nodeFontName = defaultFont;
-	} else if(opt[0].equals("-nodefontabstractname")) {
-	    nodeFontAbstractName = opt[1];
-	} else if (opt[0].equals("-!nodefontabstractname")) {
-	    nodeFontAbstractName = defaultItalicFont;
+	    nodeFontName = Font.DEFAULT_FONT;
+	} else if(opt[0].equals("-nodefontabstractitalic")) {
+	    nodeFontAbstractItalic = true;
+	} else if (opt[0].equals("-!nodefontabstractitalic")) {
+	    nodeFontAbstractItalic = false;
 	} else if(opt[0].equals("-nodefontsize")) {
-	    nodeFontSize = Integer.parseInt(opt[1]);
+	    nodeFontSize = Double.parseDouble(opt[1]);
 	} else if (opt[0].equals("-!nodefontsize")) {
 	    nodeFontSize = 10;
 	} else if(opt[0].equals("-nodefontclassname")) {
 	    nodeFontClassName = opt[1];
 	} else if (opt[0].equals("-!nodefontclassname")) {
 	    nodeFontClassName = null;
-	} else if(opt[0].equals("-nodefontclassabstractname")) {
-	    nodeFontClassAbstractName = opt[1];
-	} else if (opt[0].equals("-!nodefontclassabstractname")) {
-	    nodeFontClassAbstractName = null;
 	} else if(opt[0].equals("-nodefontclasssize")) {
-	    nodeFontClassSize = Integer.parseInt(opt[1]);
+	    nodeFontClassSize = Double.parseDouble(opt[1]);
 	} else if (opt[0].equals("-!nodefontclasssize")) {
 	    nodeFontClassSize = -1;
 	} else if(opt[0].equals("-nodefonttagname")) {
@@ -351,7 +330,7 @@ public class Options implements Cloneable, OptionProvider {
 	} else if (opt[0].equals("-!nodefonttagname")) {
 	    nodeFontTagName = null;
 	} else if(opt[0].equals("-nodefonttagsize")) {
-	    nodeFontTagSize = Integer.parseInt(opt[1]);
+	    nodeFontTagSize = Double.parseDouble(opt[1]);
 	} else if (opt[0].equals("-!nodefonttagsize")) {
 	    nodeFontTagSize = -1;
 	} else if(opt[0].equals("-nodefontpackagename")) {
@@ -359,7 +338,7 @@ public class Options implements Cloneable, OptionProvider {
 	} else if (opt[0].equals("-!nodefontpackagename")) {
 	    nodeFontPackageName = null;
 	} else if(opt[0].equals("-nodefontpackagesize")) {
-	    nodeFontPackageSize = Integer.parseInt(opt[1]);
+	    nodeFontPackageSize = Double.parseDouble(opt[1]);
 	} else if (opt[0].equals("-!nodefontpackagesize")) {
 	    nodeFontPackageSize = -1;
 	} else if(opt[0].equals("-nodefillcolor")) {

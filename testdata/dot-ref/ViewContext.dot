@@ -38,6 +38,6 @@ digraph G {
 	// gr.spinellis.context.classes.A DEPEND gr.spinellis.context.classes.E
 	c434:p -> c427:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
 	// javax.swing.JComponent
-	c509 [label=<<table title="javax.swing.JComponent" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html" target="_parent"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="Helvetica-Oblique"> JComponent </font></td></tr></table></td></tr></table>>, URL="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c509 [label=<<table title="javax.swing.JComponent" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html" target="_parent"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> JComponent </i></td></tr></table></td></tr></table>>, URL="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }
 

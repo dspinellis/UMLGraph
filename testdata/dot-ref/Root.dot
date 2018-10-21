@@ -14,7 +14,7 @@ digraph G {
 	// Adapter
 	c91 [label=<<table title="Adapter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Adapter </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// Element
-	c92 [label=<<table title="Element" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="Helvetica-Oblique"> Element </font></td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+	c92 [label=<<table title="Element" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> Element </i></td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// ObjectType
 	c93 [label=<<table title="ObjectType" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ObjectType </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 	// ObjectMap

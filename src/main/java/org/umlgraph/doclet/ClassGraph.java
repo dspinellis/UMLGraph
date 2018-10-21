@@ -68,9 +68,7 @@ import com.sun.javadoc.WildcardType;
  */
 class ClassGraph {
     protected static final char FILE_SEPARATOR = '/';
-    enum Font {
-	NORMAL, ABSTRACT, CLASS, CLASS_ABSTRACT, TAG, PACKAGE
-    }
+
     enum Align {
 	LEFT, CENTER, RIGHT;
 
@@ -183,7 +181,7 @@ class ClassGraph {
 
     /** Print a a basic type t */
     private String type(Options opt, Type t, boolean generics) {
-	return ((generics ? opt.showQualifiedGenerics : opt.showQualified) ?//
+	return ((generics ? opt.showQualifiedGenerics : opt.showQualified) ? //
 		t.qualifiedTypeName() : t.typeName()) //
 		+ typeParameters(opt, t.asParameterizedType());
     }
@@ -236,15 +234,11 @@ class ClassGraph {
 	    if (hidden(cd))
 		continue;
 	    stereotype(opt, cd, Align.LEFT);
-	    String cs = visibility(opt, cd) + cd.name();
-	    if (opt.showType) {
-		cs += "(" + parameter(opt, cd.parameters()) + ")";
-	    } else {
-		cs += "()";
-	    }
+	    String cs = visibility(opt, cd) + cd.name() //
+		    + (opt.showType ? "(" + parameter(opt, cd.parameters()) + ")" : "()");
 	    tableLine(Align.LEFT, cs);
-	    printed = true;
 	    tagvalue(opt, cd);
+	    printed = true;
 	}
 	return printed;
     }
@@ -259,14 +253,10 @@ class ClassGraph {
 	    if (md.name().equals("<clinit>") && md.isStatic() && md.isPackagePrivate())
 		continue;
 	    stereotype(opt, md, Align.LEFT);
-	    String op = visibility(opt, md) + md.name();
-	    if (opt.showType) {
-		op += "(" + parameter(opt, md.parameters()) + ")"
-			+ typeAnnotation(opt, md.returnType());
-	    } else {
-		op += "()";
-	    }
-	    tableLine(Align.LEFT, op, opt, md.isAbstract() ? Font.ABSTRACT : Font.NORMAL);
+	    String op = visibility(opt, md) + md.name() + //
+		    (opt.showType ? "(" + parameter(opt, md.parameters()) + ")" + typeAnnotation(opt, md.returnType())
+			    : "()");
+	    tableLine(Align.LEFT, (md.isAbstract() ? Font.ABSTRACT : Font.NORMAL).wrap(opt, op));
 	    printed = true;
 
 	    tagvalue(opt, md);
@@ -279,7 +269,7 @@ class ClassGraph {
 	w.print(", fontname=\"" + opt.nodeFontName + "\"");
 	w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
 	w.print(", fontsize=" + opt.nodeFontSize);
-	w.print(opt.shape.graphvizAttribute());
+	w.print(opt.shape.style);
 	w.println("];");
     }
 
@@ -301,7 +291,7 @@ class ClassGraph {
 		System.err.println("@tagvalue expects two fields: " + tag.text());
 		continue;
 	    }
-	    tableLine(Align.RIGHT, "{" + t[0] + " = " + t[1] + "}", opt, Font.TAG);
+	    tableLine(Align.RIGHT, Font.TAG.wrap(opt, "{" + t[0] + " = " + t[1] + "}"));
 	}
     }
 
@@ -399,14 +389,14 @@ class ClassGraph {
 	    int startTemplate = qualifiedName.indexOf('<');
 	    int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
 	    if (opt.showComment)
-		tableLine(Align.LEFT, htmlNewline(escape(c.commentText())), opt, Font.CLASS);
-	    else if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
+		tableLine(Align.LEFT, Font.CLASS.wrap(opt, htmlNewline(escape(c.commentText()))));
+	    else if (opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
 		String packageName = qualifiedName.substring(0, idx);
 		String cn = qualifiedName.substring(idx + 1);
-		tableLine(Align.CENTER, escape(cn), opt, font);
-		tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
+		tableLine(Align.CENTER, font.wrap(opt, escape(cn)));
+		tableLine(Align.CENTER, Font.PACKAGE.wrap(opt, packageName));
 	    } else {
-		tableLine(Align.CENTER, escape(qualifiedName), opt, font);
+		tableLine(Align.CENTER, font.wrap(opt, escape(qualifiedName)));
 	    }
 	    tagvalue(opt, c);
 	    firstInnerTableEnd(opt);
@@ -469,7 +459,7 @@ class ClassGraph {
 		w.print("\t" + noteName + " [label=");
 		externalTableStart(UmlGraph.getCommentOptions(), c.qualifiedName(), classToUrl(c, rootClass));
 		innerTableStart();
-		tableLine(Align.LEFT, htmlNewline(escape(t.text())), UmlGraph.getCommentOptions(), Font.CLASS);
+		tableLine(Align.LEFT, Font.CLASS.wrap(UmlGraph.getCommentOptions(), htmlNewline(escape(t.text()))));
 		innerTableEnd();
 		externalTableEnd();
 		nodeProperties(UmlGraph.getCommentOptions());
@@ -661,10 +651,10 @@ class ClassGraph {
 		    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
 			String packageName = qualifiedName.substring(0, idx);
 			String cn = qualifiedName.substring(idx + 1);
-			tableLine(Align.CENTER, escape(cn), opt, Font.CLASS);
-			tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
+			tableLine(Align.CENTER, Font.CLASS.wrap(opt, escape(cn)));
+			tableLine(Align.CENTER, Font.PACKAGE.wrap(opt, packageName));
 		    } else {
-			tableLine(Align.CENTER, escape(qualifiedName), opt, Font.CLASS);
+			tableLine(Align.CENTER, Font.CLASS.wrap(opt, escape(qualifiedName)));
 		    }
 		    innerTableEnd();
 		    externalTableEnd();
@@ -1041,58 +1031,11 @@ class ClassGraph {
     }
 
     private void tableLine(Align align, String text) {
-	tableLine(align, text, null, Font.NORMAL);
-    }
-
-    private void tableLine(Align align, String text, Options opt, Font font) {
 	w.print("<tr><td align=\"" + align.lower + "\" balign=\"" + align.lower + "\">" //
-		+ fontWrap(" " + text + " ", opt, font) //
+		+ text // MAY contain markup!
 		+ "</td></tr>" + linePostfix);
     }
 
-    /**
-     * Wraps the text with the appropriate font according to the specified font type
-     * @param opt
-     * @param text
-     * @param font
-     * @return
-     */
-    private String fontWrap(String text, Options opt, Font font) {
-	if(font == Font.ABSTRACT) { 
-	    return fontWrap(text, opt.nodeFontAbstractName, opt.nodeFontSize);
-	} else if(font == Font.CLASS) {
-	    return fontWrap(text, opt.nodeFontClassName, opt.nodeFontClassSize);
-	} else if(font == Font.CLASS_ABSTRACT) {
-	    return fontWrap(text,
-		    opt.nodeFontClassAbstractName == null ? opt.nodeFontAbstractName : opt.nodeFontClassAbstractName,
-		    opt.nodeFontClassSize);
-	} else if(font == Font.PACKAGE) {
-	    return fontWrap(text, opt.nodeFontPackageName, opt.nodeFontPackageSize);
-	} else if(font == Font.TAG) {
-	    return fontWrap(text, opt.nodeFontTagName, opt.nodeFontTagSize);
-	} else {
-	    return text;
-	}
-    }
-    
-    /**
-     * Wraps the text with the appropriate font tags when the font name
-     * and size are not void
-     * @param text the text to be wrapped
-     * @param fontName considered void when it's null 
-     * @param fontSize considered void when it's <= 0
-     */
-    private String fontWrap(String text, String fontName, double fontSize) {
-	if(fontName == null && fontSize == -1)
-	    return text;
-	else if(fontName == null)
-	    return "<font point-size=\"" + fontSize + "\">" + text + "</font>";
-	else if(fontSize <= 0)
-	    return "<font face=\"" + fontName + "\">" + text + "</font>";
-	else
-	    return "<font face=\"" + fontName + "\" point-size=\"" + fontSize + "\">" + text + "</font>";
-    }
-    
     private static class FieldRelationInfo {
 	ClassDoc cd;
 	boolean multiple;
