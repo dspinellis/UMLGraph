@@ -71,6 +71,7 @@ public class Options implements Cloneable, OptionProvider {
     List<Pattern> hidePatterns;
     List<Pattern> includePatterns;
     boolean showQualified;
+    boolean showQualifiedGenerics;
     boolean showAttributes;
     boolean showEnumerations;
     boolean showEnumConstants;
@@ -141,6 +142,7 @@ public class Options implements Cloneable, OptionProvider {
 
     Options() {
 	showQualified = false;
+	showQualifiedGenerics = false;
 	showAttributes = false;
 	showEnumConstants = false;
 	showOperations = false;
@@ -303,6 +305,10 @@ public class Options implements Cloneable, OptionProvider {
 	    showQualified = true;
 	} else if (opt[0].equals("-!qualify")) {
 	    showQualified = false;
+	} else if(opt[0].equals("-qualifyGenerics")) {
+	    showQualifiedGenerics = true;
+	} else if (opt[0].equals("-!qualifyGenerics")) {
+	    showQualifiedGenerics = false;
 	} else if(opt[0].equals("-horizontal")) {
 	    horizontal = true;
 	} else if (opt[0].equals("-!horizontal")) {
