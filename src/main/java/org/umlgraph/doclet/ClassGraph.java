@@ -167,18 +167,7 @@ class ClassGraph {
      * any stereotypes
      */
     private String visibility(Options opt, ProgramElementDoc e) {
-	if (!opt.showVisibility)
-	    return " ";
-	if (e.isPrivate())
-	    return "- ";
-	else if (e.isPublic())
-	    return "+ ";
-	else if (e.isProtected())
-	    return "# ";
-	else if (e.isPackagePrivate())
-	    return "~ ";
-	else
-	    return " ";
+	return opt.showVisibility ? Visibility.get(e).symbol : " ";
     }
 
     /** Print the method parameter p */
