@@ -29,15 +29,17 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Doc;
 import com.sun.javadoc.Tag;
 
 /**
@@ -66,7 +68,8 @@ public class Options implements Cloneable, OptionProvider {
     }
     
     // instance fields
-    Vector<Pattern> hidePatterns;
+    List<Pattern> hidePatterns;
+    List<Pattern> includePatterns;
     boolean showQualified;
     boolean showAttributes;
     boolean showEnumerations;
@@ -124,7 +127,7 @@ public class Options implements Cloneable, OptionProvider {
     Visibility inferDependencyVisibility;
     boolean inferDepInPackage;
     RelationType inferRelationshipType;
-    private Vector<Pattern> collPackages;
+    private List<Pattern> collPackages;
     boolean compact;
     // internal option, used by UMLDoc to generate relative links between classes
     boolean relativeLinksForSourcePackages;
@@ -168,7 +171,8 @@ public class Options implements Cloneable, OptionProvider {
 	outputFileName = "graph.dot";
 	outputDirectory= null;
 	outputEncoding = "ISO-8859-1";
-	hidePatterns = new Vector<Pattern>();
+	hidePatterns = new ArrayList<Pattern>();
+	includePatterns = new ArrayList<Pattern>();
 	apiDocMap = new HashMap<Pattern, String>();
 	apiDocRoot = null;
 	postfixPackage = false;
@@ -183,7 +187,7 @@ public class Options implements Cloneable, OptionProvider {
 	inferDepInPackage = false;
 	useImports = false;
 	inferRelationshipType = RelationType.NAVASSOC;
-	collPackages = new Vector<Pattern>();
+	collPackages = new ArrayList<Pattern>();
 	compact = false;
 	relativeLinksForSourcePackages = false;
 	nodeSep = 0.25;
@@ -200,8 +204,9 @@ public class Options implements Cloneable, OptionProvider {
 	    // Should not happen
 	}
 	// deep clone the hide and collection patterns
-	clone.hidePatterns = new Vector<Pattern>(hidePatterns);
-	clone.collPackages= new Vector<Pattern>(collPackages);
+	clone.hidePatterns = new ArrayList<Pattern>(hidePatterns);
+	clone.includePatterns = new ArrayList<Pattern>(includePatterns);
+	clone.collPackages= new ArrayList<Pattern>(collPackages);
 	clone.apiDocMap = new HashMap<Pattern, String>(apiDocMap);
 	return clone;
     }
@@ -267,6 +272,7 @@ public class Options implements Cloneable, OptionProvider {
            option.equals("-outputencoding") ||
            option.equals("-bgcolor") ||
            option.equals("-hide") ||
+           option.equals("-include") ||
            option.equals("-apidocroot") ||
            option.equals("-apidocmap") ||
            option.equals("-d") ||
@@ -432,6 +438,14 @@ public class Options implements Cloneable, OptionProvider {
 	    }
 	} else if (opt[0].equals("-!hide")) {
 	    hidePatterns.clear();
+	} else if(opt[0].equals("-include")) {
+	    try {
+		includePatterns.add(Pattern.compile(opt[1]));
+	    } catch (PatternSyntaxException e) {
+		System.err.println("Skipping invalid pattern " + opt[1]);
+	    }
+	} else if (opt[0].equals("-!include")) {
+	    includePatterns.clear();
 	} else if(opt[0].equals("-apidocroot")) {
 	    apiDocRoot = fixApiDocRoot(opt[1]);
 	} else if (opt[0].equals("-!apidocroot")) {
@@ -688,7 +702,7 @@ public class Options implements Cloneable, OptionProvider {
 
 
     /** Set the options based on the tag elements of the ClassDoc parameter */
-    public void setOptions(ClassDoc p) {
+    public void setOptions(Doc p) {
 	if (p == null)
 	    return;
 
@@ -724,7 +738,26 @@ public class Options implements Cloneable, OptionProvider {
     
     /**
      * Check if the supplied string matches an entity specified
-     * with the -hide parameter.
+     * with the -include parameter.
+     * @return true if the string matches.
+     */
+    public boolean matchesIncludeExpression(String s) {
+	for (Pattern includePattern : includePatterns) {
+	    Matcher m = includePattern.matcher(s);
+	    if (strictMatching) {
+		if (m.matches()) {
+		    return true;
+		}
+	    } else if (m.find()) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    /**
+     * Check if the supplied string matches an entity specified
+     * with the -collpackages parameter.
      * @return true if the string matches.
      */
     public boolean matchesCollPackageExpression(String s) {

@@ -74,8 +74,9 @@ public class ContextView implements OptionProvider {
     }
 
     public Options getOptionsFor(ClassDoc cd) {
-    Options opt;
-	if (globalOptions.matchesHideExpression(cd.toString()) || !matcher.matches(cd)) {
+	Options opt;
+	if (globalOptions.matchesHideExpression(cd.qualifiedName())
+		|| !(matcher.matches(cd) || globalOptions.matchesIncludeExpression(cd.qualifiedName()))) {
 		opt = hideOptions;
 	} else if (cd.equals(this.cd)) {
 		opt = centerOptions;
@@ -103,15 +104,16 @@ public class ContextView implements OptionProvider {
     }
 
     public void overrideForClass(Options opt, ClassDoc cd) {
-    	opt.setOptions(cd);
-	if (opt.matchesHideExpression(cd.toString()) || !matcher.matches(cd))
+	opt.setOptions(cd);
+	if (opt.matchesHideExpression(cd.qualifiedName())
+		|| !(matcher.matches(cd) || opt.matchesIncludeExpression(cd.qualifiedName())))
 	    opt.setOption(HIDE_OPTIONS);
 	if (cd.equals(this.cd))
 	    opt.nodeFillColor = "lemonChiffon";
     }
 
     public void overrideForClass(Options opt, String className) {
-	if (!matcher.matches(className))
+	if (!(matcher.matches(className) || opt.matchesIncludeExpression(className)))
 	    opt.setOption(HIDE_OPTIONS);
     }
 
