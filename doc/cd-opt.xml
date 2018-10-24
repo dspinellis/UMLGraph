@@ -1,9 +1,10 @@
 <?xml version="1.0" ?>
 <notes>
-A number of options contol the operation of UMLGraph
+A number of options control the operation of UMLGraph
 class diagram generator.
 These can be specified on the command line, and most can also
-be specified through javadoc tags within the diagram, affecting all or some elements.
+be specified through javadoc <code>@opt</code> tags within the diagram, affecting all or some elements.
+Most have a negated version by prefixing an exclamation mark.
 <p/>
 <h2>What Gets Drawn</h2> <!-- {{{1 -->
 <dl>
@@ -32,6 +33,7 @@ be specified through javadoc tags within the diagram, affecting all or some elem
  in the package view (which would by default filter to only include package members).</dd>
 <dt>-operations</dt><dd>Show class operations (Java methods) </dd>
 <dt>-qualify</dt><dd>Produce fully-qualified class names.  </dd>
+<dt>-qualifyGenerics</dt><dd>Use fully-qualified class names in Java generics.</dd>
 <dt>-types</dt><dd>Add type information to attributes and operations </dd>
 <dt>-view</dt><dd>Specify the fully qualified name of a class that contains
  a view definition. Only the class diagram specified by this view will be generated. 

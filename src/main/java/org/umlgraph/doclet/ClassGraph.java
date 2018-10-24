@@ -129,24 +129,34 @@ class ClassGraph {
     
 
     /** Return the class's name, possibly by stripping the leading path */
-    private String qualifiedName(Options opt, String r) {
-	if (!opt.showQualified) {
-	    // Create readable string by stripping leading path
-	    for (;;)  {
-		int dotpos = r.lastIndexOf('.');
-		if (dotpos == -1) break; // Work done!
-		/*
-		 * Change all occurences of
-		 * "p1.p2.myClass<S extends dummy.Otherclass>" into
-		 * "myClass<S extends Otherclass>"
-		 */
-		int start = dotpos;
-		while (start > 0 && Character.isJavaIdentifierPart(r.charAt(start - 1)))
-		    start--;
-		r = r.substring(0, start) + r.substring(dotpos + 1);
+    private static String qualifiedName(Options opt, String r) {
+	// Nothing to do:
+	if (opt.showQualified && (opt.showQualifiedGenerics || r.indexOf('<') < 0))
+	    return r;
+	StringBuilder buf = new StringBuilder(r.length());
+	int last = 0, depth = 0;
+	boolean strip = !opt.showQualified;
+	for (int i = 0; i < r.length();) {
+	    char c = r.charAt(i++);
+	    // The last condition prevents losing the dot in A<V>.B
+	    if ((c == '.' || c == '$') && strip && last + 1 < i)
+		last = i; // skip
+	    if (Character.isJavaIdentifierPart(c))
+		continue;
+	    // Handle nesting of generics
+	    if (c == '<') {
+		++depth;
+		strip = !opt.showQualifiedGenerics;
+	    } else if (c == '>' && --depth == 0)
+		strip = !opt.showQualified;
+	    if (last < i) {
+		buf.append(r, last, i);
+		last = i;
 	    }
 	}
-	return r;
+	if (last < r.length())
+	    buf.append(r, last, r.length());
+	return buf.toString();
     }
 
     /**
@@ -263,9 +273,9 @@ class ClassGraph {
     }
 
     /** Print a a basic type t */
-    private String type(Options opt, Type t) {
+    private String type(Options opt, Type t, boolean generics) {
 	String type;
-	if (opt.showQualified)
+	if (generics ? opt.showQualifiedGenerics : opt.showQualified)
 	    type = t.qualifiedTypeName();
 	else
 	    type = t.typeName();
@@ -281,7 +291,7 @@ class ClassGraph {
 	Type args[] = t.typeArguments();
 	tp += "&lt;";
 	for (int i = 0; i < args.length; i++) {
-	    tp += type(opt, args[i]);
+	    tp += type(opt, args[i], true);
 	    if (i != args.length - 1)
 		tp += ", ";
 	}
@@ -291,11 +301,10 @@ class ClassGraph {
 
     /** Annotate an field/argument with its type t */
     private String typeAnnotation(Options opt, Type t) {
-	String ta = "";
 	if (t.typeName().equals("void"))
-	    return ta;
-	ta += " : ";
-	ta += type(opt, t);
+	    return "";
+	String ta = " : ";
+	ta += type(opt, t, false);
 	ta += t.dimension();
 	return ta;
     }
@@ -506,16 +515,12 @@ class ClassGraph {
 	    Font font = c.isAbstract() && !c.isInterface() ? Font.CLASS_ABSTRACT : Font.CLASS;
 	    String qualifiedName = qualifiedName(opt, r);
 	    int startTemplate = qualifiedName.indexOf('<');
-	    int idx;
-	    if(startTemplate < 0)
-		idx = qualifiedName.lastIndexOf('.');
-	    else
-		idx = qualifiedName.lastIndexOf('.', startTemplate);
+	    int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
 	    if (opt.showComment)
 		tableLine(Align.LEFT, htmlNewline(escape(c.commentText())), opt, Font.CLASS);
 	    else if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
 		String packageName = qualifiedName.substring(0, idx);
-		String cn = className.substring(idx + 1);
+		String cn = qualifiedName.substring(idx + 1);
 		tableLine(Align.CENTER, escape(cn), opt, font);
 		tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
 	    } else {
@@ -781,14 +786,16 @@ class ClassGraph {
 		    w.print("\t" + info.name + "[label=");
 		    externalTableStart(opt, className, classToUrl(className));
 		    innerTableStart();
-		    int idx = className.lastIndexOf(".");
-		    if(opt.postfixPackage && idx > 0 && idx < (className.length() - 1)) {
-			String packageName = className.substring(0, idx);
-			String cn = className.substring(idx + 1);
+		    String qualifiedName = qualifiedName(opt, className);
+		    int startTemplate = qualifiedName.indexOf('<');
+		    int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
+		    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
+			String packageName = qualifiedName.substring(0, idx);
+			String cn = qualifiedName.substring(idx + 1);
 			tableLine(Align.CENTER, escape(cn), opt, Font.CLASS);
 			tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
 		    } else {
-			tableLine(Align.CENTER, escape(className), opt, Font.CLASS);
+			tableLine(Align.CENTER, escape(qualifiedName), opt, Font.CLASS);
 		    }
 		    innerTableEnd();
 		    externalTableEnd();
