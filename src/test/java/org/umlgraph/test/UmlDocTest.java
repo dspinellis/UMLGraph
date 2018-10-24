@@ -57,6 +57,7 @@ public class UmlDocTest {
 	    for (String className : differences) {
 		pw.println(className);
 	    }
+            System.exit(1);
 	} else {
 	    pw.println("GOOD, all files are structurally equal");
 	}
