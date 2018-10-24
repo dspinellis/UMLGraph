@@ -1,6 +1,6 @@
 # UMLGraph - Declarative Drawing of UML Diagrams
 
-[![Build Status](https://travis-ci.org/dspinellis/umlgraph.svg?branch=master)](https://travis-ci.org/dspinellis/umlgraph)
+[![Build Status](https://travis-ci.org/dspinellis/UMLGraph.svg?branch=master)](https://travis-ci.org/dspinellis/UMLGraph)
 
 *UMLGraph* allows the declarative specification and drawing of
 UML  diagrams.
