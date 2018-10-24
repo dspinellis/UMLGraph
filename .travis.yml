@@ -1,4 +1,10 @@
 language: java
+
+addons:
+  apt:
+    packages:
+      - graphviz
+
 install: ant
 
 script: ant test
