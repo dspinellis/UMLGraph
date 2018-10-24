@@ -119,14 +119,14 @@ class Version { public static String VERSION = "${VERSION}";}
 
 <target name="test" depends="compile,testcompile"
 	description="run the regression tests" >
-	<java classname="org.umlgraph.test.BasicTest" fork="true">
+	<java classname="org.umlgraph.test.BasicTest" fork="true" failonerror="true">
          <classpath>
            <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
            <pathelement location="${build}"/>
            <pathelement location="${lib}/UmlGraph.jar"/>
          </classpath>
     </java>
-	<java classname="org.umlgraph.test.UmlDocTest" fork="true">
+	<java classname="org.umlgraph.test.UmlDocTest" fork="true" failonerror="true">
 	         <classpath>
 	           <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
 	           <pathelement location="${build}"/>

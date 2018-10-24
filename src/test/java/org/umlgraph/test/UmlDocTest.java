@@ -148,10 +148,11 @@ public class UmlDocTest {
     private static void runDoclet(String[] options) {
 	pw.print("Run javadoc -doclet " + doclet);
 	for (String o : options)
-	    pw.print(o + " ");
+	    pw.print(" " + o);
 	pw.println();
 	com.sun.tools.javadoc.Main.execute("UMLDoc test", pw, pw, pw,
 		doclet, options);
+	System.exit(0);
     }
 
 }
