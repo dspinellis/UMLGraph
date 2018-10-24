@@ -1,4 +1,4 @@
 language: java
-install: ant deps
+install: ant
 
 script: ant test
