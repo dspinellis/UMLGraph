@@ -50,9 +50,6 @@ public class UmlDocTest {
 
 	TestUtils.cleanFolder(outFolder, true);
 
-	// don't use windows specific fonts
-	System.setProperty("os.name", "generic");
-
 	// run tests
 	runTest(differences);
 	if (differences.size() > 0) {
