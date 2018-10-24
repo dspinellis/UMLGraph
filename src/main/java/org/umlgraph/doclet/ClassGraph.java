@@ -500,9 +500,7 @@ class ClassGraph {
 		    nRows++;
 		else if(!c.isEnum() && (opt.showConstructors || opt.showOperations))
 		    nRows++;
-		if (c.isEnum() && opt.showEnumConstants)
-		    nRows++;
-		if (!c.isEnum() && (opt.showConstructors || opt.showOperations))
+		else if (c.isEnum() && opt.showEnumConstants)
 		    nRows++;
 	    }
 
