@@ -62,7 +62,6 @@ public class UmlGraphDoc {
 	    opt.strictMatching = true;
 //	    root.printNotice(opt.toString());
 
-	    root = new WrappedRootDoc(root);
 	    generatePackageDiagrams(root, opt, outputFolder);
 	    generateContextDiagrams(root, opt, outputFolder);
 	} catch(Throwable t) {
