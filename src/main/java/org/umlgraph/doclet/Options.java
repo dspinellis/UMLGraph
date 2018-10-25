@@ -153,6 +153,34 @@ public class Options implements Cloneable, OptionProvider {
 	showVisibility = true;
 	showType = true;
     }
+    
+    /**
+     * Match strings, ignoring leading <tt>-</tt>, <tt>-!</tt>, and <tt>!</tt>.
+     *
+     * @param given Given string
+     * @param expect Expected string
+     * @return {@code true} on success
+     */
+    protected static boolean matchOption(String given, String expect) {
+	return matchOption(given, expect, false);
+    }
+
+    /**
+     * Match strings, ignoring leading <tt>-</tt>, <tt>-!</tt>, and <tt>!</tt>.
+     *
+     * @param given Given string
+     * @param expect Expected string
+     * @param negative May be negative
+     * @return {@code true} on success
+     */
+    protected static boolean matchOption(String given, String expect, boolean negative) {
+	int begin = 0, end = given.length();
+	if (begin < end && given.charAt(begin) == '-')
+	    ++begin;
+	if (negative && begin < end && given.charAt(begin) == '!')
+	    ++begin;
+	return expect.length() == end - begin && expect.regionMatches(0, given, begin, end - begin);
+    }
 
     /**
      * Return the number of arguments associated with the specified option.
@@ -160,65 +188,65 @@ public class Options implements Cloneable, OptionProvider {
      * Will return 0 if the option is not supported.
      */
     public static int optionLength(String option) {
-        if(option.equals("-qualify") || option.equals("-!qualify") ||
-           option.equals("-qualifyGenerics") || option.equals("-!qualifyGenerics") ||
-           option.equals("-horizontal") || option.equals("-!horizontal") ||
-           option.equals("-attributes") || option.equals("-!attributes") ||
-           option.equals("-enumconstants") || option.equals("-!enumconstants") ||
-           option.equals("-operations") || option.equals("-!operations") ||
-           option.equals("-enumerations") || option.equals("-!enumerations") ||
-           option.equals("-constructors") || option.equals("-!constructors") ||
-           option.equals("-visibility") || option.equals("-!visibility") ||
-           option.equals("-types") || option.equals("-!types") ||
-           option.equals("-autosize") || option.equals("-!autosize") ||
-           option.equals("-commentname") || option.equals("-!commentname") ||
-           option.equals("-nodefontabstractitalic") || option.equals("-!nodefontabstractitalic") ||
-           option.equals("-all") ||
-           option.equals("-postfixpackage") ||
-           option.equals("-noguillemot") ||
-           option.equals("-views") ||
-           option.equals("-inferrel") ||
-           option.equals("-useimports") ||
-           option.equals("-collapsible") ||
-           option.equals("-inferdep") ||
-           option.equals("-inferdepinpackage") ||
-           option.equals("-compact"))
+        if(matchOption(option, "qualify", true) ||
+           matchOption(option, "qualifyGenerics", true) ||
+           matchOption(option, "horizontal", true) ||
+           matchOption(option, "attributes", true) ||
+           matchOption(option, "enumconstants", true) ||
+           matchOption(option, "operations", true) ||
+           matchOption(option, "enumerations", true) ||
+           matchOption(option, "constructors", true) ||
+           matchOption(option, "visibility", true) ||
+           matchOption(option, "types", true) ||
+           matchOption(option, "autosize", true) ||
+           matchOption(option, "commentname", true) ||
+           matchOption(option, "nodefontabstractitalic", true) ||
+           matchOption(option, "all") ||
+           matchOption(option, "postfixpackage") ||
+           matchOption(option, "noguillemot") ||
+           matchOption(option, "views") ||
+           matchOption(option, "inferrel") ||
+           matchOption(option, "useimports") ||
+           matchOption(option, "collapsible") ||
+           matchOption(option, "inferdep") ||
+           matchOption(option, "inferdepinpackage") ||
+           matchOption(option, "compact"))
 
             return 1;
-        else if(option.equals("-nodefillcolor") ||
-           option.equals("-nodefontcolor") ||
-           option.equals("-nodefontsize") ||
-           option.equals("-nodefontname") ||
-           option.equals("-nodefontclasssize") ||
-           option.equals("-nodefontclassname") ||
-   	   option.equals("-nodefonttagsize") ||
-   	   option.equals("-nodefonttagname") ||
-   	   option.equals("-nodefontpackagesize") ||
-   	   option.equals("-nodefontpackagename") ||
-           option.equals("-edgefontcolor") ||
-           option.equals("-edgecolor") ||
-           option.equals("-edgefontsize") ||
-           option.equals("-edgefontname") ||
-           option.equals("-shape") ||
-           option.equals("-output") ||
-           option.equals("-outputencoding") ||
-           option.equals("-bgcolor") ||
-           option.equals("-hide") ||
-           option.equals("-include") ||
-           option.equals("-apidocroot") ||
-           option.equals("-apidocmap") ||
-           option.equals("-d") ||
-           option.equals("-view") ||
-           option.equals("-inferreltype") ||
-           option.equals("-inferdepvis") ||
-           option.equals("-collpackages") ||
-           option.equals("-nodesep") ||
-           option.equals("-ranksep") ||
-           option.equals("-dotexecutable") ||
-           option.equals("-link"))
+        else if(matchOption(option, "nodefillcolor") ||
+           matchOption(option, "nodefontcolor") ||
+           matchOption(option, "nodefontsize") ||
+           matchOption(option, "nodefontname") ||
+           matchOption(option, "nodefontclasssize") ||
+           matchOption(option, "nodefontclassname") ||
+           matchOption(option, "nodefonttagsize") ||
+           matchOption(option, "nodefonttagname") ||
+           matchOption(option, "nodefontpackagesize") ||
+           matchOption(option, "nodefontpackagename") ||
+           matchOption(option, "edgefontcolor") ||
+           matchOption(option, "edgecolor") ||
+           matchOption(option, "edgefontsize") ||
+           matchOption(option, "edgefontname") ||
+           matchOption(option, "shape") ||
+           matchOption(option, "output") ||
+           matchOption(option, "outputencoding") ||
+           matchOption(option, "bgcolor") ||
+           matchOption(option, "hide") ||
+           matchOption(option, "include") ||
+           matchOption(option, "apidocroot") ||
+           matchOption(option, "apidocmap") ||
+           matchOption(option, "d") ||
+           matchOption(option, "view") ||
+           matchOption(option, "inferreltype") ||
+           matchOption(option, "inferdepvis") ||
+           matchOption(option, "collpackages") ||
+           matchOption(option, "nodesep") ||
+           matchOption(option, "ranksep") ||
+           matchOption(option, "dotexecutable") ||
+           matchOption(option, "link"))
            return 2;
-	else if(option.equals("-contextPattern") ||
-		option.equals("-linkoffline"))
+        else if(matchOption(option, "contextPattern") ||
+           matchOption(option, "linkoffline"))
             return 3;
         else
             return 0;
@@ -226,243 +254,164 @@ public class Options implements Cloneable, OptionProvider {
     
     /** Set the options based on a single option and its arguments */
     void setOption(String[] opt) {
-	if(!opt[0].equals("-hide") && optionLength(opt[0]) > opt.length) {
+	if(!matchOption(opt[0], "hide") && optionLength(opt[0]) > opt.length) {
 	    System.err.println("Skipping option '" + opt[0] + "', missing argument");
 	    return;
 	}
+	boolean dash = opt[0].length() > 1 && opt[0].charAt(0) == '-';
+	boolean positive = !(opt[0].length() > 1 && opt[0].charAt(dash ? 1 : 0) == '!');
 	
-	if(opt[0].equals("-qualify")) {
-	    showQualified = true;
-	} else if (opt[0].equals("-!qualify")) {
-	    showQualified = false;
-	} else if(opt[0].equals("-qualifyGenerics")) {
-	    showQualifiedGenerics = true;
-	} else if (opt[0].equals("-!qualifyGenerics")) {
-	    showQualifiedGenerics = false;
-	} else if(opt[0].equals("-horizontal")) {
-	    horizontal = true;
-	} else if (opt[0].equals("-!horizontal")) {
-	    horizontal = false;
-	} else if(opt[0].equals("-attributes")) {
-	    showAttributes = true;
-	} else if (opt[0].equals("-!attributes")) {
-	    showAttributes = false;
-	} else if(opt[0].equals("-enumconstants")) {
-	    showEnumConstants = true;
-	} else if (opt[0].equals("-!enumconstants")) {
-	    showEnumConstants = false;
-	} else if(opt[0].equals("-operations")) {
-	    showOperations = true;
-	} else if (opt[0].equals("-!operations")) {
-	    showOperations = false;
-	} else if(opt[0].equals("-enumerations")) {
-	    showEnumerations = true;
-	} else if (opt[0].equals("-!enumerations")) {
-	    showEnumerations = false;
-	} else if(opt[0].equals("-constructors")) {
-	    showConstructors = true;
-	} else if (opt[0].equals("-!constructors")) {
-	    showConstructors = false;
-	} else if(opt[0].equals("-visibility")) {
-	    showVisibility = true;
-	} else if (opt[0].equals("-!visibility")) {
-	    showVisibility = false;
-	} else if(opt[0].equals("-types")) {
-	    showType = true;
-	} else if (opt[0].equals("-!types")) {
-	    showType = false;
-	} else if(opt[0].equals("-autoSize")) {
-	    autoSize = true;
-	} else if (opt[0].equals("-!autoSize")) {
-	    autoSize = false;
-	} else if(opt[0].equals("-commentname")) {
-	    showComment = true;
-	} else if (opt[0].equals("-!commentname")) {
-	    showComment = false;
-	} else if(opt[0].equals("-all")) {
+	if(matchOption(opt[0], "qualify", true)) {
+	    showQualified = positive;
+	} else if(matchOption(opt[0], "qualifyGenerics", true)) {
+	    showQualifiedGenerics = positive;
+	} else if(matchOption(opt[0], "horizontal", true)) {
+	    horizontal = positive;
+	} else if(matchOption(opt[0], "attributes", true)) {
+	    showAttributes = positive;
+	} else if(matchOption(opt[0], "enumconstants", true)) {
+	    showEnumConstants = positive;
+	} else if(matchOption(opt[0], "operations", true)) {
+	    showOperations = positive;
+	} else if(matchOption(opt[0], "enumerations", true)) {
+	    showEnumerations = positive;
+	} else if(matchOption(opt[0], "constructors", true)) {
+	    showConstructors = positive;
+	} else if(matchOption(opt[0], "visibility", true)) {
+	    showVisibility = positive;
+	} else if(matchOption(opt[0], "types", true)) {
+	    showType = positive;
+	} else if(matchOption(opt[0], "autoSize", true)) {
+	    autoSize = positive;
+	} else if(matchOption(opt[0], "commentname", true)) {
+	    showComment = positive;
+	} else if(matchOption(opt[0], "all")) {
 	    setAll();
-	} else if(opt[0].equals("-bgcolor")) {
-	    bgColor = opt[1];
-	} else if (opt[0].equals("-!bgcolor")) {
-	    bgColor = null;
-	} else if(opt[0].equals("-edgecolor")) {
-	    edgeColor = opt[1];
-	} else if (opt[0].equals("-!edgecolor")) {
-	    edgeColor = "black";
-	} else if(opt[0].equals("-edgefontcolor")) {
-	    edgeFontColor = opt[1];
-	} else if (opt[0].equals("-!edgefontcolor")) {
-	    edgeFontColor = "black";
-	} else if(opt[0].equals("-edgefontname")) {
-	    edgeFontName = opt[1];
-	} else if (opt[0].equals("-!edgefontname")) {
-	    edgeFontName = Font.DEFAULT_FONT;
-	} else if(opt[0].equals("-edgefontsize")) {
-	    edgeFontSize = Double.parseDouble(opt[1]);
-	} else if (opt[0].equals("-!edgefontsize")) {
-	    edgeFontSize = 10;
-	} else if(opt[0].equals("-nodefontcolor")) {
-	    nodeFontColor = opt[1];
-	} else if (opt[0].equals("-!nodefontcolor")) {
-	    nodeFontColor = "black";
-	} else if(opt[0].equals("-nodefontname")) {
-	    nodeFontName = opt[1];
-	} else if (opt[0].equals("-!nodefontname")) {
-	    nodeFontName = Font.DEFAULT_FONT;
-	} else if(opt[0].equals("-nodefontabstractitalic")) {
-	    nodeFontAbstractItalic = true;
-	} else if (opt[0].equals("-!nodefontabstractitalic")) {
-	    nodeFontAbstractItalic = false;
-	} else if(opt[0].equals("-nodefontsize")) {
-	    nodeFontSize = Double.parseDouble(opt[1]);
-	} else if (opt[0].equals("-!nodefontsize")) {
-	    nodeFontSize = 10;
-	} else if(opt[0].equals("-nodefontclassname")) {
-	    nodeFontClassName = opt[1];
-	} else if (opt[0].equals("-!nodefontclassname")) {
-	    nodeFontClassName = null;
-	} else if(opt[0].equals("-nodefontclasssize")) {
-	    nodeFontClassSize = Double.parseDouble(opt[1]);
-	} else if (opt[0].equals("-!nodefontclasssize")) {
-	    nodeFontClassSize = -1;
-	} else if(opt[0].equals("-nodefonttagname")) {
-	    nodeFontTagName = opt[1];
-	} else if (opt[0].equals("-!nodefonttagname")) {
-	    nodeFontTagName = null;
-	} else if(opt[0].equals("-nodefonttagsize")) {
-	    nodeFontTagSize = Double.parseDouble(opt[1]);
-	} else if (opt[0].equals("-!nodefonttagsize")) {
-	    nodeFontTagSize = -1;
-	} else if(opt[0].equals("-nodefontpackagename")) {
-	    nodeFontPackageName = opt[1];
-	} else if (opt[0].equals("-!nodefontpackagename")) {
-	    nodeFontPackageName = null;
-	} else if(opt[0].equals("-nodefontpackagesize")) {
-	    nodeFontPackageSize = Double.parseDouble(opt[1]);
-	} else if (opt[0].equals("-!nodefontpackagesize")) {
-	    nodeFontPackageSize = -1;
-	} else if(opt[0].equals("-nodefillcolor")) {
-	    nodeFillColor = opt[1];
-	} else if (opt[0].equals("-!nodefillcolor")) {
-	    nodeFillColor = null;
-	} else if(opt[0].equals("-shape")) {
-	    shape = Shape.of(opt[1]);
-	} else if (opt[0].equals("-!shape")) {
-	    shape = Shape.CLASS;
-	} else if(opt[0].equals("-output")) {
-	    outputFileName = opt[1];
-	} else if (opt[0].equals("-!output")) {
-	    outputFileName = "graph.dot";
-	} else if(opt[0].equals("-outputencoding")) {
-	    outputEncoding = opt[1];
-	} else if (opt[0].equals("-!outputencoding")) {
-	    outputEncoding = "ISO-8859-1";
-	} else if(opt[0].equals("-hide")) {
-	    if(opt.length == 1) {
+	} else if(matchOption(opt[0], "bgcolor", true)) {
+	    bgColor = positive ? opt[1] : null;
+	} else if(matchOption(opt[0], "edgecolor", true)) {
+	    edgeColor = positive ? opt[1] : "black";
+	} else if(matchOption(opt[0], "edgefontcolor", true)) {
+	    edgeFontColor = positive ? opt[1] : "black";
+	} else if(matchOption(opt[0], "edgefontname", true)) {
+	    edgeFontName = positive ? opt[1] : Font.DEFAULT_FONT;
+	} else if(matchOption(opt[0], "edgefontsize", true)) {
+	    edgeFontSize = positive ? Double.parseDouble(opt[1]) : 10;
+	} else if(matchOption(opt[0], "nodefontcolor", true)) {
+	    nodeFontColor = positive ? opt[1] : "black";
+	} else if(matchOption(opt[0], "nodefontname", true)) {
+	    nodeFontName = positive ? opt[1] : Font.DEFAULT_FONT;
+	} else if(matchOption(opt[0], "nodefontabstractitalic", true)) {
+	    nodeFontAbstractItalic = positive;
+	} else if(matchOption(opt[0], "nodefontsize", true)) {
+	    nodeFontSize = positive ? Double.parseDouble(opt[1]) : 10;
+	} else if(matchOption(opt[0], "nodefontclassname", true)) {
+	    nodeFontClassName = positive ? opt[1] : null;
+	} else if(matchOption(opt[0], "nodefontclasssize", true)) {
+	    nodeFontClassSize = positive ? Double.parseDouble(opt[1]) : -1;
+	} else if(matchOption(opt[0], "nodefonttagname", true)) {
+	    nodeFontTagName = positive ? opt[1] : null;
+	} else if(matchOption(opt[0], "nodefonttagsize", true)) {
+	    nodeFontTagSize = positive ? Double.parseDouble(opt[1]) : -1;
+	} else if(matchOption(opt[0], "nodefontpackagename", true)) {
+	    nodeFontPackageName = positive ? opt[1] : null;
+	} else if(matchOption(opt[0], "nodefontpackagesize", true)) {
+	    nodeFontPackageSize = positive ? Double.parseDouble(opt[1]) : -1;
+	} else if(matchOption(opt[0], "nodefillcolor", true)) {
+	    nodeFillColor = positive ? opt[1] : null;
+	} else if(matchOption(opt[0], "shape", true)) {
+	    shape = positive ? Shape.of(opt[1]) : Shape.CLASS;
+	} else if(matchOption(opt[0], "output", true)) {
+	    outputFileName = positive ? opt[1] : "graph.dot";
+	} else if(matchOption(opt[0], "outputencoding", true)) {
+	    outputEncoding = positive ? opt[1] : "ISO-8859-1";
+	} else if(matchOption(opt[0], "hide", true)) {
+	    if (positive) {
+		if (opt.length == 1) {
+		    hidePatterns.clear();
+		    hidePatterns.add(allPattern);
+		} else {
+		    try {
+			hidePatterns.add(Pattern.compile(opt[1]));
+		    } catch (PatternSyntaxException e) {
+			System.err.println("Skipping invalid pattern " + opt[1]);
+		    }
+		}
+	    } else
 		hidePatterns.clear();
-		hidePatterns.add(allPattern);
-	    } else {
+	} else if(matchOption(opt[0], "include", true)) {
+	    if (positive) {
 		try {
-		    hidePatterns.add(Pattern.compile(opt[1]));
+		    includePatterns.add(Pattern.compile(opt[1]));
 		} catch (PatternSyntaxException e) {
 		    System.err.println("Skipping invalid pattern " + opt[1]);
 		}
-	    }
-	} else if (opt[0].equals("-!hide")) {
-	    hidePatterns.clear();
-	} else if(opt[0].equals("-include")) {
-	    try {
-		includePatterns.add(Pattern.compile(opt[1]));
-	    } catch (PatternSyntaxException e) {
-		System.err.println("Skipping invalid pattern " + opt[1]);
-	    }
-	} else if (opt[0].equals("-!include")) {
-	    includePatterns.clear();
-	} else if(opt[0].equals("-apidocroot")) {
-	    apiDocRoot = fixApiDocRoot(opt[1]);
-	} else if (opt[0].equals("-!apidocroot")) {
-	    apiDocRoot = null;
-	} else if(opt[0].equals("-apidocmap")) {
-	    setApiDocMapFile(opt[1]);
-	} else if (opt[0].equals("-!apidocmap")) {
-	    apiDocMap.clear();
-	} else if(opt[0].equals("-noguillemot")) {
-	    guilOpen = "&lt;&lt;";
-	    guilClose = "&gt;&gt;";
-	} else if (opt[0].equals("-!noguillemot")) {
-	    guilOpen = "\u00ab";
-	    guilClose = "\u00bb";
-	} else if (opt[0].equals("-view")) {
-	    viewName = opt[1];
-	} else if (opt[0].equals("-!view")) {
-	    viewName = null;
-	} else if (opt[0].equals("-views")) {
-	    findViews = true;
-	} else if (opt[0].equals("-!views")) {
-	    findViews = false;
-	} else if (opt[0].equals("-d")) {
-	    outputDirectory = opt[1];
-	} else if (opt[0].equals("-!d")) {
-	    outputDirectory = null;
-	} else if(opt[0].equals("-inferrel")) {
-	    inferRelationships = true;
-	} else if(opt[0].equals("-!inferrel")) {
-	    inferRelationships = false;
-	} else if(opt[0].equals("-inferreltype")) {
+	    } else
+		includePatterns.clear();
+	} else if(matchOption(opt[0], "apidocroot", true)) {
+	    apiDocRoot = positive ? fixApiDocRoot(opt[1]) : null;
+	} else if(matchOption(opt[0], "apidocmap", true)) {
+	    if (positive)
+		setApiDocMapFile(opt[1]);
+	    else
+		apiDocMap.clear();
+	} else if(matchOption(opt[0], "noguillemot", true)) {
+	    guilOpen = positive ? "&lt;&lt;" : "\u00ab";
+	    guilClose = positive ? "&gt;&gt;" : "\u00bb";
+	} else if (matchOption(opt[0], "view", true)) {
+	    viewName = positive ? opt[1] : null;
+	} else if (matchOption(opt[0], "views", true)) {
+	    findViews = positive;
+	} else if (matchOption(opt[0], "d", true)) {
+	    outputDirectory = positive ? opt[1] : null;
+	} else if(matchOption(opt[0], "inferrel", true)) {
+	    inferRelationships = positive;
+	} else if(matchOption(opt[0], "inferreltype", true)) {
+	    if (positive) {
 		try {
 		    inferRelationshipType = RelationType.valueOf(opt[1].toUpperCase());
 		} catch(IllegalArgumentException e) {
 		    System.err.println("Unknown association type " + opt[1]);
 		}
-	} else if(opt[0].equals("-!inferreltype")) {
-	    inferRelationshipType = RelationType.NAVASSOC;
-	} else if(opt[0].equals("-inferdepvis")) {
-	    try {
-		Visibility vis = Visibility.valueOf(opt[1].toUpperCase());
-		inferDependencyVisibility = vis;
-	    } catch(IllegalArgumentException e) {
-		System.err.println("Ignoring invalid visibility specification for " +
-				"dependency inference: " + opt[1]);
-	    }
-	} else if(opt[0].equals("-!inferdepvis")) {
-	    inferDependencyVisibility = Visibility.PRIVATE;
-	} else if(opt[0].equals("-collapsible")) {
-	    collapsibleDiagrams = true;
-	} else if(opt[0].equals("-!collapsible")) {
-	    collapsibleDiagrams = false;
-	} else if(opt[0].equals("-inferdep")) {
-	    inferDependencies = true;
-	} else if(opt[0].equals("-!inferdep")) {
-	    inferDependencies = false;
-	} else if(opt[0].equals("-inferdepinpackage")) {
-	    inferDepInPackage = true;
-	} else if(opt[0].equals("-!inferdepinpackage")) {
-	    inferDepInPackage = false;
-	} else if(opt[0].equals("-useimports")) {
-	    useImports = true;
-	} else if(opt[0].equals("-!useimports")) {
-	    useImports = false;
-	} else if (opt[0].equals("-collpackages")) {
-	    try {
-		collPackages.add(Pattern.compile(opt[1]));
-	    } catch (PatternSyntaxException e) {
-		System.err.println("Skipping invalid pattern " + opt[1]);
-	    }
-	} else if (opt[0].equals("-!collpackages")) {
-	    collPackages.clear();
-	} else if (opt[0].equals("-compact")) {
-	    compact = true;
-	} else if (opt[0].equals("-!compact")) {
-	    compact = false;
-	} else if (opt[0].equals("-postfixpackage")) {
-	    postfixPackage = true;
-	} else if (opt[0].equals("-!postfixpackage")) {
-	    postfixPackage = false;
-	} else if (opt[0].equals("-link")) {
+	    } else 
+		inferRelationshipType = RelationType.NAVASSOC;
+	} else if(matchOption(opt[0], "inferdepvis", true)) {
+	    if (positive) {
+		try {
+		    Visibility vis = Visibility.valueOf(opt[1].toUpperCase());
+		    inferDependencyVisibility = vis;
+		} catch(IllegalArgumentException e) {
+		    System.err.println("Ignoring invalid visibility specification for " +
+			    "dependency inference: " + opt[1]);
+		}
+	    } else
+		inferDependencyVisibility = Visibility.PRIVATE;
+	} else if(matchOption(opt[0], "collapsible", true)) {
+	    collapsibleDiagrams = positive;
+	} else if(matchOption(opt[0], "inferdep", true)) {
+	    inferDependencies = positive;
+	} else if(matchOption(opt[0], "inferdepinpackage", true)) {
+	    inferDepInPackage = positive;
+	} else if(matchOption(opt[0], "useimports", true)) {
+	    useImports = positive;
+	} else if (matchOption(opt[0], "collpackages", true)) {
+	    if (positive) {
+		try {
+		    collPackages.add(Pattern.compile(opt[1]));
+		} catch (PatternSyntaxException e) {
+		    System.err.println("Skipping invalid pattern " + opt[1]);
+		}
+	    } else
+		collPackages.clear();
+	} else if (matchOption(opt[0], "compact", true)) {
+	    compact = positive;
+	} else if (matchOption(opt[0], "postfixpackage", true)) {
+	    postfixPackage = positive;
+	} else if (matchOption(opt[0], "link")) {
 	    addApiDocRoots(opt[1]);
-	} else if (opt[0].equals("-linkoffline")) {
+	} else if (matchOption(opt[0], "linkoffline")) {
 	    addApiDocRootsOffline(opt[1], opt[2]);
-	} else if(opt[0].equals("-contextPattern")) {
+	} else if(matchOption(opt[0], "contextPattern")) {
 	    RelationDirection d; RelationType rt;
 	    try {
 		d = RelationDirection.valueOf(opt[2].toUpperCase());
@@ -476,27 +425,22 @@ public class Options implements Cloneable, OptionProvider {
 		
 	    }
 		
-	} else if (opt[0].equals("-nodesep")) {
+	} else if (matchOption(opt[0], "nodesep", true)) {
 	    try {
-		nodeSep = Double.parseDouble(opt[1]);
+		nodeSep = positive ? Double.parseDouble(opt[1]) : 0.25;
 	    } catch (NumberFormatException e) {
 		System.err.println("Skipping invalid nodesep " + opt[1]);
 	    }
-	} else if (opt[0].equals("-!nodesep")) {
-	    nodeSep = 0.25;
-	} else if (opt[0].equals("-ranksep")) {
+	} else if (matchOption(opt[0], "ranksep", true)) {
 	    try {
-		rankSep = Double.parseDouble(opt[1]);
+		rankSep = positive ? Double.parseDouble(opt[1]) : 0.5;
 	    } catch (NumberFormatException e) {
 		System.err.println("Skipping invalid ranksep " + opt[1]);
 	    }
-	} else if (opt[0].equals("-!ranksep")) {
-	    rankSep = 0.5;
-    } else if (opt[0].equals("-dotexecutable")) {
-        dotExecutable = opt[1];
+	} else if (matchOption(opt[0], "dotexecutable")) {
+	    dotExecutable = opt[1];
 	} else
-	    ; // Do nothing, javadoc will handle the option or complain, if
-                // needed.
+	    ; // Do nothing, javadoc will handle the option or complain, if needed.
     }
 
     /**
@@ -634,11 +578,8 @@ public class Options implements Cloneable, OptionProvider {
 	if (p == null)
 	    return;
 
-	for (Tag tag : p.tags("opt")) {
-	    String[] opt = StringUtil.tokenize(tag.text());
-	    opt[0] = "-" + opt[0];
-	    setOption(opt);
-	}
+	for (Tag tag : p.tags("opt"))
+	    setOption(StringUtil.tokenize(tag.text()));
     }
 
     /**

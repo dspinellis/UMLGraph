@@ -26,7 +26,7 @@ public class ContextView implements OptionProvider {
     private Options hideOptions;
     private Options centerOptions;
     private Options packageOptions;
-    private static final String[] HIDE_OPTIONS = new String[] { "-hide" };
+    private static final String[] HIDE_OPTIONS = new String[] { "hide" };
 
     public ContextView(String outputFolder, ClassDoc cd, RootDoc root, Options parent)
 	    throws IOException {
@@ -42,7 +42,7 @@ public class ContextView implements OptionProvider {
 	this.packageOptions.showQualified = false;
 
 	this.myGlobalOptions = parent.getGlobalOptions();
-	this.myGlobalOptions.setOption(new String[] { "-output", outputPath });
+	this.myGlobalOptions.setOption(new String[] { "output", outputPath });
 	this.myGlobalOptions.setOption(HIDE_OPTIONS);
 
 	this.hideOptions = parent.getGlobalOptions();
@@ -61,7 +61,7 @@ public class ContextView implements OptionProvider {
 	this.cd = contextCenter;
 	String outputPath = cd.containingPackage().name().replace('.', '/') + "/" + cd.name()
 		+ ".dot";
-	this.myGlobalOptions.setOption(new String[] { "-output", outputPath });
+	this.myGlobalOptions.setOption(new String[] { "output", outputPath });
 	matcher.setContextCenter(Pattern.compile(cd.toString()));
     }
 

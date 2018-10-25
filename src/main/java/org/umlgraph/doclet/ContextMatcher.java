@@ -67,9 +67,9 @@ public class ContextMatcher implements ClassMatcher {
 	this.root = root;
 	this.keepParentHide = keepParentHide;
 	opt = (Options) options.clone();
-	opt.setOption(new String[] { "-!hide" });
-	opt.setOption(new String[] { "-!attributes" });
-	opt.setOption(new String[] { "-!operations" });
+	opt.setOption(new String[] { "!hide" });
+	opt.setOption(new String[] { "!attributes" });
+	opt.setOption(new String[] { "!operations" });
 	this.cg = new ClassGraphHack(root, opt);
 
 	setContextCenter(pattern);
