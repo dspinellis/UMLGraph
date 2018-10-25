@@ -97,26 +97,23 @@ public class ContextMatcher implements ClassMatcher {
 
     /**
      * Adds the specified class to the internal class graph along with its
-     * relations and depencies, eventually inferring them, according to the
+     * relations and dependencies, eventually inferring them, according to the
      * Options specified for this matcher
      * @param cd
      */
     private void addToGraph(ClassDoc cd) {
 	// avoid adding twice the same class, but don't rely on cg.getClassInfo
-        // since there
-	// are other ways to add a classInfor than printing the class
+	// since there are other ways to add a classInfor than printing the class
 	if (visited.contains(cd.toString()))
 	    return;
 
 	visited.add(cd.toString());
 	cg.printClass(cd, false);
 	cg.printRelations(cd);
-	if (opt.inferRelationships) {
+	if (opt.inferRelationships)
 	    cg.printInferredRelations(cd);
-	}
-	if (opt.inferDependencies) {
+	if (opt.inferDependencies)
 	    cg.printInferredDependencies(cd);
-	}
     }
 
     /**

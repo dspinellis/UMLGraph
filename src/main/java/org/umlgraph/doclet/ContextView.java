@@ -52,7 +52,7 @@ public class ContextView implements OptionProvider {
 	this.centerOptions.nodeFillColor = "lemonChiffon";
 	this.centerOptions.showQualified = false;
 
-	this.matcher = new ContextMatcher(root, Pattern.compile(cd.qualifiedName()),
+	this.matcher = new ContextMatcher(root, Pattern.compile(Pattern.quote(cd.toString())),
 		myGlobalOptions, true);
 
     }
@@ -62,7 +62,7 @@ public class ContextView implements OptionProvider {
 	String outputPath = cd.containingPackage().name().replace('.', '/') + "/" + cd.name()
 		+ ".dot";
 	this.myGlobalOptions.setOption(new String[] { "output", outputPath });
-	matcher.setContextCenter(Pattern.compile(cd.toString()));
+	matcher.setContextCenter(Pattern.compile(Pattern.quote(cd.toString())));
     }
 
     public String getDisplayName() {

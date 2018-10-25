@@ -312,26 +312,17 @@ class ClassGraph {
 
     /** Return true if c has a @hidden tag associated with it */
     private boolean hidden(ProgramElementDoc c) {
-	Tag tags[] = c.tags("hidden");
-	if (tags.length > 0)
-	    return true;
-	tags = c.tags("view");
-	if (tags.length > 0)
-	    return true;
-	Options opt; 
-	if(c instanceof ClassDoc)
-	  opt = optionProvider.getOptionsFor((ClassDoc) c);
-	else 
-	  opt = optionProvider.getOptionsFor(c.containingClass());
-	    return opt.matchesHideExpression(c.toString());
+	return c.tags("hidden").length > 0 || c.tags("view").length > 0 || //
+		optionProvider.getOptionsFor(c instanceof ClassDoc ? (ClassDoc) c : c.containingClass()) //
+			.matchesHideExpression(c.toString());
     }
-    
+
     protected ClassInfo getClassInfo(String className) {
 	return classnames.get(removeTemplate(className));
     }
-    
-    private ClassInfo newClassInfo(String className, boolean printed, boolean hidden) {
-	ClassInfo ci = new ClassInfo(printed, hidden);
+
+    private ClassInfo newClassInfo(String className, boolean hidden) {
+	ClassInfo ci = new ClassInfo(hidden);
         classnames.put(removeTemplate(className), ci);
         return ci;
     }
@@ -352,139 +343,121 @@ class ClassGraph {
      * relative links in diagrams for UMLDoc
      */
     public String printClass(ClassDoc c, boolean rootClass) {
-	ClassInfo ci;
-	boolean toPrint;
-	Options opt = optionProvider.getOptionsFor(c);
-
 	String className = c.toString();
-	if ((ci = getClassInfo(className)) != null)
-	    toPrint = !ci.nodePrinted;
-	else {
-	    toPrint = true;
-	    ci = newClassInfo(className, true, hidden(c));
-	}
-	if (toPrint && !hidden(c) && (!c.isEnum() || opt.showEnumerations)) {
-	    // Associate classname's alias
-	    String r = className;
-	    w.println("\t// " + r);
-	    // Create label
-	    w.print("\t" + ci.name + " [label=");
+	ClassInfo ci = getClassInfo(className);
+	ci = ci != null ? ci : newClassInfo(className, hidden(c));
+	if(ci.nodePrinted || ci.hidden)
+	    return ci.name;
+	Options opt = optionProvider.getOptionsFor(c);
+	if (c.isEnum() && !opt.showEnumerations)
+	    return ci.name;
+	// Associate classname's alias
+	w.println("\t// " + className);
+	// Create label
+	w.print("\t" + ci.name + " [label=");
 
-	    boolean showMembers =
+	boolean showMembers =
 		(opt.showAttributes && c.fields().length > 0) ||
 		(c.isEnum() && opt.showEnumConstants && c.enumConstants().length > 0) ||
 		(opt.showOperations && c.methods().length > 0) ||
 		(opt.showConstructors && c.constructors().length > 0);
-	    
-	    externalTableStart(opt, c.qualifiedName(), classToUrl(c, rootClass));
 
-	    firstInnerTableStart(opt);
-	    if (c.isInterface())
-		tableLine(Align.CENTER, guilWrap(opt, "interface"));
-	    if (c.isEnum())
-		tableLine(Align.CENTER, guilWrap(opt, "enumeration"));
-	    stereotype(opt, c, Align.CENTER);
-	    Font font = c.isAbstract() && !c.isInterface() ? Font.CLASS_ABSTRACT : Font.CLASS;
-	    String qualifiedName = qualifiedName(opt, r);
-	    int startTemplate = qualifiedName.indexOf('<');
-	    int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
-	    if (opt.showComment)
-		tableLine(Align.LEFT, Font.CLASS.wrap(opt, htmlNewline(escape(c.commentText()))));
-	    else if (opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
-		String packageName = qualifiedName.substring(0, idx);
-		String cn = qualifiedName.substring(idx + 1);
-		tableLine(Align.CENTER, font.wrap(opt, escape(cn)));
-		tableLine(Align.CENTER, Font.PACKAGE.wrap(opt, packageName));
-	    } else {
-		tableLine(Align.CENTER, font.wrap(opt, escape(qualifiedName)));
-	    }
-	    tagvalue(opt, c);
-	    firstInnerTableEnd(opt);
-	    
-	    if (showMembers) {
-		if (opt.showAttributes) {
-		    innerTableStart();
-		    FieldDoc[] fields = c.fields();
-		    // if there are no fields, print an empty line to generate proper HTML
-		    if (fields.length == 0)
-			tableLine(Align.LEFT, "");
-		    else
-			attributes(opt, c.fields());
-		    innerTableEnd();
-		} else if(!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
-		    // show an emtpy box if we don't show attributes but
-		    // we show operations
-		    innerTableStart();
-		    tableLine(Align.LEFT, "");
-		    innerTableEnd();
-	    	}
-		if (c.isEnum() && opt.showEnumConstants) {
-		    innerTableStart();
-		    FieldDoc[] ecs = c.enumConstants();
-		    // if there are no constants, print an empty line to generate proper HTML		    
-		    if (ecs.length == 0) {
-			tableLine(Align.LEFT, "");
-		    } else {
-			for (FieldDoc fd : c.enumConstants()) {
-			    tableLine(Align.LEFT, fd.name());
-			}
-		    }
-		    innerTableEnd();
-		}
-		if (!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
-		    innerTableStart();
-		    boolean printedLines = false;
-		    if (opt.showConstructors)
-			printedLines |= operations(opt, c.constructors());
-		    if (opt.showOperations)
-			printedLines |= operations(opt, c.methods());
+	externalTableStart(opt, c.qualifiedName(), classToUrl(c, rootClass));
 
-		    if (!printedLines)
-			// if there are no operations nor constructors,
-			// print an empty line to generate proper HTML
-			tableLine(Align.LEFT, "");
-
-		    innerTableEnd();
-		}
-	    }
-	    externalTableEnd();
-	    w.print(", URL=\"" + classToUrl(c, rootClass) + "\"");
-	    nodeProperties(opt);
-
-	    // If needed, add a note for this node
-	    int ni = 0;
-	    for (Tag t : c.tags("note")) {
-		String noteName = "n" + ni + "c" + ci.name;
-		w.print("\t// Note annotation\n");
-		w.print("\t" + noteName + " [label=");
-		externalTableStart(UmlGraph.getCommentOptions(), c.qualifiedName(), classToUrl(c, rootClass));
-		innerTableStart();
-		tableLine(Align.LEFT, Font.CLASS.wrap(UmlGraph.getCommentOptions(), htmlNewline(escape(t.text()))));
-		innerTableEnd();
-		externalTableEnd();
-		nodeProperties(UmlGraph.getCommentOptions());
-		w.print("\t" + noteName + " -> " + relationNode(c) + "[arrowhead=none];\n");
-		ni++;
-	    }
-	    ci.nodePrinted = true;
+	firstInnerTableStart(opt);
+	if (c.isInterface())
+	    tableLine(Align.CENTER, guilWrap(opt, "interface"));
+	if (c.isEnum())
+	    tableLine(Align.CENTER, guilWrap(opt, "enumeration"));
+	stereotype(opt, c, Align.CENTER);
+	Font font = c.isAbstract() && !c.isInterface() ? Font.CLASS_ABSTRACT : Font.CLASS;
+	String qualifiedName = qualifiedName(opt, className);
+	int startTemplate = qualifiedName.indexOf('<');
+	int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
+	if (opt.showComment)
+	    tableLine(Align.LEFT, Font.CLASS.wrap(opt, htmlNewline(escape(c.commentText()))));
+	else if (opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
+	    String packageName = qualifiedName.substring(0, idx);
+	    String cn = qualifiedName.substring(idx + 1);
+	    tableLine(Align.CENTER, font.wrap(opt, escape(cn)));
+	    tableLine(Align.CENTER, Font.PACKAGE.wrap(opt, packageName));
+	} else {
+	    tableLine(Align.CENTER, font.wrap(opt, escape(qualifiedName)));
 	}
-	return ci.name;
-    }
+	tagvalue(opt, c);
+	firstInnerTableEnd(opt);
 
-    private String getNodeName(ClassDoc c) {
-	String className = c.toString();
-	ClassInfo ci = getClassInfo(className);
-	if (ci == null)
-	    ci = newClassInfo(className, false, hidden(c));
-	return ci.name;
-    }
-    
-    /** Return a class's internal name */
-    private String getNodeName(String c) {
-	ClassInfo ci = getClassInfo(c);
+	/*
+	 * Warning: The boolean expressions guarding innerTableStart()
+	 * in this block, should match those in the code block above
+	 * marked: "Calculate the number of innerTable rows we will emmit"
+	 */
+	if (showMembers) {
+	    if (opt.showAttributes) {
+		innerTableStart();
+		FieldDoc[] fields = c.fields();
+		// if there are no fields, print an empty line to generate proper HTML
+		if (fields.length == 0)
+		    tableLine(Align.LEFT, "");
+		else
+		    attributes(opt, c.fields());
+		innerTableEnd();
+	    } else if(!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
+		// show an emtpy box if we don't show attributes but
+		// we show operations
+		innerTableStart();
+		tableLine(Align.LEFT, "");
+		innerTableEnd();
+	    }
+	    if (c.isEnum() && opt.showEnumConstants) {
+		innerTableStart();
+		FieldDoc[] ecs = c.enumConstants();
+		// if there are no constants, print an empty line to generate proper HTML
+		if (ecs.length == 0) {
+		    tableLine(Align.LEFT, "");
+		} else {
+		    for (FieldDoc fd : c.enumConstants()) {
+			tableLine(Align.LEFT, fd.name());
+		    }
+		}
+		innerTableEnd();
+	    }
+	    if (!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
+		innerTableStart();
+		boolean printedLines = false;
+		if (opt.showConstructors)
+		    printedLines |= operations(opt, c.constructors());
+		if (opt.showOperations)
+		    printedLines |= operations(opt, c.methods());
 
-	if (ci == null)
-	    ci = newClassInfo(c, false, false);
+		if (!printedLines)
+		    // if there are no operations nor constructors,
+		    // print an empty line to generate proper HTML
+		    tableLine(Align.LEFT, "");
+
+		innerTableEnd();
+	    }
+	}
+	externalTableEnd();
+	w.print(", URL=\"" + classToUrl(c, rootClass) + "\"");
+	nodeProperties(opt);
+
+	// If needed, add a note for this node
+	int ni = 0;
+	for (Tag t : c.tags("note")) {
+	    String noteName = "n" + ni + "c" + ci.name;
+	    w.print("\t// Note annotation\n");
+	    w.print("\t" + noteName + " [label=");
+	    externalTableStart(UmlGraph.getCommentOptions(), c.qualifiedName(), classToUrl(c, rootClass));
+	    innerTableStart();
+	    tableLine(Align.LEFT, Font.CLASS.wrap(UmlGraph.getCommentOptions(), htmlNewline(escape(t.text()))));
+	    innerTableEnd();
+	    externalTableEnd();
+	    nodeProperties(UmlGraph.getCommentOptions());
+	    w.print("\t" + noteName + " -> " + relationNode(c) + "[arrowhead=none];\n");
+	    ni++;
+	}
+	ci.nodePrinted = true;
 	return ci.name;
     }
 
@@ -564,7 +537,10 @@ class ClassGraph {
      * whose outline is rendered through an inner table.
      */
     private String relationNode(ClassDoc c) {
-	return getNodeName(c) + optionProvider.getOptionsFor(c).shape.landingPort();
+	String className = c.toString();
+	ClassInfo ci = getClassInfo(className);
+	return (ci != null ? ci : newClassInfo(className, hidden(c))).name //
+		+ optionProvider.getOptionsFor(c).shape.landingPort();
     }
 
     /** Return the full name of a relation's node c.
@@ -575,7 +551,9 @@ class ClassGraph {
      */
     private String relationNode(ClassDoc c, String cName) {
 	Options opt = c == null ? optionProvider.getOptionsFor(cName) : optionProvider.getOptionsFor(c);
-	return getNodeName(cName) + opt.shape.landingPort();
+	ClassInfo ci = getClassInfo(cName);
+	return (ci != null ? ci : newClassInfo(cName, false)).name //
+		+ opt.shape.landingPort();
     }
 
     /** Print a class's relations */
@@ -584,14 +562,10 @@ class ClassGraph {
 	if (hidden(c) || c.name().equals("")) // avoid phantom classes, they may pop up when the source uses annotations
 	    return;
 	String className = c.toString();
-
 	// Print generalization (through the Java superclass)
 	Type s = c.superclassType();
-	if (s != null &&
-	    !s.toString().equals("java.lang.Object") &&
-	    !c.isEnum() &&
-	    !hidden(s.asClassDoc())) {
-	    	ClassDoc sc = s.asClassDoc();
+	ClassDoc sc = s != null && !s.qualifiedTypeName().equals(Object.class.getName()) ? s.asClassDoc() : null;
+	if (sc != null && !c.isEnum() && !hidden(sc)) {
 		w.println("\t//" + c + " extends " + s + "\n" +
 		    "\t" + relationNode(sc) + " -> " + relationNode(c) +
 		    " [" + RelationType.EXTENDS.style + "];");

@@ -43,8 +43,7 @@ class ClassInfo {
      */
     Map<String, RelationPattern> relatedClasses = new HashMap<String, RelationPattern>();
 
-    ClassInfo(boolean p, boolean h) {
-	nodePrinted = p;
+    ClassInfo(boolean h) {
 	hidden = h;
 	name = "c" + classNumber;
 	classNumber++;
