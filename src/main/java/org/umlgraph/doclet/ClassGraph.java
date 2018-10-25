@@ -25,7 +25,7 @@ import static org.umlgraph.doclet.StringUtil.guillemize;
 import static org.umlgraph.doclet.StringUtil.htmlNewline;
 import static org.umlgraph.doclet.StringUtil.removeTemplate;
 import static org.umlgraph.doclet.StringUtil.tokenize;
-
+import static org.umlgraph.doclet.StringUtil.buildRelativePathFromClassNames;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -91,7 +91,7 @@ class ClassGraph {
     
     // used only when generating context class diagrams in UMLDoc, to generate the proper
     // relative links to other classes in the image map
-    protected Doc contextDoc;
+    protected final Doc contextDoc;
       
     /**
      * Create a new ClassGraph.  <p>The packages passed as an
@@ -114,17 +114,12 @@ class ClassGraph {
 	rootClasses = new HashSet<String>();
 	for (ClassDoc classDoc : root.classes()) {
 	    rootClasses.add(classDoc.qualifiedName());
-		rootClassdocs.put(classDoc.qualifiedName(), classDoc);
+	    rootClassdocs.put(classDoc.qualifiedName(), classDoc);
 	}
 	
 	Options opt = optionProvider.getGlobalOptions();
-	if (opt.compact) {
-	    linePrefix = "";
-	    linePostfix = "";
-	} else {
-	    linePrefix = "\t";
-	    linePostfix = "\n";
-	}
+	linePrefix = opt.compact ? "" : "\t";
+	linePostfix = opt.compact ? "" : "\n";
     }
 
     
@@ -864,39 +859,12 @@ class ClassGraph {
 		} else {
 		    return classToUrl(cd.qualifiedName());
 		}
-	    return buildRelativePath(packageName, cd.containingPackage().name()) + cd.name() + ".html";
+	    return buildRelativePathFromClassNames(packageName, cd.containingPackage().name()) + cd.name() + ".html";
 	} else {
 	    return classToUrl(cd.qualifiedName());
 	} 
     }
 
-    protected static String buildRelativePath(String contextPackageName, String classPackageName) {
-	// path, relative to the root, of the destination class
-	String[] contextClassPath = contextPackageName.split("\\.");
-	String[] currClassPath = classPackageName.split("\\.");
-
-	// compute relative path between the context and the destination
-	// ... first, compute common part
-	int i = 0;
-	while (i < contextClassPath.length && i < currClassPath.length
-		&& contextClassPath[i].equals(currClassPath[i]))
-	    i++;
-	// ... go up with ".." to reach the common root
-	StringBuilder buf = new StringBuilder();
-	if (i == contextClassPath.length) {
-	    buf.append('.').append(FILE_SEPARATOR);
-	} else {
-	    for (int j = i; j < contextClassPath.length; j++) {
-		buf.append("..").append(FILE_SEPARATOR);
-	    }
-	}
-	// ... go down from the common root to the destination
-	for (int j = i; j < currClassPath.length; j++) {
-	    buf.append(currClassPath[j]).append(FILE_SEPARATOR);
-	}
-	return buf.toString();
-    }
-	
 	private String getPackageName(String className) {
 		if (this.rootClassdocs.get(className) == null) {
 			int idx = className.lastIndexOf('.');
@@ -920,7 +888,7 @@ class ClassGraph {
 	String docRoot = mapApiDocRoot(className);
 	if (docRoot == null)
 	    return null;
-	return new StringBuilder(docRoot) //
+	return new StringBuilder(250).append(docRoot) //
 		.append(getPackageName(className).replace('.', FILE_SEPARATOR)) //
 		.append(FILE_SEPARATOR) //
 		.append(getUnqualifiedName(className)) //

@@ -164,4 +164,24 @@ class StringUtil {
 	}
 	return buf.toString();
     }
+
+    public static String buildRelativePathFromClassNames(String contextPackageName, String classPackageName) {
+	// path, relative to the root, of the destination class
+	String[] contextClassPath = contextPackageName.split("\\.");
+	String[] currClassPath = classPackageName.split("\\.");
+
+	// compute relative path between the context and the destination
+	// ... first, compute common part
+	int i = 0, e = Math.min(contextClassPath.length, currClassPath.length);
+	while (i < e && contextClassPath[i].equals(currClassPath[i]))
+	    i++;
+	// ... go up with ".." to reach the common root
+	StringBuilder buf = new StringBuilder(classPackageName.length());
+	for (int j = i; j < contextClassPath.length; j++)
+	    buf.append("../");
+	// ... go down from the common root to the destination
+	for (int j = i; j < currClassPath.length; j++)
+	    buf.append(currClassPath[j]).append('/'); // Always use HTML seperators
+	return buf.toString();
+    }
 }
