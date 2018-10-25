@@ -91,7 +91,7 @@ class ClassGraph {
     
     // used only when generating context class diagrams in UMLDoc, to generate the proper
     // relative links to other classes in the image map
-    protected final Doc contextDoc;
+    protected final String contextPackageName;
       
     /**
      * Create a new ClassGraph.  <p>The packages passed as an
@@ -106,7 +106,6 @@ class ClassGraph {
 	this.optionProvider = optionProvider;
 	this.collectionClassDoc = root.classNamed("java.util.Collection");
 	this.mapClassDoc = root.classNamed("java.util.Map");
-	this.contextDoc = contextDoc;
 	
 	// to gather the packages containing specified classes, loop thru them and gather
 	// package definitions. User root.specifiedPackages is not safe, since the user
@@ -116,6 +115,14 @@ class ClassGraph {
 	    rootClasses.add(classDoc.qualifiedName());
 	    rootClassdocs.put(classDoc.qualifiedName(), classDoc);
 	}
+	
+	// determine the context path, relative to the root
+	if (contextDoc instanceof ClassDoc)
+	    contextPackageName = ((ClassDoc) contextDoc).containingPackage().name();
+	else if (contextDoc instanceof PackageDoc)
+	    contextPackageName = ((PackageDoc) contextDoc).name();
+	else
+	    contextPackageName = null; // Not available
 	
 	Options opt = optionProvider.getGlobalOptions();
 	linePrefix = opt.compact ? "" : "\t";
@@ -849,20 +856,9 @@ class ClassGraph {
     /** Convert the class name into a corresponding URL */
     public String classToUrl(ClassDoc cd, boolean rootClass) {
 	// building relative path for context and package diagrams
-	if(contextDoc != null && rootClass) {
-	    // determine the context path, relative to the root
-	    String packageName;
-	    if (contextDoc instanceof ClassDoc) {
-		    packageName = ((ClassDoc) contextDoc).containingPackage().name();
-		} else if (contextDoc instanceof PackageDoc) {
-		    packageName = ((PackageDoc) contextDoc).name();
-		} else {
-		    return classToUrl(cd.qualifiedName());
-		}
-	    return buildRelativePathFromClassNames(packageName, cd.containingPackage().name()) + cd.name() + ".html";
-	} else {
-	    return classToUrl(cd.qualifiedName());
-	} 
+	if(contextPackageName != null && rootClass)
+	    return buildRelativePathFromClassNames(contextPackageName, cd.containingPackage().name()) + cd.name() + ".html";
+	return classToUrl(cd.qualifiedName());
     }
 
 	private String getPackageName(String className) {
