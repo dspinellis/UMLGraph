@@ -67,8 +67,6 @@ import com.sun.javadoc.WildcardType;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 class ClassGraph {
-    protected static final char FILE_SEPARATOR = '/';
-
     enum Align {
 	LEFT, CENTER, RIGHT;
 
@@ -861,49 +859,34 @@ class ClassGraph {
 	return classToUrl(cd.qualifiedName());
     }
 
-	private String getPackageName(String className) {
-		if (this.rootClassdocs.get(className) == null) {
-			int idx = className.lastIndexOf('.');
-			return idx > 0 ? className.substring(0, idx) : "";
-		} else {
-			return this.rootClassdocs.get(className).containingPackage().name();
-		}
-	}
-	
-	private String getUnqualifiedName(String className) {
-		if (this.rootClassdocs.get(className) == null) {
-			int idx = className.lastIndexOf('.');
-			return idx > 0 ? className.substring(idx + 1) : className;
-		} else {
-			return this.rootClassdocs.get(className).name();
-		}
-	}
-    
     /** Convert the class name into a corresponding URL */
     public String classToUrl(String className) {
-	String docRoot = mapApiDocRoot(className);
-	if (docRoot == null)
-	    return null;
-	return new StringBuilder(250).append(docRoot) //
-		.append(getPackageName(className).replace('.', FILE_SEPARATOR)) //
-		.append(FILE_SEPARATOR) //
-		.append(getUnqualifiedName(className)) //
-		.append(".html").toString();
+	ClassDoc classDoc = rootClassdocs.get(className);
+	if (classDoc != null) {
+	    String docRoot = optionProvider.getGlobalOptions().apiDocRoot;
+	    if (docRoot == null)
+		return null;
+	    return new StringBuilder(docRoot.length() + className.length() + 10).append(docRoot) //
+		    .append(classDoc.containingPackage().name().replace('.', '/')) //
+		    .append('/').append(classDoc.name()).append(".html").toString();
+	}
+	String docRoot = optionProvider.getGlobalOptions().getApiDocRoot(className);
+	    if (docRoot == null)
+		return null;
+	int split = className.lastIndexOf('.'), cur;
+	// For inner classes, the full name may contain a dot,
+	// So we need this heuristic to go back further:
+	while ((cur = className.lastIndexOf('.', split - 1)) >= 0) {
+	    if (Character.isUpperCase(className.charAt(cur + 1)))
+		split = cur; // Continue, this was a class name.
+	    else
+		break;
+	}
+	StringBuilder buf = new StringBuilder(docRoot.length() + className.length() + 10).append(docRoot);
+	if (split > 0) // Avoid -1, and the extra slash then.
+	    buf.append(className.substring(0, split).replace('.', '/')).append('/');
+	return buf.append(className, split + 1, className.length()).append(".html").toString();
     }
-
-    /**
-     * Returns the appropriate URL "root" for a given class name.
-     * The root will be used as the prefix of the URL used to link the class in
-     * the final diagram to the associated JavaDoc page.
-     */
-    private String mapApiDocRoot(String className) {
-	/* If no packages are specified, we use apiDocRoot for all of them. */
-	if (rootClasses.contains(className))
-	    return optionProvider.getGlobalOptions().apiDocRoot;
-	else
-	    return optionProvider.getGlobalOptions().getApiDocRoot(className);
-    }
-
     
     /** Dot prologue 
      * @throws IOException */
