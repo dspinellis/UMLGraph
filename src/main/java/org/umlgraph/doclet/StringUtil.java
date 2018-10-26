@@ -184,4 +184,36 @@ class StringUtil {
 	    buf.append(currClassPath[j]).append('/'); // Always use HTML seperators
 	return buf.toString();
     }
+
+    /**
+     * We can't just always use the last dot, because there are inner classes. And
+     * these may have frequent names. But the prime example is
+     * {@link java.util.Map.Entry}, which we want to show up as package
+     * <tt>java.util</tt> and class <tt>Map.Entry</tt>.
+     * <p>
+     * Note: this is only a heuristic. We only have the string here, and must assume
+     * users adhere to Java conventions, of beginning package names with a lowercase
+     * letter.
+     * 
+     * @param className
+     * @return Splitting point (Either referring to a dot, or -1)
+     */
+    public static int splitPackageClass(String className) {
+	int gen = className.indexOf('<'); // Begin before generics.
+	int end = gen >= 0 ? gen : className.length();
+	int start = className.lastIndexOf('.', end);
+	// No package name special cases:
+	if (start < 0)
+	    return gen >= 0 || className.isEmpty() ? -1 //
+		    : Character.isLowerCase(className.charAt(0)) ? end : -1;
+	int split = end;
+	while (true) {
+	    if (Character.isLowerCase(className.charAt(start + 1)))
+		return split;
+	    split = start; // Continue, this looks like a class name.
+	    if (start < 0)
+		return -1;
+	    start = className.lastIndexOf('.', start - 1);
+	}
+    }
 }

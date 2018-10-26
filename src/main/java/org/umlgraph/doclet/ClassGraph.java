@@ -19,13 +19,15 @@
 
 package org.umlgraph.doclet;
 
+import static org.umlgraph.doclet.StringUtil.buildRelativePathFromClassNames;
 import static org.umlgraph.doclet.StringUtil.escape;
 import static org.umlgraph.doclet.StringUtil.guilWrap;
 import static org.umlgraph.doclet.StringUtil.guillemize;
 import static org.umlgraph.doclet.StringUtil.htmlNewline;
 import static org.umlgraph.doclet.StringUtil.removeTemplate;
+import static org.umlgraph.doclet.StringUtil.splitPackageClass;
 import static org.umlgraph.doclet.StringUtil.tokenize;
-import static org.umlgraph.doclet.StringUtil.buildRelativePathFromClassNames;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -133,33 +135,38 @@ class ClassGraph {
     private static String qualifiedName(Options opt, String r) {
 	if (opt.hideGenerics)
 	    r = removeTemplate(r);
-	// Nothing to do:
+	// Fast path - nothing to do:
 	if (opt.showQualified && (opt.showQualifiedGenerics || r.indexOf('<') < 0))
 	    return r;
 	StringBuilder buf = new StringBuilder(r.length());
-	int last = 0, depth = 0;
-	boolean strip = !opt.showQualified;
-	for (int i = 0; i < r.length();) {
-	    char c = r.charAt(i++);
-	    // The last condition prevents losing the dot in A<V>.B
-	    if ((c == '.' || c == '$') && strip && last + 1 < i)
-		last = i; // skip
+	qualifiedNameInner(opt, r, buf, 0, !opt.showQualified);
+	return buf.toString();
+    }
+
+    private static int qualifiedNameInner(Options opt, String r, StringBuilder buf, int last, boolean strip) {
+	boolean guessPackage = last < r.length() && Character.isLowerCase(r.charAt(last));
+	for (int i = last; i < r.length(); i++) {
+	    char c = r.charAt(i);
+	    if (c == '.' || c == '$') {
+		if (strip && guessPackage)
+		    last = i + 1; // skip dot
+		guessPackage = guessPackage && last < r.length() && Character.isLowerCase(r.charAt(last));
+		continue;
+	    }
 	    if (Character.isJavaIdentifierPart(c))
 		continue;
+	    buf.append(r, last, i);
+	    last = i;
 	    // Handle nesting of generics
 	    if (c == '<') {
-		++depth;
-		strip = !opt.showQualifiedGenerics;
-	    } else if (c == '>' && --depth == 0)
-		strip = !opt.showQualified;
-	    if (last < i) {
-		buf.append(r, last, i);
-		last = i;
-	    }
+		buf.append('<');
+		i = last = qualifiedNameInner(opt, r, buf, ++last, !opt.showQualifiedGenerics);
+		buf.append('>');
+	    } else if (c == '>')
+		return i + 1;
 	}
-	if (last < r.length())
-	    buf.append(r, last, r.length());
-	return buf.toString();
+	buf.append(r, last, r.length());
+	return r.length();
     }
 
     /**
@@ -374,8 +381,7 @@ class ClassGraph {
 	stereotype(opt, c, Align.CENTER);
 	Font font = c.isAbstract() && !c.isInterface() ? Font.CLASS_ABSTRACT : Font.CLASS;
 	String qualifiedName = qualifiedName(opt, className);
-	int startTemplate = qualifiedName.indexOf('<');
-	int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
+	int idx = splitPackageClass(qualifiedName);
 	if (opt.showComment)
 	    tableLine(Align.LEFT, Font.CLASS.wrap(opt, htmlNewline(escape(c.commentText()))));
 	else if (opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
@@ -849,21 +855,14 @@ class ClassGraph {
 	String docRoot = optionProvider.getGlobalOptions().getApiDocRoot(className);
 	    if (docRoot == null)
 		return null;
-	int split = className.lastIndexOf('.'), cur;
-	// For inner classes, the full name may contain a dot,
-	// So we need this heuristic to go back further:
-	while ((cur = className.lastIndexOf('.', split - 1)) >= 0) {
-	    if (Character.isUpperCase(className.charAt(cur + 1)))
-		split = cur; // Continue, this was a class name.
-	    else
-		break;
-	}
+	int split = splitPackageClass(className);
 	StringBuilder buf = new StringBuilder(docRoot.length() + className.length() + 10).append(docRoot);
 	if (split > 0) // Avoid -1, and the extra slash then.
 	    buf.append(className.substring(0, split).replace('.', '/')).append('/');
-	return buf.append(className, split + 1, className.length()).append(".html").toString();
+	return buf.append(className, Math.min(split + 1, className.length()), className.length()) //
+		.append(".html").toString();
     }
-    
+
     /** Dot prologue 
      * @throws IOException */
     public void prologue() throws IOException {
