@@ -57,6 +57,7 @@ public class Options implements Cloneable, OptionProvider {
     List<Pattern> includePatterns = new ArrayList<Pattern>();
     boolean showQualified = false;
     boolean showQualifiedGenerics = false;
+    boolean hideGenerics = false;
     boolean showAttributes = false;
     boolean showEnumerations = false;
     boolean showEnumConstants = false;
@@ -190,6 +191,7 @@ public class Options implements Cloneable, OptionProvider {
     public static int optionLength(String option) {
         if(matchOption(option, "qualify", true) ||
            matchOption(option, "qualifyGenerics", true) ||
+           matchOption(option, "hideGenerics", true) ||
            matchOption(option, "horizontal", true) ||
            matchOption(option, "attributes", true) ||
            matchOption(option, "enumconstants", true) ||
@@ -265,6 +267,8 @@ public class Options implements Cloneable, OptionProvider {
 	    showQualified = positive;
 	} else if(matchOption(opt[0], "qualifyGenerics", true)) {
 	    showQualifiedGenerics = positive;
+	} else if(matchOption(opt[0], "hideGenerics", true)) {
+	    hideGenerics = positive;
 	} else if(matchOption(opt[0], "horizontal", true)) {
 	    horizontal = positive;
 	} else if(matchOption(opt[0], "attributes", true)) {

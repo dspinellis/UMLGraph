@@ -131,6 +131,8 @@ class ClassGraph {
 
     /** Return the class's name, possibly by stripping the leading path */
     private static String qualifiedName(Options opt, String r) {
+	if (opt.hideGenerics)
+	    r = removeTemplate(r);
 	// Nothing to do:
 	if (opt.showQualified && (opt.showQualifiedGenerics || r.indexOf('<') < 0))
 	    return r;
@@ -183,7 +185,7 @@ class ClassGraph {
     private String type(Options opt, Type t, boolean generics) {
 	return ((generics ? opt.showQualifiedGenerics : opt.showQualified) ? //
 		t.qualifiedTypeName() : t.typeName()) //
-		+ typeParameters(opt, t.asParameterizedType());
+		+ (opt.hideGenerics ? "" : typeParameters(opt, t.asParameterizedType()));
     }
 
     /** Print the parameters of the parameterized type t */
