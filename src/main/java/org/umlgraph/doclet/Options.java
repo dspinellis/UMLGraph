@@ -177,6 +177,7 @@ public class Options implements Cloneable, OptionProvider {
      */
     public static int optionLength(String option) {
         if(option.equals("-qualify") || option.equals("-!qualify") ||
+           option.equals("-qualifyGenerics") || option.equals("-!qualifyGenerics") ||
            option.equals("-horizontal") || option.equals("-!horizontal") ||
            option.equals("-attributes") || option.equals("-!attributes") ||
            option.equals("-enumconstants") || option.equals("-!enumconstants") ||
