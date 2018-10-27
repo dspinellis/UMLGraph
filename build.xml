@@ -127,36 +127,44 @@ class Version { public static String VERSION = "${VERSION}";}
 
 <target name="test" depends="compile,testcompile"
 	description="run the regression tests" >
-	<java classname="org.umlgraph.test.BasicTest" fork="true" failonerror="true">
-         <classpath>
-           <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-           <pathelement location="${build}"/>
-           <pathelement location="${lib}/UmlGraph.jar"/>
-         </classpath>
-    </java>
-	<java classname="org.umlgraph.test.UmlDocTest" fork="true" failonerror="true">
-	         <classpath>
-	           <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-	           <pathelement location="${build}"/>
-	           <pathelement location="${lib}/UmlGraph.jar"/>
-	         </classpath>
-	    </java>
+	<!-- postpone failures, so we get to see the pngs -->
+	<java classname="org.umlgraph.test.BasicTest" fork="true" resultproperty="BasicTest.exit">
+		<classpath>
+			<pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
+			<pathelement location="${build}"/>
+			<pathelement location="${lib}/UmlGraph.jar"/>
+		</classpath>
+	</java>
+	<java classname="org.umlgraph.test.UmlDocTest" fork="true" resultproperty="UmlDocTest.exit">
+		<classpath>
+			<pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
+			<pathelement location="${build}"/>
+			<pathelement location="${lib}/UmlGraph.jar"/>
+		</classpath>
+	</java>
 	<apply executable="dot" dest="${testout}" parallel="false">
 		<arg value="-Tpng"/>
 		<arg value="-o"/>
 		<targetfile/>
 		<srcfile/>
-	  <fileset dir="${testout}" includes="*.dot"/>
-	  <mapper type="glob" from="*.dot" to="*.png"/>
+		<fileset dir="${testout}" includes="*.dot"/>
+		<mapper type="glob" from="*.dot" to="*.png"/>
 	</apply>
 	<apply executable="dot" dest="${testref}" parallel="false">
 		<arg value="-Tpng"/>
 		<arg value="-o"/>
 		<targetfile/>
 		<srcfile/>
-	  <fileset dir="${testref}" includes="*.dot"/>
-	  <mapper type="glob" from="*.dot" to="*.png"/>
+		<fileset dir="${testref}" includes="*.dot"/>
+		<mapper type="glob" from="*.dot" to="*.png"/>
 	</apply>
+	<!-- postponed failure, so we get to see the pngs -->
+	<fail message="BasicTest failed">
+		<condition><not><equals arg1="0" arg2="${BasicTest.exit}"/></not></condition>
+	</fail>
+	<fail message="UmlDocTest failed">
+		<condition><not><equals arg1="0" arg2="${UmlDocTest.exit}"/></not></condition>
+	</fail>
 </target>
 
 <target name="javadocs" depends="compile">
