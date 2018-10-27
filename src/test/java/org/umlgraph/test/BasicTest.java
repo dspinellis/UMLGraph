@@ -64,6 +64,7 @@ public class BasicTest {
 	pw.println();
 	pw.println();
 	pw.flush();
+	System.exit(differences.size() > 0 ? 1 : 0);
     }
 
     private static void performViewTests(List<String> differences, File outFolder)
