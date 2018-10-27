@@ -141,10 +141,8 @@ public class ContextMatcher implements ClassMatcher {
 	    return true;
 
 	for (ClassDoc mcd : matched) {
-	    String mcName = mcd.toString();
-	    ClassInfo ciMatched = cg.getClassInfo(mcName);
-	    RelationPattern rp = ciMatched.getRelation(name);
-	    if (ciMatched != null && rp != null && opt.contextRelationPattern.matchesOne(rp))
+	    RelationPattern rp = cg.getClassInfo(mcd, true).getRelation(name);
+	    if (rp != null && opt.contextRelationPattern.matchesOne(rp))
 		return true;
 	}
 	return false;

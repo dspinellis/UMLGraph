@@ -331,23 +331,32 @@ class ClassGraph {
 			.matchesHideExpression(c.toString());
     }
 
-    protected ClassInfo getClassInfo(String className) {
-	return classnames.get(removeTemplate(className));
+    protected ClassInfo getClassInfo(ClassDoc cd, boolean create) {
+	return getClassInfo(cd, cd.toString(), create);
     }
 
-    private ClassInfo newClassInfo(String className, boolean hidden) {
-	ClassInfo ci = new ClassInfo(hidden);
-        classnames.put(removeTemplate(className), ci);
-        return ci;
+    protected ClassInfo getClassInfo(String className, boolean create) {
+	return getClassInfo(null, className, create);
+    }
+
+    protected ClassInfo getClassInfo(ClassDoc cd, String className, boolean create) {
+	className = removeTemplate(className);
+	ClassInfo ci = classnames.get(className);
+	if (ci == null && create) {
+	    Options o = optionProvider.getOptionsFor(className);
+	    boolean hidden = cd != null ? hidden(cd) : o.matchesHideExpression(className);
+	    ci = new ClassInfo(hidden, o.shape.landingPort());
+	    classnames.put(className, ci);
+	}
+	return ci;
     }
 
     /** Return true if the class name is associated to an hidden class or matches a hide expression */
-    private boolean hidden(String s) {
-	ClassInfo ci = getClassInfo(s);
-	return (ci != null && ci.hidden) || optionProvider.getOptionsFor(s).matchesHideExpression(s);
+    private boolean hidden(String className) {
+	className = removeTemplate(className);
+	ClassInfo ci = classnames.get(className);
+	return ci != null ? ci.hidden : optionProvider.getOptionsFor(className).matchesHideExpression(className);
     }
-
-    
 
     /**
      * Prints the class if needed.
@@ -357,14 +366,13 @@ class ClassGraph {
      * relative links in diagrams for UMLDoc
      */
     public String printClass(ClassDoc c, boolean rootClass) {
-	String className = c.toString();
-	ClassInfo ci = getClassInfo(className);
-	ci = ci != null ? ci : newClassInfo(className, hidden(c));
+	ClassInfo ci = getClassInfo(c, true);
 	if(ci.nodePrinted || ci.hidden)
 	    return ci.name;
 	Options opt = optionProvider.getOptionsFor(c);
 	if (c.isEnum() && !opt.showEnumerations)
 	    return ci.name;
+	String className = c.toString();
 	// Associate classname's alias
 	w.println(linePrefix + "// " + className);
 	// Create label
@@ -469,7 +477,8 @@ class ClassGraph {
 	    innerTableEnd();
 	    externalTableEnd();
 	    nodeProperties(UmlGraph.getCommentOptions());
-	    w.print(linePrefix + noteName + " -> " + relationNode(c) + "[arrowhead=none];\n");
+	    ClassInfo ci1 = getClassInfo(c, true);
+	    w.print(linePrefix + noteName + " -> " + ci1.name + ci1.port + "[arrowhead=none];\n");
 	    ni++;
 	}
 	ci.nodePrinted = true;
@@ -518,7 +527,8 @@ class ClassGraph {
 	headLabel = (headLabel != null && !headLabel.isEmpty()) ? ",headlabel=\"" + headLabel + "\"" : "";
 	boolean unLabeled = tailLabel.isEmpty() && label.isEmpty() && headLabel.isEmpty();
 
-	String n1 = relationNode(from, fromName), n2 = relationNode(to, toName);
+	ClassInfo ci1 = getClassInfo(from, fromName, true), ci2 = getClassInfo(to, toName, true);
+	String n1 = ci1.name + ci1.port, n2 = ci2.name + ci2.port;
 	// For ranking we need to output extends/implements backwards.
 	if (rt.backorder) { // Swap:
 	    String tmp = n1;
@@ -544,8 +554,8 @@ class ClassGraph {
 	RelationDirection d = RelationDirection.BOTH;
 	if(rt == RelationType.NAVASSOC || rt == RelationType.DEPEND)
 	    d = RelationDirection.OUT;
-	getClassInfo(fromName).addRelation(toName, rt, d);
-        getClassInfo(toName).addRelation(fromName, rt, d.inverse());
+	ci1.addRelation(toName, rt, d);
+	ci2.addRelation(fromName, rt, d.inverse());
     }
 
     /**
@@ -558,30 +568,6 @@ class ClassGraph {
 	relation(opt, rt, from, from.toString(), to, to.toString(), tailLabel, label, headLabel);
     }
 
-
-    /** Return the full name of a relation's node.
-     * This may involve appending the port :p for the standard nodes
-     * whose outline is rendered through an inner table.
-     */
-    private String relationNode(ClassDoc c) {
-	String className = c.toString();
-	ClassInfo ci = getClassInfo(className);
-	return (ci != null ? ci : newClassInfo(className, hidden(c))).name //
-		+ optionProvider.getOptionsFor(c).shape.landingPort();
-    }
-
-    /** Return the full name of a relation's node c.
-     * This may involve appending the port :p for the standard nodes
-     * whose outline is rendered through an inner table.
-     * @param c the node's class (may be null)
-     * @param cName the node's class name
-     */
-    private String relationNode(ClassDoc c, String cName) {
-	Options opt = c == null ? optionProvider.getOptionsFor(cName) : optionProvider.getOptionsFor(c);
-	ClassInfo ci = getClassInfo(cName);
-	return (ci != null ? ci : newClassInfo(cName, false)).name //
-		+ opt.shape.landingPort();
-    }
 
     /** Print a class's relations */
     public void printRelations(ClassDoc c) {
@@ -617,37 +603,38 @@ class ClassGraph {
     public void printExtraClasses(RootDoc root) {
 	Set<String> names = new HashSet<String>(classnames.keySet()); 
 	for(String className: names) {
-	    ClassInfo info = getClassInfo(className);
-	    if (!info.nodePrinted) {
-		ClassDoc c = root.classNamed(className);
-		if(c != null) {
-		    printClass(c, false);
-		} else {
-		    Options opt = optionProvider.getOptionsFor(className);
-		    if(opt.matchesHideExpression(className))
-			continue;
-		    w.println(linePrefix + "// " + className);
-		    w.print(linePrefix  + info.name + "[label=");
-		    externalTableStart(opt, className, classToUrl(className));
-		    innerTableStart();
-		    String qualifiedName = qualifiedName(opt, className);
-		    int startTemplate = qualifiedName.indexOf('<');
-		    int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
-		    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
-			String packageName = qualifiedName.substring(0, idx);
-			String cn = qualifiedName.substring(idx + 1);
-			tableLine(Align.CENTER, Font.CLASS.wrap(opt, escape(cn)));
-			tableLine(Align.CENTER, Font.PACKAGE.wrap(opt, packageName));
-		    } else {
-			tableLine(Align.CENTER, Font.CLASS.wrap(opt, escape(qualifiedName)));
-		    }
-		    innerTableEnd();
-		    externalTableEnd();
-		    if (className == null || className.length() == 0)
-			w.print(",URL=\"" + classToUrl(className) + "\"");
-		    nodeProperties(opt);
-		}
+	    ClassInfo info = getClassInfo(className, true);
+	    if (info.nodePrinted)
+		continue;
+	    ClassDoc c = root.classNamed(className);
+	    if(c != null) {
+		printClass(c, false);
+		continue;
 	    }
+	    // Handle missing classes:
+	    Options opt = optionProvider.getOptionsFor(className);
+	    if(opt.matchesHideExpression(className))
+		continue;
+	    w.println(linePrefix + "// " + className);
+	    w.print(linePrefix  + info.name + "[label=");
+	    externalTableStart(opt, className, classToUrl(className));
+	    innerTableStart();
+	    String qualifiedName = qualifiedName(opt, className);
+	    int startTemplate = qualifiedName.indexOf('<');
+	    int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
+	    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
+		String packageName = qualifiedName.substring(0, idx);
+		String cn = qualifiedName.substring(idx + 1);
+		tableLine(Align.CENTER, Font.CLASS.wrap(opt, escape(cn)));
+		tableLine(Align.CENTER, Font.PACKAGE.wrap(opt, packageName));
+	    } else {
+		tableLine(Align.CENTER, Font.CLASS.wrap(opt, escape(qualifiedName)));
+	    }
+	    innerTableEnd();
+	    externalTableEnd();
+	    if (className == null || className.length() == 0)
+		w.print(",URL=\"" + classToUrl(className) + "\"");
+	    nodeProperties(opt);
 	}
     }
     
@@ -657,31 +644,28 @@ class ClassGraph {
      * @param classes
      */  
     public void printInferredRelations(ClassDoc c) {
-	Options opt = optionProvider.getOptionsFor(c);
-
 	// check if the source is excluded from inference
 	if (hidden(c))
 	    return;
 
+	Options opt = optionProvider.getOptionsFor(c);
+
 	for (FieldDoc field : c.fields(false)) {
 	    if(hidden(field))
 		continue;
-
 	    // skip statics
 	    if(field.isStatic())
 		continue;
-	    
 	    // skip primitives
 	    FieldRelationInfo fri = getFieldRelationInfo(field);
 	    if (fri == null)
 		continue;
-
 	    // check if the destination is excluded from inference
 	    if (hidden(fri.cd))
 		continue;
 
 	    // if source and dest are not already linked, add a dependency
-	    RelationPattern rp = getClassInfo(c.toString()).getRelation(fri.cd.toString());
+	    RelationPattern rp = getClassInfo(c, true).getRelation(fri.cd.toString());
 	    if (rp == null) {
 		String destAdornment = fri.multiple ? "*" : "";
 		relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
@@ -705,12 +689,10 @@ class ClassGraph {
      * @param classes
      */  
     public void printInferredDependencies(ClassDoc c) {
-	Options opt = optionProvider.getOptionsFor(c);
-
-	String sourceName = c.toString();
 	if (hidden(c))
 	    return;
 
+	Options opt = optionProvider.getOptionsFor(c);
 	Set<Type> types = new HashSet<Type>();
 	// harvest method return and parameter types
 	for (MethodDoc method : filterByVisibility(c.methods(false), opt.inferDependencyVisibility)) {
@@ -760,7 +742,7 @@ class ClassGraph {
 		continue;
 
 	    // if source and dest are not already linked, add a dependency
-	    RelationPattern rp = getClassInfo(sourceName).getRelation(fc.toString());
+	    RelationPattern rp = getClassInfo(c, true).getRelation(fc.toString());
 	    if (rp == null || rp.matchesOne(new RelationPattern(RelationDirection.OUT))) {
 		relation(opt, RelationType.DEPEND, c, fc, "", "", "");
 	    }

@@ -31,7 +31,7 @@ import java.util.Map;
 class ClassInfo {
     private static int classNumber;
     /** Alias name for the class */
-    String name;
+    final String name, port;
     /** True if the class class node has been printed */
     boolean nodePrinted;
     /** True if the class class node is hidden */
@@ -43,9 +43,10 @@ class ClassInfo {
      */
     Map<String, RelationPattern> relatedClasses = new HashMap<String, RelationPattern>();
 
-    ClassInfo(boolean h) {
+    ClassInfo(boolean h, String port) {
 	hidden = h;
 	name = "c" + classNumber;
+	this.port = port;
 	classNumber++;
     }
     
