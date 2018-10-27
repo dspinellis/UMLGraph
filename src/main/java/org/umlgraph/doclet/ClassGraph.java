@@ -721,17 +721,6 @@ class ClassGraph {
      * Prints associations recovered from the fields of a class. An association is inferred only
      * if another relation between the two classes is not already in the graph.
      * @param classes
-     */    
-    public void printInferredRelations(ClassDoc[] classes) {
-        for (ClassDoc c : classes) {
-            printInferredRelations(c);
-        }
-    }
-    
-    /**
-     * Prints associations recovered from the fields of a class. An association is inferred only
-     * if another relation between the two classes is not already in the graph.
-     * @param classes
      */  
     public void printInferredRelations(ClassDoc c) {
 	Options opt = optionProvider.getOptionsFor(c);
@@ -763,18 +752,6 @@ class ClassGraph {
 		String destAdornment = fri.multiple ? "*" : "";
 		relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
             }
-	}
-    }
-
-    /**
-     * Prints dependencies recovered from the methods of a class. A
-     * dependency is inferred only if another relation between the two
-     * classes is not already in the graph.
-     * @param classes
-     */    
-    public void printInferredDependencies(ClassDoc[] classes) {
-	for (ClassDoc c : classes) {
-	    printInferredDependencies(c);
 	}
     }
 
