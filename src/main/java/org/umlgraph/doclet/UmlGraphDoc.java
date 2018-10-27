@@ -117,14 +117,18 @@ public class UmlGraphDoc {
 
 	ContextView view = null;
 	for (ClassDoc classDoc : classDocs) {
-	    if(view == null)
-		view = new ContextView(outputFolder, classDoc, root, opt);
-	    else
-		view.setContextCenter(classDoc);
-	    UmlGraph.buildGraph(root, view, classDoc);
-	    runGraphviz(opt.dotExecutable, outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
-	    alterHtmlDocs(opt, outputFolder, classDoc.containingPackage().name(), classDoc.name(),
-		    classDoc.name() + ".html", Pattern.compile(".*(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
+	    try {
+		if(view == null)
+		    view = new ContextView(outputFolder, classDoc, root, opt);
+		else
+		    view.setContextCenter(classDoc);
+		UmlGraph.buildGraph(root, view, classDoc);
+		runGraphviz(opt.dotExecutable, outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
+		alterHtmlDocs(opt, outputFolder, classDoc.containingPackage().name(), classDoc.name(),
+			classDoc.name() + ".html", Pattern.compile(".*(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
+	    } catch (Exception e) {
+		throw new RuntimeException("Error generating " + classDoc.name(), e);
+	    }
 	}
     }
 
