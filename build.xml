@@ -64,6 +64,14 @@
 <!-- import environment variables -->
 <property environment="env"/>
 
+<target name="clean">
+	<delete dir="${build}"/>
+	<delete dir="${lib}"/>
+	<delete dir="testdata/dot-out"/>
+	<delete dir="${javadoc}"/>
+	<delete dir="${dist}/lib"/>
+</target>
+
 <target name="init">
 	<!-- Create the time stamp -->
 	<tstamp/>
