@@ -439,11 +439,6 @@ class ClassGraph {
 	    tagvalue(opt, c);
 	    firstInnerTableEnd(opt);
 	    
-	    /*
-	     * Warning: The boolean expressions guarding innerTableStart()
-	     * in this block, should match those in the code block above
-	     * marked: "Calculate the number of innerTable rows we will emmit"
-	     */
 	    if (showMembers) {
 		if (opt.showAttributes) {
 		    innerTableStart();
