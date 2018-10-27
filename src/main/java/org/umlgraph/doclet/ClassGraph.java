@@ -343,9 +343,8 @@ class ClassGraph {
 	className = removeTemplate(className);
 	ClassInfo ci = classnames.get(className);
 	if (ci == null && create) {
-	    Options o = optionProvider.getOptionsFor(className);
-	    boolean hidden = cd != null ? hidden(cd) : o.matchesHideExpression(className);
-	    ci = new ClassInfo(hidden, o.shape.landingPort());
+	    boolean hidden = cd != null ? hidden(cd) : optionProvider.getOptionsFor(className).matchesHideExpression(className);
+	    ci = new ClassInfo(hidden);
 	    classnames.put(className, ci);
 	}
 	return ci;
@@ -478,7 +477,7 @@ class ClassGraph {
 	    externalTableEnd();
 	    nodeProperties(UmlGraph.getCommentOptions());
 	    ClassInfo ci1 = getClassInfo(c, true);
-	    w.print(linePrefix + noteName + " -> " + ci1.name + ci1.port + "[arrowhead=none];\n");
+	    w.print(linePrefix + noteName + " -> " + ci1.name + "[arrowhead=none];\n");
 	    ni++;
 	}
 	ci.nodePrinted = true;
@@ -528,13 +527,12 @@ class ClassGraph {
 	boolean unLabeled = tailLabel.isEmpty() && label.isEmpty() && headLabel.isEmpty();
 
 	ClassInfo ci1 = getClassInfo(from, fromName, true), ci2 = getClassInfo(to, toName, true);
-	String n1 = ci1.name + ci1.port, n2 = ci2.name + ci2.port;
+	String n1 = ci1.name, n2 = ci2.name;
 	// For ranking we need to output extends/implements backwards.
 	if (rt.backorder) { // Swap:
-	    String tmp = n1;
-	    n1 = n2;
-	    n2 = tmp;
-	    tmp = tailLabel;
+	    n1 = ci2.name;
+	    n2 = ci1.name;
+	    String tmp = tailLabel;
 	    tailLabel = headLabel;
 	    headLabel = tmp;
 	}
@@ -886,7 +884,7 @@ class ClassGraph {
 	    linePrefix + "node [fontname=\"" + opt.nodeFontName +
 	    "\",fontcolor=\"" + opt.nodeFontColor +
 	    "\",fontsize=" + fmt(opt.nodeFontSize) +
-	    ",shape=plaintext];"
+	    ",shape=plaintext,margin=0,width=0,height=0];"
 	);
 
 	w.println(linePrefix + "nodesep=" + opt.nodeSep + ";");
@@ -909,7 +907,7 @@ class ClassGraph {
 	String href = url == null ? "" : (" href=\"" + url + "\" target=\"_parent\"");
 	w.print("<<table title=\"" + name + "\" border=\"0\" cellborder=\"" + 
 	    opt.shape.cellBorder() + "\" cellspacing=\"0\" " +
-	    "cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
+	    "cellpadding=\"2\"" + bgcolor + href + ">" + linePostfix);
     }
     
     private void externalTableEnd() {
@@ -943,7 +941,8 @@ class ClassGraph {
     }
 
     private void tableLine(Align align, String text) {
-	w.print("<tr><td align=\"" + align.lower + "\" balign=\"" + align.lower + "\"> " //
+	w.print(linePrefix + linePrefix //
+		+ "<tr><td align=\"" + align.lower + "\" balign=\"" + align.lower + "\"> " //
 		+ text // MAY contain markup!
 		+ " </td></tr>" + linePostfix);
     }

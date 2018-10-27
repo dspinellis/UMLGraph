@@ -7,38 +7,38 @@
 digraph G {
 graph [fontnames="svg"]
 edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
-node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext,margin=0,width=0,height=0];
 nodesep=0.25;
 ranksep=0.5;
 // gr.spinellis.context.classes.AClient
-c424 [label=<<table title="gr.spinellis.context.classes.AClient" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> AClient </td></tr></table></td></tr></table>>];
+c424 [label=<<table title="gr.spinellis.context.classes.AClient" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> AClient </td></tr></table></td></tr></table>>];
 // gr.spinellis.context.classes.ASubclass
-c426 [label=<<table title="gr.spinellis.context.classes.ASubclass" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ASubclass </td></tr></table></td></tr></table>>];
+c426 [label=<<table title="gr.spinellis.context.classes.ASubclass" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ASubclass </td></tr></table></td></tr></table>>];
 // gr.spinellis.context.classes.E
-c427 [label=<<table title="gr.spinellis.context.classes.E" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> E </td></tr></table></td></tr></table>>];
+c427 [label=<<table title="gr.spinellis.context.classes.E" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> E </td></tr></table></td></tr></table>>];
 // gr.spinellis.context.classes.D
-c429 [label=<<table title="gr.spinellis.context.classes.D" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> D </td></tr></table></td></tr></table>>];
+c429 [label=<<table title="gr.spinellis.context.classes.D" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> D </td></tr></table></td></tr></table>>];
 // gr.spinellis.context.classes.B
-c432 [label=<<table title="gr.spinellis.context.classes.B" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> B </td></tr></table></td></tr></table>>];
+c432 [label=<<table title="gr.spinellis.context.classes.B" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> B </td></tr></table></td></tr></table>>];
 // gr.spinellis.context.classes.ABaseClass
-c433 [label=<<table title="gr.spinellis.context.classes.ABaseClass" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ABaseClass </td></tr></table></td></tr></table>>];
+c433 [label=<<table title="gr.spinellis.context.classes.ABaseClass" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ABaseClass </td></tr></table></td></tr></table>>];
 // gr.spinellis.context.classes.A
-c434 [label=<<table title="gr.spinellis.context.classes.A" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonchiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> A </td></tr></table></td></tr></table>>];
+c434 [label=<<table title="gr.spinellis.context.classes.A" border="0" cellborder="1" cellspacing="0" cellpadding="2" bgcolor="lemonchiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> A </td></tr></table></td></tr></table>>];
 // gr.spinellis.context.classes.ASubclass extends gr.spinellis.context.classes.A
-c434:p -> c426:p [arrowtail=empty,dir=back,weight=10];
+c434 -> c426 [arrowtail=empty,dir=back,weight=10];
 // gr.spinellis.context.classes.A extends gr.spinellis.context.classes.ABaseClass
-c433:p -> c434:p [arrowtail=empty,dir=back,weight=10];
+c433 -> c434 [arrowtail=empty,dir=back,weight=10];
 // gr.spinellis.context.classes.D navassoc gr.spinellis.context.classes.A
-c429:p -> c434:p [arrowhead=open,weight=1];
+c429 -> c434 [arrowhead=open,weight=1];
 // gr.spinellis.context.classes.A navassoc gr.spinellis.context.classes.B
-c434:p -> c432:p [arrowhead=open,weight=1];
+c434 -> c432 [arrowhead=open,weight=1];
 // gr.spinellis.context.classes.A navassoc javax.swing.JComponent
-c434:p -> c509:p [arrowhead=open,weight=1];
+c434 -> c509 [arrowhead=open,weight=1];
 // gr.spinellis.context.classes.AClient depend gr.spinellis.context.classes.A
-c424:p -> c434:p [arrowhead=open,style=dashed,weight=0];
+c424 -> c434 [arrowhead=open,style=dashed,weight=0];
 // gr.spinellis.context.classes.A depend gr.spinellis.context.classes.E
-c434:p -> c427:p [arrowhead=open,style=dashed,weight=0];
+c434 -> c427 [arrowhead=open,style=dashed,weight=0];
 // javax.swing.JComponent
-c509 [label=<<table title="javax.swing.JComponent" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html" target="_parent"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> JComponent </i></td></tr></table></td></tr></table>>, URL="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html"];
+c509 [label=<<table title="javax.swing.JComponent" border="0" cellborder="1" cellspacing="0" cellpadding="2" href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html" target="_parent"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> JComponent </i></td></tr></table></td></tr></table>>, URL="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html"];
 }
 

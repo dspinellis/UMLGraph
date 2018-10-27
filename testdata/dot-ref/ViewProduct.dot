@@ -7,14 +7,14 @@
 digraph G {
 graph [fontnames="svg"]
 edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
-node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext,margin=0,width=0,height=0];
 nodesep=0.25;
 ranksep=0.5;
 // gr.spinellis.basic.product.Product
-c129 [label=<<table title="gr.spinellis.basic.product.Product" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Product </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  name </td></tr><tr><td align="left" balign="left">  stock </td></tr><tr><td align="left" balign="left">  price </td></tr><tr><td align="left" balign="left">  category </td></tr></table></td></tr></table>>];
+c129 [label=<<table title="gr.spinellis.basic.product.Product" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Product </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  name </td></tr><tr><td align="left" balign="left">  stock </td></tr><tr><td align="left" balign="left">  price </td></tr><tr><td align="left" balign="left">  category </td></tr></table></td></tr></table>>];
 // gr.spinellis.basic.product.Category
-c130 [label=<<table title="gr.spinellis.basic.product.Category" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Category </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  name </td></tr><tr><td align="left" balign="left">  products </td></tr></table></td></tr></table>>];
+c130 [label=<<table title="gr.spinellis.basic.product.Category" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Category </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  name </td></tr><tr><td align="left" balign="left">  products </td></tr></table></td></tr></table>>];
 // gr.spinellis.basic.product.Product assoc gr.spinellis.basic.product.Category
-c129:p -> c130:p [arrowhead=none,weight=2,taillabel="*", headlabel="1"];
+c129 -> c130 [arrowhead=none,weight=2,taillabel="*", headlabel="1"];
 }
 

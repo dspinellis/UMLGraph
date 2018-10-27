@@ -7,26 +7,26 @@
 digraph G {
 graph [fontnames="svg"]
 edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
-node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext,margin=0,width=0,height=0];
 nodesep=0.25;
 ranksep=0.5;
 // gr.spinellis.basic.invoice.InvoiceItem
-c355 [label=<<table title="gr.spinellis.basic.invoice.InvoiceItem" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InvoiceItem </td></tr></table></td></tr></table>>];
+c355 [label=<<table title="gr.spinellis.basic.invoice.InvoiceItem" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InvoiceItem </td></tr></table></td></tr></table>>];
 // gr.spinellis.basic.invoice.Invoice
-c356 [label=<<table title="gr.spinellis.basic.invoice.Invoice" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Invoice </td></tr></table></td></tr></table>>];
+c356 [label=<<table title="gr.spinellis.basic.invoice.Invoice" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Invoice </td></tr></table></td></tr></table>>];
 // gr.spinellis.basic.invoice.Customer
-c357 [label=<<table title="gr.spinellis.basic.invoice.Customer" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Customer </td></tr></table></td></tr></table>>];
+c357 [label=<<table title="gr.spinellis.basic.invoice.Customer" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Customer </td></tr></table></td></tr></table>>];
 // gr.spinellis.basic.product.Product
-c358 [label=<<table title="gr.spinellis.basic.product.Product" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Product </td></tr></table></td></tr></table>>];
+c358 [label=<<table title="gr.spinellis.basic.product.Product" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Product </td></tr></table></td></tr></table>>];
 // gr.spinellis.basic.product.Category
-c359 [label=<<table title="gr.spinellis.basic.product.Category" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Category </td></tr></table></td></tr></table>>];
+c359 [label=<<table title="gr.spinellis.basic.product.Category" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Category </td></tr></table></td></tr></table>>];
 // gr.spinellis.basic.invoice.InvoiceItem assoc gr.spinellis.basic.product.Product
-c355:p -> c358:p [arrowhead=none,weight=2,taillabel="*", headlabel="1"];
+c355 -> c358 [arrowhead=none,weight=2,taillabel="*", headlabel="1"];
 // gr.spinellis.basic.invoice.Invoice assoc gr.spinellis.basic.invoice.Customer
-c356:p -> c357:p [arrowhead=none,weight=2,taillabel="*", headlabel="1"];
+c356 -> c357 [arrowhead=none,weight=2,taillabel="*", headlabel="1"];
 // gr.spinellis.basic.invoice.Invoice composed gr.spinellis.basic.invoice.InvoiceItem
-c356:p -> c355:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1", headlabel="*"];
+c356 -> c355 [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1", headlabel="*"];
 // gr.spinellis.basic.product.Product assoc gr.spinellis.basic.product.Category
-c358:p -> c359:p [arrowhead=none,weight=2,taillabel="*", headlabel="1"];
+c358 -> c359 [arrowhead=none,weight=2,taillabel="*", headlabel="1"];
 }
 

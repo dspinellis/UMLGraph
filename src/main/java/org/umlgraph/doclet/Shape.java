@@ -71,11 +71,6 @@ public enum Shape {
 	this.style = style;
     }
 
-    /** Return the shape's GraphViz landing port */
-    public String landingPort() {
-	return this == CLASS || this == ACTIVECLASS ? ":p" : "";
-    }
-
     /** Return the table border required for the shape */
     public String extraColumn() {
 	return this == Shape.ACTIVECLASS ? ("<td rowspan=\"10\"></td>") : "";

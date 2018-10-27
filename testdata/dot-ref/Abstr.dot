@@ -7,20 +7,20 @@
 digraph G {
 graph [fontnames="svg"]
 edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
-node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext,margin=0,width=0,height=0];
 nodesep=0.25;
 ranksep=0.5;
 // test.AbstractNode
-c1 [label=<<table title="test.AbstractNode" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> AbstractNode </i></td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"><i>  abstractMethod() </i></td></tr><tr><td align="left" balign="left">  concreteMethod() </td></tr></table></td></tr></table>>];
+c1 [label=<<table title="test.AbstractNode" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> AbstractNode </i></td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"><i>  abstractMethod() </i></td></tr><tr><td align="left" balign="left">  concreteMethod() </td></tr></table></td></tr></table>>];
 // test.InnerNode
-c2 [label=<<table title="test.InnerNode" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InnerNode </td></tr></table></td></tr></table>>];
+c2 [label=<<table title="test.InnerNode" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InnerNode </td></tr></table></td></tr></table>>];
 // test.Leaf
-c3 [label=<<table title="test.Leaf" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Leaf </td></tr></table></td></tr></table>>];
+c3 [label=<<table title="test.Leaf" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Leaf </td></tr></table></td></tr></table>>];
 // test.InnerNode extends test.AbstractNode
-c1:p -> c2:p [arrowtail=empty,dir=back,weight=10];
+c1 -> c2 [arrowtail=empty,dir=back,weight=10];
 // test.InnerNode composed test.AbstractNode
-c2:p -> c1:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1", label="has", headlabel="*"];
+c2 -> c1 [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1", label="has", headlabel="*"];
 // test.Leaf extends test.AbstractNode
-c1:p -> c3:p [arrowtail=empty,dir=back,weight=10];
+c1 -> c3 [arrowtail=empty,dir=back,weight=10];
 }
 

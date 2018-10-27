@@ -7,18 +7,18 @@
 digraph G {
 graph [fontnames="svg"]
 edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
-node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext,margin=0,width=0,height=0];
 nodesep=0.25;
 ranksep=0.5;
 // Application
-c74 [label=<<table title="Application" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Application </td></tr></table></td></tr></table>>];
+c74 [label=<<table title="Application" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Application </td></tr></table></td></tr></table>>];
 // IrpApplication
-c75 [label=<<table title="IrpApplication" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> IrpApplication </td></tr></table></td></tr></table>>];
+c75 [label=<<table title="IrpApplication" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> IrpApplication </td></tr></table></td></tr></table>>];
 // Main
-c76 [label=<<table title="Main" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Main </td></tr></table></td></tr></table>>];
+c76 [label=<<table title="Main" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Main </td></tr></table></td></tr></table>>];
 // IrpApplication extends Application
-c74:p -> c75:p [arrowtail=empty,dir=back,weight=10];
+c74 -> c75 [arrowtail=empty,dir=back,weight=10];
 // Main depend IrpApplication
-c76:p -> c75:p [arrowhead=open,style=dashed,weight=0,label="&#171;friend&#187;"];
+c76 -> c75 [arrowhead=open,style=dashed,weight=0,label="&#171;friend&#187;"];
 }
 
