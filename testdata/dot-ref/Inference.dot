@@ -22,9 +22,9 @@ c69 [label=<<table title="MyFunnyList" border="0" cellborder="1" cellspacing="0"
 c70 [label=<<table title="MyList" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> MyList </td></tr></table></td></tr></table>>];
 // D
 c71 [label=<<table title="D" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> D </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  anotherListOfA : MyList </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr></table>>];
-//MyFunnyList<T, V> extends java.util.ArrayList<T>
+// MyFunnyList<T, V> extends java.util.ArrayList<T>
 c72:p -> c69:p [arrowtail=empty,dir=back,weight=10];
-//MyList extends MyFunnyList<A, B>
+// MyList extends MyFunnyList<A, B>
 c69:p -> c70:p [arrowtail=empty,dir=back,weight=10];
 // A has B
 c66:p -> c67:p [arrowhead=none,arrowtail=ediamond,dir=back,weight=4];

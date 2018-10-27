@@ -12,13 +12,13 @@ nodesep=0.25;
 ranksep=0.5;
 // MyVector<E, P>
 c85 [label=<<table title="MyVector" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> MyVector&lt;E, P&gt; </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"> ~ addAll(index : int, c : Collection&lt;E&gt;) : boolean </td></tr><tr><td align="left" balign="left"> ~ foo(x : MyVector&lt;P, MyVector&lt;E, E&gt;&gt;) : MyVector&lt;E, P&gt; </td></tr><tr><td align="left" balign="left"> ~ removeAll(c : Collection&lt;?&gt;) : boolean </td></tr><tr><td align="left" balign="left"> ~ set(index : int, element : E) : E </td></tr></table></td></tr></table>>];
-//MyVector<E, P> extends java.util.Vector<E>
+// MyVector<E, P> extends java.util.Vector<E>
 c86:p -> c85:p [arrowtail=empty,dir=back,weight=10];
-//MyVector<E, P> implements java.util.List<E>
+// MyVector<E, P> implements java.util.List<E>
 c87:p -> c85:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//MyVector<E, P> implements java.util.RandomAccess
+// MyVector<E, P> implements java.util.RandomAccess
 c88:p -> c85:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//MyVector<E, P> implements java.lang.Cloneable
+// MyVector<E, P> implements java.lang.Cloneable
 c89:p -> c85:p [arrowtail=empty,style=dashed,dir=back,weight=9];
 // java.util.RandomAccess
 c88 [label=<<table title="java.util.RandomAccess" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://docs.oracle.com/javase/7/docs/api/java/util/RandomAccess.html" target="_parent"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> RandomAccess </td></tr></table></td></tr></table>>, URL="http://docs.oracle.com/javase/7/docs/api/java/util/RandomAccess.html"];

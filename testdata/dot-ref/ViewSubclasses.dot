@@ -20,13 +20,13 @@ c582 [label=<<table title="gr.spinellis.subclass.classes.SubTwo" border="0" cell
 c583 [label=<<table title="gr.spinellis.subclass.classes.SubOne" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> SubOne </td></tr></table></td></tr></table>>];
 // gr.spinellis.subclass.classes.Super
 c584 [label=<<table title="gr.spinellis.subclass.classes.Super" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonchiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Super </td></tr></table></td></tr></table>>];
-//gr.spinellis.subclass.classes.SubOneTwo extends gr.spinellis.subclass.classes.SubOne
+// gr.spinellis.subclass.classes.SubOneTwo extends gr.spinellis.subclass.classes.SubOne
 c583:p -> c580:p [arrowtail=empty,dir=back,weight=10];
-//gr.spinellis.subclass.classes.SubOneOne extends gr.spinellis.subclass.classes.SubOne
+// gr.spinellis.subclass.classes.SubOneOne extends gr.spinellis.subclass.classes.SubOne
 c583:p -> c581:p [arrowtail=empty,dir=back,weight=10];
-//gr.spinellis.subclass.classes.SubTwo extends gr.spinellis.subclass.classes.Super
+// gr.spinellis.subclass.classes.SubTwo extends gr.spinellis.subclass.classes.Super
 c584:p -> c582:p [arrowtail=empty,dir=back,weight=10];
-//gr.spinellis.subclass.classes.SubOne extends gr.spinellis.subclass.classes.Super
+// gr.spinellis.subclass.classes.SubOne extends gr.spinellis.subclass.classes.Super
 c584:p -> c583:p [arrowtail=empty,dir=back,weight=10];
 }
 

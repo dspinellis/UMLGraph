@@ -34,15 +34,15 @@ c90:p -> c94:p [arrowhead=none,weight=2,headlabel="0..n"];
 c90:p -> c95:p [arrowhead=none,weight=2,headlabel="0..n"];
 // Root assoc DataOperation
 c90:p -> c96:p [arrowhead=none,weight=2,headlabel="0..n"];
-//ObjectType extends Element
+// ObjectType extends Element
 c92:p -> c93:p [arrowtail=empty,dir=back,weight=10];
-//ObjectMap extends Element
+// ObjectMap extends Element
 c92:p -> c94:p [arrowtail=empty,dir=back,weight=10];
 // ObjectMap has ObjectType
 c94:p -> c93:p [arrowhead=none,arrowtail=ediamond,dir=back,weight=4,taillabel="1..1", headlabel="1..1"];
-//Table extends Element
+// Table extends Element
 c92:p -> c95:p [arrowtail=empty,dir=back,weight=10];
-//DataOperation extends Element
+// DataOperation extends Element
 c92:p -> c96:p [arrowtail=empty,dir=back,weight=10];
 }
 

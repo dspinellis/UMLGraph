@@ -16,11 +16,11 @@ c112 [label=<<table title="net.sf.whatever.test.AbstractBase" border="0" cellbor
 c113 [label=<<table title="net.sf.whatever.test.Composite" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="arial"> Composite </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> net.sf.whatever.test </font></td></tr></table></td></tr></table>>];
 // net.sf.whatever.test.Style
 c114 [label=<<table title="net.sf.whatever.test.Style" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="arial"> Style </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> net.sf.whatever.test </font></td></tr></table></td></tr></table>>];
-//net.sf.whatever.test.Composite extends net.sf.whatever.test.AbstractBase
+// net.sf.whatever.test.Composite extends net.sf.whatever.test.AbstractBase
 c112:p -> c113:p [arrowtail=empty,dir=back,weight=10];
 // net.sf.whatever.test.Composite composed from.Outer.Space.AlienClass
 c113:p -> c115:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1",label="has",headlabel="*"];
-//net.sf.whatever.test.Style extends net.sf.whatever.test.AbstractBase
+// net.sf.whatever.test.Style extends net.sf.whatever.test.AbstractBase
 c112:p -> c114:p [arrowtail=empty,dir=back,weight=10];
 // from.Outer.Space.AlienClass
 c115[label=<<table title="from.Outer.Space.AlienClass" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://docs.oracle.com/javase/7/docs/api/from/Outer/Space/AlienClass.html" target="_parent"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="arial"> AlienClass </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> from.Outer.Space </font></td></tr></table></td></tr></table>>];

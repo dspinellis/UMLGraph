@@ -30,25 +30,25 @@ c62 [label=<<table title="Bond" border="0" cellborder="1" cellspacing="0" cellpa
 c63 [label=<<table title="CheckingAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> CheckingAccount </td></tr></table></td></tr></table>>];
 // SavingsAccount
 c64 [label=<<table title="SavingsAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> SavingsAccount </td></tr></table></td></tr></table>>];
-//BankAccount extends Asset
+// BankAccount extends Asset
 c55:p -> c58:p [arrowtail=empty,dir=back,weight=10];
-//BankAccount extends InsurableItem
+// BankAccount extends InsurableItem
 c57:p -> c58:p [arrowtail=empty,dir=back,weight=10];
-//BankAccount extends InterestBearingItem
+// BankAccount extends InterestBearingItem
 c56:p -> c58:p [arrowtail=empty,dir=back,weight=10];
-//RealEstate extends Asset
+// RealEstate extends Asset
 c55:p -> c59:p [arrowtail=empty,dir=back,weight=10];
-//RealEstate extends InsurableItem
+// RealEstate extends InsurableItem
 c57:p -> c59:p [arrowtail=empty,dir=back,weight=10];
-//Security extends Asset
+// Security extends Asset
 c55:p -> c60:p [arrowtail=empty,dir=back,weight=10];
-//Stock extends Security
+// Stock extends Security
 c60:p -> c61:p [arrowtail=empty,dir=back,weight=10];
-//Bond extends Security
+// Bond extends Security
 c60:p -> c62:p [arrowtail=empty,dir=back,weight=10];
-//CheckingAccount extends BankAccount
+// CheckingAccount extends BankAccount
 c58:p -> c63:p [arrowtail=empty,dir=back,weight=10];
-//SavingsAccount extends BankAccount
+// SavingsAccount extends BankAccount
 c58:p -> c64:p [arrowtail=empty,dir=back,weight=10];
 }
 

@@ -16,11 +16,11 @@ c1 [label=<<table title="test.AbstractNode" border="0" cellborder="1" cellspacin
 c2 [label=<<table title="test.InnerNode" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InnerNode </td></tr></table></td></tr></table>>];
 // test.Leaf
 c3 [label=<<table title="test.Leaf" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Leaf </td></tr></table></td></tr></table>>];
-//test.InnerNode extends test.AbstractNode
+// test.InnerNode extends test.AbstractNode
 c1:p -> c2:p [arrowtail=empty,dir=back,weight=10];
 // test.InnerNode composed test.AbstractNode
 c2:p -> c1:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1", label="has", headlabel="*"];
-//test.Leaf extends test.AbstractNode
+// test.Leaf extends test.AbstractNode
 c1:p -> c3:p [arrowtail=empty,dir=back,weight=10];
 }
 

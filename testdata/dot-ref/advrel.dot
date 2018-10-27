@@ -22,11 +22,11 @@ c8 [label=<<table title="SetTopController" border="0" cellborder="1" cellspacing
 c9 [label=<<table title="ChannelIterator" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ChannelIterator </td></tr></table></td></tr></table>>];
 // URLStreamHandler
 c10 [label=<<table title="URLStreamHandler" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> URLStreamHandler </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"><i>  OpenConnection() </i></td></tr><tr><td align="left" balign="left"><i>  parseURL() </i></td></tr><tr><td align="left" balign="left"><i>  setURL() </i></td></tr><tr><td align="left" balign="left"><i>  toExternalForm() </i></td></tr></table></td></tr></table>>];
-//SetTopController extends Controller
+// SetTopController extends Controller
 c5:p -> c8:p [arrowtail=empty,dir=back,weight=10];
-//SetTopController extends EmbeddedAgent
+// SetTopController extends EmbeddedAgent
 c6:p -> c8:p [arrowtail=empty,dir=back,weight=10];
-//SetTopController implements URLStreamHandler
+// SetTopController implements URLStreamHandler
 c10:p -> c8:p [arrowtail=empty,style=dashed,dir=back,weight=9];
 // SetTopController navassoc PowerManager
 c8:p -> c7:p [arrowhead=open,weight=1];

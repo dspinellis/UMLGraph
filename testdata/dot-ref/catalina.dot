@@ -30,29 +30,29 @@ c26 [label=<<table title="ResponseFacade" border="0" cellborder="1" cellspacing=
 c27 [label=<<table title="ServletResponse" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> ServletResponse </td></tr></table></td></tr></table>>];
 // Response
 c28 [label=<<table title="Response" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> Response </td></tr></table></td></tr></table>>];
-//HttpResponseBase extends ResponseBase
+// HttpResponseBase extends ResponseBase
 c24:p -> c19:p [arrowtail=empty,dir=back,weight=10];
-//HttpResponseBase implements HttpResponse
+// HttpResponseBase implements HttpResponse
 c23:p -> c19:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//HttpResponseBase implements HttpServletResponse
+// HttpResponseBase implements HttpServletResponse
 c25:p -> c19:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//HttpResponseWrapper extends ResponseWrapper
+// HttpResponseWrapper extends ResponseWrapper
 c22:p -> c20:p [arrowtail=empty,dir=back,weight=10];
-//HttpResponseWrapper implements HttpResponse
+// HttpResponseWrapper implements HttpResponse
 c23:p -> c20:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//HttpResponseFacade extends ResponseFacade
+// HttpResponseFacade extends ResponseFacade
 c26:p -> c21:p [arrowtail=empty,dir=back,weight=10];
-//HttpResponseFacade implements HttpServletResponse
+// HttpResponseFacade implements HttpServletResponse
 c25:p -> c21:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//ResponseWrapper implements Response
+// ResponseWrapper implements Response
 c28:p -> c22:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//HttpResponse implements Response
+// HttpResponse implements Response
 c28:p -> c23:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//ResponseBase implements Response
+// ResponseBase implements Response
 c28:p -> c24:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//ResponseBase implements ServletResponse
+// ResponseBase implements ServletResponse
 c27:p -> c24:p [arrowtail=empty,style=dashed,dir=back,weight=9];
-//ResponseFacade implements ServletResponse
+// ResponseFacade implements ServletResponse
 c27:p -> c26:p [arrowtail=empty,style=dashed,dir=back,weight=9];
 }
 

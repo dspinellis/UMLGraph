@@ -24,9 +24,9 @@ c432 [label=<<table title="gr.spinellis.context.classes.B" border="0" cellborder
 c433 [label=<<table title="gr.spinellis.context.classes.ABaseClass" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ABaseClass </td></tr></table></td></tr></table>>];
 // gr.spinellis.context.classes.A
 c434 [label=<<table title="gr.spinellis.context.classes.A" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonchiffon"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> A </td></tr></table></td></tr></table>>];
-//gr.spinellis.context.classes.ASubclass extends gr.spinellis.context.classes.A
+// gr.spinellis.context.classes.ASubclass extends gr.spinellis.context.classes.A
 c434:p -> c426:p [arrowtail=empty,dir=back,weight=10];
-//gr.spinellis.context.classes.A extends gr.spinellis.context.classes.ABaseClass
+// gr.spinellis.context.classes.A extends gr.spinellis.context.classes.ABaseClass
 c433:p -> c434:p [arrowtail=empty,dir=back,weight=10];
 // gr.spinellis.context.classes.D navassoc gr.spinellis.context.classes.A
 c429:p -> c434:p [arrowhead=open,weight=1];

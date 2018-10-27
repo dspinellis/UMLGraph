@@ -16,9 +16,9 @@ c30 [label=<<table title="Person" border="0" cellborder="1" cellspacing="0" cell
 c31 [label=<<table title="Employee" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor=".13 .9 1"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Employee </td></tr></table></td></tr></table>>];
 // Client
 c32 [label=<<table title="Client" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor=".13 .9 1"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Client </td></tr></table></td></tr></table>>];
-//Employee extends Person
+// Employee extends Person
 c30:p -> c31:p [arrowtail=empty,dir=back,weight=10];
-//Client extends Person
+// Client extends Person
 c30:p -> c32:p [arrowtail=empty,dir=back,weight=10];
 }
 
