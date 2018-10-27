@@ -166,7 +166,7 @@ public class DotDiff {
             int closedBracketIdx = line.lastIndexOf(']');
             int arrowIdx = line.indexOf("->");
             if (openBrackedIdx < 0 && closedBracketIdx < 0 || line.startsWith("edge")
-                    || line.startsWith("node"))
+                    || line.startsWith("node") || line.startsWith("graph"))
                 extraLines.add(line);
             else if (arrowIdx > 0 && arrowIdx < openBrackedIdx) { // that's an arc
                 arcLines.add(line);

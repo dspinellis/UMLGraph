@@ -5,20 +5,21 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	rankdir=LR;
-	// UserGroup
-	c12 [label=<<table title="UserGroup" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> UserGroup </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// User
-	c13 [label=<<table title="User" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> User </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Password
-	c14 [label=<<table title="Password" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Password </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// UserGroup ASSOC User
-	c12:p -> c13:p [taillabel="*", label="", headlabel="*\n\n+user ", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// User NAVASSOC Password
-	c13:p -> c14:p [taillabel="1\n\n+owner\r", label="", headlabel="*\n\n+key", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+nodesep=0.25;
+ranksep=0.5;
+rankdir=LR;
+// UserGroup
+c12 [label=<<table title="UserGroup" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> UserGroup </td></tr></table></td></tr></table>>];
+// User
+c13 [label=<<table title="User" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> User </td></tr></table></td></tr></table>>];
+// Password
+c14 [label=<<table title="Password" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Password </td></tr></table></td></tr></table>>];
+// UserGroup assoc User
+c12:p -> c13:p [arrowhead=none,weight=2,taillabel="*", headlabel="*\n\n+user "];
+// User navassoc Password
+c13:p -> c14:p [arrowhead=open,weight=1,taillabel="1\n\n+owner\r", headlabel="*\n\n+key"];
 }
 

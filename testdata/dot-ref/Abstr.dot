@@ -5,21 +5,22 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	// test.AbstractNode
-	c1 [label=<<table title="test.AbstractNode" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> AbstractNode </i></td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"><font face="Helvetica" point-size="10.0"><i>  abstractMethod() </i></font></td></tr><tr><td align="left" balign="left">  concreteMethod() </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// test.InnerNode
-	c2 [label=<<table title="test.InnerNode" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InnerNode </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// test.Leaf
-	c3 [label=<<table title="test.Leaf" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Leaf </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	//test.InnerNode extends test.AbstractNode
-	c1:p -> c2:p [dir=back,arrowtail=empty];
-	// test.InnerNode COMPOSED test.AbstractNode
-	c2:p -> c1:p [taillabel="1", label="has", headlabel="*", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond, dir=both];
-	//test.Leaf extends test.AbstractNode
-	c1:p -> c3:p [dir=back,arrowtail=empty];
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+nodesep=0.25;
+ranksep=0.5;
+// test.AbstractNode
+c1 [label=<<table title="test.AbstractNode" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> AbstractNode </i></td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"><i>  abstractMethod() </i></td></tr><tr><td align="left" balign="left">  concreteMethod() </td></tr></table></td></tr></table>>];
+// test.InnerNode
+c2 [label=<<table title="test.InnerNode" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InnerNode </td></tr></table></td></tr></table>>];
+// test.Leaf
+c3 [label=<<table title="test.Leaf" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Leaf </td></tr></table></td></tr></table>>];
+//test.InnerNode extends test.AbstractNode
+c1:p -> c2:p [arrowtail=empty,dir=back,weight=10];
+// test.InnerNode composed test.AbstractNode
+c2:p -> c1:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1", label="has", headlabel="*"];
+//test.Leaf extends test.AbstractNode
+c1:p -> c3:p [arrowtail=empty,dir=back,weight=10];
 }
 

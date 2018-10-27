@@ -6,21 +6,29 @@ package org.umlgraph.doclet;
  * @author Erich Schubert
  */
 public enum RelationType {
-    ASSOC("arrowhead=none"), //
-    NAVASSOC("arrowhead=open"), //
-    HAS("arrowhead=none, arrowtail=ediamond, dir=both"), //
-    NAVHAS("arrowhead=open, arrowtail=ediamond, dir=both"), //
-    COMPOSED("arrowhead=none, arrowtail=diamond, dir=both"), //
-    NAVCOMPOSED("arrowhead=open, arrowtail=diamond, dir=both"), //
-    DEPEND("arrowhead=open, style=dashed"), //
-    EXTENDS("arrowtail=empty, dir=back"), //
-    IMPLEMENTS("arrowtail=empty, dir=back, style=dashed");
+    DEPEND("arrowhead=open,style=dashed,weight=0", false), // Weakest
+    NAVASSOC("arrowhead=open,weight=1", false), //
+    ASSOC("arrowhead=none,weight=2", false), //
+    NAVHAS("arrowhead=open,arrowtail=ediamond,dir=both,weight=3", false), //
+    HAS("arrowhead=none,arrowtail=ediamond,dir=back,weight=4", false), //
+    NAVCOMPOSED("arrowhead=open,arrowtail=diamond,dir=both,weight=5", false), //
+    COMPOSED("arrowhead=none,arrowtail=diamond,dir=back,weight=6", false), //
+    IMPLEMENTS("arrowtail=empty,style=dashed,dir=back,weight=9", true), //
+    EXTENDS("arrowtail=empty,dir=back,weight=10", true);
 
-    public final String lower, style;
+    /** Lower case version of the label */
+    public final String lower;
+
+    /** Graphviz style */
+    public final String style;
+
+    /** Backwards edges with respect to node ranking */
+    public final boolean backorder;
 
     /** Enum constructors must be private */
-    private RelationType(String style) {
+    private RelationType(String style, boolean backorder) {
 	this.lower = toString().toLowerCase();
 	this.style = style;
+	this.backorder = backorder;
     }
 }

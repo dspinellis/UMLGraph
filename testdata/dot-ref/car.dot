@@ -5,23 +5,24 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	// Tyre
-	c15 [label=<<table title="Tyre" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Tyre </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Engine
-	c16 [label=<<table title="Engine" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Engine </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Body
-	c17 [label=<<table title="Body" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Body </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Car
-	c18 [label=<<table title="Car" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Car </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Car COMPOSED Tyre
-	c18:p -> c15:p [taillabel="1", label="", headlabel="4", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond, dir=both];
-	// Car COMPOSED Engine
-	c18:p -> c16:p [taillabel="1", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond, dir=both];
-	// Car COMPOSED Body
-	c18:p -> c17:p [taillabel="1", label="", headlabel="1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond, dir=both];
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+nodesep=0.25;
+ranksep=0.5;
+// Tyre
+c15 [label=<<table title="Tyre" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Tyre </td></tr></table></td></tr></table>>];
+// Engine
+c16 [label=<<table title="Engine" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Engine </td></tr></table></td></tr></table>>];
+// Body
+c17 [label=<<table title="Body" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Body </td></tr></table></td></tr></table>>];
+// Car
+c18 [label=<<table title="Car" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Car </td></tr></table></td></tr></table>>];
+// Car composed Tyre
+c18:p -> c15:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1", headlabel="4"];
+// Car composed Engine
+c18:p -> c16:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1", headlabel="1"];
+// Car composed Body
+c18:p -> c17:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1", headlabel="1"];
 }
 

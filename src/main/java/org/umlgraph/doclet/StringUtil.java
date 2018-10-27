@@ -216,4 +216,16 @@ class StringUtil {
 	    start = className.lastIndexOf('.', start - 1);
 	}
     }
+    
+    /**
+     * Format a double to a string.
+     * <p>
+     * Avoids printing "10.0" for exact values like 10.
+     * 
+     * @param val Value
+     * @return Formatted value
+     */
+    public static String fmt(double val) {
+	return val == Math.round(val) ? Long.toString((long) val) : Double.toString(val);
+    }
 }

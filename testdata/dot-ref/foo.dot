@@ -5,21 +5,22 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	// a.b.c.UMLOptions
-	c50 [label=<<table title="a.b.c.UMLOptions" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> UMLOptions </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// a.b.c.UserGroup
-	c51 [label=<<table title="a.b.c.UserGroup" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> UserGroup </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// a.b.c.User
-	c52 [label=<<table title="a.b.c.User" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> User </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// a.b.c.Password
-	c53 [label=<<table title="a.b.c.Password" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Password </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// a.b.c.UserGroup ASSOC a.b.c.User
-	c51:p -> c52:p [taillabel="*", label="", headlabel="*\n\n+user ", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// a.b.c.User NAVASSOC a.b.c.Password
-	c52:p -> c53:p [taillabel="1\n\n+owner\r", label="", headlabel="*\n\n+key", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+nodesep=0.25;
+ranksep=0.5;
+// a.b.c.UMLOptions
+c50 [label=<<table title="a.b.c.UMLOptions" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> UMLOptions </td></tr></table></td></tr></table>>];
+// a.b.c.UserGroup
+c51 [label=<<table title="a.b.c.UserGroup" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> UserGroup </td></tr></table></td></tr></table>>];
+// a.b.c.User
+c52 [label=<<table title="a.b.c.User" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> User </td></tr></table></td></tr></table>>];
+// a.b.c.Password
+c53 [label=<<table title="a.b.c.Password" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Password </td></tr></table></td></tr></table>>];
+// a.b.c.UserGroup assoc a.b.c.User
+c51:p -> c52:p [arrowhead=none,weight=2,taillabel="*", headlabel="*\n\n+user "];
+// a.b.c.User navassoc a.b.c.Password
+c52:p -> c53:p [arrowhead=open,weight=1,taillabel="1\n\n+owner\r", headlabel="*\n\n+key"];
 }
 

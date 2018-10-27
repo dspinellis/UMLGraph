@@ -21,6 +21,7 @@ package org.umlgraph.doclet;
 
 import static org.umlgraph.doclet.StringUtil.buildRelativePathFromClassNames;
 import static org.umlgraph.doclet.StringUtil.escape;
+import static org.umlgraph.doclet.StringUtil.fmt;
 import static org.umlgraph.doclet.StringUtil.guilWrap;
 import static org.umlgraph.doclet.StringUtil.guillemize;
 import static org.umlgraph.doclet.StringUtil.htmlNewline;
@@ -144,13 +145,13 @@ class ClassGraph {
     }
 
     private static int qualifiedNameInner(Options opt, String r, StringBuilder buf, int last, boolean strip) {
-	boolean guessPackage = last < r.length() && Character.isLowerCase(r.charAt(last));
+	strip = strip && last < r.length() && Character.isLowerCase(r.charAt(last));
 	for (int i = last; i < r.length(); i++) {
 	    char c = r.charAt(i);
 	    if (c == '.' || c == '$') {
-		if (strip && guessPackage)
+		if (strip)
 		    last = i + 1; // skip dot
-		guessPackage = guessPackage && last < r.length() && Character.isLowerCase(r.charAt(last));
+		strip = strip && last < r.length() && Character.isLowerCase(r.charAt(last));
 		continue;
 	    }
 	    if (Character.isJavaIdentifierPart(c))
@@ -275,9 +276,13 @@ class ClassGraph {
 
     /** Print the common class node's properties */
     private void nodeProperties(Options opt) {
-	w.print(", fontname=\"" + opt.nodeFontName + "\"");
-	w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
-	w.print(", fontsize=" + opt.nodeFontSize);
+	Options def = opt.getGlobalOptions();
+	if (opt.nodeFontName != def.nodeFontName)
+	    w.print(",fontname=\"" + opt.nodeFontName + "\"");
+	if (opt.nodeFontColor != def.nodeFontColor)
+	    w.print(",fontcolor=\"" + opt.nodeFontColor + "\"");
+	if (opt.nodeFontSize != def.nodeFontSize)
+	    w.print(",fontsize=" + fmt(opt.nodeFontSize));
 	w.print(opt.shape.style);
 	w.println("];");
     }
@@ -361,9 +366,9 @@ class ClassGraph {
 	if (c.isEnum() && !opt.showEnumerations)
 	    return ci.name;
 	// Associate classname's alias
-	w.println("\t// " + className);
+	w.println(linePrefix + "// " + className);
 	// Create label
-	w.print("\t" + ci.name + " [label=");
+	w.print(linePrefix + ci.name + " [label=");
 
 	boolean showMembers =
 		(opt.showAttributes && c.fields().length > 0) ||
@@ -371,7 +376,8 @@ class ClassGraph {
 		(opt.showOperations && c.methods().length > 0) ||
 		(opt.showConstructors && c.constructors().length > 0);
 
-	externalTableStart(opt, c.qualifiedName(), classToUrl(c, rootClass));
+	final String url = classToUrl(c, rootClass);
+	externalTableStart(opt, c.qualifiedName(), url);
 
 	firstInnerTableStart(opt);
 	if (c.isInterface())
@@ -447,22 +453,23 @@ class ClassGraph {
 	    }
 	}
 	externalTableEnd();
-	w.print(", URL=\"" + classToUrl(c, rootClass) + "\"");
+	if (url != null)
+	    w.print(", URL=\"" + url + "\"");
 	nodeProperties(opt);
 
 	// If needed, add a note for this node
 	int ni = 0;
 	for (Tag t : c.tags("note")) {
 	    String noteName = "n" + ni + "c" + ci.name;
-	    w.print("\t// Note annotation\n");
-	    w.print("\t" + noteName + " [label=");
-	    externalTableStart(UmlGraph.getCommentOptions(), c.qualifiedName(), classToUrl(c, rootClass));
+	    w.print(linePrefix + "// Note annotation\n");
+	    w.print(linePrefix + noteName + " [label=");
+	    externalTableStart(UmlGraph.getCommentOptions(), c.qualifiedName(), url);
 	    innerTableStart();
 	    tableLine(Align.LEFT, Font.CLASS.wrap(UmlGraph.getCommentOptions(), htmlNewline(escape(t.text()))));
 	    innerTableEnd();
 	    externalTableEnd();
 	    nodeProperties(UmlGraph.getCommentOptions());
-	    w.print("\t" + noteName + " -> " + relationNode(c) + "[arrowhead=none];\n");
+	    w.print(linePrefix + noteName + " -> " + relationNode(c) + "[arrowhead=none];\n");
 	    ni++;
 	}
 	ci.nodePrinted = true;
@@ -479,13 +486,12 @@ class ClassGraph {
 	String tagname = rt.lower;
 	for (Tag tag : from.tags(tagname)) {
 	    String t[] = tokenize(tag.text());    // l-src label l-dst target
+	    t = t.length == 1 ? new String[] { "-", "-", "-", t[0] } : t; // Shorthand
 	    if (t.length != 4) {
 		System.err.println("Error in " + from + "\n" + tagname + " expects four fields (l-src label l-dst target): " + tag.text());
 		return;
 	    }
 	    ClassDoc to = from.findClass(t[3]);
-
-
 	    if (to != null) {
 		if(hidden(to))
 		    continue;
@@ -507,19 +513,32 @@ class ClassGraph {
      */
     private void relation(Options opt, RelationType rt, ClassDoc from, String fromName, 
 	    ClassDoc to, String toName, String tailLabel, String label, String headLabel) {
+	tailLabel = (tailLabel != null && !tailLabel.isEmpty()) ? ",taillabel=\"" + tailLabel + "\"" : "";
+	label = (label != null && !label.isEmpty()) ? ",label=\"" + guillemize(opt, label) + "\"" : "";
+	headLabel = (headLabel != null && !headLabel.isEmpty()) ? ",headlabel=\"" + headLabel + "\"" : "";
+	boolean unLabeled = tailLabel.isEmpty() && label.isEmpty() && headLabel.isEmpty();
 
+	String n1 = relationNode(from, fromName), n2 = relationNode(to, toName);
+	// For ranking we need to output extends/implements backwards.
+	if (rt.backorder) { // Swap:
+	    String tmp = n1;
+	    n1 = n2;
+	    n2 = tmp;
+	    tmp = tailLabel;
+	    tailLabel = headLabel;
+	    headLabel = tmp;
+	}
+	Options def = opt.getGlobalOptions();
 	// print relation
-	w.println("\t// " + fromName + " " + rt.lower + " " + toName);
-	w.println("\t" + relationNode(from, fromName) + " -> " + relationNode(to, toName) + " [" +
-    	"taillabel=\"" + tailLabel + "\", " +
-    	((label == null || label.isEmpty()) ? "label=\"\", " : "label=\"" + guillemize(opt, label) + "\", ") +
-    	"headlabel=\"" + headLabel + "\", " +
-    	"fontname=\"" + opt.edgeFontName + "\", " +
-    	"fontcolor=\"" + opt.edgeFontColor + "\", " +
-    	"fontsize=" + opt.edgeFontSize + ", " +
-    	"color=\"" + opt.edgeColor + "\", " +
-    	rt.style + "];"
-    	);
+	w.println(linePrefix + "// " + fromName + " " + rt.lower + " " + toName);
+	w.println(linePrefix + n1 + " -> " + n2 + " [" + rt.style +
+		(opt.edgeColor != def.edgeColor ? ",color=\"" + opt.edgeColor + "\"" : "") +
+		(unLabeled ? "" :
+		    (opt.edgeFontName != def.edgeFontName ? ",fontname=\"" + opt.edgeFontName + "\"" : "") +
+		    (opt.edgeFontColor != def.edgeFontColor ? ",fontcolor=\"" + opt.edgeFontColor + "\"" : "") +
+		    (opt.edgeFontSize != def.edgeFontSize ? ",fontsize=" + fmt(opt.edgeFontSize) : "")) +
+		tailLabel + label + headLabel +
+		"];");
 	
 	// update relation info
 	RelationDirection d = RelationDirection.BOTH;
@@ -569,44 +588,28 @@ class ClassGraph {
 	Options opt = optionProvider.getOptionsFor(c);
 	if (hidden(c) || c.name().equals("")) // avoid phantom classes, they may pop up when the source uses annotations
 	    return;
-	String className = c.toString();
 	// Print generalization (through the Java superclass)
 	Type s = c.superclassType();
 	ClassDoc sc = s != null && !s.qualifiedTypeName().equals(Object.class.getName()) ? s.asClassDoc() : null;
-	if (sc != null && !c.isEnum() && !hidden(sc)) {
-		w.println("\t//" + c + " extends " + s + "\n" +
-		    "\t" + relationNode(sc) + " -> " + relationNode(c) +
-		    " [" + RelationType.EXTENDS.style + "];");
-		getClassInfo(className).addRelation(sc.toString(), RelationType.EXTENDS, RelationDirection.OUT);
-		getClassInfo(sc.toString()).addRelation(className, RelationType.EXTENDS, RelationDirection.IN);
-	}
-
+	if (sc != null && !c.isEnum() && !hidden(sc))
+	    relation(opt, RelationType.EXTENDS, c, sc, null, null, null);
 	// Print generalizations (through @extends tags)
 	for (Tag tag : c.tags("extends"))
-	    if (!hidden(tag.text())) {
-		ClassDoc from = c.findClass(tag.text());
-		w.println("\t//" + c + " extends " + tag.text() + "\n" +
-		    "\t" + relationNode(from, tag.text()) + " -> " + relationNode(c) + " [" + RelationType.EXTENDS.style + "];");
-		getClassInfo(className).addRelation(tag.text(), RelationType.EXTENDS, RelationDirection.OUT);
-		getClassInfo(tag.text()).addRelation(className, RelationType.EXTENDS, RelationDirection.IN);
-	    }
+	    if (!hidden(tag.text()))
+		relation(opt, RelationType.EXTENDS, c, c.findClass(tag.text()), null, null, null);
 	// Print realizations (Java interfaces)
 	for (Type iface : c.interfaceTypes()) {
 	    ClassDoc ic = iface.asClassDoc();
-	    if (!hidden(ic)) {
-		w.println("\t//" + c + " implements " + ic + "\n\t" + relationNode(ic) + " -> " + relationNode(c)
-			+ " [" + RelationType.IMPLEMENTS.style + "];");
-		getClassInfo(className).addRelation(ic.toString(), RelationType.IMPLEMENTS, RelationDirection.OUT);
-		getClassInfo(ic.toString()).addRelation(className, RelationType.IMPLEMENTS, RelationDirection.IN);
-	    }
+	    if (!hidden(ic))
+		relation(opt, RelationType.IMPLEMENTS, c, ic, null, null, null);
 	}
 	// Print other associations
-	allRelation(opt, RelationType.ASSOC, c);
-	allRelation(opt, RelationType.NAVASSOC, c);
-	allRelation(opt, RelationType.HAS, c);
-	allRelation(opt, RelationType.NAVHAS, c);
 	allRelation(opt, RelationType.COMPOSED, c);
 	allRelation(opt, RelationType.NAVCOMPOSED, c);
+	allRelation(opt, RelationType.HAS, c);
+	allRelation(opt, RelationType.NAVHAS, c);
+	allRelation(opt, RelationType.ASSOC, c);
+	allRelation(opt, RelationType.NAVASSOC, c);
 	allRelation(opt, RelationType.DEPEND, c);
     }
 
@@ -623,8 +626,8 @@ class ClassGraph {
 		    Options opt = optionProvider.getOptionsFor(className);
 		    if(opt.matchesHideExpression(className))
 			continue;
-		    w.println("\t// " + className);
-		    w.print("\t" + info.name + "[label=");
+		    w.println(linePrefix + "// " + className);
+		    w.print(linePrefix  + info.name + "[label=");
 		    externalTableStart(opt, className, classToUrl(className));
 		    innerTableStart();
 		    String qualifiedName = qualifiedName(opt, className);
@@ -641,7 +644,7 @@ class ClassGraph {
 		    innerTableEnd();
 		    externalTableEnd();
 		    if (className == null || className.length() == 0)
-			w.print(", URL=\"" + classToUrl(className) + "\"");
+			w.print(",URL=\"" + classToUrl(className) + "\"");
 		    nodeProperties(opt);
 		}
 	    }
@@ -892,19 +895,24 @@ class ClassGraph {
 	    Version.VERSION + " (http://www.spinellis.gr/umlgraph/)\n" +
 	    "#\n\n" +
 	    "digraph G {\n" +
-	    "\tedge [fontname=\"" + opt.edgeFontName +
-	    "\",fontsize=10,labelfontname=\"" + opt.edgeFontName +
-	    "\",labelfontsize=10];\n" +
-	    "\tnode [fontname=\"" + opt.nodeFontName +
-	    "\",fontsize=10,shape=plaintext];"
+	    linePrefix + "graph [fontnames=\"svg\"]\n" +
+	    linePrefix + "edge [fontname=\"" + opt.edgeFontName +
+	    "\",fontsize=" + fmt(opt.edgeFontSize) +
+	    ",labelfontname=\"" + opt.edgeFontName +
+	    "\",labelfontsize=" + fmt(opt.edgeFontSize) +
+	    ",color=\"" + opt.edgeColor + "\"];\n" +
+	    linePrefix + "node [fontname=\"" + opt.nodeFontName +
+	    "\",fontcolor=\"" + opt.nodeFontColor +
+	    "\",fontsize=" + fmt(opt.nodeFontSize) +
+	    ",shape=plaintext];"
 	);
 
-	w.println("\tnodesep=" + opt.nodeSep + ";");
-	w.println("\tranksep=" + opt.rankSep + ";");
+	w.println(linePrefix + "nodesep=" + opt.nodeSep + ";");
+	w.println(linePrefix + "ranksep=" + opt.rankSep + ";");
 	if (opt.horizontal)
-	    w.println("\trankdir=LR;");
+	    w.println(linePrefix + "rankdir=LR;");
 	if (opt.bgColor != null)
-	    w.println("\tbgcolor=\"" + opt.bgColor + "\";\n");
+	    w.println(linePrefix + "bgcolor=\"" + opt.bgColor + "\";\n");
     }
 
     /** Dot epilogue */
@@ -953,9 +961,9 @@ class ClassGraph {
     }
 
     private void tableLine(Align align, String text) {
-	w.print("<tr><td align=\"" + align.lower + "\" balign=\"" + align.lower + "\">" //
+	w.print("<tr><td align=\"" + align.lower + "\" balign=\"" + align.lower + "\"> " //
 		+ text // MAY contain markup!
-		+ "</td></tr>" + linePostfix);
+		+ " </td></tr>" + linePostfix);
     }
 
     private static class FieldRelationInfo {

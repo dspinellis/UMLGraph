@@ -5,25 +5,26 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Serif",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	bgcolor=".7 .9 1";
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="yellow"];
+node [fontname="Serif",fontcolor="black",fontsize=14,shape=plaintext];
+nodesep=0.25;
+ranksep=0.5;
+bgcolor=".7 .9 1";
 
-	// Pixel
-	c37 [label=<<table title="Pixel" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="#a0a0a0"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Pixel </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"> - x : int </td></tr><tr><td align="left" balign="left"> - y : int </td></tr></table></td></tr></table>>, URL="null", fontname="arial", fontcolor="white", fontsize=14.0];
-	// Red
-	c38 [label=<<table title="Red" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="red"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Red </td></tr></table></td></tr></table>>, URL="null", fontname="Serif", fontcolor="black", fontsize=14.0];
-	// Green
-	c39 [label=<<table title="Green" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="green"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Green </td></tr></table></td></tr></table>>, URL="null", fontname="Serif", fontcolor="black", fontsize=14.0];
-	// Blue
-	c40 [label=<<table title="Blue" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="blue"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Blue </td></tr></table></td></tr></table>>, URL="null", fontname="Serif", fontcolor="black", fontsize=14.0];
-	// Pixel COMPOSED Red
-	c37:p -> c38:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="yellow", arrowhead=none, arrowtail=diamond, dir=both];
-	// Pixel COMPOSED Green
-	c37:p -> c39:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="yellow", arrowhead=none, arrowtail=diamond, dir=both];
-	// Pixel COMPOSED Blue
-	c37:p -> c40:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="yellow", arrowhead=none, arrowtail=diamond, dir=both];
+// Pixel
+c37 [label=<<table title="Pixel" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="#a0a0a0"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Pixel </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"> - x : int </td></tr><tr><td align="left" balign="left"> - y : int </td></tr></table></td></tr></table>>];
+// Red
+c38 [label=<<table title="Red" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="red"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Red </td></tr></table></td></tr></table>>];
+// Green
+c39 [label=<<table title="Green" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="green"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Green </td></tr></table></td></tr></table>>];
+// Blue
+c40 [label=<<table title="Blue" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="blue"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Blue </td></tr></table></td></tr></table>>];
+// Pixel composed Red
+c37:p -> c38:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6];
+// Pixel composed Green
+c37:p -> c39:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6];
+// Pixel composed Blue
+c37:p -> c40:p [arrowhead=none,arrowtail=diamond,dir=back,weight=6];
 }
 

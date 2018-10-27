@@ -5,43 +5,44 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	// Root
-	c90 [label=<<table title="Root" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Root </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Adapter
-	c91 [label=<<table title="Adapter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Adapter </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Element
-	c92 [label=<<table title="Element" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> Element </i></td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// ObjectType
-	c93 [label=<<table title="ObjectType" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ObjectType </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// ObjectMap
-	c94 [label=<<table title="ObjectMap" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ObjectMap </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Table
-	c95 [label=<<table title="Table" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Table </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// DataOperation
-	c96 [label=<<table title="DataOperation" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> DataOperation </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Root ASSOC Adapter
-	c90:p -> c91:p [taillabel="1..1", label="", headlabel="0..n", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// Root ASSOC ObjectType
-	c90:p -> c93:p [taillabel="", label="", headlabel="0..n", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// Root ASSOC ObjectMap
-	c90:p -> c94:p [taillabel="", label="", headlabel="0..n", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// Root ASSOC Table
-	c90:p -> c95:p [taillabel="", label="", headlabel="0..n", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	// Root ASSOC DataOperation
-	c90:p -> c96:p [taillabel="", label="", headlabel="0..n", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none];
-	//ObjectType extends Element
-	c92:p -> c93:p [dir=back,arrowtail=empty];
-	//ObjectMap extends Element
-	c92:p -> c94:p [dir=back,arrowtail=empty];
-	// ObjectMap HAS ObjectType
-	c94:p -> c93:p [taillabel="1..1", label="", headlabel="1..1", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=ediamond, dir=both];
-	//Table extends Element
-	c92:p -> c95:p [dir=back,arrowtail=empty];
-	//DataOperation extends Element
-	c92:p -> c96:p [dir=back,arrowtail=empty];
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext];
+nodesep=0.25;
+ranksep=0.5;
+// Root
+c90 [label=<<table title="Root" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Root </td></tr></table></td></tr></table>>];
+// Adapter
+c91 [label=<<table title="Adapter" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Adapter </td></tr></table></td></tr></table>>];
+// Element
+c92 [label=<<table title="Element" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> Element </i></td></tr></table></td></tr></table>>];
+// ObjectType
+c93 [label=<<table title="ObjectType" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ObjectType </td></tr></table></td></tr></table>>];
+// ObjectMap
+c94 [label=<<table title="ObjectMap" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ObjectMap </td></tr></table></td></tr></table>>];
+// Table
+c95 [label=<<table title="Table" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Table </td></tr></table></td></tr></table>>];
+// DataOperation
+c96 [label=<<table title="DataOperation" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> DataOperation </td></tr></table></td></tr></table>>];
+// Root assoc Adapter
+c90:p -> c91:p [arrowhead=none,weight=2,taillabel="1..1", headlabel="0..n"];
+// Root assoc ObjectType
+c90:p -> c93:p [arrowhead=none,weight=2,headlabel="0..n"];
+// Root assoc ObjectMap
+c90:p -> c94:p [arrowhead=none,weight=2,headlabel="0..n"];
+// Root assoc Table
+c90:p -> c95:p [arrowhead=none,weight=2,headlabel="0..n"];
+// Root assoc DataOperation
+c90:p -> c96:p [arrowhead=none,weight=2,headlabel="0..n"];
+//ObjectType extends Element
+c92:p -> c93:p [arrowtail=empty,dir=back,weight=10];
+//ObjectMap extends Element
+c92:p -> c94:p [arrowtail=empty,dir=back,weight=10];
+// ObjectMap has ObjectType
+c94:p -> c93:p [arrowhead=none,arrowtail=ediamond,dir=back,weight=4,taillabel="1..1", headlabel="1..1"];
+//Table extends Element
+c92:p -> c95:p [arrowtail=empty,dir=back,weight=10];
+//DataOperation extends Element
+c92:p -> c96:p [arrowtail=empty,dir=back,weight=10];
 }
 
