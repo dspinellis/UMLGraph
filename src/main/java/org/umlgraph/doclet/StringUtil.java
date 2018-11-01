@@ -164,4 +164,68 @@ class StringUtil {
 	}
 	return buf.toString();
     }
+
+    public static String buildRelativePathFromClassNames(String contextPackageName, String classPackageName) {
+	// path, relative to the root, of the destination class
+	String[] contextClassPath = contextPackageName.split("\\.");
+	String[] currClassPath = classPackageName.split("\\.");
+
+	// compute relative path between the context and the destination
+	// ... first, compute common part
+	int i = 0, e = Math.min(contextClassPath.length, currClassPath.length);
+	while (i < e && contextClassPath[i].equals(currClassPath[i]))
+	    i++;
+	// ... go up with ".." to reach the common root
+	StringBuilder buf = new StringBuilder(classPackageName.length());
+	for (int j = i; j < contextClassPath.length; j++)
+	    buf.append("../");
+	// ... go down from the common root to the destination
+	for (int j = i; j < currClassPath.length; j++)
+	    buf.append(currClassPath[j]).append('/'); // Always use HTML seperators
+	return buf.toString();
+    }
+
+    /**
+     * We can't just always use the last dot, because there are inner classes. And
+     * these may have frequent names. But the prime example is
+     * {@link java.util.Map.Entry}, which we want to show up as package
+     * <tt>java.util</tt> and class <tt>Map.Entry</tt>.
+     * <p>
+     * Note: this is only a heuristic. We only have the string here, and must assume
+     * users adhere to Java conventions, of beginning package names with a lowercase
+     * letter.
+     * 
+     * @param className
+     * @return Splitting point (Either referring to a dot, or -1)
+     */
+    public static int splitPackageClass(String className) {
+	int gen = className.indexOf('<'); // Begin before generics.
+	int end = gen >= 0 ? gen : className.length();
+	int start = className.lastIndexOf('.', end);
+	// No package name special cases:
+	if (start < 0)
+	    return gen >= 0 || className.isEmpty() ? -1 //
+		    : Character.isLowerCase(className.charAt(0)) ? end : -1;
+	int split = end;
+	while (true) {
+	    if (Character.isLowerCase(className.charAt(start + 1)))
+		return split;
+	    split = start; // Continue, this looks like a class name.
+	    if (start < 0)
+		return -1;
+	    start = className.lastIndexOf('.', start - 1);
+	}
+    }
+    
+    /**
+     * Format a double to a string.
+     * <p>
+     * Avoids printing "10.0" for exact values like 10.
+     * 
+     * @param val Value
+     * @return Formatted value
+     */
+    public static String fmt(double val) {
+	return val == Math.round(val) ? Long.toString((long) val) : Double.toString(val);
+    }
 }

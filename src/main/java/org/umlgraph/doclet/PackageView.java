@@ -17,7 +17,7 @@ import com.sun.javadoc.RootDoc;
  */
 public class PackageView implements OptionProvider {
 
-    private static final String[] HIDE = new String[] { "-hide" };
+    private static final String[] HIDE = new String[] { "hide" };
     private PackageDoc pd;
     private OptionProvider parent;
     private ClassMatcher matcher;
@@ -40,7 +40,7 @@ public class PackageView implements OptionProvider {
     public Options getGlobalOptions() {
 	Options go = parent.getGlobalOptions();
 
-	go.setOption(new String[] { "-output", outputPath });
+	go.setOption(new String[] { "output", outputPath });
 	go.setOption(HIDE);
 
 	return go;

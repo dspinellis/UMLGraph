@@ -25,17 +25,12 @@ public class SubclassMatcher implements ClassMatcher {
 	    return true;
 	
 	// recurse on supeclass, if available
-	if(cd.superclass() != null)
-	    return matches(cd.superclass());
-	
-	return false;
+	return cd.superclass() == null ? false : matches(cd.superclass());
     }
 
     public boolean matches(String name) {
 	ClassDoc cd = root.classNamed(name);
-	if(cd == null)
-	    return false;
-	return matches(cd);
+	return cd == null ? false : matches(cd);
     }
 
 }

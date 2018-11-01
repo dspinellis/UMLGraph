@@ -5,23 +5,24 @@
 #
 
 digraph G {
-	edge [fontname="arial",fontsize=10,labelfontname="arial",labelfontsize=10];
-	node [fontname="arial",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	// net.sf.whatever.test.AbstractBase
-	c112 [label=<<table title="net.sf.whatever.test.AbstractBase" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;base&#187; </td></tr><tr><td align="center" balign="center"><font face="arial"> AbstractBase </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> net.sf.whatever.test </font></td></tr><tr><td align="right" balign="right"><font face="arial" point-size="6.0"> {since = 1.0} </font></td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  field : int </td></tr><tr><td align="right" balign="right"><font face="arial" point-size="6.0"> {since = 1.5} </font></td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"><font face="Helvetica-Oblique" point-size="9.0">  abstractMethod() </font></td></tr><tr><td align="left" balign="left">  concreteMethod() : int </td></tr></table></td></tr></table>>, URL="null", fontname="arial", fontcolor="black", fontsize=9.0];
-	// net.sf.whatever.test.Composite
-	c113 [label=<<table title="net.sf.whatever.test.Composite" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="arial"> Composite </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> net.sf.whatever.test </font></td></tr></table></td></tr></table>>, URL="null", fontname="arial", fontcolor="black", fontsize=9.0];
-	// net.sf.whatever.test.Style
-	c114 [label=<<table title="net.sf.whatever.test.Style" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="arial"> Style </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> net.sf.whatever.test </font></td></tr></table></td></tr></table>>, URL="null", fontname="arial", fontcolor="black", fontsize=9.0];
-	//net.sf.whatever.test.Composite extends net.sf.whatever.test.AbstractBase
-	c112:p -> c113:p [dir=back,arrowtail=empty];
-	// net.sf.whatever.test.Composite COMPOSED from.Outer.Space.AlienClass
-	c113:p -> c115:p [taillabel="1", label="has", headlabel="*", fontname="arial", fontcolor="black", fontsize=10.0, color="black", arrowhead=none, arrowtail=diamond, dir=both];
-	//net.sf.whatever.test.Style extends net.sf.whatever.test.AbstractBase
-	c112:p -> c114:p [dir=back,arrowtail=empty];
-	// from.Outer.Space.AlienClass
-	c115[label=<<table title="from.Outer.Space.AlienClass" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://docs.oracle.com/javase/7/docs/api/from/Outer/Space/AlienClass.html" target="_parent"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="arial"> AlienClass </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> from.Outer.Space </font></td></tr></table></td></tr></table>>, fontname="arial", fontcolor="black", fontsize=9.0];
+graph [fontnames="svg"]
+edge [fontname="arial",fontsize=10,labelfontname="arial",labelfontsize=10,color="black"];
+node [fontname="arial",fontcolor="black",fontsize=9,shape=plaintext,margin=0,width=0,height=0];
+nodesep=0.25;
+ranksep=0.5;
+// net.sf.whatever.test.AbstractBase
+c112 [label=<<table title="net.sf.whatever.test.AbstractBase" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;base&#187; </td></tr><tr><td align="center" balign="center"><font face="arial"> AbstractBase </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> net.sf.whatever.test </font></td></tr><tr><td align="right" balign="right"><font face="arial" point-size="6.0"> {since = 1.0} </font></td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  field : int </td></tr><tr><td align="right" balign="right"><font face="arial" point-size="6.0"> {since = 1.5} </font></td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"><i>  abstractMethod() </i></td></tr><tr><td align="left" balign="left">  concreteMethod() : int </td></tr></table></td></tr></table>>];
+// net.sf.whatever.test.Composite
+c113 [label=<<table title="net.sf.whatever.test.Composite" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="arial"> Composite </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> net.sf.whatever.test </font></td></tr></table></td></tr></table>>];
+// net.sf.whatever.test.Style
+c114 [label=<<table title="net.sf.whatever.test.Style" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="arial"> Style </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> net.sf.whatever.test </font></td></tr></table></td></tr></table>>];
+// net.sf.whatever.test.Composite extends net.sf.whatever.test.AbstractBase
+c112 -> c113 [arrowtail=empty,dir=back,weight=10];
+// net.sf.whatever.test.Composite composed from.Outer.Space.AlienClass
+c113 -> c115 [arrowhead=none,arrowtail=diamond,dir=back,weight=6,taillabel="1",label="has",headlabel="*"];
+// net.sf.whatever.test.Style extends net.sf.whatever.test.AbstractBase
+c112 -> c114 [arrowtail=empty,dir=back,weight=10];
+// from.Outer.Space.AlienClass
+c115[label=<<table title="from.Outer.Space.AlienClass" border="0" cellborder="1" cellspacing="0" cellpadding="2" href="http://docs.oracle.com/javase/7/docs/api/from/Outer.Space.AlienClass.html" target="_parent"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="arial"> AlienClass </font></td></tr><tr><td align="center" balign="center"><font point-size="8.0"> from.Outer.Space </font></td></tr></table></td></tr></table>>];
 }
 
