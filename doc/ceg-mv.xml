@@ -93,18 +93,18 @@ clean:
 
 build/%.dot : %.java
 	mkdir -p $(dir $@)
-	$(jd) $(jd_flags) $(detailed_flags) -output $@ $<
+	$(jd) $(jd_flags) $(detailed_flags) -output $@ $&lt;
 
 build/%-small.dot : %.java
 	mkdir -p $(dir $@)
-	$(jd) $(jd_flags) -output $@ $<
+	$(jd) $(jd_flags) -output $@ $&lt;
 
 %.png : %.dot
-	dot -Nheight=0.2 -Elabelfontcolor=DarkSlateBlue -Elabelfontsize=8 -Tpng -o $@ $<
+	dot -Nheight=0.2 -Elabelfontcolor=DarkSlateBlue -Elabelfontsize=8 -Tpng -o $@ $&lt;
 
 build/%.png : %.fig
 	mkdir -p $(dir $@)
-	fig2dev -L png -S 4 $< $@
+	fig2dev -L png -S 4 $&lt; $@
 
 dot: $(dot_files)
 
@@ -112,7 +112,7 @@ png: $(png_files)
 
 build/%.png : %.png
 	mkdir -p $(dir $@)
-	cp $< $@
+	cp $&lt; $@
 
 # Example usage:
 #   make debug-java_files
