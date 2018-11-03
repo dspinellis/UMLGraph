@@ -326,9 +326,11 @@ class ClassGraph {
 
     /** Return true if c has a @hidden tag associated with it */
     private boolean hidden(ProgramElementDoc c) {
-	return c.tags("hidden").length > 0 || c.tags("view").length > 0 || //
-		optionProvider.getOptionsFor(c instanceof ClassDoc ? (ClassDoc) c : c.containingClass()) //
-			.matchesHideExpression(c.toString());
+	if (c.tags("hidden").length > 0 || c.tags("view").length > 0)
+	    return true;
+	Options opt = optionProvider.getOptionsFor(c instanceof ClassDoc ? (ClassDoc) c : c.containingClass());
+	return opt.matchesHideExpression(c.toString()) //
+		|| (opt.hidePrivateInner && c instanceof ClassDoc  && c.isPrivate() && ((ClassDoc) c).containingClass() != null);
     }
 
     protected ClassInfo getClassInfo(ClassDoc cd, boolean create) {

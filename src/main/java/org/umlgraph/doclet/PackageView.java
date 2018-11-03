@@ -63,8 +63,8 @@ public class PackageView implements OptionProvider {
 	boolean inPackage = matcher.matches(cd);
 	if (inPackage)
 	    opt.showQualified = false;
-	if (!(inPackage || this.opt.matchesIncludeExpression(cd.qualifiedName()))
-		|| this.opt.matchesHideExpression(cd.qualifiedName()))
+	boolean included = inPackage || this.opt.matchesIncludeExpression(cd.qualifiedName());
+	if (!included || this.opt.matchesHideExpression(cd.qualifiedName()))
 	    opt.setOption(HIDE);
     }
 
@@ -73,8 +73,8 @@ public class PackageView implements OptionProvider {
 	boolean inPackage = matcher.matches(className);
 	if (inPackage)
 	    opt.showQualified = false;
-	if (!(inPackage || this.opt.matchesIncludeExpression(className))
-		|| this.opt.matchesHideExpression(className))
+	boolean included = inPackage || this.opt.matchesIncludeExpression(className);
+	if (!included || this.opt.matchesHideExpression(className))
 	    opt.setOption(HIDE);
     }
 

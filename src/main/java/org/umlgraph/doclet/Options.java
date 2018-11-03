@@ -115,6 +115,7 @@ public class Options implements Cloneable, OptionProvider {
     RelationType inferRelationshipType = RelationType.NAVASSOC;
     private List<Pattern> collPackages = new ArrayList<Pattern>();
     boolean compact = false;
+    boolean hidePrivateInner = false;
     // internal option, used by UMLDoc to generate relative links between classes
     boolean relativeLinksForSourcePackages = false;
     // internal option, used by UMLDoc to force strict matching on the class names
@@ -193,6 +194,7 @@ public class Options implements Cloneable, OptionProvider {
            matchOption(option, "qualifyGenerics", true) ||
            matchOption(option, "hideGenerics", true) ||
            matchOption(option, "horizontal", true) ||
+           matchOption(option, "all") ||
            matchOption(option, "attributes", true) ||
            matchOption(option, "enumconstants", true) ||
            matchOption(option, "operations", true) ||
@@ -203,16 +205,16 @@ public class Options implements Cloneable, OptionProvider {
            matchOption(option, "autosize", true) ||
            matchOption(option, "commentname", true) ||
            matchOption(option, "nodefontabstractitalic", true) ||
-           matchOption(option, "all") ||
-           matchOption(option, "postfixpackage") ||
-           matchOption(option, "noguillemot") ||
-           matchOption(option, "views") ||
-           matchOption(option, "inferrel") ||
-           matchOption(option, "useimports") ||
-           matchOption(option, "collapsible") ||
-           matchOption(option, "inferdep") ||
-           matchOption(option, "inferdepinpackage") ||
-           matchOption(option, "compact"))
+           matchOption(option, "postfixpackage", true) ||
+           matchOption(option, "noguillemot", true) ||
+           matchOption(option, "views", true) ||
+           matchOption(option, "inferrel", true) ||
+           matchOption(option, "useimports", true) ||
+           matchOption(option, "collapsible", true) ||
+           matchOption(option, "inferdep", true) ||
+           matchOption(option, "inferdepinpackage", true) ||
+           matchOption(option, "hideprivateinner", true) ||
+           matchOption(option, "compact", true))
 
             return 1;
         else if(matchOption(option, "nodefillcolor") ||
@@ -396,6 +398,8 @@ public class Options implements Cloneable, OptionProvider {
 	    inferDependencies = positive;
 	} else if(matchOption(opt[0], "inferdepinpackage", true)) {
 	    inferDepInPackage = positive;
+	} else if (matchOption(opt[0], "hideprivateinner", true)) {
+	    hidePrivateInner = positive;
 	} else if(matchOption(opt[0], "useimports", true)) {
 	    useImports = positive;
 	} else if (matchOption(opt[0], "collpackages", true)) {
