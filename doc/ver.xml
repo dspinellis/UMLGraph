@@ -13,6 +13,10 @@ this works well with <code>-qualify -postfixpackage</code> (and <code>-!qualifyG
 To get the old <code>-qualify</code> behavior, you need to add <code>-qualifyGenerics</code>,
 the default is off, and it will not inherit from <code>-qualify</code>.</li>
 <li>Better handling of complex names with generics and inner classes such as <code>pkg.Outer&lt;T&gt;.Inner</code>.</li>
+<li>Use &lt;i&gt; tags for italic, because the old font naming approach does not work with SVG anymore.
+Replace <code>-nodefontabstractname</code> and <code>-nodefontclassabstractname</code>
+with a simple flag <code>-nodefontabstractitalic</code> instead.</li>
+<li>Added <code>-hideprivateinner</code> to hide all private inner classes.</li>
 </ul>
 </dd>
 

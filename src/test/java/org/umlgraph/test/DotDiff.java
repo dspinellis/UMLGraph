@@ -166,16 +166,15 @@ public class DotDiff {
             int closedBracketIdx = line.lastIndexOf(']');
             int arrowIdx = line.indexOf("->");
             if (openBrackedIdx < 0 && closedBracketIdx < 0 || line.startsWith("edge")
-                    || line.startsWith("node"))
+                    || line.startsWith("node") || line.startsWith("graph"))
                 extraLines.add(line);
             else if (arrowIdx > 0 && arrowIdx < openBrackedIdx) { // that's an arc
                 arcLines.add(line);
             } else { // that's a node
                 String attributes = line.substring(openBrackedIdx + 1, closedBracketIdx);
                 Map<String, String> attMap = parseAttributes(attributes);
-                String name = line.substring(0, openBrackedIdx - 1).trim();
-                String label = attMap.get("label");
-                DotNode node = new DotNode(name, label, attMap, line);
+                String name = trim(line.substring(0, openBrackedIdx - 1));
+                DotNode node = new DotNode(name, attMap.get("label"), attMap, line);
                 nodes.put(name, node);
                 nodeList.add(node);
             }
@@ -185,17 +184,19 @@ public class DotDiff {
             int closedBracketIdx = line.lastIndexOf(']');
             String attributes = line.substring(openBrackedIdx + 1, closedBracketIdx);
             String[] names = line.substring(0, openBrackedIdx).split("->");
-            DotNode from = nodes.get(names[0].trim());
-            DotNode to = nodes.get(names[1].trim());
-            if (from == null) {
-                from = new DotNode(names[0], "", new HashMap<String, String>(), "");
-            }
-            if (to == null) {
-                to = new DotNode(names[1], "", new HashMap<String, String>(), "");
-            }
+            DotNode from = nodes.get(names[0] = trim(names[0]));
+            DotNode to = nodes.get(names[1] = trim(names[1]));
+            from = from != null ? from : new DotNode(names[0], "", new HashMap<String, String>(), "");
+            to = to != null? to : new DotNode(names[1], "", new HashMap<String, String>(), "");
             arcs.add(new DotArc(from, to, parseAttributes(attributes), line));
         }
         return extraLines;
+    }
+
+    // Trim space AND port.
+    private String trim(String name) {
+        name = name.trim();
+        return name.endsWith(":p") ? name.substring(0, name.length() - 2) : name;
     }
 
     private Map<String, String> parseAttributes(String attributes) throws IOException {

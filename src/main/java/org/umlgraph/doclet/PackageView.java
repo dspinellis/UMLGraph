@@ -17,7 +17,7 @@ import com.sun.javadoc.RootDoc;
  */
 public class PackageView implements OptionProvider {
 
-    private static final String[] HIDE = new String[] { "-hide" };
+    private static final String[] HIDE = new String[] { "hide" };
     private PackageDoc pd;
     private OptionProvider parent;
     private ClassMatcher matcher;
@@ -40,7 +40,7 @@ public class PackageView implements OptionProvider {
     public Options getGlobalOptions() {
 	Options go = parent.getGlobalOptions();
 
-	go.setOption(new String[] { "-output", outputPath });
+	go.setOption(new String[] { "output", outputPath });
 	go.setOption(HIDE);
 
 	return go;
@@ -63,8 +63,8 @@ public class PackageView implements OptionProvider {
 	boolean inPackage = matcher.matches(cd);
 	if (inPackage)
 	    opt.showQualified = false;
-	if (!(inPackage || this.opt.matchesIncludeExpression(cd.qualifiedName()))
-		|| this.opt.matchesHideExpression(cd.qualifiedName()))
+	boolean included = inPackage || this.opt.matchesIncludeExpression(cd.qualifiedName());
+	if (!included || this.opt.matchesHideExpression(cd.qualifiedName()))
 	    opt.setOption(HIDE);
     }
 
@@ -73,8 +73,8 @@ public class PackageView implements OptionProvider {
 	boolean inPackage = matcher.matches(className);
 	if (inPackage)
 	    opt.showQualified = false;
-	if (!(inPackage || this.opt.matchesIncludeExpression(className))
-		|| this.opt.matchesHideExpression(className))
+	boolean included = inPackage || this.opt.matchesIncludeExpression(className);
+	if (!included || this.opt.matchesHideExpression(className))
 	    opt.setOption(HIDE);
     }
 

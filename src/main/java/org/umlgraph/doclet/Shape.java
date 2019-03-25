@@ -18,80 +18,66 @@
 
 package org.umlgraph.doclet;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doc;
-import com.sun.javadoc.LanguageVersion;
-import com.sun.javadoc.RootDoc;
+import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Properties of node shapes
  *
  * @version $Revision$
- * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
+ * @author Erich Schubert
  */
-public class Shape {
+public enum Shape {
+    CLASS(""), //
+    NOTE(", shape=note"), //
+    NODE(", shape=box3d"), //
+    COMPONENT(", shape=component"), //
+    PACKAGE(", shape=tab"), //
+    COLLABORATION(", shape=ellipse, style=dashed"), //
+    USECASE(", shape=ellipse"), //
+    ACTIVECLASS("");
 
-    /** Shape's UMLGraph name */
-    private String name;
+    /** Graphviz style */
+    public final String style;
 
-    /** Construct a default (class) Shape */
-    public Shape() {
-	name = "class";
-    }
+    /** Map for valid shape names */
+    private static final HashMap<String, Shape> index = new HashMap<String, Shape>(16);
 
-    /** Construct a Shape through the specified UMLGraph name */
-    public Shape(String n) {
-	name = n;
-	if (graphvizAttribute() == null) {
-	    System.err.println("Ignoring invalid shape " + n);
-	    name = "class";
+    /** Initialize the lookup index */
+    static {
+	for (Shape s : Shape.values()) {
+	    index.put(s.name(), s);
+	    index.put(s.name().toLowerCase(Locale.ROOT), s);
 	}
     }
 
     /**
-     * Return the GraphViz shape name corresponding to the shape
+     * Get the shape from a string. This allows both the uppercase and the lowercase
+     * name. Prefer this to {{@link #valueOf(String)} which only accepts uppercase.
+     *
+     * @param s String
+     * @return Shape
      */
-    public String graphvizAttribute() {
-	if (name.equals("class"))
-	    return "";		// Default; plaintext
-	else if (name.equals("note"))
-	    return ", shape=note";
-	else if (name.equals("node"))
-	    return ", shape=box3d";
-	else if (name.equals("component"))
-	    return ", shape=component";
-	else if (name.equals("package"))
-	    return ", shape=tab";
-	else if (name.equals("collaboration"))
-	    return ", shape=ellipse, style=dashed";
-	else if (name.equals("usecase"))
-	    return ", shape=ellipse";
-	else if (name.equals("activeclass"))
-	    return "";		// Default; plaintext
-	else
-	    return null;
+    public static Shape of(String s) {
+	Shape shp = index.get(s);
+	if (shp != null)
+	    return shp;
+	System.err.println("Ignoring invalid shape: " + s);
+	return CLASS;
     }
 
-    /** Return the shape's GraphViz landing port */
-    String landingPort() {
-	if (name.equals("class") || name.equals("activeclass"))
-	    return ":p";
-	else
-	    return "";
+    /** Enum constructor, must be private! */
+    private Shape(String style) {
+	this.style = style;
     }
 
     /** Return the table border required for the shape */
-    String extraColumn(int nRows) {
-	return name.equals("activeclass") ? ("<td rowspan=\"" + nRows + "\"></td>") : "";
+    public String extraColumn() {
+	return this == Shape.ACTIVECLASS ? ("<td rowspan=\"10\"></td>") : "";
     }
 
     /** Return the cell border required for the shape */
-    String cellBorder() {
-	return (name.equals("class") || name.equals("activeclass")) ? "1" : "0";
+    public String cellBorder() {
+	return this == CLASS || this == ACTIVECLASS ? "1" : "0";
     }
 }

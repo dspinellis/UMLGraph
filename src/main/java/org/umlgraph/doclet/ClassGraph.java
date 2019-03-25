@@ -19,11 +19,21 @@
 
 package org.umlgraph.doclet;
 
+import static org.umlgraph.doclet.StringUtil.buildRelativePathFromClassNames;
+import static org.umlgraph.doclet.StringUtil.escape;
+import static org.umlgraph.doclet.StringUtil.fmt;
+import static org.umlgraph.doclet.StringUtil.guilWrap;
+import static org.umlgraph.doclet.StringUtil.guillemize;
+import static org.umlgraph.doclet.StringUtil.htmlNewline;
+import static org.umlgraph.doclet.StringUtil.removeTemplate;
+import static org.umlgraph.doclet.StringUtil.splitPackageClass;
+import static org.umlgraph.doclet.StringUtil.tokenize;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -33,7 +43,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.ConstructorDoc;
@@ -61,23 +70,16 @@ import com.sun.javadoc.WildcardType;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 class ClassGraph {
-    protected static final char FILE_SEPARATOR = '/';
-    enum Font {
-	NORMAL, ABSTRACT, CLASS, CLASS_ABSTRACT, TAG, PACKAGE
-    }
     enum Align {
-	LEFT, CENTER, RIGHT
+	LEFT, CENTER, RIGHT;
+
+	public final String lower;
+
+	private Align() {
+	    this.lower = toString().toLowerCase();
+	}
     };
-    public static Map<RelationType, String> associationMap = new HashMap<RelationType, String>();
-    static {
-	associationMap.put(RelationType.ASSOC, "arrowhead=none");
-	associationMap.put(RelationType.NAVASSOC, "arrowhead=open");
-	associationMap.put(RelationType.HAS, "arrowhead=none, arrowtail=ediamond, dir=both");
-	associationMap.put(RelationType.NAVHAS, "arrowhead=open, arrowtail=ediamond, dir=both");
-	associationMap.put(RelationType.COMPOSED, "arrowhead=none, arrowtail=diamond, dir=both");
-	associationMap.put(RelationType.NAVCOMPOSED, "arrowhead=open, arrowtail=diamond, dir=both");
-	associationMap.put(RelationType.DEPEND, "arrowhead=open, style=dashed");
-    }
+
     protected Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
     protected Set<String> rootClasses;
 	protected Map<String, ClassDoc> rootClassdocs = new HashMap<String, ClassDoc>();
@@ -90,7 +92,7 @@ class ClassGraph {
     
     // used only when generating context class diagrams in UMLDoc, to generate the proper
     // relative links to other classes in the image map
-    protected Doc contextDoc;
+    protected final String contextPackageName;
       
     /**
      * Create a new ClassGraph.  <p>The packages passed as an
@@ -105,7 +107,6 @@ class ClassGraph {
 	this.optionProvider = optionProvider;
 	this.collectionClassDoc = root.classNamed("java.util.Collection");
 	this.mapClassDoc = root.classNamed("java.util.Map");
-	this.contextDoc = contextDoc;
 	
 	// to gather the packages containing specified classes, loop thru them and gather
 	// package definitions. User root.specifiedPackages is not safe, since the user
@@ -113,133 +114,60 @@ class ClassGraph {
 	rootClasses = new HashSet<String>();
 	for (ClassDoc classDoc : root.classes()) {
 	    rootClasses.add(classDoc.qualifiedName());
-		rootClassdocs.put(classDoc.qualifiedName(), classDoc);
+	    rootClassdocs.put(classDoc.qualifiedName(), classDoc);
 	}
 	
+	// determine the context path, relative to the root
+	if (contextDoc instanceof ClassDoc)
+	    contextPackageName = ((ClassDoc) contextDoc).containingPackage().name();
+	else if (contextDoc instanceof PackageDoc)
+	    contextPackageName = ((PackageDoc) contextDoc).name();
+	else
+	    contextPackageName = null; // Not available
+	
 	Options opt = optionProvider.getGlobalOptions();
-	if (opt.compact) {
-	    linePrefix = "";
-	    linePostfix = "";
-	} else {
-	    linePrefix = "\t";
-	    linePostfix = "\n";
-	}
+	linePrefix = opt.compact ? "" : "\t";
+	linePostfix = opt.compact ? "" : "\n";
     }
 
     
 
     /** Return the class's name, possibly by stripping the leading path */
     private static String qualifiedName(Options opt, String r) {
-	// Nothing to do:
+	if (opt.hideGenerics)
+	    r = removeTemplate(r);
+	// Fast path - nothing to do:
 	if (opt.showQualified && (opt.showQualifiedGenerics || r.indexOf('<') < 0))
 	    return r;
 	StringBuilder buf = new StringBuilder(r.length());
-	int last = 0, depth = 0;
-	boolean strip = !opt.showQualified;
-	for (int i = 0; i < r.length();) {
-	    char c = r.charAt(i++);
-	    // The last condition prevents losing the dot in A<V>.B
-	    if ((c == '.' || c == '$') && strip && last + 1 < i)
-		last = i; // skip
-	    if (Character.isJavaIdentifierPart(c))
-		continue;
-	    // Handle nesting of generics
-	    if (c == '<') {
-		++depth;
-		strip = !opt.showQualifiedGenerics;
-	    } else if (c == '>' && --depth == 0)
-		strip = !opt.showQualified;
-	    if (last < i) {
-		buf.append(r, last, i);
-		last = i;
-	    }
-	}
-	if (last < r.length())
-	    buf.append(r, last, r.length());
+	qualifiedNameInner(opt, r, buf, 0, !opt.showQualified);
 	return buf.toString();
     }
 
-    /**
-     * Escape &lt;, &gt;, and &amp; characters in the string with
-     * the corresponding HTML entity code.
-     */
-    private String escape(String s) {
-	final Pattern toEscape = Pattern.compile("[&<>]");
-
-	if (toEscape.matcher(s).find()) {
-	    StringBuilder sb = new StringBuilder(s);
-	    for (int i = 0; i < sb.length();) {
-		switch (sb.charAt(i)) {
-		case '&':
-		    sb.replace(i, i + 1, "&amp;");
-		    i += "&amp;".length();
-		    break;
-		case '<':
-		    sb.replace(i, i + 1, "&lt;");
-		    i += "&lt;".length();
-		    break;
-		case '>':
-		    sb.replace(i, i + 1, "&gt;");
-		    i += "&gt;".length();
-		    break;
-		default:
-		    i++;
-		}
+    private static int qualifiedNameInner(Options opt, String r, StringBuilder buf, int last, boolean strip) {
+	strip = strip && last < r.length() && Character.isLowerCase(r.charAt(last));
+	for (int i = last; i < r.length(); i++) {
+	    char c = r.charAt(i);
+	    if (c == '.' || c == '$') {
+		if (strip)
+		    last = i + 1; // skip dot
+		strip = strip && last < r.length() && Character.isLowerCase(r.charAt(last));
+		continue;
 	    }
-	    return sb.toString();
-	} else
-	    return s;
-    }
-
-    /**
-     * Convert embedded newlines into HTML line breaks
-     */
-    private String htmlNewline(String s) {
-	if (s.indexOf('\n') == -1)
-	    return (s);
-
-	StringBuilder sb = new StringBuilder(s);
-	for (int i = 0; i < sb.length();) {
-	    if (sb.charAt(i) == '\n') {
-		sb.replace(i, i + 1, "<br/>");
-		i += "<br/>".length();
-	    } else
-		i++;
+	    if (Character.isJavaIdentifierPart(c))
+		continue;
+	    buf.append(r, last, i);
+	    last = i;
+	    // Handle nesting of generics
+	    if (c == '<') {
+		buf.append('<');
+		i = last = qualifiedNameInner(opt, r, buf, ++last, !opt.showQualifiedGenerics);
+		buf.append('>');
+	    } else if (c == '>')
+		return i + 1;
 	}
-	return sb.toString();
-    }
-
-
-    /**
-     * Convert &lt; and &gt; characters in the string to the respective guillemot characters.
-     */
-    private String guillemize(Options opt, String s) {
-	StringBuilder r = new StringBuilder(s);
-	for (int i = 0; i < r.length();)
-	    switch (r.charAt(i)) {
-	    case '<':
-		r.replace(i, i + 1, opt.guilOpen);
-		i += opt.guilOpen.length();
-		break;
-	    case '>':
-		r.replace(i, i + 1, opt.guilClose);
-		i += opt.guilClose.length();
-		break;
-	    default:
-		i++;
-		break;
-	    }
-	return r.toString();
-    }
-
-    /**
-     * Wraps a string in Guillemot (or an ASCII substitute) characters.
-     *
-     * @param str the <code>String</code> to be wrapped.
-     * @return the wrapped <code>String</code>.
-     */
-    private String guilWrap(Options opt, String str) {
-	return opt.guilOpen + str + opt.guilClose;
+	buf.append(r, last, r.length());
+	return r.length();
     }
 
     /**
@@ -247,66 +175,46 @@ class ClassGraph {
      * any stereotypes
      */
     private String visibility(Options opt, ProgramElementDoc e) {
-	if (!opt.showVisibility)
-	    return " ";
-	if (e.isPrivate())
-	    return "- ";
-	else if (e.isPublic())
-	    return "+ ";
-	else if (e.isProtected())
-	    return "# ";
-	else if (e.isPackagePrivate())
-	    return "~ ";
-	else
-	    return " ";
+	return opt.showVisibility ? Visibility.get(e).symbol : " ";
     }
 
     /** Print the method parameter p */
     private String parameter(Options opt, Parameter p[]) {
-	String par = "";
+	StringBuilder par = new StringBuilder(1000);
 	for (int i = 0; i < p.length; i++) {
-	    par += p[i].name() + typeAnnotation(opt, p[i].type());
+	    par.append(p[i].name() + typeAnnotation(opt, p[i].type()));
 	    if (i + 1 < p.length)
-		par += ", ";
+		par.append(", ");
 	}
-	return par;
+	return par.toString();
     }
 
     /** Print a a basic type t */
     private String type(Options opt, Type t, boolean generics) {
-	String type;
-	if (generics ? opt.showQualifiedGenerics : opt.showQualified)
-	    type = t.qualifiedTypeName();
-	else
-	    type = t.typeName();
-	type += typeParameters(opt, t.asParameterizedType());
-	return type;
+	return ((generics ? opt.showQualifiedGenerics : opt.showQualified) ? //
+		t.qualifiedTypeName() : t.typeName()) //
+		+ (opt.hideGenerics ? "" : typeParameters(opt, t.asParameterizedType()));
     }
 
     /** Print the parameters of the parameterized type t */
     private String typeParameters(Options opt, ParameterizedType t) {
-	String tp = "";
 	if (t == null)
-	    return tp;
+	    return "";
+	StringBuffer tp = new StringBuffer(1000).append("&lt;");
 	Type args[] = t.typeArguments();
-	tp += "&lt;";
 	for (int i = 0; i < args.length; i++) {
-	    tp += type(opt, args[i], true);
+	    tp.append(type(opt, args[i], true));
 	    if (i != args.length - 1)
-		tp += ", ";
+		tp.append(", ");
 	}
-	tp += "&gt;";
-	return tp;
+	return tp.append("&gt;").toString();
     }
 
     /** Annotate an field/argument with its type t */
     private String typeAnnotation(Options opt, Type t) {
 	if (t.typeName().equals("void"))
 	    return "";
-	String ta = " : ";
-	ta += type(opt, t, false);
-	ta += t.dimension();
-	return ta;
+	return " : " + type(opt, t, false) + t.dimension();
     }
 
     /** Print the class's attributes fd */
@@ -314,9 +222,8 @@ class ClassGraph {
 	for (FieldDoc f : fd) {
 	    if (hidden(f))
 		continue;
-	    String att;
 	    stereotype(opt, f, Align.LEFT);
-	    att = visibility(opt, f) + f.name();
+	    String att = visibility(opt, f) + f.name();
 	    if (opt.showType)
 		att += typeAnnotation(opt, f.type());
 	    tableLine(Align.LEFT, att);
@@ -337,15 +244,11 @@ class ClassGraph {
 	    if (hidden(cd))
 		continue;
 	    stereotype(opt, cd, Align.LEFT);
-	    String cs = visibility(opt, cd) + cd.name();
-	    if (opt.showType) {
-		cs += "(" + parameter(opt, cd.parameters()) + ")";
-	    } else {
-		cs += "()";
-	    }
+	    String cs = visibility(opt, cd) + cd.name() //
+		    + (opt.showType ? "(" + parameter(opt, cd.parameters()) + ")" : "()");
 	    tableLine(Align.LEFT, cs);
-	    printed = true;
 	    tagvalue(opt, cd);
+	    printed = true;
 	}
 	return printed;
     }
@@ -360,14 +263,10 @@ class ClassGraph {
 	    if (md.name().equals("<clinit>") && md.isStatic() && md.isPackagePrivate())
 		continue;
 	    stereotype(opt, md, Align.LEFT);
-	    String op = visibility(opt, md) + md.name();
-	    if (opt.showType) {
-		op += "(" + parameter(opt, md.parameters()) + ")"
-			+ typeAnnotation(opt, md.returnType());
-	    } else {
-		op += "()";
-	    }
-	    tableLine(Align.LEFT, op, opt, md.isAbstract() ? Font.ABSTRACT : Font.NORMAL);
+	    String op = visibility(opt, md) + md.name() + //
+		    (opt.showType ? "(" + parameter(opt, md.parameters()) + ")" + typeAnnotation(opt, md.returnType())
+			    : "()");
+	    tableLine(Align.LEFT, (md.isAbstract() ? Font.ABSTRACT : Font.NORMAL).wrap(opt, op));
 	    printed = true;
 
 	    tagvalue(opt, md);
@@ -377,10 +276,14 @@ class ClassGraph {
 
     /** Print the common class node's properties */
     private void nodeProperties(Options opt) {
-	w.print(", fontname=\"" + opt.nodeFontName + "\"");
-	w.print(", fontcolor=\"" + opt.nodeFontColor + "\"");
-	w.print(", fontsize=" + opt.nodeFontSize);
-	w.print(opt.shape.graphvizAttribute());
+	Options def = opt.getGlobalOptions();
+	if (opt.nodeFontName != def.nodeFontName)
+	    w.print(",fontname=\"" + opt.nodeFontName + "\"");
+	if (opt.nodeFontColor != def.nodeFontColor)
+	    w.print(",fontcolor=\"" + opt.nodeFontColor + "\"");
+	if (opt.nodeFontSize != def.nodeFontSize)
+	    w.print(",fontsize=" + fmt(opt.nodeFontSize));
+	w.print(opt.shape.style);
 	w.println("];");
     }
 
@@ -397,12 +300,12 @@ class ClassGraph {
 	    return;
 	
 	for (Tag tag : tags) {
-	    String t[] = StringUtil.tokenize(tag.text());
+	    String t[] = tokenize(tag.text());
 	    if (t.length != 2) {
 		System.err.println("@tagvalue expects two fields: " + tag.text());
 		continue;
 	    }
-	    tableLine(Align.RIGHT, "{" + t[0] + " = " + t[1] + "}", opt, Font.TAG);
+	    tableLine(Align.RIGHT, Font.TAG.wrap(opt, "{" + t[0] + " = " + t[1] + "}"));
 	}
     }
 
@@ -412,7 +315,7 @@ class ClassGraph {
      */
     private void stereotype(Options opt, Doc c, Align align) {
 	for (Tag tag : c.tags("stereotype")) {
-	    String t[] = StringUtil.tokenize(tag.text());
+	    String t[] = tokenize(tag.text());
 	    if (t.length != 1) {
 		System.err.println("@stereotype expects one field: " + tag.text());
 		continue;
@@ -423,41 +326,38 @@ class ClassGraph {
 
     /** Return true if c has a @hidden tag associated with it */
     private boolean hidden(ProgramElementDoc c) {
-	Tag tags[] = c.tags("hidden");
-	if (tags.length > 0)
+	if (c.tags("hidden").length > 0 || c.tags("view").length > 0)
 	    return true;
-	tags = c.tags("view");
-	if (tags.length > 0)
-	    return true;
-	Options opt; 
-	if(c instanceof ClassDoc)
-	  opt = optionProvider.getOptionsFor((ClassDoc) c);
-	else 
-	  opt = optionProvider.getOptionsFor(c.containingClass());
-	    return opt.matchesHideExpression(c.toString());
+	Options opt = optionProvider.getOptionsFor(c instanceof ClassDoc ? (ClassDoc) c : c.containingClass());
+	return opt.matchesHideExpression(c.toString()) //
+		|| (opt.hidePrivateInner && c instanceof ClassDoc  && c.isPrivate() && ((ClassDoc) c).containingClass() != null);
     }
-    
-    protected ClassInfo getClassInfo(String className) {
-	return classnames.get(removeTemplate(className));
+
+    protected ClassInfo getClassInfo(ClassDoc cd, boolean create) {
+	return getClassInfo(cd, cd.toString(), create);
     }
-    
-    private ClassInfo newClassInfo(String className, boolean printed, boolean hidden) {
-	ClassInfo ci = new ClassInfo(printed, hidden);
-        classnames.put(removeTemplate(className), ci);
-        return ci;
+
+    protected ClassInfo getClassInfo(String className, boolean create) {
+	return getClassInfo(null, className, create);
+    }
+
+    protected ClassInfo getClassInfo(ClassDoc cd, String className, boolean create) {
+	className = removeTemplate(className);
+	ClassInfo ci = classnames.get(className);
+	if (ci == null && create) {
+	    boolean hidden = cd != null ? hidden(cd) : optionProvider.getOptionsFor(className).matchesHideExpression(className);
+	    ci = new ClassInfo(hidden);
+	    classnames.put(className, ci);
+	}
+	return ci;
     }
 
     /** Return true if the class name is associated to an hidden class or matches a hide expression */
-    private boolean hidden(String s) {
-	ClassInfo ci = getClassInfo(s);
-	Options opt = optionProvider.getOptionsFor(s);
-	if(ci != null)
-	    return ci.hidden || opt.matchesHideExpression(s);
-	else
-	    return opt.matchesHideExpression(s);
+    private boolean hidden(String className) {
+	className = removeTemplate(className);
+	ClassInfo ci = classnames.get(className);
+	return ci != null ? ci.hidden : optionProvider.getOptionsFor(className).matchesHideExpression(className);
     }
-
-    
 
     /**
      * Prints the class if needed.
@@ -467,157 +367,122 @@ class ClassGraph {
      * relative links in diagrams for UMLDoc
      */
     public String printClass(ClassDoc c, boolean rootClass) {
-	ClassInfo ci;
-	boolean toPrint;
+	ClassInfo ci = getClassInfo(c, true);
+	if(ci.nodePrinted || ci.hidden)
+	    return ci.name;
 	Options opt = optionProvider.getOptionsFor(c);
-
+	if (c.isEnum() && !opt.showEnumerations)
+	    return ci.name;
 	String className = c.toString();
-	if ((ci = getClassInfo(className)) != null)
-	    toPrint = !ci.nodePrinted;
-	else {
-	    toPrint = true;
-	    ci = newClassInfo(className, true, hidden(c));
-	}
-	if (toPrint && !hidden(c) && (!c.isEnum() || opt.showEnumerations)) {
-	    // Associate classname's alias
-	    String r = className;
-	    w.println("\t// " + r);
-	    // Create label
-	    w.print("\t" + ci.name + " [label=");
+	// Associate classname's alias
+	w.println(linePrefix + "// " + className);
+	// Create label
+	w.print(linePrefix + ci.name + " [label=");
 
-	    boolean showMembers =
+	boolean showMembers =
 		(opt.showAttributes && c.fields().length > 0) ||
 		(c.isEnum() && opt.showEnumConstants && c.enumConstants().length > 0) ||
 		(opt.showOperations && c.methods().length > 0) ||
 		(opt.showConstructors && c.constructors().length > 0);
-	    
-	    externalTableStart(opt, c.qualifiedName(), classToUrl(c, rootClass));
 
-	    // Calculate the number of innerTable rows we will emmit
-	    int nRows = 1;
-	    if (showMembers) {
-		if (opt.showAttributes)
-		    nRows++;
-		else if(!c.isEnum() && (opt.showConstructors || opt.showOperations))
-		    nRows++;
-		if (c.isEnum() && opt.showEnumConstants)
-		    nRows++;
-		if (!c.isEnum() && (opt.showConstructors || opt.showOperations))
-		    nRows++;
-	    }
+	final String url = classToUrl(c, rootClass);
+	externalTableStart(opt, c.qualifiedName(), url);
 
-	    firstInnerTableStart(opt, nRows);
-	    if (c.isInterface())
-		tableLine(Align.CENTER, guilWrap(opt, "interface"));
-	    if (c.isEnum())
-		tableLine(Align.CENTER, guilWrap(opt, "enumeration"));
-	    stereotype(opt, c, Align.CENTER);
-	    Font font = c.isAbstract() && !c.isInterface() ? Font.CLASS_ABSTRACT : Font.CLASS;
-	    String qualifiedName = qualifiedName(opt, r);
-	    int startTemplate = qualifiedName.indexOf('<');
-	    int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
-	    if (opt.showComment)
-		tableLine(Align.LEFT, htmlNewline(escape(c.commentText())), opt, Font.CLASS);
-	    else if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
-		String packageName = qualifiedName.substring(0, idx);
-		String cn = qualifiedName.substring(idx + 1);
-		tableLine(Align.CENTER, escape(cn), opt, font);
-		tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
-	    } else {
-		tableLine(Align.CENTER, escape(qualifiedName), opt, font);
-	    }
-	    tagvalue(opt, c);
-	    firstInnerTableEnd(opt, nRows);
-	    
-	    /*
-	     * Warning: The boolean expressions guarding innerTableStart()
-	     * in this block, should match those in the code block above
-	     * marked: "Calculate the number of innerTable rows we will emmit"
-	     */
-	    if (showMembers) {
-		if (opt.showAttributes) {
-		    innerTableStart();
-		    FieldDoc[] fields = c.fields();
-		    // if there are no fields, print an empty line to generate proper HTML
-		    if (fields.length == 0)
-			tableLine(Align.LEFT, "");
-		    else
-			attributes(opt, c.fields());
-		    innerTableEnd();
-		} else if(!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
-		    // show an emtpy box if we don't show attributes but
-		    // we show operations
-		    innerTableStart();
-		    tableLine(Align.LEFT, "");
-		    innerTableEnd();
-	    	}
-		if (c.isEnum() && opt.showEnumConstants) {
-		    innerTableStart();
-		    FieldDoc[] ecs = c.enumConstants();
-		    // if there are no constants, print an empty line to generate proper HTML		    
-		    if (ecs.length == 0) {
-			tableLine(Align.LEFT, "");
-		    } else {
-			for (FieldDoc fd : c.enumConstants()) {
-			    tableLine(Align.LEFT, fd.name());
-			}
-		    }
-		    innerTableEnd();
-		}
-		if (!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
-		    innerTableStart();
-		    boolean printedLines = false;
-		    if (opt.showConstructors)
-			printedLines |= operations(opt, c.constructors());
-		    if (opt.showOperations)
-			printedLines |= operations(opt, c.methods());
-
-		    if (!printedLines)
-			// if there are no operations nor constructors,
-			// print an empty line to generate proper HTML
-			tableLine(Align.LEFT, "");
-
-		    innerTableEnd();
-		}
-	    }
-	    externalTableEnd();
-	    w.print(", URL=\"" + classToUrl(c, rootClass) + "\"");
-	    nodeProperties(opt);
-
-	    // If needed, add a note for this node
-	    int ni = 0;
-	    for (Tag t : c.tags("note")) {
-		String noteName = "n" + ni + "c" + ci.name;
-		w.print("\t// Note annotation\n");
-		w.print("\t" + noteName + " [label=");
-		externalTableStart(UmlGraph.getCommentOptions(), c.qualifiedName(), classToUrl(c, rootClass));
-		innerTableStart();
-		tableLine(Align.LEFT, htmlNewline(escape(t.text())), UmlGraph.getCommentOptions(), Font.CLASS);
-		innerTableEnd();
-		externalTableEnd();
-		nodeProperties(UmlGraph.getCommentOptions());
-		w.print("\t" + noteName + " -> " + relationNode(c) + "[arrowhead=none];\n");
-		ni++;
-	    }
-	    ci.nodePrinted = true;
+	firstInnerTableStart(opt);
+	if (c.isInterface())
+	    tableLine(Align.CENTER, guilWrap(opt, "interface"));
+	if (c.isEnum())
+	    tableLine(Align.CENTER, guilWrap(opt, "enumeration"));
+	stereotype(opt, c, Align.CENTER);
+	Font font = c.isAbstract() && !c.isInterface() ? Font.CLASS_ABSTRACT : Font.CLASS;
+	String qualifiedName = qualifiedName(opt, className);
+	int idx = splitPackageClass(qualifiedName);
+	if (opt.showComment)
+	    tableLine(Align.LEFT, Font.CLASS.wrap(opt, htmlNewline(escape(c.commentText()))));
+	else if (opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
+	    String packageName = qualifiedName.substring(0, idx);
+	    String cn = qualifiedName.substring(idx + 1);
+	    tableLine(Align.CENTER, font.wrap(opt, escape(cn)));
+	    tableLine(Align.CENTER, Font.PACKAGE.wrap(opt, packageName));
+	} else {
+	    tableLine(Align.CENTER, font.wrap(opt, escape(qualifiedName)));
 	}
-	return ci.name;
-    }
+	tagvalue(opt, c);
+	firstInnerTableEnd(opt);
 
-    private String getNodeName(ClassDoc c) {
-	String className = c.toString();
-	ClassInfo ci = getClassInfo(className);
-	if (ci == null)
-	    ci = newClassInfo(className, false, hidden(c));
-	return ci.name;
-    }
-    
-    /** Return a class's internal name */
-    private String getNodeName(String c) {
-	ClassInfo ci = getClassInfo(c);
+	/*
+	 * Warning: The boolean expressions guarding innerTableStart()
+	 * in this block, should match those in the code block above
+	 * marked: "Calculate the number of innerTable rows we will emmit"
+	 */
+	if (showMembers) {
+	    if (opt.showAttributes) {
+		innerTableStart();
+		FieldDoc[] fields = c.fields();
+		// if there are no fields, print an empty line to generate proper HTML
+		if (fields.length == 0)
+		    tableLine(Align.LEFT, "");
+		else
+		    attributes(opt, c.fields());
+		innerTableEnd();
+	    } else if(!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
+		// show an emtpy box if we don't show attributes but
+		// we show operations
+		innerTableStart();
+		tableLine(Align.LEFT, "");
+		innerTableEnd();
+	    }
+	    if (c.isEnum() && opt.showEnumConstants) {
+		innerTableStart();
+		FieldDoc[] ecs = c.enumConstants();
+		// if there are no constants, print an empty line to generate proper HTML
+		if (ecs.length == 0) {
+		    tableLine(Align.LEFT, "");
+		} else {
+		    for (FieldDoc fd : c.enumConstants()) {
+			tableLine(Align.LEFT, fd.name());
+		    }
+		}
+		innerTableEnd();
+	    }
+	    if (!c.isEnum() && (opt.showConstructors || opt.showOperations)) {
+		innerTableStart();
+		boolean printedLines = false;
+		if (opt.showConstructors)
+		    printedLines |= operations(opt, c.constructors());
+		if (opt.showOperations)
+		    printedLines |= operations(opt, c.methods());
 
-	if (ci == null)
-	    ci = newClassInfo(c, false, false);
+		if (!printedLines)
+		    // if there are no operations nor constructors,
+		    // print an empty line to generate proper HTML
+		    tableLine(Align.LEFT, "");
+
+		innerTableEnd();
+	    }
+	}
+	externalTableEnd();
+	if (url != null)
+	    w.print(", URL=\"" + url + "\"");
+	nodeProperties(opt);
+
+	// If needed, add a note for this node
+	int ni = 0;
+	for (Tag t : c.tags("note")) {
+	    String noteName = "n" + ni + "c" + ci.name;
+	    w.print(linePrefix + "// Note annotation\n");
+	    w.print(linePrefix + noteName + " [label=");
+	    externalTableStart(UmlGraph.getCommentOptions(), c.qualifiedName(), url);
+	    innerTableStart();
+	    tableLine(Align.LEFT, Font.CLASS.wrap(UmlGraph.getCommentOptions(), htmlNewline(escape(t.text()))));
+	    innerTableEnd();
+	    externalTableEnd();
+	    nodeProperties(UmlGraph.getCommentOptions());
+	    ClassInfo ci1 = getClassInfo(c, true);
+	    w.print(linePrefix + noteName + " -> " + ci1.name + "[arrowhead=none];\n");
+	    ni++;
+	}
+	ci.nodePrinted = true;
 	return ci.name;
     }
 
@@ -630,14 +495,13 @@ class ClassGraph {
     private void allRelation(Options opt, RelationType rt, ClassDoc from) {
 	String tagname = rt.lower;
 	for (Tag tag : from.tags(tagname)) {
-	    String t[] = StringUtil.tokenize(tag.text());    // l-src label l-dst target
+	    String t[] = tokenize(tag.text());    // l-src label l-dst target
+	    t = t.length == 1 ? new String[] { "-", "-", "-", t[0] } : t; // Shorthand
 	    if (t.length != 4) {
 		System.err.println("Error in " + from + "\n" + tagname + " expects four fields (l-src label l-dst target): " + tag.text());
 		return;
 	    }
 	    ClassDoc to = from.findClass(t[3]);
-
-
 	    if (to != null) {
 		if(hidden(to))
 		    continue;
@@ -659,27 +523,39 @@ class ClassGraph {
      */
     private void relation(Options opt, RelationType rt, ClassDoc from, String fromName, 
 	    ClassDoc to, String toName, String tailLabel, String label, String headLabel) {
+	tailLabel = (tailLabel != null && !tailLabel.isEmpty()) ? ",taillabel=\"" + tailLabel + "\"" : "";
+	label = (label != null && !label.isEmpty()) ? ",label=\"" + guillemize(opt, label) + "\"" : "";
+	headLabel = (headLabel != null && !headLabel.isEmpty()) ? ",headlabel=\"" + headLabel + "\"" : "";
+	boolean unLabeled = tailLabel.isEmpty() && label.isEmpty() && headLabel.isEmpty();
 
+	ClassInfo ci1 = getClassInfo(from, fromName, true), ci2 = getClassInfo(to, toName, true);
+	String n1 = ci1.name, n2 = ci2.name;
+	// For ranking we need to output extends/implements backwards.
+	if (rt.backorder) { // Swap:
+	    n1 = ci2.name;
+	    n2 = ci1.name;
+	    String tmp = tailLabel;
+	    tailLabel = headLabel;
+	    headLabel = tmp;
+	}
+	Options def = opt.getGlobalOptions();
 	// print relation
-	String edgetype = associationMap.get(rt);
-	w.println("\t// " + fromName + " " + rt.toString() + " " + toName);
-	w.println("\t" + relationNode(from, fromName) + " -> " + relationNode(to, toName) + " [" +
-    	"taillabel=\"" + tailLabel + "\", " +
-    	((label == null || label.isEmpty()) ? "label=\"\", " : "label=\"" + guillemize(opt, label) + "\", ") +
-    	"headlabel=\"" + headLabel + "\", " +
-    	"fontname=\"" + opt.edgeFontName + "\", " +
-    	"fontcolor=\"" + opt.edgeFontColor + "\", " +
-    	"fontsize=" + opt.edgeFontSize + ", " +
-    	"color=\"" + opt.edgeColor + "\", " +
-    	edgetype + "];"
-    	);
+	w.println(linePrefix + "// " + fromName + " " + rt.lower + " " + toName);
+	w.println(linePrefix + n1 + " -> " + n2 + " [" + rt.style +
+		(opt.edgeColor != def.edgeColor ? ",color=\"" + opt.edgeColor + "\"" : "") +
+		(unLabeled ? "" :
+		    (opt.edgeFontName != def.edgeFontName ? ",fontname=\"" + opt.edgeFontName + "\"" : "") +
+		    (opt.edgeFontColor != def.edgeFontColor ? ",fontcolor=\"" + opt.edgeFontColor + "\"" : "") +
+		    (opt.edgeFontSize != def.edgeFontSize ? ",fontsize=" + fmt(opt.edgeFontSize) : "")) +
+		tailLabel + label + headLabel +
+		"];");
 	
 	// update relation info
 	RelationDirection d = RelationDirection.BOTH;
 	if(rt == RelationType.NAVASSOC || rt == RelationType.DEPEND)
 	    d = RelationDirection.OUT;
-	getClassInfo(fromName).addRelation(toName, rt, d);
-        getClassInfo(toName).addRelation(fromName, rt, d.inverse());
+	ci1.addRelation(toName, rt, d);
+	ci2.addRelation(fromName, rt, d.inverse());
     }
 
     /**
@@ -693,79 +569,33 @@ class ClassGraph {
     }
 
 
-    /** Return the full name of a relation's node.
-     * This may involve appending the port :p for the standard nodes
-     * whose outline is rendered through an inner table.
-     */
-    private String relationNode(ClassDoc c) {
-	Options opt = optionProvider.getOptionsFor(c);
-	String name = getNodeName(c);
-	return name + opt.shape.landingPort();
-    }
-
-    /** Return the full name of a relation's node c.
-     * This may involve appending the port :p for the standard nodes
-     * whose outline is rendered through an inner table.
-     * @param c the node's class (may be null)
-     * @param cName the node's class name
-     */
-    private String relationNode(ClassDoc c, String cName) {
-	Options opt;
-	if (c == null)
-	    opt = optionProvider.getOptionsFor(cName);
-	else
-	    opt = optionProvider.getOptionsFor(c);
-	String name = getNodeName(cName);
-	return name + opt.shape.landingPort();
-    }
-
     /** Print a class's relations */
     public void printRelations(ClassDoc c) {
 	Options opt = optionProvider.getOptionsFor(c);
 	if (hidden(c) || c.name().equals("")) // avoid phantom classes, they may pop up when the source uses annotations
 	    return;
-	String className = c.toString();
-
 	// Print generalization (through the Java superclass)
 	Type s = c.superclassType();
-	if (s != null &&
-	    !s.toString().equals("java.lang.Object") &&
-	    !c.isEnum() &&
-	    !hidden(s.asClassDoc())) {
-	    	ClassDoc sc = s.asClassDoc();
-		w.println("\t//" + c + " extends " + s + "\n" +
-		    "\t" + relationNode(sc) + " -> " + relationNode(c) + " [dir=back,arrowtail=empty];");
-		getClassInfo(className).addRelation(sc.toString(), RelationType.EXTENDS, RelationDirection.OUT);
-		getClassInfo(sc.toString()).addRelation(className, RelationType.EXTENDS, RelationDirection.IN);
-	}
-
+	ClassDoc sc = s != null && !s.qualifiedTypeName().equals(Object.class.getName()) ? s.asClassDoc() : null;
+	if (sc != null && !c.isEnum() && !hidden(sc))
+	    relation(opt, RelationType.EXTENDS, c, sc, null, null, null);
 	// Print generalizations (through @extends tags)
 	for (Tag tag : c.tags("extends"))
-	    if (!hidden(tag.text())) {
-		ClassDoc from = c.findClass(tag.text());
-		w.println("\t//" + c + " extends " + tag.text() + "\n" +
-		    "\t" + relationNode(from, tag.text()) + " -> " + relationNode(c) + " [dir=back,arrowtail=empty];");
-		getClassInfo(className).addRelation(tag.text(), RelationType.EXTENDS, RelationDirection.OUT);
-		getClassInfo(tag.text()).addRelation(className, RelationType.EXTENDS, RelationDirection.IN);
-	    }
+	    if (!hidden(tag.text()))
+		relation(opt, RelationType.EXTENDS, c, c.findClass(tag.text()), null, null, null);
 	// Print realizations (Java interfaces)
 	for (Type iface : c.interfaceTypes()) {
 	    ClassDoc ic = iface.asClassDoc();
-	    if (!hidden(ic)) {
-		w.println("\t//" + c + " implements " + ic + "\n\t" + 
-		    relationNode(ic) + " -> " + relationNode(c) + " [dir=back,arrowtail=empty,style=dashed];"
-		    );
-		getClassInfo(className).addRelation(ic.toString(), RelationType.IMPLEMENTS, RelationDirection.OUT);
-		getClassInfo(ic.toString()).addRelation(className, RelationType.IMPLEMENTS, RelationDirection.IN);
-	    }
+	    if (!hidden(ic))
+		relation(opt, RelationType.IMPLEMENTS, c, ic, null, null, null);
 	}
 	// Print other associations
-	allRelation(opt, RelationType.ASSOC, c);
-	allRelation(opt, RelationType.NAVASSOC, c);
-	allRelation(opt, RelationType.HAS, c);
-	allRelation(opt, RelationType.NAVHAS, c);
 	allRelation(opt, RelationType.COMPOSED, c);
 	allRelation(opt, RelationType.NAVCOMPOSED, c);
+	allRelation(opt, RelationType.HAS, c);
+	allRelation(opt, RelationType.NAVHAS, c);
+	allRelation(opt, RelationType.ASSOC, c);
+	allRelation(opt, RelationType.NAVASSOC, c);
 	allRelation(opt, RelationType.DEPEND, c);
     }
 
@@ -773,49 +603,39 @@ class ClassGraph {
     public void printExtraClasses(RootDoc root) {
 	Set<String> names = new HashSet<String>(classnames.keySet()); 
 	for(String className: names) {
-	    ClassInfo info = getClassInfo(className);
-	    if (!info.nodePrinted) {
-		ClassDoc c = root.classNamed(className);
-		if(c != null) {
-		    printClass(c, false);
-		} else {
-		    Options opt = optionProvider.getOptionsFor(className);
-		    if(opt.matchesHideExpression(className))
-			continue;
-		    w.println("\t// " + className);
-		    w.print("\t" + info.name + "[label=");
-		    externalTableStart(opt, className, classToUrl(className));
-		    innerTableStart();
-		    String qualifiedName = qualifiedName(opt, className);
-		    int startTemplate = qualifiedName.indexOf('<');
-		    int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
-		    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
-			String packageName = qualifiedName.substring(0, idx);
-			String cn = qualifiedName.substring(idx + 1);
-			tableLine(Align.CENTER, escape(cn), opt, Font.CLASS);
-			tableLine(Align.CENTER, packageName, opt, Font.PACKAGE);
-		    } else {
-			tableLine(Align.CENTER, escape(qualifiedName), opt, Font.CLASS);
-		    }
-		    innerTableEnd();
-		    externalTableEnd();
-		    if (className == null || className.length() == 0)
-			w.print(", URL=\"" + classToUrl(className) + "\"");
-		    nodeProperties(opt);
-		}
+	    ClassInfo info = getClassInfo(className, true);
+	    if (info.nodePrinted)
+		continue;
+	    ClassDoc c = root.classNamed(className);
+	    if(c != null) {
+		printClass(c, false);
+		continue;
 	    }
+	    // Handle missing classes:
+	    Options opt = optionProvider.getOptionsFor(className);
+	    if(opt.matchesHideExpression(className))
+		continue;
+	    w.println(linePrefix + "// " + className);
+	    w.print(linePrefix  + info.name + "[label=");
+	    externalTableStart(opt, className, classToUrl(className));
+	    innerTableStart();
+	    String qualifiedName = qualifiedName(opt, className);
+	    int startTemplate = qualifiedName.indexOf('<');
+	    int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
+	    if(opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
+		String packageName = qualifiedName.substring(0, idx);
+		String cn = qualifiedName.substring(idx + 1);
+		tableLine(Align.CENTER, Font.CLASS.wrap(opt, escape(cn)));
+		tableLine(Align.CENTER, Font.PACKAGE.wrap(opt, packageName));
+	    } else {
+		tableLine(Align.CENTER, Font.CLASS.wrap(opt, escape(qualifiedName)));
+	    }
+	    innerTableEnd();
+	    externalTableEnd();
+	    if (className == null || className.length() == 0)
+		w.print(",URL=\"" + classToUrl(className) + "\"");
+	    nodeProperties(opt);
 	}
-    }
-    
-    /**
-     * Prints associations recovered from the fields of a class. An association is inferred only
-     * if another relation between the two classes is not already in the graph.
-     * @param classes
-     */    
-    public void printInferredRelations(ClassDoc[] classes) {
-        for (ClassDoc c : classes) {
-            printInferredRelations(c);
-        }
     }
     
     /**
@@ -824,47 +644,32 @@ class ClassGraph {
      * @param classes
      */  
     public void printInferredRelations(ClassDoc c) {
-	Options opt = optionProvider.getOptionsFor(c);
-
 	// check if the source is excluded from inference
 	if (hidden(c))
 	    return;
 
+	Options opt = optionProvider.getOptionsFor(c);
+
 	for (FieldDoc field : c.fields(false)) {
 	    if(hidden(field))
 		continue;
-
 	    // skip statics
 	    if(field.isStatic())
 		continue;
-	    
 	    // skip primitives
 	    FieldRelationInfo fri = getFieldRelationInfo(field);
 	    if (fri == null)
 		continue;
-
 	    // check if the destination is excluded from inference
 	    if (hidden(fri.cd))
 		continue;
 
 	    // if source and dest are not already linked, add a dependency
-	    RelationPattern rp = getClassInfo(c.toString()).getRelation(fri.cd.toString());
+	    RelationPattern rp = getClassInfo(c, true).getRelation(fri.cd.toString());
 	    if (rp == null) {
 		String destAdornment = fri.multiple ? "*" : "";
 		relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
             }
-	}
-    }
-
-    /**
-     * Prints dependencies recovered from the methods of a class. A
-     * dependency is inferred only if another relation between the two
-     * classes is not already in the graph.
-     * @param classes
-     */    
-    public void printInferredDependencies(ClassDoc[] classes) {
-	for (ClassDoc c : classes) {
-	    printInferredDependencies(c);
 	}
     }
 
@@ -884,12 +689,10 @@ class ClassGraph {
      * @param classes
      */  
     public void printInferredDependencies(ClassDoc c) {
-	Options opt = optionProvider.getOptionsFor(c);
-
-	String sourceName = c.toString();
 	if (hidden(c))
 	    return;
 
+	Options opt = optionProvider.getOptionsFor(c);
 	Set<Type> types = new HashSet<Type>();
 	// harvest method return and parameter types
 	for (MethodDoc method : filterByVisibility(c.methods(false), opt.inferDependencyVisibility)) {
@@ -939,7 +742,7 @@ class ClassGraph {
 		continue;
 
 	    // if source and dest are not already linked, add a dependency
-	    RelationPattern rp = getClassInfo(sourceName).getRelation(fc.toString());
+	    RelationPattern rp = getClassInfo(c, true).getRelation(fc.toString());
 	    if (rp == null || rp.matchesOne(new RelationPattern(RelationDirection.OUT))) {
 		relation(opt, RelationType.DEPEND, c, fc, "", "", "");
 	    }
@@ -1015,120 +818,36 @@ class ClassGraph {
 	return null;
     }
 
-    /** Removes the template specs from a class name. */
-    private String removeTemplate(String name) {
-	int openIdx = name.indexOf('<');
-	if(openIdx == -1)
-	    return name;
-	StringBuilder buf = new StringBuilder(name.length());
-	for (int i = 0, depth = 0; i < name.length(); i++) {
-		char c = name.charAt(i);
-		if (c == '<')
-			depth++;
-		else if (c == '>')
-			depth--;
-		else if (depth == 0)
-			buf.append(c);
-	}
-	return buf.toString();
-    }
-
     /** Convert the class name into a corresponding URL */
     public String classToUrl(ClassDoc cd, boolean rootClass) {
 	// building relative path for context and package diagrams
-	if(contextDoc != null && rootClass) {
-	    // determine the context path, relative to the root
-	    String packageName;
-	    if (contextDoc instanceof ClassDoc) {
-		    packageName = ((ClassDoc) contextDoc).containingPackage().name();
-		} else if (contextDoc instanceof PackageDoc) {
-		    packageName = ((PackageDoc) contextDoc).name();
-		} else {
-		    return classToUrl(cd.qualifiedName());
-		}
-	    return buildRelativePath(packageName, cd.containingPackage().name()) + cd.name() + ".html";
-	} else {
-	    return classToUrl(cd.qualifiedName());
-	} 
+	if(contextPackageName != null && rootClass)
+	    return buildRelativePathFromClassNames(contextPackageName, cd.containingPackage().name()) + cd.name() + ".html";
+	return classToUrl(cd.qualifiedName());
     }
 
-    protected static String buildRelativePath(String contextPackageName, String classPackageName) {
-	// path, relative to the root, of the destination class
-	String[] contextClassPath = contextPackageName.split("\\.");
-	String[] currClassPath = classPackageName.split("\\.");
-
-	// compute relative path between the context and the destination
-	// ... first, compute common part
-	int i = 0;
-	while (i < contextClassPath.length && i < currClassPath.length
-		&& contextClassPath[i].equals(currClassPath[i]))
-	    i++;
-	// ... go up with ".." to reach the common root
-	StringBuilder buf = new StringBuilder();
-	if (i == contextClassPath.length) {
-	    buf.append(".").append(FILE_SEPARATOR);
-	} else {
-	    for (int j = i; j < contextClassPath.length; j++) {
-		buf.append("..").append(FILE_SEPARATOR);
-	    }
-	}
-	// ... go down from the common root to the destination
-	for (int j = i; j < currClassPath.length; j++) {
-	    buf.append(currClassPath[j]).append(FILE_SEPARATOR);
-	}
-	return buf.toString();
-    }
-	
-	private String getPackageName(String className) {
-		if (this.rootClassdocs.get(className) == null) {
-			int idx = className.lastIndexOf('.');
-			return idx > 0 ? className.substring(0, idx) : "";
-		} else {
-			return this.rootClassdocs.get(className).containingPackage().name();
-		}
-	}
-	
-	private String getUnqualifiedName(String className) {
-		if (this.rootClassdocs.get(className) == null) {
-			int idx = className.lastIndexOf('.');
-			return idx > 0 ? className.substring(idx + 1) : className;
-		} else {
-			return this.rootClassdocs.get(className).name();
-		}
-	}
-    
     /** Convert the class name into a corresponding URL */
     public String classToUrl(String className) {
-        String docRoot = mapApiDocRoot(className);
-        if (docRoot != null) {
-            StringBuilder buf = new StringBuilder(docRoot);
-            buf.append(getPackageName(className).replace('.', FILE_SEPARATOR) + FILE_SEPARATOR);
-			buf.append(getUnqualifiedName(className));
-            buf.append(".html");
-            return buf.toString();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns the appropriate URL "root" for a given class name.
-     * The root will be used as the prefix of the URL used to link the class in
-     * the final diagram to the associated JavaDoc page.
-     */
-    private String mapApiDocRoot(String className) {
-	String root;
-	/* If no packages are specified, we use apiDocRoot for all of them. */
-	if (rootClasses.contains(className)) {
-	    root = optionProvider.getGlobalOptions().apiDocRoot;
-	} else {
-	    Options globalOptions = optionProvider.getGlobalOptions();
-	    root = globalOptions.getApiDocRoot(className);
+	ClassDoc classDoc = rootClassdocs.get(className);
+	if (classDoc != null) {
+	    String docRoot = optionProvider.getGlobalOptions().apiDocRoot;
+	    if (docRoot == null)
+		return null;
+	    return new StringBuilder(docRoot.length() + className.length() + 10).append(docRoot) //
+		    .append(classDoc.containingPackage().name().replace('.', '/')) //
+		    .append('/').append(classDoc.name()).append(".html").toString();
 	}
-	return root;
+	String docRoot = optionProvider.getGlobalOptions().getApiDocRoot(className);
+	    if (docRoot == null)
+		return null;
+	int split = splitPackageClass(className);
+	StringBuilder buf = new StringBuilder(docRoot.length() + className.length() + 10).append(docRoot);
+	if (split > 0) // Avoid -1, and the extra slash then.
+	    buf.append(className.substring(0, split).replace('.', '/')).append('/');
+	return buf.append(className, Math.min(split + 1, className.length()), className.length()) //
+		.append(".html").toString();
     }
 
-    
     /** Dot prologue 
      * @throws IOException */
     public void prologue() throws IOException {
@@ -1140,11 +859,7 @@ class ClassGraph {
 	else {
 	    // prepare output file. Use the output file name as a full path unless the output
 	    // directory is specified
-	    File file;
-	    if (opt.outputDirectory != null)
-		file = new File(opt.outputDirectory, opt.outputFileName);
-	    else
-		file = new File(opt.outputFileName);
+	    File file = new File(opt.outputDirectory, opt.outputFileName);
 	    // make sure the output directory are there, otherwise create them
 	    if (file.getParentFile() != null
 		&& !file.getParentFile().exists())
@@ -1162,19 +877,24 @@ class ClassGraph {
 	    Version.VERSION + " (http://www.spinellis.gr/umlgraph/)\n" +
 	    "#\n\n" +
 	    "digraph G {\n" +
-	    "\tedge [fontname=\"" + opt.edgeFontName +
-	    "\",fontsize=10,labelfontname=\"" + opt.edgeFontName +
-	    "\",labelfontsize=10];\n" +
-	    "\tnode [fontname=\"" + opt.nodeFontName +
-	    "\",fontsize=10,shape=plaintext];"
+	    linePrefix + "graph [fontnames=\"svg\"]\n" +
+	    linePrefix + "edge [fontname=\"" + opt.edgeFontName +
+	    "\",fontsize=" + fmt(opt.edgeFontSize) +
+	    ",labelfontname=\"" + opt.edgeFontName +
+	    "\",labelfontsize=" + fmt(opt.edgeFontSize) +
+	    ",color=\"" + opt.edgeColor + "\"];\n" +
+	    linePrefix + "node [fontname=\"" + opt.nodeFontName +
+	    "\",fontcolor=\"" + opt.nodeFontColor +
+	    "\",fontsize=" + fmt(opt.nodeFontSize) +
+	    ",shape=plaintext,margin=0,width=0,height=0];"
 	);
 
-	w.println("\tnodesep=" + opt.nodeSep + ";");
-	w.println("\tranksep=" + opt.rankSep + ";");
+	w.println(linePrefix + "nodesep=" + opt.nodeSep + ";");
+	w.println(linePrefix + "ranksep=" + opt.rankSep + ";");
 	if (opt.horizontal)
-	    w.println("\trankdir=LR;");
+	    w.println(linePrefix + "rankdir=LR;");
 	if (opt.bgColor != null)
-	    w.println("\tbgcolor=\"" + opt.bgColor + "\";\n");
+	    w.println(linePrefix + "bgcolor=\"" + opt.bgColor + "\";\n");
     }
 
     /** Dot epilogue */
@@ -1185,16 +905,11 @@ class ClassGraph {
     }
     
     private void externalTableStart(Options opt, String name, String url) {
-	String bgcolor = "";
-	if (opt.nodeFillColor != null)
-	    bgcolor = " bgcolor=\""+ opt.nodeFillColor + "\"";
-	String href = "";
-	if (url != null)
-	    href = " href=\"" + url + "\" target=\"_parent\"";
-
+	String bgcolor = opt.nodeFillColor == null ? "" : (" bgcolor=\"" + opt.nodeFillColor + "\"");
+	String href = url == null ? "" : (" href=\"" + url + "\" target=\"_parent\"");
 	w.print("<<table title=\"" + name + "\" border=\"0\" cellborder=\"" + 
 	    opt.shape.cellBorder() + "\" cellspacing=\"0\" " +
-	    "cellpadding=\"2\" port=\"p\"" + bgcolor + href + ">" + linePostfix);
+	    "cellpadding=\"2\"" + bgcolor + href + ">" + linePostfix);
     }
     
     private void externalTableEnd() {
@@ -1208,10 +923,9 @@ class ClassGraph {
     
     /**
      * Start the first inner table of a class.
-     * @param nRows the total number of rows in this table.
      */
-    private void firstInnerTableStart(Options opt, int nRows) {
-	w.print(linePrefix + linePrefix + "<tr>" + opt.shape.extraColumn(nRows) +
+    private void firstInnerTableStart(Options opt) {
+	w.print(linePrefix + linePrefix + "<tr>" + opt.shape.extraColumn() +
 		"<td><table border=\"0\" cellspacing=\"0\" " +
 		"cellpadding=\"1\">" + linePostfix);
     }
@@ -1222,83 +936,19 @@ class ClassGraph {
 
     /**
      * End the first inner table of a class.
-     * @param nRows the total number of rows in this table.
      */
-    private void firstInnerTableEnd(Options opt, int nRows) {
+    private void firstInnerTableEnd(Options opt) {
 	w.print(linePrefix + linePrefix + "</table></td>" +
-	    opt.shape.extraColumn(nRows) + "</tr>" + linePostfix);
+	    opt.shape.extraColumn() + "</tr>" + linePostfix);
     }
 
     private void tableLine(Align align, String text) {
-	tableLine(align, text, null, Font.NORMAL);
+	w.print(linePrefix + linePrefix //
+		+ "<tr><td align=\"" + align.lower + "\" balign=\"" + align.lower + "\"> " //
+		+ text // MAY contain markup!
+		+ " </td></tr>" + linePostfix);
     }
-    
-    private void tableLine(Align align, String text, Options opt, Font font) {
-	String open;
-	String close = "</td></tr>";
-	String prefix = linePrefix + linePrefix + linePrefix;
-	String alignText;
 
-	if(align == Align.CENTER)
-	    alignText = "center";
-	else if(align == Align.LEFT)
-	    alignText = "left";
-	else if(align == Align.RIGHT)
-	    alignText = "right";
-	else
-	    throw new RuntimeException("Unknown alignement type " + align);
-	
-	text = fontWrap(" " + text + " ", opt, font);
-	open = "<tr><td align=\"" + alignText + "\" balign=\"" + alignText + "\">";
-	w.print(open + text + close + linePostfix);
-    }
-    
-    /**
-     * Wraps the text with the appropriate font according to the specified font type
-     * @param opt
-     * @param text
-     * @param font
-     * @return
-     */
-    private String fontWrap(String text, Options opt, Font font) {
-	if(font == Font.ABSTRACT) { 
-	    return fontWrap(text, opt.nodeFontAbstractName, opt.nodeFontSize);
-	} else if(font == Font.CLASS) {
-	    return fontWrap(text, opt.nodeFontClassName, opt.nodeFontClassSize);
-	} else if(font == Font.CLASS_ABSTRACT) {
-	    String name;
-	    if(opt.nodeFontClassAbstractName == null)
-		name = opt.nodeFontAbstractName;
-	    else
-		name = opt.nodeFontClassAbstractName;
-	    return fontWrap(text, name, opt.nodeFontClassSize);
-	} else if(font == Font.PACKAGE) {
-	    return fontWrap(text, opt.nodeFontPackageName, opt.nodeFontPackageSize);
-	} else if(font == Font.TAG) {
-	    return fontWrap(text, opt.nodeFontTagName, opt.nodeFontTagSize);
-	} else {
-	    return text;
-	}
-    }
-    
-    /**
-     * Wraps the text with the appropriate font tags when the font name
-     * and size are not void
-     * @param text the text to be wrapped
-     * @param fontName considered void when it's null 
-     * @param fontSize considered void when it's <= 0
-     */
-    private String fontWrap(String text, String fontName, double fontSize) {
-	if(fontName == null && fontSize == -1)
-	    return text;
-	else if(fontName == null)
-	    return "<font point-size=\"" + fontSize + "\">" + text + "</font>";
-	else if(fontSize <= 0)
-	    return "<font face=\"" + fontName + "\">" + text + "</font>";
-	else
-	    return "<font face=\"" + fontName + "\" point-size=\"" + fontSize + "\">" + text + "</font>";
-    }
-    
     private static class FieldRelationInfo {
 	ClassDoc cd;
 	boolean multiple;

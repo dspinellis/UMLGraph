@@ -20,7 +20,6 @@
 package org.umlgraph.doclet;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +31,7 @@ import java.util.Map;
 class ClassInfo {
     private static int classNumber;
     /** Alias name for the class */
-    String name;
+    final String name;
     /** True if the class class node has been printed */
     boolean nodePrinted;
     /** True if the class class node is hidden */
@@ -44,10 +43,9 @@ class ClassInfo {
      */
     Map<String, RelationPattern> relatedClasses = new HashMap<String, RelationPattern>();
 
-    ClassInfo(boolean p, boolean h) {
-	nodePrinted = p;
+    ClassInfo(boolean h) {
 	hidden = h;
-	name = "c" + (new Integer(classNumber)).toString();
+	name = "c" + classNumber;
 	classNumber++;
     }
     

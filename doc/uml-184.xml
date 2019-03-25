@@ -30,7 +30,7 @@ async(); message(S,W,"liftReceiver"); sync();
 active(S);
 message(W,S,"setDialTone()");
 async(); message(S,W,"*dialDigit(d)"); sync();
-lconstraint(W,"{dialing.executionTime < 30s}");
+lconstraint(W,"{dialing.executionTime &lt; 30s}");
 active(W);
 message(W,W,"routeCalls(s,n)");
 inactive(W);

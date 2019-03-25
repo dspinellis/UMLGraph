@@ -62,12 +62,10 @@ public class UmlGraphDoc {
 	    opt.strictMatching = true;
 //	    root.printNotice(opt.toString());
 
-	    root = new WrappedRootDoc(root);
 	    generatePackageDiagrams(root, opt, outputFolder);
 	    generateContextDiagrams(root, opt, outputFolder);
 	} catch(Throwable t) {
-	    root.printWarning("Error!");
-	    root.printWarning(t.toString());
+	    root.printWarning("Error: " + t.toString());
 	    t.printStackTrace();
 	    return false;
 	}
@@ -117,14 +115,18 @@ public class UmlGraphDoc {
 
 	ContextView view = null;
 	for (ClassDoc classDoc : classDocs) {
-	    if(view == null)
-		view = new ContextView(outputFolder, classDoc, root, opt);
-	    else
-		view.setContextCenter(classDoc);
-	    UmlGraph.buildGraph(root, view, classDoc);
-	    runGraphviz(opt.dotExecutable, outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
-	    alterHtmlDocs(opt, outputFolder, classDoc.containingPackage().name(), classDoc.name(),
-		    classDoc.name() + ".html", Pattern.compile(".*(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
+	    try {
+		if(view == null)
+		    view = new ContextView(outputFolder, classDoc, root, opt);
+		else
+		    view.setContextCenter(classDoc);
+		UmlGraph.buildGraph(root, view, classDoc);
+		runGraphviz(opt.dotExecutable, outputFolder, classDoc.containingPackage().name(), classDoc.name(), root);
+		alterHtmlDocs(opt, outputFolder, classDoc.containingPackage().name(), classDoc.name(),
+			classDoc.name() + ".html", Pattern.compile(".*(Class|Interface|Enum) " + classDoc.name() + ".*") , root);
+	    } catch (Exception e) {
+		throw new RuntimeException("Error generating " + classDoc.name(), e);
+	    }
 	}
     }
 

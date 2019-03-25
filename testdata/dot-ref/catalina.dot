@@ -5,53 +5,54 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	// HttpResponseBase
-	c19 [label=<<table title="HttpResponseBase" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> HttpResponseBase </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// HttpResponseWrapper
-	c20 [label=<<table title="HttpResponseWrapper" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="Helvetica-Oblique"> HttpResponseWrapper </font></td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// HttpResponseFacade
-	c21 [label=<<table title="HttpResponseFacade" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> HttpResponseFacade </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// ResponseWrapper
-	c22 [label=<<table title="ResponseWrapper" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="Helvetica-Oblique"> ResponseWrapper </font></td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// HttpResponse
-	c23 [label=<<table title="HttpResponse" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> HttpResponse </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// ResponseBase
-	c24 [label=<<table title="ResponseBase" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><font face="Helvetica-Oblique"> ResponseBase </font></td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// HttpServletResponse
-	c25 [label=<<table title="HttpServletResponse" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> HttpServletResponse </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// ResponseFacade
-	c26 [label=<<table title="ResponseFacade" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ResponseFacade </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// ServletResponse
-	c27 [label=<<table title="ServletResponse" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> ServletResponse </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Response
-	c28 [label=<<table title="Response" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> Response </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	//HttpResponseBase extends ResponseBase
-	c24:p -> c19:p [dir=back,arrowtail=empty];
-	//HttpResponseBase implements HttpResponse
-	c23:p -> c19:p [dir=back,arrowtail=empty,style=dashed];
-	//HttpResponseBase implements HttpServletResponse
-	c25:p -> c19:p [dir=back,arrowtail=empty,style=dashed];
-	//HttpResponseWrapper extends ResponseWrapper
-	c22:p -> c20:p [dir=back,arrowtail=empty];
-	//HttpResponseWrapper implements HttpResponse
-	c23:p -> c20:p [dir=back,arrowtail=empty,style=dashed];
-	//HttpResponseFacade extends ResponseFacade
-	c26:p -> c21:p [dir=back,arrowtail=empty];
-	//HttpResponseFacade implements HttpServletResponse
-	c25:p -> c21:p [dir=back,arrowtail=empty,style=dashed];
-	//ResponseWrapper implements Response
-	c28:p -> c22:p [dir=back,arrowtail=empty,style=dashed];
-	//HttpResponse implements Response
-	c28:p -> c23:p [dir=back,arrowtail=empty,style=dashed];
-	//ResponseBase implements Response
-	c28:p -> c24:p [dir=back,arrowtail=empty,style=dashed];
-	//ResponseBase implements ServletResponse
-	c27:p -> c24:p [dir=back,arrowtail=empty,style=dashed];
-	//ResponseFacade implements ServletResponse
-	c27:p -> c26:p [dir=back,arrowtail=empty,style=dashed];
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext,margin=0,width=0,height=0];
+nodesep=0.25;
+ranksep=0.5;
+// HttpResponseBase
+c19 [label=<<table title="HttpResponseBase" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> HttpResponseBase </td></tr></table></td></tr></table>>];
+// HttpResponseWrapper
+c20 [label=<<table title="HttpResponseWrapper" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> HttpResponseWrapper </i></td></tr></table></td></tr></table>>];
+// HttpResponseFacade
+c21 [label=<<table title="HttpResponseFacade" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> HttpResponseFacade </td></tr></table></td></tr></table>>];
+// ResponseWrapper
+c22 [label=<<table title="ResponseWrapper" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> ResponseWrapper </i></td></tr></table></td></tr></table>>];
+// HttpResponse
+c23 [label=<<table title="HttpResponse" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> HttpResponse </td></tr></table></td></tr></table>>];
+// ResponseBase
+c24 [label=<<table title="ResponseBase" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"><i> ResponseBase </i></td></tr></table></td></tr></table>>];
+// HttpServletResponse
+c25 [label=<<table title="HttpServletResponse" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> HttpServletResponse </td></tr></table></td></tr></table>>];
+// ResponseFacade
+c26 [label=<<table title="ResponseFacade" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ResponseFacade </td></tr></table></td></tr></table>>];
+// ServletResponse
+c27 [label=<<table title="ServletResponse" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> ServletResponse </td></tr></table></td></tr></table>>];
+// Response
+c28 [label=<<table title="Response" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> Response </td></tr></table></td></tr></table>>];
+// HttpResponseBase extends ResponseBase
+c24 -> c19 [arrowtail=empty,dir=back,weight=10];
+// HttpResponseBase implements HttpResponse
+c23 -> c19 [arrowtail=empty,style=dashed,dir=back,weight=9];
+// HttpResponseBase implements HttpServletResponse
+c25 -> c19 [arrowtail=empty,style=dashed,dir=back,weight=9];
+// HttpResponseWrapper extends ResponseWrapper
+c22 -> c20 [arrowtail=empty,dir=back,weight=10];
+// HttpResponseWrapper implements HttpResponse
+c23 -> c20 [arrowtail=empty,style=dashed,dir=back,weight=9];
+// HttpResponseFacade extends ResponseFacade
+c26 -> c21 [arrowtail=empty,dir=back,weight=10];
+// HttpResponseFacade implements HttpServletResponse
+c25 -> c21 [arrowtail=empty,style=dashed,dir=back,weight=9];
+// ResponseWrapper implements Response
+c28 -> c22 [arrowtail=empty,style=dashed,dir=back,weight=9];
+// HttpResponse implements Response
+c28 -> c23 [arrowtail=empty,style=dashed,dir=back,weight=9];
+// ResponseBase implements Response
+c28 -> c24 [arrowtail=empty,style=dashed,dir=back,weight=9];
+// ResponseBase implements ServletResponse
+c27 -> c24 [arrowtail=empty,style=dashed,dir=back,weight=9];
+// ResponseFacade implements ServletResponse
+c27 -> c26 [arrowtail=empty,style=dashed,dir=back,weight=9];
 }
 
