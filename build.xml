@@ -21,12 +21,12 @@
 <macrodef name="gitversion" description="Get git version.">
 	<attribute name="outputproperty"/>
 	<sequential>
-		<echo message="git describe --abbrev=6 => '@{outputproperty}'"/>
+		<echo message="git rev-parse --short=6 => '@{outputproperty}'"/>
 	<exec executable="git"
 		failonerror="true"
 		outputproperty="@{outputproperty}">
-		<arg value="describe"/>
-		<arg value="--abbrev=6"/>
+		<arg value="rev-parse"/>
+		<arg value="--short=6"/>
 		<arg value="HEAD"/>
 		<redirector>
 			<outputfilterchain>
@@ -78,8 +78,8 @@
 <target name="version">
 	<exec executable="git"
 		outputproperty="VERSION">
-		<arg value="describe"/>
-		<arg value="--abbrev=6"/>
+		<arg value="rev-parse"/>
+		<arg value="--short=6"/>
 		<arg value="HEAD"/>
 	</exec>
 	<echo>Version is ${VERSION}</echo>
