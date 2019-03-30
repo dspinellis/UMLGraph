@@ -108,8 +108,17 @@ public class ContextView implements OptionProvider {
 	if (opt.matchesHideExpression(cd.qualifiedName())
 		|| !(matcher.matches(cd) || opt.matchesIncludeExpression(cd.qualifiedName())))
 	    opt.setOption(HIDE_OPTIONS);
-	if (cd.equals(this.cd))
+	if (cd.equals(this.cd)) {
 	    opt.nodeFillColor = "lemonChiffon";
+        } else {
+            // If the class is not the class on the Javadoc page, hide all the detail.
+            // In order for attributes and operations to be properly hidden, 
+            // all of these need to be set to false.
+            opt.showAttributes = false;
+            opt.showOperations = false;
+            opt.showConstructors = false;
+            opt.showEnumConstants = false;
+        }
     }
 
     public void overrideForClass(Options opt, String className) {
