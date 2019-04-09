@@ -98,7 +98,7 @@ public class BasicTest {
     private static List<String> getViewList(File viewFolder) {
 	if (!viewFolder.exists())
 	    throw new RuntimeException("The folder " + viewFolder.getAbsolutePath()
-		    + " does not exists.");
+		    + " does not exist.");
 	else if (!viewFolder.isDirectory())
 	    throw new RuntimeException(viewFolder.getAbsolutePath() + " is not a folder!.");
 	else if (!viewFolder.canRead())

@@ -92,10 +92,10 @@ public class UmlDocTest {
 	    return;
 	
 	if (!refFolder.exists() || !refFolder.isDirectory())
-	    throw new IllegalArgumentException("Reference does not exists or is not a folder: "
+	    throw new IllegalArgumentException("Reference does not exist or is not a folder: "
 		    + refFolder.getAbsolutePath());
 	if (!outFolder.exists() || !outFolder.isDirectory())
-	    throw new IllegalArgumentException("Output does not exists or is not a folder: "
+	    throw new IllegalArgumentException("Output does not exist or is not a folder: "
 		    + outFolder.getAbsolutePath());
 
 	// get elements and sort
