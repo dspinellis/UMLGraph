@@ -200,7 +200,7 @@ class ClassGraph {
     private String typeParameters(Options opt, ParameterizedType t) {
 	if (t == null)
 	    return "";
-	StringBuffer tp = new StringBuffer(1000).append("&lt;");
+	StringBuilder tp = new StringBuilder(1000).append("&lt;");
 	Type args[] = t.typeArguments();
 	for (int i = 0; i < args.length; i++) {
 	    tp.append(type(opt, args[i], true));
@@ -439,7 +439,7 @@ class ClassGraph {
 		if (ecs.length == 0) {
 		    tableLine(Align.LEFT, "");
 		} else {
-		    for (FieldDoc fd : c.enumConstants()) {
+		    for (FieldDoc fd : ecs) {
 			tableLine(Align.LEFT, fd.name());
 		    }
 		}
