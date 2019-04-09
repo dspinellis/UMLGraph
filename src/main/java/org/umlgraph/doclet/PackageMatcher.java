@@ -20,5 +20,4 @@ public class PackageMatcher implements ClassMatcher {
 		return true;
 	return false;
     }
-
 }

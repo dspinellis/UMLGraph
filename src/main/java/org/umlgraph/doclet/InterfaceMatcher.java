@@ -38,5 +38,4 @@ public class InterfaceMatcher implements ClassMatcher {
 	ClassDoc cd = root.classNamed(name);
 	return cd == null ? false : matches(cd);
     }
-
 }

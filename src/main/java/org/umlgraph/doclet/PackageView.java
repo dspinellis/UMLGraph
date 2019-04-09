@@ -77,5 +77,4 @@ public class PackageView implements OptionProvider {
 	if (!included || this.opt.matchesHideExpression(className))
 	    opt.setOption(HIDE);
     }
-
 }

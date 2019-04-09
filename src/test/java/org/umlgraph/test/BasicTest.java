@@ -145,5 +145,4 @@ public class BasicTest {
 	    differences.add(dotFile.getName() + " is different from the reference");
 	}
     }
-
 }

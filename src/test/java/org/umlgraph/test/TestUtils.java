@@ -34,10 +34,10 @@ import java.util.List;
 public class TestUtils {
 
     /**
-         * Simple text file diffing: will tell you if two text files are line by
-         * line equals, and will stop at the first difference found.
-         * @throws IOException
-         */
+    * Simple text file diffing: will tell you if two text files are line by
+    * line equals, and will stop at the first difference found.
+    * @throws IOException
+    */
     public static boolean textFilesEquals(PrintWriter pw, File refTextFile, File outTextFile)
 	    throws IOException {
 	BufferedReader refReader = null, outReader = null;
@@ -123,8 +123,8 @@ public class TestUtils {
     }
 
     /**
-         * Deletes the content of the folder, eventually in a recursive way
-         */
+    * Deletes the content of the folder, eventually in a recursive way
+    */
     public static void cleanFolder(File folder, boolean recurse) {
 	for (File f : folder.listFiles()) {
 	    if (f.isDirectory()) {
@@ -138,7 +138,5 @@ public class TestUtils {
 	    }
 
 	}
-
     }
-
 }

@@ -14,6 +14,7 @@
  *
  *
  */
+
 package org.umlgraph.doclet;
 
 import java.util.ArrayList;
@@ -169,5 +170,4 @@ public class View implements OptionProvider {
     public String getDisplayName() {
 	return "view " + viewDoc.name();
     }
-
 }

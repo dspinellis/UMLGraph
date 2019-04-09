@@ -82,7 +82,7 @@ class ClassGraph {
 
     protected Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
     protected Set<String> rootClasses;
-	protected Map<String, ClassDoc> rootClassdocs = new HashMap<String, ClassDoc>();
+    protected Map<String, ClassDoc> rootClassdocs = new HashMap<String, ClassDoc>();
     protected OptionProvider optionProvider;
     protected PrintWriter w;
     protected ClassDoc collectionClassDoc;
@@ -673,7 +673,8 @@ class ClassGraph {
 	}
     }
 
-    /** Returns an array representing the imported classes of c.
+    /**
+     * Returns an array representing the imported classes of c.
      * Disables the deprecation warning, which is output, because the
      * imported classed are an implementation detail.
      */
@@ -848,8 +849,10 @@ class ClassGraph {
 		.append(".html").toString();
     }
 
-    /** Dot prologue 
-     * @throws IOException */
+    /**
+     * Dot prologue 
+     * @throws IOException
+     */
     public void prologue() throws IOException {
 	Options opt = optionProvider.getGlobalOptions();
 	OutputStream os;

@@ -43,5 +43,4 @@ public class RunDoc {
 	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw,
 		"org.umlgraph.doclet.UmlGraphDoc", options);
     }
-
 }

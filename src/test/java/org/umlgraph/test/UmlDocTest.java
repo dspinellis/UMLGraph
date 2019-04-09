@@ -16,6 +16,7 @@
  *
  *
  */
+
 package org.umlgraph.test;
 
 import java.io.File;
@@ -78,14 +79,14 @@ public class UmlDocTest {
     }
 
     /**
-         * Ensures that reference and output have the same contents in terms of:
-         * <ul>
-         * <li> html files </li>
-         * <li> dot files </li>
-         * <li> folders </li>
-         * </ul>
-         * @throws IOException
-         */
+    * Ensures that reference and output have the same contents in terms of:
+    * <ul>
+    * <li> html files </li>
+    * <li> dot files </li>
+    * <li> folders </li>
+    * </ul>
+    * @throws IOException
+    */
     private static void compareDocletOutputs(List<String> differences, File refFolder,
 	    File outFolder) throws IOException {
 	if (!refFolder.exists() || !refFolder.isDirectory())
@@ -139,9 +140,9 @@ public class UmlDocTest {
     }
 
     /**
-         * Runs the UmlGraphDoc doclet
-         * @param options
-         */
+    * Runs the UmlGraphDoc doclet
+    * @param options
+    */
     private static void runDoclet(String[] options) {
 	pw.print("Run javadoc -doclet " + doclet);
 	for (String o : options)
@@ -150,5 +151,4 @@ public class UmlDocTest {
 	com.sun.tools.javadoc.Main.execute("UMLDoc test", pw, pw, pw,
 		doclet, options);
     }
-
 }

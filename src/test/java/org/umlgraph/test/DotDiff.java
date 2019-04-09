@@ -304,5 +304,4 @@ public class DotDiff {
             return "Arc: " + from.label + " -> " + to.label + "; " + line;
         }
     }
-
 }
