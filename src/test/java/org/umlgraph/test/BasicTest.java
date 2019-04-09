@@ -58,13 +58,13 @@ public class BasicTest {
 	    for (String className : differences) {
 		pw.println(className);
 	    }
+            System.exit(1);
 	} else {
 	    pw.println("GOOD, all files are structurally equal");
 	}
 	pw.println();
 	pw.println();
 	pw.flush();
-	System.exit(differences.size() > 0 ? 1 : 0);
     }
 
     private static void performViewTests(List<String> differences, File outFolder)
