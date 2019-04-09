@@ -88,9 +88,6 @@ public class UmlDocTest {
          */
     private static void compareDocletOutputs(List<String> differences, File refFolder,
 	    File outFolder) throws IOException {
-	if(refFolder.getName().equals("CVS"))
-	    return;
-	
 	if (!refFolder.exists() || !refFolder.isDirectory())
 	    throw new IllegalArgumentException("Reference does not exist or is not a folder: "
 		    + refFolder.getAbsolutePath());
