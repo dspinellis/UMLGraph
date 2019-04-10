@@ -14,6 +14,7 @@
  *
  *
  */
+
 package org.umlgraph.doclet;
 
 import java.util.regex.Pattern;
@@ -39,5 +40,4 @@ public class PatternMatcher implements ClassMatcher {
     public boolean matches(String name) {
 	return pattern.matcher(name).matches();
     }
-
 }

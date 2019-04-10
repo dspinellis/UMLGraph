@@ -7,7 +7,6 @@ public class PackageMatcher implements ClassMatcher {
     protected PackageDoc packageDoc;
 
     public PackageMatcher(PackageDoc packageDoc) {
-	super();
 	this.packageDoc = packageDoc;
     }
 
@@ -21,5 +20,4 @@ public class PackageMatcher implements ClassMatcher {
 		return true;
 	return false;
     }
-
 }

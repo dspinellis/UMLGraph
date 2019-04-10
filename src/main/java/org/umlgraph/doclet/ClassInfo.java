@@ -66,7 +66,5 @@ class ClassInfo {
     public static void reset() {
 	classNumber = 0;
     }
-
-    
 }
 

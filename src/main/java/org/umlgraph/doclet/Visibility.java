@@ -16,6 +16,7 @@
  *
  *
  */
+
 package org.umlgraph.doclet;
 
 import com.sun.javadoc.ProgramElementDoc;

@@ -32,5 +32,4 @@ public class SubclassMatcher implements ClassMatcher {
 	ClassDoc cd = root.classNamed(name);
 	return cd == null ? false : matches(cd);
     }
-
 }

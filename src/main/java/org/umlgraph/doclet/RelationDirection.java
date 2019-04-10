@@ -36,5 +36,4 @@ public enum RelationDirection {
     public RelationDirection inverse() {
 	return this == IN ? OUT : this == OUT ? IN : this;
     }
-
-};
+}

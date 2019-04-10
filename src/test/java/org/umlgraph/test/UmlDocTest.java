@@ -16,6 +16,7 @@
  *
  *
  */
+
 package org.umlgraph.test;
 
 import java.io.File;
@@ -78,24 +79,21 @@ public class UmlDocTest {
     }
 
     /**
-         * Ensures that reference and output have the same contents in terms of:
-         * <ul>
-         * <li> html files </li>
-         * <li> dot files </li>
-         * <li> folders </li>
-         * </ul>
-         * @throws IOException
-         */
+    * Ensures that reference and output have the same contents in terms of:
+    * <ul>
+    * <li> html files </li>
+    * <li> dot files </li>
+    * <li> folders </li>
+    * </ul>
+    * @throws IOException
+    */
     private static void compareDocletOutputs(List<String> differences, File refFolder,
 	    File outFolder) throws IOException {
-	if(refFolder.getName().equals("CVS"))
-	    return;
-	
 	if (!refFolder.exists() || !refFolder.isDirectory())
-	    throw new IllegalArgumentException("Reference does not exists or is not a folder: "
+	    throw new IllegalArgumentException("Reference does not exist or is not a folder: "
 		    + refFolder.getAbsolutePath());
 	if (!outFolder.exists() || !outFolder.isDirectory())
-	    throw new IllegalArgumentException("Output does not exists or is not a folder: "
+	    throw new IllegalArgumentException("Output does not exist or is not a folder: "
 		    + outFolder.getAbsolutePath());
 
 	// get elements and sort
@@ -142,17 +140,15 @@ public class UmlDocTest {
     }
 
     /**
-         * Runs the UmlGraphDoc doclet
-         * @param options
-         */
+    * Runs the UmlGraphDoc doclet
+    * @param options
+    */
     private static void runDoclet(String[] options) {
 	pw.print("Run javadoc -doclet " + doclet);
 	for (String o : options)
-	    pw.print(" " + o);
+	    pw.print(o + " ");
 	pw.println();
 	com.sun.tools.javadoc.Main.execute("UMLDoc test", pw, pw, pw,
 		doclet, options);
-	System.exit(0);
     }
-
 }

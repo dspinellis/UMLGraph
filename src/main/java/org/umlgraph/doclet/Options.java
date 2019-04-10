@@ -130,7 +130,7 @@ public class Options implements Cloneable, OptionProvider {
     }
 
     @Override
-	public Object clone() {
+    public Object clone() {
 	Options clone = null;
 	try {
 	     clone = (Options) super.clone();
@@ -680,5 +680,4 @@ public class Options implements Cloneable, OptionProvider {
 	}
 	return sb.toString();
     }
-
 }

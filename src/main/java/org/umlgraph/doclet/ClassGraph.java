@@ -82,7 +82,7 @@ class ClassGraph {
 
     protected Map<String, ClassInfo> classnames = new HashMap<String, ClassInfo>();
     protected Set<String> rootClasses;
-	protected Map<String, ClassDoc> rootClassdocs = new HashMap<String, ClassDoc>();
+    protected Map<String, ClassDoc> rootClassdocs = new HashMap<String, ClassDoc>();
     protected OptionProvider optionProvider;
     protected PrintWriter w;
     protected ClassDoc collectionClassDoc;
@@ -200,7 +200,7 @@ class ClassGraph {
     private String typeParameters(Options opt, ParameterizedType t) {
 	if (t == null)
 	    return "";
-	StringBuffer tp = new StringBuffer(1000).append("&lt;");
+	StringBuilder tp = new StringBuilder(1000).append("&lt;");
 	Type args[] = t.typeArguments();
 	for (int i = 0; i < args.length; i++) {
 	    tp.append(type(opt, args[i], true));
@@ -439,7 +439,7 @@ class ClassGraph {
 		if (ecs.length == 0) {
 		    tableLine(Align.LEFT, "");
 		} else {
-		    for (FieldDoc fd : c.enumConstants()) {
+		    for (FieldDoc fd : ecs) {
 			tableLine(Align.LEFT, fd.name());
 		    }
 		}
@@ -673,7 +673,8 @@ class ClassGraph {
 	}
     }
 
-    /** Returns an array representing the imported classes of c.
+    /**
+     * Returns an array representing the imported classes of c.
      * Disables the deprecation warning, which is output, because the
      * imported classed are an implementation detail.
      */
@@ -848,8 +849,10 @@ class ClassGraph {
 		.append(".html").toString();
     }
 
-    /** Dot prologue 
-     * @throws IOException */
+    /**
+     * Dot prologue 
+     * @throws IOException
+     */
     public void prologue() throws IOException {
 	Options opt = optionProvider.getGlobalOptions();
 	OutputStream os;

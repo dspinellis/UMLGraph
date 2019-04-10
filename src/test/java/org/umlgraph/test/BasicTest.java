@@ -58,13 +58,13 @@ public class BasicTest {
 	    for (String className : differences) {
 		pw.println(className);
 	    }
+            System.exit(1);
 	} else {
 	    pw.println("GOOD, all files are structurally equal");
 	}
 	pw.println();
 	pw.println();
 	pw.flush();
-	System.exit(differences.size() > 0 ? 1 : 0);
     }
 
     private static void performViewTests(List<String> differences, File outFolder)
@@ -98,7 +98,7 @@ public class BasicTest {
     private static List<String> getViewList(File viewFolder) {
 	if (!viewFolder.exists())
 	    throw new RuntimeException("The folder " + viewFolder.getAbsolutePath()
-		    + " does not exists.");
+		    + " does not exist.");
 	else if (!viewFolder.isDirectory())
 	    throw new RuntimeException(viewFolder.getAbsolutePath() + " is not a folder!.");
 	else if (!viewFolder.canRead())
@@ -145,5 +145,4 @@ public class BasicTest {
 	    differences.add(dotFile.getName() + " is different from the reference");
 	}
     }
-
 }

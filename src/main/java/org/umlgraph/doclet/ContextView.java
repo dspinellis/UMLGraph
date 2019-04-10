@@ -116,5 +116,4 @@ public class ContextView implements OptionProvider {
 	if (!(matcher.matches(className) || opt.matchesIncludeExpression(className)))
 	    opt.setOption(HIDE_OPTIONS);
     }
-
 }
