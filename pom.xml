@@ -40,14 +40,14 @@
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
-    <version>7</version>
+    <version>9</version>
   </parent>
 
   <dependencies>
     <dependency>
       <groupId>sun.jdk</groupId>
       <artifactId>tools</artifactId>
-      <version>1.5.0</version>
+      <version>1.11</version>
       <scope>system</scope>
       <systemPath>${java.home}/../lib/tools.jar</systemPath>
     </dependency>
@@ -61,6 +61,22 @@
       </resource>
     </resources>
     <plugins>
+
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-gpg-plugin</artifactId>
+	<version>1.5</version>
+	<executions>
+	  <execution>
+	    <id>sign-artifacts</id>
+	    <phase>verify</phase>
+	    <goals>
+	      <goal>sign</goal>
+	    </goals>
+	  </execution>
+	</executions>
+      </plugin>
+
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
@@ -68,7 +84,9 @@
           <source>1.5</source>
           <target>1.5</target>
         </configuration>
-      </plugin>      <plugin>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.3.1</version>
@@ -81,6 +99,7 @@
           </archive>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
@@ -92,6 +111,7 @@
 	  <goals>deploy</goals>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -105,10 +125,11 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9</version>
+        <version>2.9.1</version>
         <configuration>
 	  <tags>
 	    <tag>
@@ -149,6 +170,23 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
+      <plugin>
+	<groupId>org.sonatype.plugins</groupId>
+	<artifactId>nexus-staging-maven-plugin</artifactId>
+	<version>1.6.7</version>
+	<extensions>true</extensions>
+	<configuration>
+	  <serverId>ossrh</serverId>
+	  <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+	  <autoReleaseAfterClose>true</autoReleaseAfterClose>
+	</configuration>
+      </plugin>
+  </plugins>
   </build>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
