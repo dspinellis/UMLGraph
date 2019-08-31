@@ -26,7 +26,7 @@ public class ContextView implements OptionProvider {
     private Options hideOptions;
     private Options centerOptions;
     private Options packageOptions;
-    private static final String[] HIDE_OPTIONS = new String[] { "-hide" };
+    private static final String[] HIDE_OPTIONS = new String[] { "hide" };
 
     public ContextView(String outputFolder, ClassDoc cd, RootDoc root, Options parent)
 	    throws IOException {
@@ -42,7 +42,7 @@ public class ContextView implements OptionProvider {
 	this.packageOptions.showQualified = false;
 
 	this.myGlobalOptions = parent.getGlobalOptions();
-	this.myGlobalOptions.setOption(new String[] { "-output", outputPath });
+	this.myGlobalOptions.setOption(new String[] { "output", outputPath });
 	this.myGlobalOptions.setOption(HIDE_OPTIONS);
 
 	this.hideOptions = parent.getGlobalOptions();
@@ -52,7 +52,7 @@ public class ContextView implements OptionProvider {
 	this.centerOptions.nodeFillColor = "lemonChiffon";
 	this.centerOptions.showQualified = false;
 
-	this.matcher = new ContextMatcher(root, Pattern.compile(cd.qualifiedName()),
+	this.matcher = new ContextMatcher(root, Pattern.compile(Pattern.quote(cd.toString())),
 		myGlobalOptions, true);
 
     }
@@ -61,8 +61,8 @@ public class ContextView implements OptionProvider {
 	this.cd = contextCenter;
 	String outputPath = cd.containingPackage().name().replace('.', '/') + "/" + cd.name()
 		+ ".dot";
-	this.myGlobalOptions.setOption(new String[] { "-output", outputPath });
-	matcher.setContextCenter(Pattern.compile(cd.toString()));
+	this.myGlobalOptions.setOption(new String[] { "output", outputPath });
+	matcher.setContextCenter(Pattern.compile(Pattern.quote(cd.toString())));
     }
 
     public String getDisplayName() {
@@ -74,8 +74,9 @@ public class ContextView implements OptionProvider {
     }
 
     public Options getOptionsFor(ClassDoc cd) {
-    Options opt;
-	if (globalOptions.matchesHideExpression(cd.toString()) || !matcher.matches(cd)) {
+	Options opt;
+	if (globalOptions.matchesHideExpression(cd.qualifiedName())
+		|| !(matcher.matches(cd) || globalOptions.matchesIncludeExpression(cd.qualifiedName()))) {
 		opt = hideOptions;
 	} else if (cd.equals(this.cd)) {
 		opt = centerOptions;
@@ -90,7 +91,7 @@ public class ContextView implements OptionProvider {
     }
 
     public Options getOptionsFor(String name) {
-    Options opt;
+	Options opt;
 	if (!matcher.matches(name))
 		opt = hideOptions;
 	else if (name.equals(cd.name()))
@@ -103,15 +104,16 @@ public class ContextView implements OptionProvider {
     }
 
     public void overrideForClass(Options opt, ClassDoc cd) {
-    	opt.setOptions(cd);
-	if (opt.matchesHideExpression(cd.toString()) || !matcher.matches(cd))
+	opt.setOptions(cd);
+	if (opt.matchesHideExpression(cd.qualifiedName())
+		|| !(matcher.matches(cd) || opt.matchesIncludeExpression(cd.qualifiedName())))
 	    opt.setOption(HIDE_OPTIONS);
 	if (cd.equals(this.cd))
 	    opt.nodeFillColor = "lemonChiffon";
     }
 
     public void overrideForClass(Options opt, String className) {
-	if (!matcher.matches(className))
+	if (!(matcher.matches(className) || opt.matchesIncludeExpression(className)))
 	    opt.setOption(HIDE_OPTIONS);
     }
 

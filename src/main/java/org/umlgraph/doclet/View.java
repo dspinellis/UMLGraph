@@ -140,36 +140,30 @@ public class View implements OptionProvider {
 	
 	boolean outputSet = false;
 	for (String[] opts : globalOptions) {
-	    if (opts[0].equals("-output"))
+	    if (Options.matchOption(opts[0], "output"))
 		outputSet = true;
 	    go.setOption(opts);
 	}
 	if (!outputSet)
-	    go.setOption(new String[] { "-output", viewDoc.name() + ".dot" });
+	    go.setOption(new String[] { "output", viewDoc.name() + ".dot" });
 	
 	return go;
     }
 
     public void overrideForClass(Options opt, ClassDoc cd) {
 	provider.overrideForClass(opt, cd);
-	for (ClassMatcher cm : optionOverrides.keySet()) {
-	    if(cm.matches(cd)) {
-		for (String[] override : optionOverrides.get(cm)) {
+	for (ClassMatcher cm : optionOverrides.keySet())
+	    if(cm.matches(cd))
+		for (String[] override : optionOverrides.get(cm))
 		    opt.setOption(override);
-		}
-	    }
-	}
     }
 
     public void overrideForClass(Options opt, String className) {
 	provider.overrideForClass(opt, className);
-	for (ClassMatcher cm : optionOverrides.keySet()) {
-	    if(cm.matches(className)) {
-		for (String[] override : optionOverrides.get(cm)) {
+	for (ClassMatcher cm : optionOverrides.keySet())
+	    if(cm.matches(className))
+		for (String[] override : optionOverrides.get(cm))
 		    opt.setOption(override);
-		}
-	    }
-	}
     }
 
     public String getDisplayName() {

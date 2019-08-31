@@ -5,11 +5,12 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	// ActionQueue
-	c35 [label=<<table title="ActionQueue" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;container&#187; </td></tr><tr><td align="center" balign="center"> ActionQueue </td></tr><tr><td align="right" balign="right"> {version = 3.2} </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  add(a : Action) </td></tr><tr><td align="left" balign="left">  add(a : Action, n : int) </td></tr><tr><td align="right" balign="right"> {version = 1.0} </td></tr><tr><td align="left" balign="left">  remove(n : int) </td></tr><tr><td align="left" balign="left"> &#171;query&#187; </td></tr><tr><td align="left" balign="left">  length() : int </td></tr><tr><td align="left" balign="left"> &#171;helper functions&#187; </td></tr><tr><td align="left" balign="left">  reorder() </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext,margin=0,width=0,height=0];
+nodesep=0.25;
+ranksep=0.5;
+// ActionQueue
+c35 [label=<<table title="ActionQueue" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;container&#187; </td></tr><tr><td align="center" balign="center"> ActionQueue </td></tr><tr><td align="right" balign="right"> {version = 3.2} </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  add(a : Action) </td></tr><tr><td align="left" balign="left">  add(a : Action, n : int) </td></tr><tr><td align="right" balign="right"> {version = 1.0} </td></tr><tr><td align="left" balign="left">  remove(n : int) </td></tr><tr><td align="left" balign="left"> &#171;query&#187; </td></tr><tr><td align="left" balign="left">  length() : int </td></tr><tr><td align="left" balign="left"> &#171;helper functions&#187; </td></tr><tr><td align="left" balign="left">  reorder() </td></tr></table></td></tr></table>>];
 }
 

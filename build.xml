@@ -21,12 +21,12 @@
 <macrodef name="gitversion" description="Get git version.">
 	<attribute name="outputproperty"/>
 	<sequential>
-		<echo message="git describe --abbrev=6 => '@{outputproperty}'"/>
+		<echo message="git rev-parse --short=6 => '@{outputproperty}'"/>
 	<exec executable="git"
 		failonerror="true"
 		outputproperty="@{outputproperty}">
-		<arg value="describe"/>
-		<arg value="--abbrev=6"/>
+		<arg value="rev-parse"/>
+		<arg value="--short=6"/>
 		<arg value="HEAD"/>
 		<redirector>
 			<outputfilterchain>
@@ -64,6 +64,14 @@
 <!-- import environment variables -->
 <property environment="env"/>
 
+<target name="clean">
+	<delete dir="${build}"/>
+	<delete dir="${lib}"/>
+	<delete dir="testdata/dot-out"/>
+	<delete dir="${javadoc}"/>
+	<delete dir="${dist}/lib"/>
+</target>
+
 <target name="init">
 	<!-- Create the time stamp -->
 	<tstamp/>
@@ -78,8 +86,8 @@
 <target name="version">
 	<exec executable="git"
 		outputproperty="VERSION">
-		<arg value="describe"/>
-		<arg value="--abbrev=6"/>
+		<arg value="rev-parse"/>
+		<arg value="--short=6"/>
 		<arg value="HEAD"/>
 	</exec>
 	<echo>Version is ${VERSION}</echo>
@@ -119,36 +127,44 @@ class Version { public static String VERSION = "${VERSION}";}
 
 <target name="test" depends="compile,testcompile"
 	description="run the regression tests" >
-	<java classname="org.umlgraph.test.BasicTest" fork="true">
-         <classpath>
-           <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-           <pathelement location="${build}"/>
-           <pathelement location="${lib}/UmlGraph.jar"/>
-         </classpath>
-    </java>
-	<java classname="org.umlgraph.test.UmlDocTest" fork="true">
-	         <classpath>
-	           <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
-	           <pathelement location="${build}"/>
-	           <pathelement location="${lib}/UmlGraph.jar"/>
-	         </classpath>
-	    </java>
+	<!-- postpone failures, so we get to see the pngs -->
+	<java classname="org.umlgraph.test.BasicTest" fork="true" resultproperty="BasicTest.exit">
+		<classpath>
+			<pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
+			<pathelement location="${build}"/>
+			<pathelement location="${lib}/UmlGraph.jar"/>
+		</classpath>
+	</java>
+	<java classname="org.umlgraph.test.UmlDocTest" fork="true" resultproperty="UmlDocTest.exit">
+		<classpath>
+			<pathelement location="${env.JAVA_HOME}/lib/tools.jar"/>
+			<pathelement location="${build}"/>
+			<pathelement location="${lib}/UmlGraph.jar"/>
+		</classpath>
+	</java>
 	<apply executable="dot" dest="${testout}" parallel="false">
 		<arg value="-Tpng"/>
 		<arg value="-o"/>
 		<targetfile/>
 		<srcfile/>
-	  <fileset dir="${testout}" includes="*.dot"/>
-	  <mapper type="glob" from="*.dot" to="*.png"/>
+		<fileset dir="${testout}" includes="*.dot"/>
+		<mapper type="glob" from="*.dot" to="*.png"/>
 	</apply>
 	<apply executable="dot" dest="${testref}" parallel="false">
 		<arg value="-Tpng"/>
 		<arg value="-o"/>
 		<targetfile/>
 		<srcfile/>
-	  <fileset dir="${testref}" includes="*.dot"/>
-	  <mapper type="glob" from="*.dot" to="*.png"/>
+		<fileset dir="${testref}" includes="*.dot"/>
+		<mapper type="glob" from="*.dot" to="*.png"/>
 	</apply>
+	<!-- postponed failure, so we get to see the pngs -->
+	<fail message="BasicTest failed">
+		<condition><not><equals arg1="0" arg2="${BasicTest.exit}"/></not></condition>
+	</fail>
+	<fail message="UmlDocTest failed">
+		<condition><not><equals arg1="0" arg2="${UmlDocTest.exit}"/></not></condition>
+	</fail>
 </target>
 
 <target name="javadocs" depends="compile">
@@ -156,6 +172,7 @@ class Version { public static String VERSION = "${VERSION}";}
 		<doclet name="org.umlgraph.doclet.UmlGraphDoc" path="${lib}/UmlGraph.jar">
 			<param name="-inferrel"/>
 			<param name="-inferdep"/>
+			<param name="-autosize"/>
 			<param name="-collapsible"/>
 			<param name="-hide" value="java.*"/>
 			<param name="-collpackages" value="java.util.*"/>

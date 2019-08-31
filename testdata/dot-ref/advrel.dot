@@ -5,31 +5,32 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	// Controller
-	c5 [label=<<table title="Controller" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Controller </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// EmbeddedAgent
-	c6 [label=<<table title="EmbeddedAgent" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> EmbeddedAgent </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// PowerManager
-	c7 [label=<<table title="PowerManager" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> PowerManager </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// SetTopController
-	c8 [label=<<table title="SetTopController" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> SetTopController </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  authorizationLevel </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  startUp() </td></tr><tr><td align="left" balign="left">  shutDown() </td></tr><tr><td align="left" balign="left">  connect() </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// ChannelIterator
-	c9 [label=<<table title="ChannelIterator" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ChannelIterator </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// URLStreamHandler
-	c10 [label=<<table title="URLStreamHandler" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> URLStreamHandler </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"><font face="Helvetica-Oblique" point-size="10.0">  OpenConnection() </font></td></tr><tr><td align="left" balign="left"><font face="Helvetica-Oblique" point-size="10.0">  parseURL() </font></td></tr><tr><td align="left" balign="left"><font face="Helvetica-Oblique" point-size="10.0">  setURL() </font></td></tr><tr><td align="left" balign="left"><font face="Helvetica-Oblique" point-size="10.0">  toExternalForm() </font></td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	//SetTopController extends Controller
-	c5:p -> c8:p [dir=back,arrowtail=empty];
-	//SetTopController extends EmbeddedAgent
-	c6:p -> c8:p [dir=back,arrowtail=empty];
-	//SetTopController implements URLStreamHandler
-	c10:p -> c8:p [dir=back,arrowtail=empty,style=dashed];
-	// SetTopController NAVASSOC PowerManager
-	c8:p -> c7:p [taillabel="", label="", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open];
-	// ChannelIterator DEPEND SetTopController
-	c9:p -> c8:p [taillabel="", label="&#171;friend&#187;", headlabel="", fontname="Helvetica", fontcolor="black", fontsize=10.0, color="black", arrowhead=open, style=dashed];
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext,margin=0,width=0,height=0];
+nodesep=0.25;
+ranksep=0.5;
+// Controller
+c5 [label=<<table title="Controller" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Controller </td></tr></table></td></tr></table>>];
+// EmbeddedAgent
+c6 [label=<<table title="EmbeddedAgent" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> EmbeddedAgent </td></tr></table></td></tr></table>>];
+// PowerManager
+c7 [label=<<table title="PowerManager" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> PowerManager </td></tr></table></td></tr></table>>];
+// SetTopController
+c8 [label=<<table title="SetTopController" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> SetTopController </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  authorizationLevel </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  startUp() </td></tr><tr><td align="left" balign="left">  shutDown() </td></tr><tr><td align="left" balign="left">  connect() </td></tr></table></td></tr></table>>];
+// ChannelIterator
+c9 [label=<<table title="ChannelIterator" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> ChannelIterator </td></tr></table></td></tr></table>>];
+// URLStreamHandler
+c10 [label=<<table title="URLStreamHandler" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> &#171;interface&#187; </td></tr><tr><td align="center" balign="center"> URLStreamHandler </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left">  </td></tr></table></td></tr><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="left" balign="left"><i>  OpenConnection() </i></td></tr><tr><td align="left" balign="left"><i>  parseURL() </i></td></tr><tr><td align="left" balign="left"><i>  setURL() </i></td></tr><tr><td align="left" balign="left"><i>  toExternalForm() </i></td></tr></table></td></tr></table>>];
+// SetTopController extends Controller
+c5 -> c8 [arrowtail=empty,dir=back,weight=10];
+// SetTopController extends EmbeddedAgent
+c6 -> c8 [arrowtail=empty,dir=back,weight=10];
+// SetTopController implements URLStreamHandler
+c10 -> c8 [arrowtail=empty,style=dashed,dir=back,weight=9];
+// SetTopController navassoc PowerManager
+c8 -> c7 [arrowhead=open,weight=1];
+// ChannelIterator depend SetTopController
+c9 -> c8 [arrowhead=open,style=dashed,weight=0,label="&#171;friend&#187;"];
 }
 

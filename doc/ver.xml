@@ -3,6 +3,21 @@
 <dl>
 
 <dt>Version 5.7 Under development </dt><dd>
+<ul>
+<li>The <code>@opt include</code> option can be used to include classes from
+foreign packages in the package view (unless hidden with <code>@opt hide</code>).</li>
+<li>You can now also use <code>@opt</code> in <code>package-info.java</code>.</li>
+<li>Added <code>-qualifyGenerics</code> option to separately control the inclusion of
+package names for the class (<code>-qualify</code>) and its generics. In particular
+this works well with <code>-qualify -postfixpackage</code> (and <code>-!qualifyGenerics</code>).<br />
+To get the old <code>-qualify</code> behavior, you need to add <code>-qualifyGenerics</code>,
+the default is off, and it will not inherit from <code>-qualify</code>.</li>
+<li>Better handling of complex names with generics and inner classes such as <code>pkg.Outer&lt;T&gt;.Inner</code>.</li>
+<li>Use &lt;i&gt; tags for italic, because the old font naming approach does not work with SVG anymore.
+Replace <code>-nodefontabstractname</code> and <code>-nodefontclassabstractname</code>
+with a simple flag <code>-nodefontabstractitalic</code> instead.</li>
+<li>Added <code>-hideprivateinner</code> to hide all private inner classes.</li>
+</ul>
 </dd>
 
 <dt>Version 5.6 2012-05-31 </dt><dd>

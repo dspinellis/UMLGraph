@@ -20,8 +20,8 @@ class UMLOptions {}
 
 class Person {
     House[] houses;
-    List<Dog> dogs;
-    
+    List&lt;Dog&gt; dogs;
+
     public Room getFavouriteRoom(House house) {}
 }
 
@@ -29,7 +29,7 @@ class Person {
  * @opt inferreltype composed
  */
 class House {
-    Map<String, Room> nameRoomMap;
+    Map&lt;String, Room&gt; nameRoomMap;
 }
 
 class Room {}
@@ -37,7 +37,6 @@ class Room {}
 class Dog {
     Person owner;
 }
-
 </fmtcode>
 </td><td>
 <img src="infer.png" alt="UML diagram with relationship inference" />

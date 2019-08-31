@@ -4,7 +4,7 @@
 ROOT=/cygdrive/c
 PIC2PLOT=pic2plot
 GS=gs
-DESTDIR=/dds/pubs/web/home/sw/umlgraph-mirror
+DESTDIR=/dds/pubs/web/home/umlgraph
 NOTETOOLS=/dds/pubs/Courses/tools
 GIF := $(shell sed -n 's/.*<img *src *= *"\([^.]*\.gif\)".*/\1/p' *.xml)
 XML := $(wildcard *.xml)

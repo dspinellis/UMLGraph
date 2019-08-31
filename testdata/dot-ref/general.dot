@@ -5,49 +5,50 @@
 #
 
 digraph G {
-	edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10];
-	node [fontname="Helvetica",fontsize=10,shape=plaintext];
-	nodesep=0.25;
-	ranksep=0.5;
-	// Asset
-	c55 [label=<<table title="Asset" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Asset </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// InterestBearingItem
-	c56 [label=<<table title="InterestBearingItem" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InterestBearingItem </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// InsurableItem
-	c57 [label=<<table title="InsurableItem" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InsurableItem </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// BankAccount
-	c58 [label=<<table title="BankAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> BankAccount </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// RealEstate
-	c59 [label=<<table title="RealEstate" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> RealEstate </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Security
-	c60 [label=<<table title="Security" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Security </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Stock
-	c61 [label=<<table title="Stock" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Stock </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// Bond
-	c62 [label=<<table title="Bond" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Bond </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// CheckingAccount
-	c63 [label=<<table title="CheckingAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> CheckingAccount </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	// SavingsAccount
-	c64 [label=<<table title="SavingsAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> SavingsAccount </td></tr></table></td></tr></table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
-	//BankAccount extends Asset
-	c55:p -> c58:p [dir=back,arrowtail=empty];
-	//BankAccount extends InsurableItem
-	c57:p -> c58:p [dir=back,arrowtail=empty];
-	//BankAccount extends InterestBearingItem
-	c56:p -> c58:p [dir=back,arrowtail=empty];
-	//RealEstate extends Asset
-	c55:p -> c59:p [dir=back,arrowtail=empty];
-	//RealEstate extends InsurableItem
-	c57:p -> c59:p [dir=back,arrowtail=empty];
-	//Security extends Asset
-	c55:p -> c60:p [dir=back,arrowtail=empty];
-	//Stock extends Security
-	c60:p -> c61:p [dir=back,arrowtail=empty];
-	//Bond extends Security
-	c60:p -> c62:p [dir=back,arrowtail=empty];
-	//CheckingAccount extends BankAccount
-	c58:p -> c63:p [dir=back,arrowtail=empty];
-	//SavingsAccount extends BankAccount
-	c58:p -> c64:p [dir=back,arrowtail=empty];
+graph [fontnames="svg"]
+edge [fontname="Helvetica",fontsize=10,labelfontname="Helvetica",labelfontsize=10,color="black"];
+node [fontname="Helvetica",fontcolor="black",fontsize=10,shape=plaintext,margin=0,width=0,height=0];
+nodesep=0.25;
+ranksep=0.5;
+// Asset
+c55 [label=<<table title="Asset" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Asset </td></tr></table></td></tr></table>>];
+// InterestBearingItem
+c56 [label=<<table title="InterestBearingItem" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InterestBearingItem </td></tr></table></td></tr></table>>];
+// InsurableItem
+c57 [label=<<table title="InsurableItem" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> InsurableItem </td></tr></table></td></tr></table>>];
+// BankAccount
+c58 [label=<<table title="BankAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> BankAccount </td></tr></table></td></tr></table>>];
+// RealEstate
+c59 [label=<<table title="RealEstate" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> RealEstate </td></tr></table></td></tr></table>>];
+// Security
+c60 [label=<<table title="Security" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Security </td></tr></table></td></tr></table>>];
+// Stock
+c61 [label=<<table title="Stock" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Stock </td></tr></table></td></tr></table>>];
+// Bond
+c62 [label=<<table title="Bond" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> Bond </td></tr></table></td></tr></table>>];
+// CheckingAccount
+c63 [label=<<table title="CheckingAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> CheckingAccount </td></tr></table></td></tr></table>>];
+// SavingsAccount
+c64 [label=<<table title="SavingsAccount" border="0" cellborder="1" cellspacing="0" cellpadding="2"><tr><td><table border="0" cellspacing="0" cellpadding="1"><tr><td align="center" balign="center"> SavingsAccount </td></tr></table></td></tr></table>>];
+// BankAccount extends Asset
+c55 -> c58 [arrowtail=empty,dir=back,weight=10];
+// BankAccount extends InsurableItem
+c57 -> c58 [arrowtail=empty,dir=back,weight=10];
+// BankAccount extends InterestBearingItem
+c56 -> c58 [arrowtail=empty,dir=back,weight=10];
+// RealEstate extends Asset
+c55 -> c59 [arrowtail=empty,dir=back,weight=10];
+// RealEstate extends InsurableItem
+c57 -> c59 [arrowtail=empty,dir=back,weight=10];
+// Security extends Asset
+c55 -> c60 [arrowtail=empty,dir=back,weight=10];
+// Stock extends Security
+c60 -> c61 [arrowtail=empty,dir=back,weight=10];
+// Bond extends Security
+c60 -> c62 [arrowtail=empty,dir=back,weight=10];
+// CheckingAccount extends BankAccount
+c58 -> c63 [arrowtail=empty,dir=back,weight=10];
+// SavingsAccount extends BankAccount
+c58 -> c64 [arrowtail=empty,dir=back,weight=10];
 }
 

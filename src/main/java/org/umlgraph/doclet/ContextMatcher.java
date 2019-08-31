@@ -67,9 +67,9 @@ public class ContextMatcher implements ClassMatcher {
 	this.root = root;
 	this.keepParentHide = keepParentHide;
 	opt = (Options) options.clone();
-	opt.setOption(new String[] { "-!hide" });
-	opt.setOption(new String[] { "-!attributes" });
-	opt.setOption(new String[] { "-!operations" });
+	opt.setOption(new String[] { "!hide" });
+	opt.setOption(new String[] { "!attributes" });
+	opt.setOption(new String[] { "!operations" });
 	this.cg = new ClassGraphHack(root, opt);
 
 	setContextCenter(pattern);
@@ -97,26 +97,23 @@ public class ContextMatcher implements ClassMatcher {
 
     /**
      * Adds the specified class to the internal class graph along with its
-     * relations and depencies, eventually inferring them, according to the
+     * relations and dependencies, eventually inferring them, according to the
      * Options specified for this matcher
      * @param cd
      */
     private void addToGraph(ClassDoc cd) {
 	// avoid adding twice the same class, but don't rely on cg.getClassInfo
-        // since there
-	// are other ways to add a classInfor than printing the class
+	// since there are other ways to add a classInfor than printing the class
 	if (visited.contains(cd.toString()))
 	    return;
 
 	visited.add(cd.toString());
 	cg.printClass(cd, false);
 	cg.printRelations(cd);
-	if (opt.inferRelationships) {
+	if (opt.inferRelationships)
 	    cg.printInferredRelations(cd);
-	}
-	if (opt.inferDependencies) {
+	if (opt.inferDependencies)
 	    cg.printInferredDependencies(cd);
-	}
     }
 
     /**
@@ -144,10 +141,8 @@ public class ContextMatcher implements ClassMatcher {
 	    return true;
 
 	for (ClassDoc mcd : matched) {
-	    String mcName = mcd.toString();
-	    ClassInfo ciMatched = cg.getClassInfo(mcName);
-	    RelationPattern rp = ciMatched.getRelation(name);
-	    if (ciMatched != null && rp != null && opt.contextRelationPattern.matchesOne(rp))
+	    RelationPattern rp = cg.getClassInfo(mcd, true).getRelation(name);
+	    if (rp != null && opt.contextRelationPattern.matchesOne(rp))
 		return true;
 	}
 	return false;
@@ -168,6 +163,7 @@ public class ContextMatcher implements ClassMatcher {
 	    prologue();
 	}
 
+	@Override
 	public void prologue() throws IOException {
 	    w = new PrintWriter(new DevNullWriter());
 	}
@@ -180,14 +176,17 @@ public class ContextMatcher implements ClassMatcher {
      */
     private static class DevNullWriter extends Writer {
 
+	@Override
 	public void write(char[] cbuf, int off, int len) throws IOException {
 	    // nothing to do
 	}
 
+	@Override
 	public void flush() throws IOException {
 	    // nothing to do
 	}
 
+	@Override
 	public void close() throws IOException {
 	    // nothing to do
 	}

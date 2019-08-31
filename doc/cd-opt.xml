@@ -1,9 +1,10 @@
 <?xml version="1.0" ?>
 <notes>
-A number of options contol the operation of UMLGraph
+A number of options control the operation of UMLGraph
 class diagram generator.
 These can be specified on the command line, and most can also
-be specified through javadoc tags within the diagram, affecting all or some elements.
+be specified through javadoc <code>@opt</code> tags within the diagram, affecting all or some elements.
+Most have a negated version by prefixing an exclamation mark.
 <p/>
 <h2>What Gets Drawn</h2> <!-- {{{1 -->
 <dl>
@@ -27,8 +28,12 @@ be specified through javadoc tags within the diagram, affecting all or some elem
  in this case it will hide everything (useful in the context of views
  to selectively unhide some portions of the graph, see the view chapter for
  further details).  </dd>
+<dt>-include</dt><dd>Match classes to include with a non-anchored match. This is weaker than
+ the <code>-hide</code> option, but can be used to include classes from foreign packages
+ in the package view (which would by default filter to only include package members).</dd>
 <dt>-operations</dt><dd>Show class operations (Java methods) </dd>
 <dt>-qualify</dt><dd>Produce fully-qualified class names.  </dd>
+<dt>-qualifyGenerics</dt><dd>Use fully-qualified class names in Java generics.</dd>
 <dt>-types</dt><dd>Add type information to attributes and operations </dd>
 <dt>-view</dt><dd>Specify the fully qualified name of a class that contains
  a view definition. Only the class diagram specified by this view will be generated. 
@@ -39,6 +44,7 @@ be specified through javadoc tags within the diagram, affecting all or some elem
 <h2>Visual Appearance</h2> <!-- {{{1 -->
 <dl>
 <dt>-bgcolor</dt><dd>Specify the graph's background color.  </dd>
+<dt>-autosize</dt><dd>Fits generated graph to the width of the page/window.  Defaults to true.  </dd>
 <dt>-collapsible</dt><dd>Enhance the javadoc HTML files containing UML diagrams with Javascript that provides a link for showing the (initially collapsed) diagrams.  </dd>
 <dt>-edgecolor</dt><dd>Specify the color for drawing edges.  </dd>
 <dt>-edgefontcolor</dt><dd>Specify the font color to use for edge labels.  </dd>
@@ -77,9 +83,9 @@ be specified through javadoc tags within the diagram, affecting all or some elem
 
 <p />
 All colors can be either a symbolic name (e.g. blue),
-a tripple specifying hue-saturation-brightness as values 0-1
+a triple specifying hue-saturation-brightness as values 0-1
 (e.g. ".13 0.9 1"),
-or a tripple specifying red-green-blue values as hexadecimal
+or a triple specifying red-green-blue values as hexadecimal
 digits prefixed by a # (e.g. "#ff8020").
 The symbolic color names are derived from the X Windows System;
 you can find a complete list in the
@@ -181,10 +187,6 @@ not through <em>javadoc</em>.
 When using <em>dot</em> to generate SVG diagrams you should specify
 <code>UTF-8</code> as the output encoding, to have guillemots correctly
 appearing in the resulting SVG.
-</dd>
-<dt>-verbose2</dt><dd>Will print on the standard output details regarding
-the progress of graph generation.
-(Note that -verbose is a javadoc option with a different meaning).
 </dd>
 </dl>
 <!-- Footer {{{1 -->

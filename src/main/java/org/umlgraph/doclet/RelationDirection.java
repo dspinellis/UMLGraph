@@ -13,12 +13,9 @@ public enum RelationDirection {
      * @return
      */
     public RelationDirection sum(RelationDirection d) {
-	if (this == NONE)
-	    return d;
-
-	if ((this == IN && d == OUT) || (this == OUT && d == IN) || this == BOTH || d == BOTH)
-	    return BOTH;
-	return this;
+	// Handle same and nones first:
+	return (this == d || d == NONE) ? this : //
+		this == NONE ? d : BOTH; // They are different and not none.
     }
 
     /**
@@ -28,10 +25,7 @@ public enum RelationDirection {
      * @return
      */
     public boolean contains(RelationDirection d) {
-	if (this == BOTH)
-	    return true;
-	else
-	    return d == this;
+	return this == BOTH ? true : (d == this);
     }
 
     /**
@@ -40,12 +34,7 @@ public enum RelationDirection {
      * @return
      */
     public RelationDirection inverse() {
-	if (this == IN)
-	    return OUT;
-	else if (this == OUT)
-	    return IN;
-	else
-	    return this;
+	return this == IN ? OUT : this == OUT ? IN : this;
     }
 
 };

@@ -50,9 +50,6 @@ public class BasicTest {
 
 	TestUtils.cleanFolder(outFolder, true);
 
-	// don't use windows specific fonts
-	System.setProperty("os.name", "generic");
-
 	// run tests
 	performBasicTests(differences);
 	performViewTests(differences, outFolder);
@@ -67,6 +64,7 @@ public class BasicTest {
 	pw.println();
 	pw.println();
 	pw.flush();
+	System.exit(differences.size() > 0 ? 1 : 0);
     }
 
     private static void performViewTests(List<String> differences, File outFolder)

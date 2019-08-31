@@ -84,7 +84,7 @@ public class UmlGraph {
 	commentOptions = new Options();
 	commentOptions.setOptions(root.options());
 	commentOptions.setOptions(findClass(root, "UMLNoteOptions"));
-	commentOptions.shape = new Shape("note");
+	commentOptions.shape = Shape.NOTE;
 
 	Options opt = new Options();
 	opt.setOptions(root.options());
@@ -113,14 +113,16 @@ public class UmlGraph {
 
 	ClassGraph c = new ClassGraph(root, op, contextDoc);
 	c.prologue();
-	for (int i = 0; i < classes.length; i++)
-	    c.printClass(classes[i], true);
-	for (int i = 0; i < classes.length; i++)
-	    c.printRelations(classes[i]);
+	for (ClassDoc cd : classes)
+	    c.printClass(cd, true);
+	for (ClassDoc cd : classes)
+	    c.printRelations(cd);
 	if(opt.inferRelationships)
-            c.printInferredRelations(classes);
+	    for (ClassDoc cd : classes)
+		c.printInferredRelations(cd);
         if(opt.inferDependencies)
-            c.printInferredDependencies(classes);
+	    for (ClassDoc cd : classes)
+		c.printInferredDependencies(cd);
 
 	c.printExtraClasses(root);
 	c.epilogue();
