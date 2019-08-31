@@ -1,0 +1,23 @@
+initial()
+
+compound_state(Application)
+state(A, Non Hire) 
+styles(node, [fontname=Helvetica, fontcolor=red])
+state(B, New Hire,[entry/Candidate Hire, do/Add Employee])
+compound_end()
+
+state(C, Employee, [entry/Intake New Employee])
+state(D, Retiree, [do/Employee Retirement])
+state(E, Former Employee, [do/Terminate, exit/Archive])
+
+final()
+
+transition(initial, B, Accepts offer)
+transition(initial, A, Rejects offer)
+transition(B, C, Begins work)
+transition(C, C, Boring Reality)
+transition(C, D, Employee Retires, [color=blue])
+transition(C, E, Employee Terminates, [color=red])
+transition(D, final)
+
+
