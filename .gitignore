@@ -4,6 +4,8 @@
 *.iws
 *.swp
 .settings
+.project
+.classpath
 _vimrc
 build
 CHECKSUM.MD5
