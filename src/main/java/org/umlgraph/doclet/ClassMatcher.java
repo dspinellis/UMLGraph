@@ -20,19 +20,19 @@ package org.umlgraph.doclet;
 import com.sun.javadoc.ClassDoc;
 
 /**
- * A ClassMatcher is used to check if a class definition matches a
- * specific condition. The nature of the condition is dependent on
- * the kind of matcher 
+ * A ClassMatcher is used to check if a class definition matches a specific
+ * condition. The nature of the condition is dependent on the kind of matcher
+ * 
  * @author wolf
  */
 public interface ClassMatcher {
     /**
-     * Returns the options for the specified class. 
+     * Returns the options for the specified class.
      */
     public boolean matches(ClassDoc cd);
-    
+
     /**
-     * Returns the options for the specified class. 
+     * Returns the options for the specified class.
      */
     public boolean matches(String name);
 }

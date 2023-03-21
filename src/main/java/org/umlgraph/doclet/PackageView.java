@@ -12,6 +12,7 @@ import com.sun.javadoc.RootDoc;
  * single {@linkplain ClassMatcher}, and provides some extra configuration such
  * as output path configuration (and it is specified in code rather than in
  * javadoc comments).
+ * 
  * @author wolf
  * 
  */
@@ -25,57 +26,57 @@ public class PackageView implements OptionProvider {
     private Options opt;
 
     public PackageView(String outputFolder, PackageDoc pd, RootDoc root, OptionProvider parent) {
-	this.parent = parent;
-	this.pd = pd;
-	this.matcher = new PackageMatcher(pd);
-	this.opt = parent.getGlobalOptions();
-	this.opt.setOptions(pd);
-	this.outputPath = pd.name().replace('.', '/') + "/" + pd.name() + ".dot";
+        this.parent = parent;
+        this.pd = pd;
+        this.matcher = new PackageMatcher(pd);
+        this.opt = parent.getGlobalOptions();
+        this.opt.setOptions(pd);
+        this.outputPath = pd.name().replace('.', '/') + "/" + pd.name() + ".dot";
     }
 
     public String getDisplayName() {
-	return "Package view for package " + pd;
+        return "Package view for package " + pd;
     }
 
     public Options getGlobalOptions() {
-	Options go = parent.getGlobalOptions();
+        Options go = parent.getGlobalOptions();
 
-	go.setOption(new String[] { "output", outputPath });
-	go.setOption(HIDE);
+        go.setOption(new String[] { "output", outputPath });
+        go.setOption(HIDE);
 
-	return go;
+        return go;
     }
 
     public Options getOptionsFor(ClassDoc cd) {
-	Options go = parent.getGlobalOptions();
-	overrideForClass(go, cd);
-	return go;
+        Options go = parent.getGlobalOptions();
+        overrideForClass(go, cd);
+        return go;
     }
 
     public Options getOptionsFor(String name) {
-	Options go = parent.getGlobalOptions();
-	overrideForClass(go, name);
-	return go;
+        Options go = parent.getGlobalOptions();
+        overrideForClass(go, name);
+        return go;
     }
 
     public void overrideForClass(Options opt, ClassDoc cd) {
-	opt.setOptions(cd);
-	boolean inPackage = matcher.matches(cd);
-	if (inPackage)
-	    opt.showQualified = false;
-	boolean included = inPackage || this.opt.matchesIncludeExpression(cd.qualifiedName());
-	if (!included || this.opt.matchesHideExpression(cd.qualifiedName()))
-	    opt.setOption(HIDE);
+        opt.setOptions(cd);
+        boolean inPackage = matcher.matches(cd);
+        if (inPackage)
+            opt.showQualified = false;
+        boolean included = inPackage || this.opt.matchesIncludeExpression(cd.qualifiedName());
+        if (!included || this.opt.matchesHideExpression(cd.qualifiedName()))
+            opt.setOption(HIDE);
     }
 
     public void overrideForClass(Options opt, String className) {
-	opt.showQualified = false;
-	boolean inPackage = matcher.matches(className);
-	if (inPackage)
-	    opt.showQualified = false;
-	boolean included = inPackage || this.opt.matchesIncludeExpression(className);
-	if (!included || this.opt.matchesHideExpression(className))
-	    opt.setOption(HIDE);
+        opt.showQualified = false;
+        boolean inPackage = matcher.matches(className);
+        if (inPackage)
+            opt.showQualified = false;
+        boolean included = inPackage || this.opt.matchesIncludeExpression(className);
+        if (!included || this.opt.matchesHideExpression(className))
+            opt.setOption(HIDE);
     }
 
 }

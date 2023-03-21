@@ -33,12 +33,12 @@ public enum Font {
 
     // Static initialization of further values.
     static {
-	// use an appropriate font depending on the current operating system
-	if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-	    DEFAULT_FONT = "Arial";
-	} else {
-	    DEFAULT_FONT = "Helvetica"; // TODO: can we use just "sans"?
-	}
+        // use an appropriate font depending on the current operating system
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            DEFAULT_FONT = "Arial";
+        } else {
+            DEFAULT_FONT = "Helvetica"; // TODO: can we use just "sans"?
+        }
     }
 
     /**
@@ -49,53 +49,53 @@ public enum Font {
      * @return Wrapped text
      */
     public String wrap(Options opt, String text) {
-	if (text.isEmpty() || this == NORMAL)
-	    return text;
-	String face = null;
-	double size = -1;
-	boolean italic = false;
-	switch (this) {
-	case EDGE:
-	case NODE:
-	    // Not used with the wrap function.
-	    throw new UnsupportedOperationException();
-	case ABSTRACT:
-	    italic = opt.nodeFontAbstractItalic;
-	case NORMAL:
-	    break;
-	case CLASS_ABSTRACT:
-	    italic = opt.nodeFontAbstractItalic;
-	case CLASS:
-	    face = opt.nodeFontClassName;
-	    size = opt.nodeFontClassSize;
-	    break;
-	case PACKAGE:
-	    face = opt.nodeFontPackageName;
-	    size = opt.nodeFontPackageSize;
-	    break;
-	case TAG:
-	    face = opt.nodeFontTagName;
-	    size = opt.nodeFontTagSize;
-	    break;
-	}
-	if (face == null && size < 0 && !italic)
-	    return text;
-	StringBuilder buf = new StringBuilder(text.length() + 100);
-	if (face != null || size > 0) {
-	    buf.append("<font");
-	    if (face != null)
-		buf.append(" face=\"").append(face).append('"');
-	    if (size > 0)
-		buf.append(" point-size=\"").append(size).append('"');
-	    buf.append('>');
-	}
-	if (italic)
-	    buf.append("<i>");
-	buf.append(text);
-	if (italic)
-	    buf.append("</i>");
-	if (face != null || size > 0)
-	    buf.append("</font>");
-	return buf.toString();
+        if (text.isEmpty() || this == NORMAL)
+            return text;
+        String face = null;
+        double size = -1;
+        boolean italic = false;
+        switch (this) {
+        case EDGE:
+        case NODE:
+            // Not used with the wrap function.
+            throw new UnsupportedOperationException();
+        case ABSTRACT:
+            italic = opt.nodeFontAbstractItalic;
+        case NORMAL:
+            break;
+        case CLASS_ABSTRACT:
+            italic = opt.nodeFontAbstractItalic;
+        case CLASS:
+            face = opt.nodeFontClassName;
+            size = opt.nodeFontClassSize;
+            break;
+        case PACKAGE:
+            face = opt.nodeFontPackageName;
+            size = opt.nodeFontPackageSize;
+            break;
+        case TAG:
+            face = opt.nodeFontTagName;
+            size = opt.nodeFontTagSize;
+            break;
+        }
+        if (face == null && size < 0 && !italic)
+            return text;
+        StringBuilder buf = new StringBuilder(text.length() + 100);
+        if (face != null || size > 0) {
+            buf.append("<font");
+            if (face != null)
+                buf.append(" face=\"").append(face).append('"');
+            if (size > 0)
+                buf.append(" point-size=\"").append(size).append('"');
+            buf.append('>');
+        }
+        if (italic)
+            buf.append("<i>");
+        buf.append(text);
+        if (italic)
+            buf.append("</i>");
+        if (face != null || size > 0)
+            buf.append("</font>");
+        return buf.toString();
     }
 }

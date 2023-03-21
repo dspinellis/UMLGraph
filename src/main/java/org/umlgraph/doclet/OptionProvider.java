@@ -20,8 +20,8 @@ package org.umlgraph.doclet;
 import com.sun.javadoc.ClassDoc;
 
 /**
- * A factory class that builds Options object for general use or for a
- * specific class
+ * A factory class that builds Options object for general use or for a specific
+ * class
  */
 public interface OptionProvider {
     /**
@@ -51,7 +51,8 @@ public interface OptionProvider {
 
     /**
      * Returns user displayable name for this option provider.
-     * <p>Will be used to provide progress feedback on the console
+     * <p>
+     * Will be used to provide progress feedback on the console
      */
     public String getDisplayName();
 }

@@ -14,6 +14,7 @@ import com.sun.javadoc.RootDoc;
  * single {@linkplain ContextMatcher}, but provides some extra configuration
  * such as context highlighting and output path configuration (and it is
  * specified in code rather than in javadoc comments).
+ * 
  * @author wolf
  * 
  */
@@ -28,93 +29,89 @@ public class ContextView implements OptionProvider {
     private Options packageOptions;
     private static final String[] HIDE_OPTIONS = new String[] { "hide" };
 
-    public ContextView(String outputFolder, ClassDoc cd, RootDoc root, Options parent)
-	    throws IOException {
-	this.cd = cd;
-	String outputPath = cd.containingPackage().name().replace('.', '/') + "/" + cd.name()
-		+ ".dot";
+    public ContextView(String outputFolder, ClassDoc cd, RootDoc root, Options parent) throws IOException {
+        this.cd = cd;
+        String outputPath = cd.containingPackage().name().replace('.', '/') + "/" + cd.name() + ".dot";
 
-	// setup options statically, so that we won't need to change them so
-	// often
-	this.globalOptions = parent.getGlobalOptions();
-	
-	this.packageOptions = parent.getGlobalOptions();  
-	this.packageOptions.showQualified = false;
+        // setup options statically, so that we won't need to change them so
+        // often
+        this.globalOptions = parent.getGlobalOptions();
 
-	this.myGlobalOptions = parent.getGlobalOptions();
-	this.myGlobalOptions.setOption(new String[] { "output", outputPath });
-	this.myGlobalOptions.setOption(HIDE_OPTIONS);
+        this.packageOptions = parent.getGlobalOptions();
+        this.packageOptions.showQualified = false;
 
-	this.hideOptions = parent.getGlobalOptions();
-	this.hideOptions.setOption(HIDE_OPTIONS);
+        this.myGlobalOptions = parent.getGlobalOptions();
+        this.myGlobalOptions.setOption(new String[] { "output", outputPath });
+        this.myGlobalOptions.setOption(HIDE_OPTIONS);
 
-	this.centerOptions = parent.getGlobalOptions();
-	this.centerOptions.nodeFillColor = "lemonChiffon";
-	this.centerOptions.showQualified = false;
+        this.hideOptions = parent.getGlobalOptions();
+        this.hideOptions.setOption(HIDE_OPTIONS);
 
-	this.matcher = new ContextMatcher(root, Pattern.compile(Pattern.quote(cd.toString())),
-		myGlobalOptions, true);
+        this.centerOptions = parent.getGlobalOptions();
+        this.centerOptions.nodeFillColor = "lemonChiffon";
+        this.centerOptions.showQualified = false;
+
+        this.matcher = new ContextMatcher(root, Pattern.compile(Pattern.quote(cd.toString())), myGlobalOptions, true);
 
     }
 
     public void setContextCenter(ClassDoc contextCenter) {
-	this.cd = contextCenter;
-	String outputPath = cd.containingPackage().name().replace('.', '/') + "/" + cd.name()
-		+ ".dot";
-	this.myGlobalOptions.setOption(new String[] { "output", outputPath });
-	matcher.setContextCenter(Pattern.compile(Pattern.quote(cd.toString())));
+        this.cd = contextCenter;
+        String outputPath = cd.containingPackage().name().replace('.', '/') + "/" + cd.name() + ".dot";
+        this.myGlobalOptions.setOption(new String[] { "output", outputPath });
+        matcher.setContextCenter(Pattern.compile(Pattern.quote(cd.toString())));
     }
 
     public String getDisplayName() {
-	return "Context view for class " + cd;
+        return "Context view for class " + cd;
     }
 
     public Options getGlobalOptions() {
-	return myGlobalOptions;
+        return myGlobalOptions;
     }
 
     public Options getOptionsFor(ClassDoc cd) {
-	Options opt;
-	if (globalOptions.matchesHideExpression(cd.qualifiedName())
-		|| !(matcher.matches(cd) || globalOptions.matchesIncludeExpression(cd.qualifiedName()))) {
-		opt = hideOptions;
-	} else if (cd.equals(this.cd)) {
-		opt = centerOptions;
-	} else if(cd.containingPackage().equals(this.cd.containingPackage())){
-		opt = packageOptions;
-	} else {
-		opt = globalOptions;
-	}
-	Options optionClone = (Options) opt.clone();
-	overrideForClass(optionClone, cd);
-	return optionClone;
+        Options opt;
+        if (globalOptions.matchesHideExpression(cd.qualifiedName())
+                || !(matcher.matches(cd) || globalOptions.matchesIncludeExpression(cd.qualifiedName()))) {
+            opt = hideOptions;
+        } else if (cd.equals(this.cd)) {
+            opt = centerOptions;
+        } else if (cd.containingPackage().equals(this.cd.containingPackage())) {
+            opt = packageOptions;
+        } else {
+            opt = globalOptions;
+        }
+        Options optionClone = (Options) opt.clone();
+        overrideForClass(optionClone, cd);
+        return optionClone;
     }
 
     public Options getOptionsFor(String name) {
-	Options opt;
-	if (!matcher.matches(name))
-		opt = hideOptions;
-	else if (name.equals(cd.name()))
-		opt = centerOptions;
-	else
-		opt = globalOptions;
-	Options optionClone = (Options) opt.clone();
-	overrideForClass(optionClone, name);
-	return optionClone;
+        Options opt;
+        if (!matcher.matches(name))
+            opt = hideOptions;
+        else if (name.equals(cd.name()))
+            opt = centerOptions;
+        else
+            opt = globalOptions;
+        Options optionClone = (Options) opt.clone();
+        overrideForClass(optionClone, name);
+        return optionClone;
     }
 
     public void overrideForClass(Options opt, ClassDoc cd) {
-	opt.setOptions(cd);
-	if (opt.matchesHideExpression(cd.qualifiedName())
-		|| !(matcher.matches(cd) || opt.matchesIncludeExpression(cd.qualifiedName())))
-	    opt.setOption(HIDE_OPTIONS);
-	if (cd.equals(this.cd))
-	    opt.nodeFillColor = "lemonChiffon";
+        opt.setOptions(cd);
+        if (opt.matchesHideExpression(cd.qualifiedName())
+                || !(matcher.matches(cd) || opt.matchesIncludeExpression(cd.qualifiedName())))
+            opt.setOption(HIDE_OPTIONS);
+        if (cd.equals(this.cd))
+            opt.nodeFillColor = "lemonChiffon";
     }
 
     public void overrideForClass(Options opt, String className) {
-	if (!(matcher.matches(className) || opt.matchesIncludeExpression(className)))
-	    opt.setOption(HIDE_OPTIONS);
+        if (!(matcher.matches(className) || opt.matchesIncludeExpression(className)))
+            opt.setOption(HIDE_OPTIONS);
     }
 
 }

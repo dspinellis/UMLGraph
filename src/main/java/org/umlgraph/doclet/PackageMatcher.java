@@ -7,19 +7,19 @@ public class PackageMatcher implements ClassMatcher {
     protected PackageDoc packageDoc;
 
     public PackageMatcher(PackageDoc packageDoc) {
-	super();
-	this.packageDoc = packageDoc;
+        super();
+        this.packageDoc = packageDoc;
     }
 
     public boolean matches(ClassDoc cd) {
-	return cd.containingPackage().equals(packageDoc);
+        return cd.containingPackage().equals(packageDoc);
     }
 
     public boolean matches(String name) {
-	for (ClassDoc cd : packageDoc.allClasses())
-	    if (cd.qualifiedName().equals(name))
-		return true;
-	return false;
+        for (ClassDoc cd : packageDoc.allClasses())
+            if (cd.qualifiedName().equals(name))
+                return true;
+        return false;
     }
 
 }

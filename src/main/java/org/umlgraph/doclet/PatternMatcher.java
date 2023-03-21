@@ -23,21 +23,22 @@ import com.sun.javadoc.ClassDoc;
 /**
  * Matches classes performing a regular expression match on the qualified class
  * name
+ * 
  * @author wolf
  */
 public class PatternMatcher implements ClassMatcher {
     Pattern pattern;
 
     public PatternMatcher(Pattern pattern) {
-	this.pattern = pattern;
+        this.pattern = pattern;
     }
 
     public boolean matches(ClassDoc cd) {
-	return matches(cd.toString());
+        return matches(cd.toString());
     }
 
     public boolean matches(String name) {
-	return pattern.matcher(name).matches();
+        return pattern.matcher(name).matches();
     }
 
 }

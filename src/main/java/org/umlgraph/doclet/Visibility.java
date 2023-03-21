@@ -23,6 +23,7 @@ import com.sun.javadoc.ProgramElementDoc;
 /**
  * Enumerates the possible visibilities in a Java program. For brevity, package
  * private visibility is referred as PACKAGE.
+ * 
  * @author wolf
  */
 public enum Visibility {
@@ -31,17 +32,17 @@ public enum Visibility {
     final public String symbol;
 
     private Visibility(String symbol) {
-	this.symbol = symbol;
+        this.symbol = symbol;
     }
 
     public static Visibility get(ProgramElementDoc doc) {
-	if (doc.isPrivate())
-	    return PRIVATE;
-	else if (doc.isPackagePrivate())
-	    return PACKAGE;
-	else if (doc.isProtected())
-	    return PROTECTED;
-	else
-	    return PUBLIC;
+        if (doc.isPrivate())
+            return PRIVATE;
+        else if (doc.isPackagePrivate())
+            return PACKAGE;
+        else if (doc.isProtected())
+            return PROTECTED;
+        else
+            return PUBLIC;
     }
 }
