@@ -3,6 +3,7 @@
 *.ipr
 *.iws
 *.swp
+.idea
 .settings
 .project
 .classpath

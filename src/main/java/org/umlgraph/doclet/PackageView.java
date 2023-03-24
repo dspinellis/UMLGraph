@@ -1,8 +1,14 @@
 package org.umlgraph.doclet;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.PackageDoc;
-import com.sun.javadoc.RootDoc;
+import jdk.javadoc.doclet.DocletEnvironment;
+
+import javax.lang.model.element.ModuleElement;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
+
+import org.umlgraph.doclet.util.ElementUtil;
+
+import com.sun.source.util.DocTrees;
 
 /**
  * A view designed for UMLDoc, filters out everything that it's not contained in
@@ -19,19 +25,23 @@ import com.sun.javadoc.RootDoc;
 public class PackageView implements OptionProvider {
 
     private static final String[] HIDE = new String[] { "hide" };
-    private PackageDoc pd;
+    private PackageElement pd;
     private OptionProvider parent;
     private ClassMatcher matcher;
     private String outputPath;
     private Options opt;
+    private DocTrees docTrees;
 
-    public PackageView(String outputFolder, PackageDoc pd, RootDoc root, OptionProvider parent) {
+    public PackageView(String outputFolder, PackageElement pd, DocletEnvironment root, OptionProvider parent) {
         this.parent = parent;
         this.pd = pd;
-        this.matcher = new PackageMatcher(pd);
+        this.docTrees = root.getDocTrees();
+        this.matcher = new PackageMatcher(root, pd);
         this.opt = parent.getGlobalOptions();
-        this.opt.setOptions(pd);
-        this.outputPath = pd.name().replace('.', '/') + "/" + pd.name() + ".dot";
+        this.opt.setOptions(docTrees, pd);
+        ModuleElement md = ElementUtil.getModuleOf(root, pd);
+        String pathPrefix = Runtime.version().major() > 10 && md != null ? md.getQualifiedName().toString() + "/" : "";
+        this.outputPath = pathPrefix + pd.getQualifiedName().toString().replace('.', '/') + "/" + pd.getSimpleName().toString() + ".dot";
     }
 
     public String getDisplayName() {
@@ -47,36 +57,39 @@ public class PackageView implements OptionProvider {
         return go;
     }
 
-    public Options getOptionsFor(ClassDoc cd) {
+    public Options getOptionsFor(DocTrees dt, TypeElement cd) {
         Options go = parent.getGlobalOptions();
         overrideForClass(go, cd);
         return go;
     }
 
-    public Options getOptionsFor(String name) {
+    public Options getOptionsFor(CharSequence name) {
         Options go = parent.getGlobalOptions();
         overrideForClass(go, name);
         return go;
     }
 
-    public void overrideForClass(Options opt, ClassDoc cd) {
-        opt.setOptions(cd);
+    public void overrideForClass(Options opt, TypeElement cd) {
+        opt.setOptions(docTrees, cd);
         boolean inPackage = matcher.matches(cd);
-        if (inPackage)
+        if (inPackage) {
             opt.showQualified = false;
-        boolean included = inPackage || this.opt.matchesIncludeExpression(cd.qualifiedName());
-        if (!included || this.opt.matchesHideExpression(cd.qualifiedName()))
+        }
+        boolean included = inPackage || this.opt.matchesIncludeExpression(cd.getQualifiedName());
+        if (!included || this.opt.matchesHideExpression(cd.getQualifiedName())) {
             opt.setOption(HIDE);
+        }
     }
 
-    public void overrideForClass(Options opt, String className) {
+    public void overrideForClass(Options opt, CharSequence className) {
         opt.showQualified = false;
         boolean inPackage = matcher.matches(className);
         if (inPackage)
             opt.showQualified = false;
         boolean included = inPackage || this.opt.matchesIncludeExpression(className);
-        if (!included || this.opt.matchesHideExpression(className))
+        if (!included || this.opt.matchesHideExpression(className)) {
             opt.setOption(HIDE);
+        }
     }
 
 }

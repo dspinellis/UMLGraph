@@ -3,8 +3,14 @@ package org.umlgraph.doclet;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.RootDoc;
+import jdk.javadoc.doclet.DocletEnvironment;
+
+import javax.lang.model.element.ModuleElement;
+import javax.lang.model.element.TypeElement;
+
+import org.umlgraph.doclet.util.ElementUtil;
+
+import com.sun.source.util.DocTrees;
 
 /**
  * A view designed for UMLDoc, filters out everything that it's not directly
@@ -20,7 +26,8 @@ import com.sun.javadoc.RootDoc;
  */
 public class ContextView implements OptionProvider {
 
-    private ClassDoc cd;
+    private TypeElement cd;
+    private DocletEnvironment root;
     private ContextMatcher matcher;
     private Options globalOptions;
     private Options myGlobalOptions;
@@ -29,9 +36,12 @@ public class ContextView implements OptionProvider {
     private Options packageOptions;
     private static final String[] HIDE_OPTIONS = new String[] { "hide" };
 
-    public ContextView(String outputFolder, ClassDoc cd, RootDoc root, Options parent) throws IOException {
+    public ContextView(String outputFolder, TypeElement cd, DocletEnvironment root, Options parent) throws IOException {
         this.cd = cd;
-        String outputPath = cd.containingPackage().name().replace('.', '/') + "/" + cd.name() + ".dot";
+        this.root = root;
+        ModuleElement md = ElementUtil.getModuleOf(root, cd);
+        String pathPrefix = Runtime.version().major() > 10 && md != null ? md.getQualifiedName().toString() + "/" : "";
+        String outputPath = pathPrefix + ElementUtil.getPackageOf(root, cd).getQualifiedName().toString().replace('.', '/') + "/" + cd.getSimpleName() + ".dot";
 
         // setup options statically, so that we won't need to change them so
         // often
@@ -51,13 +61,15 @@ public class ContextView implements OptionProvider {
         this.centerOptions.nodeFillColor = "lemonChiffon";
         this.centerOptions.showQualified = false;
 
-        this.matcher = new ContextMatcher(root, Pattern.compile(Pattern.quote(cd.toString())), myGlobalOptions, true);
+        this.matcher = new ContextMatcher(root, Pattern.compile(Pattern.quote(cd.getQualifiedName().toString())), myGlobalOptions, true);
 
     }
 
-    public void setContextCenter(ClassDoc contextCenter) {
+    public void setContextCenter(TypeElement contextCenter) {
         this.cd = contextCenter;
-        String outputPath = cd.containingPackage().name().replace('.', '/') + "/" + cd.name() + ".dot";
+        ModuleElement md = ElementUtil.getModuleOf(root, contextCenter);
+        String pathPrefix = Runtime.version().major() > 10 && md != null ? md.getQualifiedName().toString() + "/" : "";
+        String outputPath = pathPrefix + ElementUtil.getPackageOf(root, cd).getQualifiedName().toString().replace('.', '/') + "/" + cd.getSimpleName() + ".dot";
         this.myGlobalOptions.setOption(new String[] { "output", outputPath });
         matcher.setContextCenter(Pattern.compile(Pattern.quote(cd.toString())));
     }
@@ -70,14 +82,14 @@ public class ContextView implements OptionProvider {
         return myGlobalOptions;
     }
 
-    public Options getOptionsFor(ClassDoc cd) {
+    public Options getOptionsFor(DocTrees dt, TypeElement cd) {
         Options opt;
-        if (globalOptions.matchesHideExpression(cd.qualifiedName())
-                || !(matcher.matches(cd) || globalOptions.matchesIncludeExpression(cd.qualifiedName()))) {
+        if (globalOptions.matchesHideExpression(cd.getQualifiedName())
+                || !(matcher.matches(cd) || globalOptions.matchesIncludeExpression(cd.getQualifiedName()))) {
             opt = hideOptions;
         } else if (cd.equals(this.cd)) {
             opt = centerOptions;
-        } else if (cd.containingPackage().equals(this.cd.containingPackage())) {
+        } else if (root.getElementUtils().getPackageOf(cd).equals(root.getElementUtils().getPackageOf(this.cd))) {
             opt = packageOptions;
         } else {
             opt = globalOptions;
@@ -87,31 +99,35 @@ public class ContextView implements OptionProvider {
         return optionClone;
     }
 
-    public Options getOptionsFor(String name) {
+    public Options getOptionsFor(CharSequence name) {
         Options opt;
-        if (!matcher.matches(name))
+        if (!matcher.matches(name)) {
             opt = hideOptions;
-        else if (name.equals(cd.name()))
+        } else if (name.equals(cd.getQualifiedName())) {
             opt = centerOptions;
-        else
+        } else {
             opt = globalOptions;
+        }
         Options optionClone = (Options) opt.clone();
         overrideForClass(optionClone, name);
         return optionClone;
     }
 
-    public void overrideForClass(Options opt, ClassDoc cd) {
-        opt.setOptions(cd);
-        if (opt.matchesHideExpression(cd.qualifiedName())
-                || !(matcher.matches(cd) || opt.matchesIncludeExpression(cd.qualifiedName())))
+    public void overrideForClass(Options opt, TypeElement cd) {
+        opt.setOptions(root.getDocTrees(), cd);
+        if (opt.matchesHideExpression(cd.getQualifiedName())
+                || !(matcher.matches(cd) || opt.matchesIncludeExpression(cd.getQualifiedName()))) {
             opt.setOption(HIDE_OPTIONS);
-        if (cd.equals(this.cd))
+        }
+        if (cd.equals(this.cd)) {
             opt.nodeFillColor = "lemonChiffon";
+        }
     }
 
-    public void overrideForClass(Options opt, String className) {
-        if (!(matcher.matches(className) || opt.matchesIncludeExpression(className)))
+    public void overrideForClass(Options opt, CharSequence className) {
+        if (!(matcher.matches(className) || opt.matchesIncludeExpression(className))) {
             opt.setOption(HIDE_OPTIONS);
+        }
     }
 
 }

@@ -20,14 +20,26 @@
 package org.umlgraph.doclet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doc;
-import com.sun.javadoc.LanguageVersion;
-import com.sun.javadoc.RootDoc;
+import jdk.javadoc.doclet.Doclet;
+import jdk.javadoc.doclet.DocletEnvironment;
+import jdk.javadoc.doclet.Reporter;
+import jdk.javadoc.doclet.StandardDoclet;
+
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
+
+import org.umlgraph.doclet.util.ElementUtil;
+import org.umlgraph.doclet.util.TagUtil;
 
 /**
  * Doclet API implementation
@@ -41,7 +53,7 @@ import com.sun.javadoc.RootDoc;
  * @version $Revision$
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
-public class UmlGraph {
+public class UmlGraph implements Doclet {
 
     private static final String programName = "UmlGraph";
     private static final String docletName = "org.umlgraph.doclet.UmlGraph";
@@ -49,25 +61,66 @@ public class UmlGraph {
     /** Options used for commenting nodes */
     private static Options commentOptions;
 
-    /** Entry point through javadoc */
-    public static boolean start(RootDoc root) throws IOException {
-        Options opt = buildOptions(root);
-        root.printNotice("UMLGraph doclet version " + Version.VERSION + " started");
 
-        View[] views = buildViews(opt, root, root);
-        if (views == null)
-            return false;
-        if (views.length == 0)
-            buildGraph(root, opt, null);
-        else
-            for (int i = 0; i < views.length; i++)
-                buildGraph(root, views[i], null);
-        return true;
+    private Locale locale;
+    private Reporter reporter;
+    private Options options;
+    private StandardDoclet standard;
+
+    @Override
+    public void init(Locale locale, Reporter reporter) {
+        this.locale = locale;
+        this.reporter = reporter;
+        this.options = new Options();
+        this.standard = new StandardDoclet();
     }
 
-    public static void main(String args[]) {
-        PrintWriter err = new PrintWriter(System.err);
-        com.sun.tools.javadoc.Main.execute(programName, err, err, err, docletName, args);
+    @Override
+    public String getName() {
+        return docletName;
+    }
+
+    @Override
+    public Set<? extends Doclet.Option> getSupportedOptions() {
+        Set<Doclet.Option> options = new HashSet<>(standard.getSupportedOptions());
+        for (Doclet.Option opt : this.options.OPTIONS) {
+            options.add(opt);
+        }
+        return options;
+    }
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return standard.getSupportedSourceVersion();
+    }
+
+    /**
+     * Standard doclet entry point
+     * 
+     * @param root
+     * @return
+     */
+    @Override
+    /** Entry point through javadoc */
+    public boolean run(DocletEnvironment root) {
+        reporter.print(Diagnostic.Kind.NOTE, "UMLGraph doclet version " + Version.VERSION + " started");
+
+        List<View> views = buildViews(options, root, root);
+        if (views == null) {
+            return false;
+        }
+        try {
+            if (views.isEmpty()) {
+                buildGraph(reporter, root, options, null, null);
+            } else {
+                for (View view : views) {
+                    buildGraph(reporter, root, options, view, null);
+                }
+            }
+        } catch (IOException ioe) {
+            reporter.print(Diagnostic.Kind.ERROR, "UMLGraph doclet error : " + ioe);
+        }
+        return true;
     }
 
     public static Options getCommentOptions() {
@@ -79,49 +132,62 @@ public class UmlGraph {
      * the command line and the ones specified in the UMLOptions class, if
      * available. Also create the globally accessible commentOptions object.
      */
-    public static Options buildOptions(RootDoc root) {
-        commentOptions = new Options();
-        commentOptions.setOptions(root.options());
-        commentOptions.setOptions(findClass(root, "UMLNoteOptions"));
+    public static Options buildOptions(DocletEnvironment root, Options o) {
+        commentOptions = o.clone();
+        commentOptions.setOptions(root.getDocTrees(), findClass(root, "UMLNoteOptions"));
         commentOptions.shape = Shape.NOTE;
 
-        Options opt = new Options();
-        opt.setOptions(root.options());
-        opt.setOptions(findClass(root, "UMLOptions"));
+        Options opt = o.clone();
+        opt.setOptions(root.getDocTrees(), findClass(root, "UMLOptions"));
         return opt;
     }
 
     /** Return the ClassDoc for the specified class; null if not found. */
-    private static ClassDoc findClass(RootDoc root, String name) {
-        ClassDoc[] classes = root.classes();
-        for (ClassDoc cd : classes)
-            if (cd.name().equals(name))
-                return cd;
+    private static TypeElement findClass(DocletEnvironment root, String name) {
+        Set<? extends Element> classes = root.getIncludedElements();
+        for (Element element : classes) {
+            if (element instanceof TypeElement && ((TypeElement) element).getQualifiedName().toString().equals(name)) {
+                return (TypeElement) element;
+            }
+        }
         return null;
     }
 
     /**
      * Builds and outputs a single graph according to the view overrides
      */
-    public static void buildGraph(RootDoc root, OptionProvider op, Doc contextDoc) throws IOException {
-        if (getCommentOptions() == null)
-            buildOptions(root);
+    public static void buildGraph(Reporter reporter, DocletEnvironment root, Options options, OptionProvider op, Element contextDoc) throws IOException {
+        if (getCommentOptions() == null) {
+            buildOptions(root, options);
+        }
         Options opt = op.getGlobalOptions();
-        root.printNotice("Building " + op.getDisplayName());
-        ClassDoc[] classes = root.classes();
+        reporter.print(Diagnostic.Kind.NOTE, "Building " + op.getDisplayName());
+        Set<? extends Element> elements = root.getIncludedElements();
+        Set<TypeElement> classes = new HashSet<>();
+        for (Element element : elements) {
+            if (element instanceof TypeElement) {
+                classes.add((TypeElement) element);
+            }
+        }
 
         ClassGraph c = new ClassGraph(root, op, contextDoc);
         c.prologue();
-        for (ClassDoc cd : classes)
+        for (TypeElement cd : classes) {
             c.printClass(cd, true);
-        for (ClassDoc cd : classes)
+        }
+        for (TypeElement cd : classes) {
             c.printRelations(cd);
-        if (opt.inferRelationships)
-            for (ClassDoc cd : classes)
+        }
+        if (opt.inferRelationships) {
+            for (TypeElement cd : classes) {
                 c.printInferredRelations(cd);
-        if (opt.inferDependencies)
-            for (ClassDoc cd : classes)
+            }
+        }
+        if (opt.inferDependencies) {
+            for (TypeElement cd : classes) {
                 c.printInferredDependencies(cd);
+            }
+        }
 
         c.printExtraClasses(root);
         c.epilogue();
@@ -135,54 +201,51 @@ public class UmlGraph {
      * @param viewRootDoc The RootDoc for the view classes (may be different, or may
      *                    be the same as the srcRootDoc)
      */
-    public static View[] buildViews(Options opt, RootDoc srcRootDoc, RootDoc viewRootDoc) {
+    public static List<View> buildViews(Options opt, DocletEnvironment srcRootDoc, DocletEnvironment viewRootDoc) {
         if (opt.viewName != null) {
-            ClassDoc viewClass = viewRootDoc.classNamed(opt.viewName);
+            TypeElement viewClass = findClass(viewRootDoc, opt.viewName);
             if (viewClass == null) {
                 System.out.println("View " + opt.viewName + " not found! Exiting without generating any output.");
                 return null;
             }
-            if (viewClass.tags("view").length == 0) {
+            if (TagUtil.getTag(viewRootDoc, viewClass, "view").isEmpty()) {
                 System.out.println(viewClass + " is not a view!");
                 return null;
             }
-            if (viewClass.isAbstract()) {
+            if (viewClass.getModifiers().contains(Modifier.ABSTRACT)) {
                 System.out.println(viewClass + " is an abstract view, no output will be generated!");
                 return null;
             }
-            return new View[] { buildView(srcRootDoc, viewClass, opt) };
+            return List.of(buildView(srcRootDoc, viewClass, opt));
         } else if (opt.findViews) {
-            List<View> views = new ArrayList<View>();
-            ClassDoc[] classes = viewRootDoc.classes();
+            List<View> views = new ArrayList<>();
+            Set<? extends Element> classes = viewRootDoc.getIncludedElements();
 
             // find view classes
-            for (int i = 0; i < classes.length; i++)
-                if (classes[i].tags("view").length > 0 && !classes[i].isAbstract())
-                    views.add(buildView(srcRootDoc, classes[i], opt));
+            for (Element elmt : classes) {
+                if (!(elmt instanceof TypeElement)) {
+                    continue;
+                }
+                TypeElement element = (TypeElement) elmt;
+                if (TagUtil.getTag(viewRootDoc, element, "view").size() > 0 && !element.getModifiers().contains(Modifier.ABSTRACT)) {
+                    views.add(buildView(srcRootDoc, element, opt));
+                }
+            }
 
-            return views.toArray(new View[views.size()]);
+            return views;
         } else
-            return new View[0];
+            return Collections.emptyList();
     }
 
     /**
      * Builds a view along with its parent views, recursively
      */
-    private static View buildView(RootDoc root, ClassDoc viewClass, OptionProvider provider) {
-        ClassDoc superClass = viewClass.superclass();
-        if (superClass == null || superClass.tags("view").length == 0)
+    private static View buildView(DocletEnvironment root, TypeElement viewClass, OptionProvider provider) {
+        TypeElement superClass = ElementUtil.getSuperclass(viewClass);
+        if (superClass == null || TagUtil.getTag(root, superClass, "view").isEmpty()) {
             return new View(root, viewClass, provider);
+        }
 
         return new View(root, viewClass, buildView(root, superClass, provider));
-    }
-
-    /** Option checking */
-    public static int optionLength(String option) {
-        return Options.optionLength(option);
-    }
-
-    /** Indicate the language version we support */
-    public static LanguageVersion languageVersion() {
-        return LanguageVersion.JAVA_1_5;
     }
 }

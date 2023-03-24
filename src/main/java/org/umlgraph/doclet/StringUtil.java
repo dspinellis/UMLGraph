@@ -19,6 +19,9 @@
 
 package org.umlgraph.doclet;
 
+import javax.lang.model.element.Name;
+import javax.lang.model.util.Elements;
+
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -148,10 +151,11 @@ class StringUtil {
     }
 
     /** Removes the template specs from a class name. */
-    public static String removeTemplate(String name) {
-        int openIdx = name.indexOf('<');
-        if (openIdx == -1)
+    public static Name removeTemplate(Elements elements, Name name) {
+        int openIdx = name.toString().indexOf('<');
+        if (openIdx == -1) {
             return name;
+        }
         StringBuilder buf = new StringBuilder(name.length());
         for (int i = 0, depth = 0; i < name.length(); i++) {
             char c = name.charAt(i);
@@ -162,26 +166,29 @@ class StringUtil {
             else if (depth == 0)
                 buf.append(c);
         }
-        return buf.toString();
+        return elements.getName(buf.toString());
     }
 
-    public static String buildRelativePathFromClassNames(String contextPackageName, String classPackageName) {
+    public static String buildRelativePathFromClassNames(Name contextPackageName, String classPackageName) {
         // path, relative to the root, of the destination class
-        String[] contextClassPath = contextPackageName.split("\\.");
+        String[] contextClassPath = contextPackageName.toString().split("\\.");
         String[] currClassPath = classPackageName.split("\\.");
 
         // compute relative path between the context and the destination
         // ... first, compute common part
         int i = 0, e = Math.min(contextClassPath.length, currClassPath.length);
-        while (i < e && contextClassPath[i].equals(currClassPath[i]))
+        while (i < e && contextClassPath[i].equals(currClassPath[i])) {
             i++;
+        }
         // ... go up with ".." to reach the common root
         StringBuilder buf = new StringBuilder(classPackageName.length());
-        for (int j = i; j < contextClassPath.length; j++)
+        for (int j = i; j < contextClassPath.length; j++) {
             buf.append("../");
+        }
         // ... go down from the common root to the destination
-        for (int j = i; j < currClassPath.length; j++)
+        for (int j = i; j < currClassPath.length; j++) {
             buf.append(currClassPath[j]).append('/'); // Always use HTML seperators
+        }
         return buf.toString();
     }
 
@@ -195,10 +202,11 @@ class StringUtil {
      * users adhere to Java conventions, of beginning package names with a lowercase
      * letter.
      * 
-     * @param className
+     * @param name
      * @return Splitting point (Either referring to a dot, or -1)
      */
-    public static int splitPackageClass(String className) {
+    public static int splitPackageClass(CharSequence name) {
+        String className = name.toString();
         int gen = className.indexOf('<'); // Begin before generics.
         int end = gen >= 0 ? gen : className.length();
         int start = className.lastIndexOf('.', end);

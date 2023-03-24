@@ -22,6 +22,8 @@ package org.umlgraph.doclet;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.lang.model.element.Name;
+
 /**
  * Class's dot-compatible alias name (for fully qualified class names) and
  * printed information
@@ -42,7 +44,7 @@ class ClassInfo {
      * classes linked with a bi-directional relation , and the ones referred by a
      * directed relation
      */
-    Map<String, RelationPattern> relatedClasses = new HashMap<String, RelationPattern>();
+    Map<Name, RelationPattern> relatedClasses = new HashMap<>();
 
     ClassInfo(boolean h) {
         hidden = h;
@@ -50,7 +52,7 @@ class ClassInfo {
         classNumber++;
     }
 
-    public void addRelation(String dest, RelationType rt, RelationDirection d) {
+    public void addRelation(Name dest, RelationType rt, RelationDirection d) {
         RelationPattern ri = relatedClasses.get(dest);
         if (ri == null) {
             ri = new RelationPattern(RelationDirection.NONE);
@@ -59,7 +61,7 @@ class ClassInfo {
         ri.addRelation(rt, d);
     }
 
-    public RelationPattern getRelation(String dest) {
+    public RelationPattern getRelation(CharSequence dest) {
         return relatedClasses.get(dest);
     }
 

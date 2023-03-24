@@ -2,8 +2,13 @@ package org.umlgraph.doclet;
 
 import java.util.regex.Pattern;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.RootDoc;
+import jdk.javadoc.doclet.DocletEnvironment;
+
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
+
+import org.umlgraph.doclet.util.ElementUtil;
 
 /**
  * Matches every class that implements (directly or indirectly) an interfaces
@@ -11,31 +16,36 @@ import com.sun.javadoc.RootDoc;
  */
 public class InterfaceMatcher implements ClassMatcher {
 
-    protected RootDoc root;
+    protected DocletEnvironment root;
     protected Pattern pattern;
 
-    public InterfaceMatcher(RootDoc root, Pattern pattern) {
+    public InterfaceMatcher(DocletEnvironment root, Pattern pattern) {
         this.root = root;
         this.pattern = pattern;
     }
 
-    public boolean matches(ClassDoc cd) {
+    public boolean matches(TypeElement cd) {
         // if it's the interface we're looking for, match
-        if (cd.isInterface() && pattern.matcher(cd.toString()).matches())
+        if (cd.getKind() == ElementKind.INTERFACE && pattern.matcher(cd.toString()).matches()) {
             return true;
+        }
 
         // for each interface, recurse, since classes and interfaces
         // are treated the same in the doclet API
-        for (ClassDoc iface : cd.interfaces())
-            if (matches(iface))
+        for (TypeMirror type : cd.getInterfaces()) {
+            TypeElement iType = ElementUtil.getTypeElement(type);
+            if (iType != null && matches(iType)) {
                 return true;
+            }
+        }
 
-        // recurse on supeclass, if available
-        return cd.superclass() == null ? false : matches(cd.superclass());
+        // recurse on superclass, if available
+        TypeElement scd = ElementUtil.getTypeElement(cd.getSuperclass());
+        return scd == null ? false : matches(scd);
     }
 
-    public boolean matches(String name) {
-        ClassDoc cd = root.classNamed(name);
+    public boolean matches(CharSequence name) {
+        TypeElement cd = root.getElementUtils().getTypeElement(name);
         return cd == null ? false : matches(cd);
     }
 

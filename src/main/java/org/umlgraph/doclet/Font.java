@@ -4,7 +4,7 @@ package org.umlgraph.doclet;
  * Class to represent a font for graphviz.
  * <p>
  * This is a fairly complicated model, because it is rather an API into graphviz
- * formatting strings rather than a standalone thing. <p Some fonts (edge, node,
+ * formatting strings rather than a standalone thing. <p> Some fonts (edge, node,
  * abstract) are set on the top level elements, whereas others (class name, tag,
  * package) are inserted as {@code <font>} tags, and these can be omitted if not
  * set. Inheritance of properties then happens in graphviz.

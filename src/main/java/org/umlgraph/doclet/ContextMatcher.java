@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.RootDoc;
+import jdk.javadoc.doclet.DocletEnvironment;
+
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 
 /**
  * Matches classes that are directly connected to one of the classes matched by
@@ -46,11 +48,11 @@ import com.sun.javadoc.RootDoc;
 public class ContextMatcher implements ClassMatcher {
     ClassGraphHack cg;
     Pattern pattern;
-    List<ClassDoc> matched;
-    Set<String> visited = new HashSet<String>();
+    List<TypeElement> matched;
+    Set<String> visited = new HashSet<>();
     /** The options will be used to decide on inference */
     Options opt;
-    RootDoc root;
+    DocletEnvironment root;
     boolean keepParentHide;
 
     /**
@@ -64,7 +66,7 @@ public class ContextMatcher implements ClassMatcher {
      *                       the context
      * @throws IOException
      */
-    public ContextMatcher(RootDoc root, Pattern pattern, Options options, boolean keepParentHide) throws IOException {
+    public ContextMatcher(DocletEnvironment root, Pattern pattern, Options options, boolean keepParentHide) throws IOException {
         this.pattern = pattern;
         this.root = root;
         this.keepParentHide = keepParentHide;
@@ -89,11 +91,11 @@ public class ContextMatcher implements ClassMatcher {
         // build up the classgraph printing the relations for all of the
         // classes that make up the "center" of this context
         this.pattern = pattern;
-        matched = new ArrayList<ClassDoc>();
-        for (ClassDoc cd : root.classes()) {
-            if (pattern.matcher(cd.toString()).matches()) {
-                matched.add(cd);
-                addToGraph(cd);
+        matched = new ArrayList<>();
+        for (Element cd : root.getIncludedElements()) {
+            if (cd instanceof TypeElement && pattern.matcher(cd.toString()).matches()) {
+                matched.add((TypeElement) cd);
+                addToGraph((TypeElement) cd);
             }
         }
     }
@@ -105,31 +107,36 @@ public class ContextMatcher implements ClassMatcher {
      * 
      * @param cd
      */
-    private void addToGraph(ClassDoc cd) {
+    private void addToGraph(TypeElement cd) {
         // avoid adding twice the same class, but don't rely on cg.getClassInfo
         // since there are other ways to add a classInfor than printing the class
-        if (visited.contains(cd.toString()))
+        if (visited.contains(cd.toString())) {
             return;
+        }
 
         visited.add(cd.toString());
         cg.printClass(cd, false);
         cg.printRelations(cd);
-        if (opt.inferRelationships)
+        if (opt.inferRelationships) {
             cg.printInferredRelations(cd);
-        if (opt.inferDependencies)
+        }
+        if (opt.inferDependencies) {
             cg.printInferredDependencies(cd);
+        }
     }
 
     /**
-     * @see org.umlgraph.doclet.ClassMatcher#matches(com.sun.javadoc.ClassDoc)
+     * @see org.umlgraph.doclet.ClassMatcher#matches(TypeElement)
      */
-    public boolean matches(ClassDoc cd) {
-        if (keepParentHide && opt.matchesHideExpression(cd.toString()))
+    public boolean matches(TypeElement cd) {
+        if (keepParentHide && opt.matchesHideExpression(cd.getQualifiedName())) {
             return false;
+        }
 
         // if the class is matched, it's in by default.
-        if (matched.contains(cd))
+        if (matched.contains(cd)) {
             return true;
+        }
 
         // otherwise, add the class to the graph and see if it's associated
         // with any of the matched classes using the classgraph hack
@@ -138,16 +145,18 @@ public class ContextMatcher implements ClassMatcher {
     }
 
     /**
-     * @see org.umlgraph.doclet.ClassMatcher#matches(java.lang.String)
+     * @see org.umlgraph.doclet.ClassMatcher#matches(CharSequence)
      */
-    public boolean matches(String name) {
-        if (pattern.matcher(name).matches())
+    public boolean matches(CharSequence name) {
+        if (pattern.matcher(name).matches()) {
             return true;
+        }
 
-        for (ClassDoc mcd : matched) {
+        for (TypeElement mcd : matched) {
             RelationPattern rp = cg.getClassInfo(mcd, true).getRelation(name);
-            if (rp != null && opt.contextRelationPattern.matchesOne(rp))
+            if (rp != null && opt.contextRelationPattern.matchesOne(rp)) {
                 return true;
+            }
         }
         return false;
     }
@@ -162,7 +171,7 @@ public class ContextMatcher implements ClassMatcher {
      */
     private static class ClassGraphHack extends ClassGraph {
 
-        public ClassGraphHack(RootDoc root, OptionProvider optionProvider) throws IOException {
+        public ClassGraphHack(DocletEnvironment root, OptionProvider optionProvider) throws IOException {
             super(root, optionProvider, null);
             prologue();
         }

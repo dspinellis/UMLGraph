@@ -29,18 +29,26 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doc;
-import com.sun.javadoc.Tag;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Name;
+import javax.lang.model.element.TypeElement;
+
+import org.umlgraph.doclet.util.TagUtil;
+
+import com.sun.source.util.DocTrees;
+
+import jdk.javadoc.doclet.Doclet;
 
 /**
  * Represent the program options
@@ -49,13 +57,550 @@ import com.sun.javadoc.Tag;
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
 public class Options implements Cloneable, OptionProvider {
+    
+    public final Set<? extends Doclet.Option> OPTIONS = Set.of(
+        new Option("--d", true, "Specify the output directory (defaults to the current directory).", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                outputDirectory = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-qualify", false, "Produce fully-qualified class names.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showQualified = true;
+                return true;
+            }
+        },
+        new Option("-qualifyGenerics", false, "Use fully-qualified class names in Java generics.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showQualifiedGenerics = true;
+                return true;
+            }
+        },
+        new Option("-hideGenerics", false, "FIXME Missing doc", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                hideGenerics = true;
+                return true;
+            }
+        },
+        new Option("-horizontal", false, "Layout the graph in the horizontal direction.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                horizontal = true;
+                return true;
+            }
+        },
+        new Option("-attributes", false, "Show class attributes (Java fields)", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showAttributes = true;
+                return true;
+            }
+        },
+        new Option("-enumconstants", false, "When showing enumerations, also show the values they can take", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showEnumConstants = true;
+                return true;
+            }
+        },
+        new Option("-operations", false, "Show class operations (Java methods)", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showOperations = true;
+                return true;
+            }
+        },
+        new Option("-enumerations", false, "Show enumarations as separate stereotyped primitive types", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showEnumerations = true;
+                return true;
+            }
+        },
+        new Option("-constructors", false, "Show a class's constructors", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showConstructors = true;
+                return true;
+            }
+        },
+        new Option("-visibility", false, "Adorn class elements according to their visibility (private, public, protected, package)", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showVisibility = true;
+                return true;
+            }
+        },
+        new Option("-types", false, "Add type information to attributes and operations", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showType = true;
+                return true;
+            }
+        },
+        new Option("-autosize", false, "Fits generated graph to the width of the page/window. Defaults to true.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                autoSize = true;
+                return true;
+            }
+        },
+        new Option("-commentname", false, "Name the element using the text in the javadoc comment, instead of the name of its class.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                showComment = true;
+                return true;
+            }
+        },
+        new Option("-all", false, "Same as -attributes -operations -visibility -types -enumerations -enumconstants", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                setAll();
+                return true;
+            }
+        },
+        new Option("--bgcolor", true, "Specify the graph's background color.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                bgColor = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("--edgecolor", true, "Specify the color for drawing edges.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                edgeColor = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("--edgefontcolor", true, "Specify the font color to use for edge labels.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                edgeFontColor = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("--edgefontname", true, "Specify the font name to use for edge labels.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                edgeFontName = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-edgefontsize", true, "Specify the font size to use for edge labels.", "<double>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                edgeFontSize = Double.parseDouble(arguments.get(0));
+                return true;
+            }
+        },
+        new Option("-nodefontcolor", true, "Specify the font color to use inside nodes", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontColor = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-nodefontname", true, "Specify the font name to use inside nodes", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontName = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-nodefontabstractitalic", false, "FIXME no documentation", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontAbstractItalic = true;
+                return true;
+            }
+        },
+        new Option("-nodefontsize", true, "Specify the font size to use inside nodes", "<double>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontSize = Double.parseDouble(arguments.get(0));
+                return true;
+            }
+        },
+        new Option("-nodefontclassname", true, "Specify the font name to use for the class names", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontClassName = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-nodefontclasssize", true, "Specify the font size to use for the class names.", "<double>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontClassSize = Double.parseDouble(arguments.get(0));
+                return true;
+            }
+        },
+        new Option("-nodefonttagname", true, "Specify the font name to use for the tag names.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontTagName = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-nodefonttagsize", true, "Specify the font size to use for the tag names", "<double>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontTagSize = Double.parseDouble(arguments.get(0));
+                return true;
+            }
+        },
+        new Option("-nodefontpackagename", true, "Specify the font name to use for the package names (used only when the package name is postfixed, see -postfixpackage).", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontPackageName = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-nodefontpackagesize", true, "Specify the font size to use for the package names (used only when it package name is postfixed, see -postfixpackage).", "<double>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFontPackageSize = Double.parseDouble(arguments.get(0));
+                return true;
+            }
+        },
+        new Option("-nodefillcolor", true, "Specify the color to use to fill the shapes", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                nodeFillColor = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-shape", true, "Specify the shape to use for the rendered element(s).\n"
+                + " The following UML shapes are available: class (default), node,"
+                + " component, package, collaboration, usecase, activeclass", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                shape = Shape.of(arguments.get(0));
+                return true;
+            }
+        },
+        new Option("-output", true, "Specify the output file (default <code>graph.dot</code>).\n"
+                + "If the output directory is provided, -output can only specify a file name,\n"
+                + "otherwise a full path is accepted as well.\n"
+                + "If the filename specified is a dash, then the results are printed on the\n"
+                + "standard output, and can be directly piped into <em>dot</em>.\n"
+                + "Note that, in order to avoid <em>javadoc</em> messages to contaminate\n"
+                + "UMLGraph's output, you must execute UMLGraph directly as a jar,\n"
+                + "not through <em>javadoc</em>.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                outputFileName = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-outputencoding", true, "Specify the output encoding character set (default <code>UTF-8</code>).\n"
+                + "When using <em>dot</em> to generate SVG diagrams you should specify\n"
+                + "<code>UTF-8</code> as the output encoding, to have guillemots correctly\n"
+                + "appearing in the resulting SVG.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                outputEncoding = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("--hide", true, "Specify entities to hide from the graph."
+                + " Matching is done using a non-anchored regular match."
+                + " For instance, \"<code>-hide (Big|\\.)Widget</code>\" would hide \"<code>com.foo.widgets.Widget</code>\" and "
+                + " \"<code>com.foo.widgets.BigWidget</code>\". Can also be used without arguments, "
+                + " in this case it will hide everything (useful in the context of views "
+                + " to selectively unhide some portions of the graph, see the view chapter for "
+                + " further details).", "<pattern>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                if (arguments == null || arguments.isEmpty()) {
+                    hidePatterns.clear();
+                    hidePatterns.add(allPattern);
+                } else {
+                    try {
+                        hidePatterns.add(Pattern.compile(arguments.get(0)));
+                    } catch (PatternSyntaxException e) {
+                        System.err.println("Skipping invalid pattern " + arguments.get(0));
+                    }
+                }
+                return true;
+            }
+        },
+        new Option("--include", true, "Match classes to include with a non-anchored match. This is weaker than\n"
+                + " the <code>-hide</code> option, but can be used to include classes from foreign packages\n"
+                + " in the package view (which would by default filter to only include package members).", "<pattern>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                try {
+                    includePatterns.add(Pattern.compile(arguments.get(0)));
+                } catch (PatternSyntaxException e) {
+                    System.err.println("Skipping invalid pattern " + arguments.get(0));
+                }
+                return true;
+            }
+        },
+        new Option("-apidocroot", true, "Specify the URL that should be used as the \"root\" for local classes.\n"
+                + "This URL will be used as a prefix, to which the page name for the local class or\n"
+                + "package will be appended (following the JavaDoc convention).\n"
+                + "For example, if the value <code>http://www.acme.org/apidocs</code> is\n"
+                + "provided, the class <code>org.acme.util.MyClass</code> will be mapped to the URL\n"
+                + "<code>http://www.acme.org/apidocs/org/acme/util/MyClass.html</code>.\n"
+                + "This URL will then be added to .dot diagram and can be surfaced in the\n"
+                + "final class diagram by setting the output to SVG, or by creating an HTML page\n"
+                + "that associates the diagram static image (a .gif or .png) with a client-side\n"
+                + "image map.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                apiDocRoot = fixApiDocRoot(arguments.get(0));
+                return true;
+            }
+        },
+        new Option("-apidocmap", true, "Specify the file name of the URL mapping table. \n"
+                + "The is a standard Java property file, where the property name is a regular\n"
+                + "expression (as defined in the java.util.regex package) and the property value is\n"
+                + "an URL \"root\" as described above.\n"
+                + "This table is used to resolved external class names (class names that do not\n"
+                + "belong to the current package being processed by UMLGraph). If no file is provided,\n"
+                + "external classes will just be mapped to the on-line Java API documentation.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                setApiDocMapFile(arguments.get(0));
+                return true;
+            }
+        },
+        new Option("-noguillemot", false, "Specify that guillemot characters should not be used to denote "
+                + "special terms like \"interface\" and stereotype names."
+                + "This is used on some platforms to circumvent problems associated with displaying non-ASCII characters.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                guilOpen = "&lt;&lt;";
+                guilClose = "&gt;&gt;";
+                return true;
+            }
+        },
+        new Option("-view", true, "Specify the fully qualified name of a class that contains\n"
+                + " a view definition. Only the class diagram specified by this view will be generated. \n"
+                + " <br/>See the views chapter for more details.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                viewName = arguments.get(0);
+                return true;
+            }
+        },
+        new Option("-views", false, "Generate a class diagram for every view found in the source path..", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                findViews = true;
+                return true;
+            }
+        },
+        new Option("-inferrel", false, "Try to automatically infer relationships between classes by inspecting "
+                + "field values. See the class diagram inference chapter for further details. Disabled by default.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                inferRelationships = true;
+                return true;
+            }
+        },
+        new Option("-inferreltype", true, "The type of relationship inferred when -inferrel is activated. \n"
+                + "Defaults to \"navassoc\" (see the class modelling chapter for a list of relationship types).", "<RelationType>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                try {
+                    inferRelationshipType = RelationType.valueOf(arguments.get(0).toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Unknown association type " + arguments.get(0));
+                }
+                return true;
+            }
+        },
+        new Option("-inferdepvis", true, "Specifies the lowest visibility level of elements used to infer\n"
+                + "dependencies among classes. Possible values are private, package, protected, public, in this\n"
+                + "order. The default value is private. Use higher levels to limit the number of inferred dependencies", "<Visibility>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                try {
+                    inferDependencyVisibility = Visibility.valueOf(arguments.get(0).toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Ignoring invalid visibility specification for " + "dependency inference: " + arguments.get(0));
+                }
+                return true;
+            }
+        },
+        new Option("-collapsible", false, "Enhance the javadoc HTML files containing UML diagrams with Javascript "
+                + "that provides a link for showing the (initially collapsed) diagrams.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                collapsibleDiagrams = true;
+                return true;
+            }
+        },
+        new Option("-inferdep", false, "Try to automatically infer dependencies between classes by inspecting "
+                + "methods and fields. See the class diagram inference chapter for more details. Disabled by default.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                inferDependencies = true;
+                return true;
+            }
+        },
+        new Option("-inferdepinpackage", false, "Enable or disable dependency inference among classes in the\n"
+                + "same package. This option is disabled by default, because classes in the same package are supposed\n"
+                + "to be related anyway, and also because there's no working mechanism to actually detect all\n"
+                + "of these dependencies since imports are not required to use classes in the same package.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                inferDepInPackage = true;
+                return true;
+            }
+        },
+        new Option("-hideprivateinner", false, "FIXME NO DOC", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                hidePrivateInner = true;
+                return true;
+            }
+        },
+        new Option("-useimports", false, "Will also use imports to infer dependencies. \n"
+                + "Disabled by default, since it does not work properly if there are multiple\n"
+                + "classes in the same source file (will add dependencies to every class in\n"
+                + "the source file).", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                System.err.println("useimports has been set but will have no effect since not (yet) available");
+                useImports = true;
+                return true;
+            }
+        },
+        new Option("--collpackages", true, "Specify the classes that will be treated as "
+                + "containers for one to many relationships when inference is enabled. "
+                + "Matching is done using a non-anchored regular match. Empty by default.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                try {
+                    collPackages.add(Pattern.compile(arguments.get(0)));
+                } catch (PatternSyntaxException e) {
+                    System.err.println("Skipping invalid pattern " + arguments.get(0));
+                }
+                return true;
+            }
+        },
+        new Option("-compact", false, "Generate compact dot files, that is, print HTML labels\n"
+                + "in a single line instead of \"pretty printing\" them. Useful if the dot file\n"
+                + "has to be manipulated by an automated tool\n"
+                + "(e.g., the UMLGraph regression test suite).", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                compact = true;
+                return true;
+            }
+        },
+        new Option("-postfixpackage", false, "When using qualified class names, put the package name in the line after the class name, in order to reduce the width of class nodes.", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                postfixPackage = true;
+                return true;
+            }
+        },
+        
+        new Option("-hideGenerics", false, "?", null) {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                hideGenerics = true;
+                return true;
+            }
+        },
+        new Option("--link", true, "A clone of the standard doclet\n"
+                + "<a href=\"http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#link\">-link</a>\n"
+                + "option, allows UMLGraph to generate links from class symbols to their external javadoc\n"
+                + "documentation (image maps are automatically generated in UMLGraphDoc, you'll have to generate them\n"
+                + "manually with graphviz if using UMLGraph).", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                System.err.println("add -link option with args : " + arguments.get(0));
+                addApiDocRoots(arguments.get(0));
+                return true;
+            }
+        },
+        new Option("-linkoffline", 2, "Specify\n"
+                + "links to javadoc-generated documentation for external referenced classes.\n"
+                + "The <code>-linkoffline</code> option takes two arguments:\n"
+                + "the first for the string to be embedded in the <code>href</code>\n"
+                + "links, the second telling it where to find the <code>package-list</code>.\n"
+                + "Example:\n"
+                + "<pre>\n"
+                + "-linkoffline http://developer.android.com/reference file:/home/doc/android/\n"
+                + "</pre>\n"
+                + "See the <em>javadoc</em> documentation for more details.", "<string> <string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                addApiDocRootsOffline(arguments.get(0), arguments.get(1));
+                return true;
+            }
+        },
+        new Option("-contextPattern", 2, "FIXME MISSING DOC.", "<string> <string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                RelationDirection d;
+                RelationType rt;
+                try {
+                    d = RelationDirection.valueOf(arguments.get(1).toUpperCase());
+                    if ("all".equalsIgnoreCase(arguments.get(0))) {
+                        contextRelationPattern = new RelationPattern(d);
+                    } else {
+                        rt = RelationType.valueOf(arguments.get(0).toUpperCase());
+                        contextRelationPattern.addRelation(rt, d);
+                    }
+                } catch (IllegalArgumentException e) {
+
+                }
+                return true;
+            }
+        },
+        new Option("-nodesep", true, "Specify the horizontal separation between the class nodes (0.25 by default).  Decreasing this can make a diagram more compact.", "<double>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                try {
+                    nodeSep = Double.parseDouble(arguments.get(0));
+                } catch (NumberFormatException e) {
+                    System.err.println("Skipping invalid nodesep " + arguments.get(0));
+                }
+                return true;
+            }
+        },
+        new Option("-ranksep", true, "Specify the vertical separation between the class nodes (0.5 by default).  Decreasing this can make a diagram more compact.", "<double>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                try {
+                    rankSep = Double.parseDouble(arguments.get(0));
+                } catch (NumberFormatException e) {
+                    System.err.println("Skipping invalid ranksep " + arguments.get(0));
+                }
+                return true;
+            }
+        },
+        new Option("-dotexecutable", true, "Specify the path of the <em>dot</em> executable.", "<string>") {
+            @Override
+            public boolean process(String option, List<String> arguments) {
+                dotExecutable = arguments.get(0);
+                return true;
+            }
+        }
+
+        
+    );
+    
     // reused often, especially in UmlGraphDoc, worth creating just once and reusing
     private static final Pattern allPattern = Pattern.compile(".*");
     protected static final String DEFAULT_EXTERNAL_APIDOC = "http://docs.oracle.com/javase/7/docs/api/";
 
     // instance fields
-    List<Pattern> hidePatterns = new ArrayList<Pattern>();
-    List<Pattern> includePatterns = new ArrayList<Pattern>();
+    List<Pattern> hidePatterns = new ArrayList<>();
+    List<Pattern> includePatterns = new ArrayList<>();
     boolean showQualified = false;
     boolean showQualifiedGenerics = false;
     boolean hideGenerics = false;
@@ -87,8 +632,8 @@ public class Options implements Cloneable, OptionProvider {
     Shape shape = Shape.CLASS;
     String bgColor = null;
     public String outputFileName = "graph.dot";
-    String outputEncoding = "ISO-8859-1"; // TODO: default to UTF-8 now?
-    Map<Pattern, String> apiDocMap = new HashMap<Pattern, String>();
+    String outputEncoding = StandardCharsets.UTF_8.name();
+    Map<Pattern, String> apiDocMap = new HashMap<>();
     String apiDocRoot = null;
     boolean postfixPackage = false;
     boolean useGuillemot = true;
@@ -96,7 +641,7 @@ public class Options implements Cloneable, OptionProvider {
     String viewName = null;
     double nodeSep = 0.25;
     double rankSep = 0.5;
-    public String outputDirectory = null;
+    public String outputDirectory = ".";
     /*
      * Numeric values are preferable to symbolic here. Symbolic reportedly fail on
      * MacOSX, and also are more difficult to verify with XML tools.
@@ -113,26 +658,23 @@ public class Options implements Cloneable, OptionProvider {
     Visibility inferDependencyVisibility = Visibility.PRIVATE;
     boolean inferDepInPackage = false;
     RelationType inferRelationshipType = RelationType.NAVASSOC;
-    private List<Pattern> collPackages = new ArrayList<Pattern>();
+    private List<Pattern> collPackages = new ArrayList<>();
     boolean compact = false;
     boolean hidePrivateInner = false;
     // internal option, used by UMLDoc to generate relative links between classes
     boolean relativeLinksForSourcePackages = false;
     // internal option, used by UMLDoc to force strict matching on the class names
-    // and avoid problems with packages in the template declaration making UmlGraph
-    // hide
-    // classes outside of them (for example, class gr.spinellis.Foo<T extends
-    // java.io.Serializable>
+    // and avoid problems with packages in the template declaration making UmlGraph hide
+    // classes outside of them (for example, class gr.spinellis.Foo<T extends java.io.Serializable>
     // would have been hidden by the hide pattern "java.*"
-    // TODO: consider making this standard behaviour
-    boolean strictMatching = false;
+    boolean strictMatching = true;
     String dotExecutable = "dot";
 
     Options() {
     }
 
     @Override
-    public Object clone() {
+    public Options clone() {
         Options clone = null;
         try {
             clone = (Options) super.clone();
@@ -140,10 +682,10 @@ public class Options implements Cloneable, OptionProvider {
             throw new RuntimeException("Cannot clone?!?", e); // Should not happen
         }
         // deep clone the hide and collection patterns
-        clone.hidePatterns = new ArrayList<Pattern>(hidePatterns);
-        clone.includePatterns = new ArrayList<Pattern>(includePatterns);
-        clone.collPackages = new ArrayList<Pattern>(collPackages);
-        clone.apiDocMap = new HashMap<Pattern, String>(apiDocMap);
+        clone.hidePatterns = new ArrayList<>(hidePatterns);
+        clone.includePatterns = new ArrayList<>(includePatterns);
+        clone.collPackages = new ArrayList<>(collPackages);
+        clone.apiDocMap = new HashMap<>(apiDocMap);
         return clone;
     }
 
@@ -159,7 +701,7 @@ public class Options implements Cloneable, OptionProvider {
     }
 
     /**
-     * Match strings, ignoring leading <tt>-</tt>, <tt>-!</tt>, and <tt>!</tt>.
+     * Match strings, ignoring leading <code>-</code>, <code>--</code>, <code>-!</code>, and <code>!</code>.
      *
      * @param given  Given string
      * @param expect Expected string
@@ -170,7 +712,7 @@ public class Options implements Cloneable, OptionProvider {
     }
 
     /**
-     * Match strings, ignoring leading <tt>-</tt>, <tt>-!</tt>, and <tt>!</tt>.
+     * Match strings, ignoring leading <code>-</code>, <code>--</code>, <code>-!</code>, and <code>!</code>.
      *
      * @param given    Given string
      * @param expect   Expected string
@@ -179,10 +721,16 @@ public class Options implements Cloneable, OptionProvider {
      */
     protected static boolean matchOption(String given, String expect, boolean negative) {
         int begin = 0, end = given.length();
-        if (begin < end && given.charAt(begin) == '-')
+        if (begin < end && given.charAt(begin) == '-') {
             ++begin;
-        if (negative && begin < end && given.charAt(begin) == '!')
+        }
+        // double dashed option
+        if (begin < end && given.charAt(begin) == '-') {
             ++begin;
+        }
+        if (negative && begin < end && given.charAt(begin) == '!') {
+            ++begin;
+        }
         return expect.length() == end - begin && expect.regionMatches(0, given, begin, end - begin);
     }
 
@@ -204,10 +752,10 @@ public class Options implements Cloneable, OptionProvider {
                 || matchOption(option, "inferrel", true) || matchOption(option, "useimports", true)
                 || matchOption(option, "collapsible", true) || matchOption(option, "inferdep", true)
                 || matchOption(option, "inferdepinpackage", true) || matchOption(option, "hideprivateinner", true)
-                || matchOption(option, "compact", true))
+                || matchOption(option, "compact", true)) {
 
             return 1;
-        else if (matchOption(option, "nodefillcolor") || matchOption(option, "nodefontcolor")
+        } else if (matchOption(option, "nodefillcolor") || matchOption(option, "nodefontcolor")
                 || matchOption(option, "nodefontsize") || matchOption(option, "nodefontname")
                 || matchOption(option, "nodefontclasssize") || matchOption(option, "nodefontclassname")
                 || matchOption(option, "nodefonttagsize") || matchOption(option, "nodefonttagname")
@@ -221,12 +769,13 @@ public class Options implements Cloneable, OptionProvider {
                 || matchOption(option, "inferreltype") || matchOption(option, "inferdepvis")
                 || matchOption(option, "collpackages") || matchOption(option, "nodesep")
                 || matchOption(option, "ranksep") || matchOption(option, "dotexecutable")
-                || matchOption(option, "link"))
+                || matchOption(option, "link")) {
             return 2;
-        else if (matchOption(option, "contextPattern") || matchOption(option, "linkoffline"))
+        } else if (matchOption(option, "contextPattern") || matchOption(option, "linkoffline")) {
             return 3;
-        else
+        } else {
             return 0;
+        }
     }
 
     /** Set the options based on a single option and its arguments */
@@ -436,7 +985,7 @@ public class Options implements Cloneable, OptionProvider {
         BufferedReader br = null;
         packageListUrl = fixApiDocRoot(packageListUrl);
         try {
-            URL url = new URL(packageListUrl + "/package-list");
+            URL url = new URL(packageListUrl + "package-list");
             br = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
             while ((line = br.readLine()) != null) {
@@ -447,11 +996,12 @@ public class Options implements Cloneable, OptionProvider {
         } catch (IOException e) {
             System.err.println("Errors happened while accessing the package-list file at " + packageListUrl);
         } finally {
-            if (br != null)
+            if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
                 }
+            }
         }
 
     }
@@ -468,7 +1018,7 @@ public class Options implements Cloneable, OptionProvider {
         BufferedReader br = null;
         packageListUrl = fixApiDocRoot(packageListUrl);
         try {
-            URL url = new URL(packageListUrl + "/package-list");
+            URL url = new URL(packageListUrl + "package-list");
             br = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
             while ((line = br.readLine()) != null) {
@@ -479,11 +1029,12 @@ public class Options implements Cloneable, OptionProvider {
         } catch (IOException e) {
             System.err.println("Unable to access the package-list file at " + packageListUrl);
         } finally {
-            if (br != null)
+            if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
                 }
+            }
         }
     }
 
@@ -528,44 +1079,47 @@ public class Options implements Cloneable, OptionProvider {
      * the constructor of the api doc root, so it depends on the order of "-link"
      * and "-apiDocMap" parameters.
      */
-    public String getApiDocRoot(String className) {
-        if (apiDocMap.isEmpty())
+    public String getApiDocRoot(Name className) {
+        if (apiDocMap.isEmpty()) {
             apiDocMap.put(Pattern.compile(".*"), DEFAULT_EXTERNAL_APIDOC);
+        }
 
         for (Map.Entry<Pattern, String> mapEntry : apiDocMap.entrySet()) {
-            if (mapEntry.getKey().matcher(className).matches())
+            if (mapEntry.getKey().matcher(className).matches()) {
                 return mapEntry.getValue();
+            }
         }
         return null;
     }
 
     /** Trim and append a file separator to the string */
     private String fixApiDocRoot(String str) {
-        if (str == null)
+        if (str == null) {
             return null;
+        }
         String fixed = str.trim();
-        if (fixed.isEmpty())
+        if (fixed.isEmpty()) {
             return "";
-        if (File.separatorChar != '/')
+        }
+        if (File.separatorChar != '/') {
             fixed = fixed.replace(File.separatorChar, '/');
-        if (!fixed.endsWith("/"))
+        }
+        if (!fixed.endsWith("/")) {
             fixed = fixed + "/";
+        }
         return fixed;
     }
 
-    /** Set the options based on the command line parameters */
-    public void setOptions(String[][] options) {
-        for (String s[] : options)
-            setOption(s);
-    }
-
     /** Set the options based on the tag elements of the ClassDoc parameter */
-    public void setOptions(Doc p) {
-        if (p == null)
+    public void setOptions(DocTrees docTrees, Element p) {
+        if (p == null) {
             return;
+        }
 
-        for (Tag tag : p.tags("opt"))
-            setOption(StringUtil.tokenize(tag.text()));
+        List<String> tags = TagUtil.getTag(docTrees, p, "opt");
+        for (String tag : tags) {
+            setOption(StringUtil.tokenize(tag));
+        }
     }
 
     /**
@@ -574,15 +1128,17 @@ public class Options implements Cloneable, OptionProvider {
      * 
      * @return true if the string matches.
      */
-    public boolean matchesHideExpression(String s) {
+    public boolean matchesHideExpression(CharSequence s) {
         for (Pattern hidePattern : hidePatterns) {
             // micro-optimization because the "all pattern" is heavily used in UmlGraphDoc
-            if (hidePattern == allPattern)
+            if (hidePattern == allPattern) {
                 return true;
+            }
 
             Matcher m = hidePattern.matcher(s);
-            if (strictMatching ? m.matches() : m.find())
+            if (strictMatching ? m.matches() : m.find()) {
                 return true;
+            }
         }
         return false;
     }
@@ -593,11 +1149,12 @@ public class Options implements Cloneable, OptionProvider {
      * 
      * @return true if the string matches.
      */
-    public boolean matchesIncludeExpression(String s) {
+    public boolean matchesIncludeExpression(CharSequence s) {
         for (Pattern includePattern : includePatterns) {
             Matcher m = includePattern.matcher(s);
-            if (strictMatching ? m.matches() : m.find())
+            if (strictMatching ? m.matches() : m.find()) {
                 return true;
+            }
         }
         return false;
     }
@@ -608,7 +1165,7 @@ public class Options implements Cloneable, OptionProvider {
      * 
      * @return true if the string matches.
      */
-    public boolean matchesCollPackageExpression(String s) {
+    public boolean matchesCollPackageExpression(CharSequence s) {
         for (Pattern collPattern : collPackages) {
             Matcher m = collPattern.matcher(s);
             if (strictMatching ? m.matches() : m.find())
@@ -621,13 +1178,13 @@ public class Options implements Cloneable, OptionProvider {
     // OptionProvider methods
     // ----------------------------------------------------------------
 
-    public Options getOptionsFor(ClassDoc cd) {
+    public Options getOptionsFor(DocTrees docTrees, TypeElement cd) {
         Options localOpt = getGlobalOptions();
-        localOpt.setOptions(cd);
+        localOpt.setOptions(docTrees, cd);
         return localOpt;
     }
 
-    public Options getOptionsFor(String name) {
+    public Options getOptionsFor(CharSequence name) {
         return getGlobalOptions();
     }
 
@@ -635,11 +1192,11 @@ public class Options implements Cloneable, OptionProvider {
         return (Options) clone();
     }
 
-    public void overrideForClass(Options opt, ClassDoc cd) {
+    public void overrideForClass(Options opt, TypeElement cd) {
         // nothing to do
     }
 
-    public void overrideForClass(Options opt, String className) {
+    public void overrideForClass(Options opt, CharSequence className) {
         // nothing to do
     }
 
