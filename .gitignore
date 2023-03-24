@@ -3,7 +3,10 @@
 *.ipr
 *.iws
 *.swp
+.idea
 .settings
+.project
+.classpath
 _vimrc
 build
 CHECKSUM.MD5

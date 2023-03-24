@@ -22,9 +22,12 @@ package org.umlgraph.doclet;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.lang.model.element.Name;
+
 /**
- * Class's dot-compatible alias name (for fully qualified class names)
- * and printed information
+ * Class's dot-compatible alias name (for fully qualified class names) and
+ * printed information
+ * 
  * @version $Revision$
  * @author <a href="http://www.spinellis.gr">Diomidis Spinellis</a>
  */
@@ -36,37 +39,35 @@ class ClassInfo {
     boolean nodePrinted;
     /** True if the class class node is hidden */
     boolean hidden;
-    /** 
-     * The list of classes that share a relation with this one. Contains
-     * all the classes linked with a bi-directional relation , and the ones 
-     * referred by a directed relation 
+    /**
+     * The list of classes that share a relation with this one. Contains all the
+     * classes linked with a bi-directional relation , and the ones referred by a
+     * directed relation
      */
-    Map<String, RelationPattern> relatedClasses = new HashMap<String, RelationPattern>();
+    Map<Name, RelationPattern> relatedClasses = new HashMap<>();
 
     ClassInfo(boolean h) {
-	hidden = h;
-	name = "c" + classNumber;
-	classNumber++;
+        hidden = h;
+        name = "c" + classNumber;
+        classNumber++;
     }
-    
-    public void addRelation(String dest, RelationType rt, RelationDirection d) {
-	RelationPattern ri = relatedClasses.get(dest);
-	if(ri == null) {
-	    ri = new RelationPattern(RelationDirection.NONE);
-	    relatedClasses.put(dest, ri);
-	}
-	ri.addRelation(rt, d);
+
+    public void addRelation(Name dest, RelationType rt, RelationDirection d) {
+        RelationPattern ri = relatedClasses.get(dest);
+        if (ri == null) {
+            ri = new RelationPattern(RelationDirection.NONE);
+            relatedClasses.put(dest, ri);
+        }
+        ri.addRelation(rt, d);
     }
-    
-    public RelationPattern getRelation(String dest) {
-	return relatedClasses.get(dest);
+
+    public RelationPattern getRelation(CharSequence dest) {
+        return relatedClasses.get(dest);
     }
 
     /** Start numbering from zero. */
     public static void reset() {
-	classNumber = 0;
+        classNumber = 0;
     }
 
-    
 }
-

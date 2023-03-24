@@ -21,6 +21,12 @@ package org.umlgraph.test;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Arrays;
+
+import javax.tools.DocumentationTool;
+import javax.tools.ToolProvider;
+
+import org.umlgraph.doclet.UmlGraph;
 
 public class RunOne {
 
@@ -53,8 +59,8 @@ public class RunOne {
     }
 
     private static void runDoclet(String[] options) {
-	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw, "org.umlgraph.doclet.UmlGraph", options);
+        DocumentationTool systemDocumentationTool = ToolProvider.getSystemDocumentationTool();
+        DocumentationTool.DocumentationTask task = systemDocumentationTool.getTask(pw, null, null, UmlGraph.class, Arrays.asList(options), null);
+        task.call();
     }
-
-    
 }

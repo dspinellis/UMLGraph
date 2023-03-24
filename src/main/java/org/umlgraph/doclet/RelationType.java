@@ -27,8 +27,8 @@ public enum RelationType {
 
     /** Enum constructors must be private */
     private RelationType(String style, boolean backorder) {
-	this.lower = toString().toLowerCase();
-	this.style = style;
-	this.backorder = backorder;
+        this.lower = toString().toLowerCase();
+        this.style = style;
+        this.backorder = backorder;
     }
 }

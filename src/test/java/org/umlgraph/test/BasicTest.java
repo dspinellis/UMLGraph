@@ -26,6 +26,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.tools.DocumentationTool;
+import javax.tools.ToolProvider;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.umlgraph.doclet.UmlGraph;
+
 /**
  * UmlGraph regression tests
  * @author wolf
@@ -41,12 +49,15 @@ public class BasicTest {
 
     static PrintWriter pw = new PrintWriter(System.out);
 
-    public static void main(String[] args) throws IOException {
+    @Test
+    @Ignore
+    public void test() throws IOException {
 	List<String> differences = new ArrayList<String>();
 
 	File outFolder = new File(testDestFolder);
-	if (!outFolder.exists())
+	if (!outFolder.exists()) {
 	    outFolder.mkdirs();
+	}
 
 	TestUtils.cleanFolder(outFolder, true);
 
@@ -64,14 +75,14 @@ public class BasicTest {
 	pw.println();
 	pw.println();
 	pw.flush();
-	System.exit(differences.size() > 0 ? 1 : 0);
+	Assert.assertEquals("Some differences found " + differences.size(), 0, differences.size());
     }
 
     private static void performViewTests(List<String> differences, File outFolder)
 	    throws IOException {
-	String[] options = new String[] { "-docletpath", "build", "-private", "-d",
-		outFolder.getAbsolutePath(), "-sourcepath", "testdata/java", "-compact",
-		"-subpackages", "gr.spinellis", "-views" };
+	String[] options = new String[] { "--docletpath=build", "-private",
+	        "--d=\"" + outFolder.getAbsolutePath() + "\"", "--sourcepath=\"testdata/java\"", "-compact",
+		"--subpackages=\"gr.spinellis\"", "-views" };
 	runDoclet(options);
 
 	List<String> viewFiles = new ArrayList<String>();
@@ -118,8 +129,8 @@ public class BasicTest {
 	    dotFile.delete();
 	    File refFile = new File(testRefFolder, outFileName);
 	    String javaPath = new File(testSourceFolder, javaFiles[i]).getAbsolutePath();
-	    String[] options = new String[] { "-docletpath", "build", "-hide", "Hidden",
-		    "-compact", "-private", "-d", testDestFolder, "-output", outFileName, javaPath };
+	    String[] options = new String[] { "--docletpath=build", "--hide=\"Hidden\"",
+		    "-compact", "-private", "--d=\"" + testDestFolder + "\"", "--output=\"" + outFileName + "\"", javaPath };
 
 	    runDoclet(options);
 	    compare(differences, dotFile, refFile);
@@ -128,8 +139,9 @@ public class BasicTest {
     }
 
     private static void runDoclet(String[] options) {
-	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw,
-		"org.umlgraph.doclet.UmlGraph", options);
+        DocumentationTool systemDocumentationTool = ToolProvider.getSystemDocumentationTool();
+        DocumentationTool.DocumentationTask task = systemDocumentationTool.getTask(pw, null, null, UmlGraph.class, Arrays.asList(options), null);
+        task.call();
     }
 
     private static void compare(List<String> differences, File dotFile, File refFile)

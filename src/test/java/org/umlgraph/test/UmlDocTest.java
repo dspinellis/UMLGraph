@@ -25,6 +25,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.tools.DocumentationTool;
+import javax.tools.ToolProvider;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.umlgraph.doclet.UmlGraphDoc;
+
 /**
  * UmlGraphDoc doclet regression tests
  * @author wolf
@@ -41,7 +48,9 @@ public class UmlDocTest {
 
     static PrintWriter pw = new PrintWriter(System.out);
 
-    public static void main(String[] args) throws IOException {
+    @Test
+    @Ignore
+    public void test() throws IOException {
 	List<String> differences = new ArrayList<String>();
 
 	File outFolder = new File(testDestFolder);
@@ -68,10 +77,11 @@ public class UmlDocTest {
 
     private static void runTest(List<String> differences) throws IOException {
 	File outFolder = new File(testDestFolder);
-	String[] options = new String[] { "-docletpath", "build", "-private", "-d",
-		outFolder.getAbsolutePath(), "-sourcepath", testSourceFolder, "-compact",
+	File srcFolder = new File(testSourceFolder);
+	String[] options = new String[] { "-private", "--d=\"" + outFolder.getAbsolutePath() + "\"",
+	        "--source-path=\"" + srcFolder.getAbsolutePath() + "\"", "-compact",
 		"-subpackages", "gr.spinellis", "-inferrel", "-inferdep", "-qualify",
-		"-postfixpackage", "-collpackages", "java.util.*" };
+		"-postfixpackage", "--collpackages=\"java.util.*\"" };
 	runDoclet(options);
 
 	compareDocletOutputs(differences, new File(testRefFolder), new File(testDestFolder));
@@ -119,8 +129,9 @@ public class UmlDocTest {
 			differences.add(out.getName() + " is different from the reference");
 
 		} else {
-		    if (!TestUtils.textFilesEquals(pw, ref, out))
+		    if (!TestUtils.textFilesEquals(pw, ref, out)) {
 			differences.add(out.getName() + " is different from the reference");
+		    }
 		}
 		i++;
 		j++;
@@ -146,13 +157,14 @@ public class UmlDocTest {
          * @param options
          */
     private static void runDoclet(String[] options) {
-	pw.print("Run javadoc -doclet " + doclet);
-	for (String o : options)
-	    pw.print(" " + o);
-	pw.println();
-	com.sun.tools.javadoc.Main.execute("UMLDoc test", pw, pw, pw,
-		doclet, options);
-	System.exit(0);
+        pw.print("Run javadoc -doclet " + doclet);
+        for (String o : options) {
+            pw.print(" " + o);
+        }
+        pw.println();
+        DocumentationTool systemDocumentationTool = ToolProvider.getSystemDocumentationTool();
+        DocumentationTool.DocumentationTask task = systemDocumentationTool.getTask(pw, null, null, UmlGraphDoc.class, Arrays.asList(options), null);
+        task.call();
     }
 
 }

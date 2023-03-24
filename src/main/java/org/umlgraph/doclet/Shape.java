@@ -45,10 +45,10 @@ public enum Shape {
 
     /** Initialize the lookup index */
     static {
-	for (Shape s : Shape.values()) {
-	    index.put(s.name(), s);
-	    index.put(s.name().toLowerCase(Locale.ROOT), s);
-	}
+        for (Shape s : Shape.values()) {
+            index.put(s.name(), s);
+            index.put(s.name().toLowerCase(Locale.ROOT), s);
+        }
     }
 
     /**
@@ -59,25 +59,25 @@ public enum Shape {
      * @return Shape
      */
     public static Shape of(String s) {
-	Shape shp = index.get(s);
-	if (shp != null)
-	    return shp;
-	System.err.println("Ignoring invalid shape: " + s);
-	return CLASS;
+        Shape shp = index.get(s);
+        if (shp != null)
+            return shp;
+        System.err.println("Ignoring invalid shape: " + s);
+        return CLASS;
     }
 
     /** Enum constructor, must be private! */
     private Shape(String style) {
-	this.style = style;
+        this.style = style;
     }
 
     /** Return the table border required for the shape */
     public String extraColumn() {
-	return this == Shape.ACTIVECLASS ? ("<td rowspan=\"10\"></td>") : "";
+        return this == Shape.ACTIVECLASS ? ("<td rowspan=\"10\"></td>") : "";
     }
 
     /** Return the cell border required for the shape */
     public String cellBorder() {
-	return this == CLASS || this == ACTIVECLASS ? "1" : "0";
+        return this == CLASS || this == ACTIVECLASS ? "1" : "0";
     }
 }

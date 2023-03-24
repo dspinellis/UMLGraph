@@ -18,26 +18,27 @@ package org.umlgraph.doclet;
 
 import java.util.regex.Pattern;
 
-import com.sun.javadoc.ClassDoc;
+import javax.lang.model.element.TypeElement;
 
 /**
  * Matches classes performing a regular expression match on the qualified class
  * name
+ * 
  * @author wolf
  */
 public class PatternMatcher implements ClassMatcher {
     Pattern pattern;
 
     public PatternMatcher(Pattern pattern) {
-	this.pattern = pattern;
+        this.pattern = pattern;
     }
 
-    public boolean matches(ClassDoc cd) {
-	return matches(cd.toString());
+    public boolean matches(TypeElement cd) {
+        return matches(cd.getQualifiedName());
     }
 
-    public boolean matches(String name) {
-	return pattern.matcher(name).matches();
+    public boolean matches(CharSequence name) {
+        return pattern.matcher(name).matches();
     }
 
 }

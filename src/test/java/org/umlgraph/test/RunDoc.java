@@ -21,6 +21,12 @@ package org.umlgraph.test;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Arrays;
+
+import javax.tools.DocumentationTool;
+import javax.tools.ToolProvider;
+
+import org.umlgraph.doclet.UmlGraphDoc;
 
 public class RunDoc {
 
@@ -34,14 +40,15 @@ public class RunDoc {
 	File outFolder = new File(docFolder);
 	if (!outFolder.exists())
 	    outFolder.mkdirs();
-	String[] options = new String[] { "-docletpath", "build", "-private", "-d", docFolder,
+	String[] options = new String[] { "-docletpath", "build", "-private", "--d", docFolder,
 		"-sourcepath", sourcesFolder, "-subpackages", "gr.spinellis" };
 	runDoclet(options);
     }
 
     private static void runDoclet(String[] options) {
-	com.sun.tools.javadoc.Main.execute("UMLGraph test", pw, pw, pw,
-		"org.umlgraph.doclet.UmlGraphDoc", options);
+        DocumentationTool systemDocumentationTool = ToolProvider.getSystemDocumentationTool();
+        DocumentationTool.DocumentationTask task = systemDocumentationTool.getTask(pw, null, null, UmlGraphDoc.class, Arrays.asList(options), null);
+        task.call();
     }
 
 }
