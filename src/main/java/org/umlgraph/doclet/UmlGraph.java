@@ -66,13 +66,16 @@ public class UmlGraph implements Doclet {
     private Reporter reporter;
     private Options options;
     private StandardDoclet standard;
+    
+    public UmlGraph() {
+        this.options = new Options();
+        this.standard = new StandardDoclet();
+    }
 
     @Override
     public void init(Locale locale, Reporter reporter) {
         this.locale = locale;
         this.reporter = reporter;
-        this.options = new Options();
-        this.standard = new StandardDoclet();
     }
 
     @Override
@@ -233,8 +236,9 @@ public class UmlGraph implements Doclet {
             }
 
             return views;
-        } else
+        } else {
             return Collections.emptyList();
+        }
     }
 
     /**

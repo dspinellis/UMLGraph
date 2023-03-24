@@ -42,6 +42,15 @@
     <artifactId>oss-parent</artifactId>
     <version>9</version>
   </parent>
+  
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <resources>
@@ -132,6 +141,7 @@
             <option>--link="https://docs.oracle.com/javase/7/docs/jdk/api/javadoc/doclet/"</option>
             <option>--link="https://download.oracle.com/javase/7/docs/api/"</option>
           </additionalOptions>
+          <detectJavaApiLink>false</detectJavaApiLink>
           <useStandardDocletOptions>true</useStandardDocletOptions>
         </configuration>
         <executions>

@@ -285,7 +285,7 @@ public class Options implements Cloneable, OptionProvider {
                 return true;
             }
         },
-        new Option("-output", true, "Specify the output file (default <code>graph.dot</code>).\n"
+        new Option("--output", true, "Specify the output file (default <code>graph.dot</code>).\n"
                 + "If the output directory is provided, -output can only specify a file name,\n"
                 + "otherwise a full path is accepted as well.\n"
                 + "If the filename specified is a dash, then the results are printed on the\n"
@@ -507,13 +507,6 @@ public class Options implements Cloneable, OptionProvider {
             }
         },
         
-        new Option("-hideGenerics", false, "?", null) {
-            @Override
-            public boolean process(String option, List<String> arguments) {
-                hideGenerics = true;
-                return true;
-            }
-        },
         new Option("--link", true, "A clone of the standard doclet\n"
                 + "<a href=\"http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/javadoc.html#link\">-link</a>\n"
                 + "option, allows UMLGraph to generate links from class symbols to their external javadoc\n"
