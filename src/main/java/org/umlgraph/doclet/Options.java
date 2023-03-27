@@ -1161,8 +1161,9 @@ public class Options implements Cloneable, OptionProvider {
     public boolean matchesCollPackageExpression(CharSequence s) {
         for (Pattern collPattern : collPackages) {
             Matcher m = collPattern.matcher(s);
-            if (strictMatching ? m.matches() : m.find())
+            if (strictMatching ? m.matches() : m.find()) {
                 return true;
+            }
         }
         return false;
     }

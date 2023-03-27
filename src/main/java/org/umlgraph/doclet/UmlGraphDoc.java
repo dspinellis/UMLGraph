@@ -129,7 +129,7 @@ public class UmlGraphDoc implements Doclet {
                 UmlGraph.buildGraph(reporter, root, opt, view, packageDoc);
                 runGraphviz(opt.dotExecutable, outputFolder, ElementUtil.getModuleOf(root, packageDoc), packageDoc.getQualifiedName(), packageDoc.getSimpleName(), reporter);
                 alterHtmlDocs(opt, outputFolder, ElementUtil.getModuleOf(root, packageDoc), packageDoc.getQualifiedName(), packageDoc.getSimpleName(), "package-summary.html",
-                        Pattern.compile("(</[Hh]2>)|(<h1 title=\"Package\").*"), reporter);
+                        Pattern.compile("(</[Hh]2>)|(<h1 title=\"Package( |\")).*"), reporter);
             }
         }
     }
