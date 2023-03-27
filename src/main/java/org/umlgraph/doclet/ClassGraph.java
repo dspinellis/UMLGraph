@@ -808,7 +808,7 @@ class ClassGraph {
         for (TypeMirror type : types) {
             // skip primitives and type variables, as well as dependencies
             // on the source class
-            if (type.getKind().isPrimitive()
+            if (ElementUtil.isPrimitive(type)
                     || ElementUtil.isType(type, TypeKind.TYPEVAR) || ElementUtil.isType(type, TypeKind.WILDCARD)
                     || type instanceof NoType
                     || c.toString().equals(ElementUtil.getTypeElement(type).toString())) {
@@ -856,7 +856,7 @@ class ClassGraph {
 
     private FieldRelationInfo getFieldRelationInfo(VariableElement field) {
         TypeMirror type = field.asType();
-        if (type.getKind().isPrimitive() || ElementUtil.isType(type, TypeKind.WILDCARD) || ElementUtil.isType(type, TypeKind.TYPEVAR)) {
+        if (ElementUtil.isPrimitive(type) || ElementUtil.isType(type, TypeKind.WILDCARD) || ElementUtil.isType(type, TypeKind.TYPEVAR)) {
             return null;
         }
         

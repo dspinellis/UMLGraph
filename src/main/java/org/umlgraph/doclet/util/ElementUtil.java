@@ -23,6 +23,16 @@ import jdk.javadoc.doclet.DocletEnvironment;
 
 public class ElementUtil {
 
+    public static boolean isPrimitive(TypeMirror type) {
+        if (type.getKind().isPrimitive()) {
+            return true;
+        }
+        if (type.getKind() == TypeKind.ARRAY) {
+            return isPrimitive(((ArrayType) type).getComponentType());
+        }
+        return false;
+    }
+
     public static boolean isType(TypeMirror type, TypeKind kind) {
         if (type.getKind() == kind) {
             return true;
