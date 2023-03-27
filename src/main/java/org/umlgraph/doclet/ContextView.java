@@ -61,7 +61,7 @@ public class ContextView implements OptionProvider {
         this.centerOptions.nodeFillColor = "lemonChiffon";
         this.centerOptions.showQualified = false;
 
-        this.matcher = new ContextMatcher(root, Pattern.compile(Pattern.quote(cd.getQualifiedName().toString())), myGlobalOptions, true);
+        this.matcher = new ContextMatcher(root, Pattern.compile(Pattern.quote(cd.toString())), myGlobalOptions, true);
 
     }
 
@@ -103,7 +103,7 @@ public class ContextView implements OptionProvider {
         Options opt;
         if (!matcher.matches(name)) {
             opt = hideOptions;
-        } else if (name.equals(cd.getQualifiedName())) {
+        } else if (name.equals(cd.getSimpleName())) {
             opt = centerOptions;
         } else {
             opt = globalOptions;

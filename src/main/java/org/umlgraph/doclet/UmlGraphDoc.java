@@ -123,7 +123,6 @@ public class UmlGraphDoc implements Doclet {
                 continue;
             }
             if (!packages.contains(packageDoc.getSimpleName())) {
-                reporter.print(Diagnostic.Kind.WARNING, "Package processed " + packageDoc.getQualifiedName());
                 packages.add(packageDoc.getSimpleName());
                 OptionProvider view = new PackageView(outputFolder, packageDoc, root, opt);
                 UmlGraph.buildGraph(reporter, root, opt, view, packageDoc);
@@ -151,7 +150,6 @@ public class UmlGraphDoc implements Doclet {
 
         ContextView view = null;
         for (TypeElement classDoc : classDocs) {
-            reporter.print(Diagnostic.Kind.WARNING, "Class processed " + classDoc.getQualifiedName());
             try {
                 if (view == null) {
                     view = new ContextView(outputFolder, classDoc, root, opt);

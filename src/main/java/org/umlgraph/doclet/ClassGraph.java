@@ -499,8 +499,9 @@ class ClassGraph {
             }
         }
         externalTableEnd();
-        if (url != null)
+        if (url != null) {
             w.print(", URL=\"" + url + "\"");
+        }
         nodeProperties(opt);
 
         // If needed, add a note for this node
@@ -672,8 +673,9 @@ class ClassGraph {
             }
             // Handle missing classes:
             Options opt = optionProvider.getOptionsFor(className);
-            if (opt.matchesHideExpression(className))
+            if (opt.matchesHideExpression(className)) {
                 continue;
+            }
             w.println(linePrefix + "// " + className);
             w.print(linePrefix + info.name + "[label=");
             externalTableStart(opt, className, classToUrl(className));
@@ -731,7 +733,7 @@ class ClassGraph {
             }
 
             // if source and dest are not already linked, add a dependency
-            RelationPattern rp = getClassInfo(c, true).getRelation(fri.cd.toString());
+            RelationPattern rp = getClassInfo(c, true).getRelation(fri.cd.getQualifiedName());
             if (rp == null) {
                 String destAdornment = fri.multiple ? "*" : "";
                 relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
@@ -828,7 +830,7 @@ class ClassGraph {
             }
 
             // if source and dest are not already linked, add a dependency
-            RelationPattern rp = getClassInfo(c, true).getRelation(fc.toString());
+            RelationPattern rp = getClassInfo(c, true).getRelation(fc.getQualifiedName());
             if (rp == null || rp.matchesOne(new RelationPattern(RelationDirection.OUT))) {
                 relation(opt, RelationType.DEPEND, c, fc, "", "", "");
             }
