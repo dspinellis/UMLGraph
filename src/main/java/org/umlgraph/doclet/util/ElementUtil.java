@@ -1,5 +1,6 @@
 package org.umlgraph.doclet.util;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,26 @@ import javax.lang.model.util.Types;
 import jdk.javadoc.doclet.DocletEnvironment;
 
 public class ElementUtil {
+
+    public static boolean isPrimitive(TypeMirror type) {
+        if (type.getKind().isPrimitive()) {
+            return true;
+        }
+        if (type.getKind() == TypeKind.ARRAY) {
+            return isPrimitive(((ArrayType) type).getComponentType());
+        }
+        return false;
+    }
+
+    public static boolean isType(TypeMirror type, TypeKind kind) {
+        if (type.getKind() == kind) {
+            return true;
+        }
+        if (type.getKind() == TypeKind.ARRAY) {
+            return isType(((ArrayType) type).getComponentType(), kind);
+        }
+        return false;
+    }
     
     public static CharSequence getSimpleName(Types types, TypeMirror t) {
         if (t instanceof ArrayType) {
@@ -71,13 +92,19 @@ public class ElementUtil {
             return null;
         }
         if (clazz instanceof ArrayType) {
-            return getTypeElement(((ArrayType) clazz).getComponentType());
+            TypeMirror componentType = ((ArrayType) clazz).getComponentType();
+            return getTypeElement(componentType);
         }
         if (!(clazz instanceof DeclaredType)) {
+            System.err.println("getTypeElement will return null for type class : " + clazz + " instanceof " + clazz.getClass() + " and kind " + clazz.getKind());
             return null;
         }
         Element scd = ((DeclaredType) clazz).asElement();
-        return scd instanceof TypeElement ? (TypeElement) scd : null;
+        if (!(scd instanceof TypeElement)) {
+            System.err.println("getTypeElement will return null for element class : " + scd == null ? "null" : scd.getClass());
+            return null;
+        }
+        return (TypeElement) scd;
     }
 
     public static TypeMirror getSuperclassType(DeclaredType pt) {
@@ -88,8 +115,11 @@ public class ElementUtil {
         return getTypeElement(element.getSuperclass());
     }
     
-    public static List<? extends TypeMirror> getInterfacesTypes(TypeElement element) {
-        return element.getInterfaces();
+    public static List<? extends TypeMirror> getInterfacesTypes(Element element) {
+        if (element instanceof TypeElement) {
+            return ((TypeElement) element).getInterfaces();
+        }
+        return Collections.emptyList();
     }
 
     public static List<TypeElement> getInterfaces(TypeElement element) {

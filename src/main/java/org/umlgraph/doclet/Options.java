@@ -589,7 +589,7 @@ public class Options implements Cloneable, OptionProvider {
     
     // reused often, especially in UmlGraphDoc, worth creating just once and reusing
     private static final Pattern allPattern = Pattern.compile(".*");
-    protected static final String DEFAULT_EXTERNAL_APIDOC = "http://docs.oracle.com/javase/7/docs/api/";
+    protected static final String DEFAULT_EXTERNAL_APIDOC = "https://docs.oracle.com/javase/9/docs/api/";
 
     // instance fields
     List<Pattern> hidePatterns = new ArrayList<>();
@@ -975,28 +975,37 @@ public class Options implements Cloneable, OptionProvider {
      * @param packageListUrl
      */
     private void addApiDocRoots(String packageListUrl) {
+        tryFetch(null, packageListUrl);
+    }
+
+    private void tryFetch(String docUrl, String packageListUrl) {
         BufferedReader br = null;
         packageListUrl = fixApiDocRoot(packageListUrl);
-        try {
-            URL url = new URL(packageListUrl + "package-list");
-            br = new BufferedReader(new InputStreamReader(url.openStream()));
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line + ".";
-                Pattern pattern = Pattern.compile(line.replace(".", "\\.") + "[^\\.]*");
-                apiDocMap.put(pattern, packageListUrl);
-            }
-        } catch (IOException e) {
-            System.err.println("Errors happened while accessing the package-list file at " + packageListUrl);
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
+        String finalDocUrl = docUrl == null ? null : fixApiDocRoot(docUrl);
+        for (String suffix : List.of("package-list", "element-list")) {
+            try {
+                URL url = new URL(packageListUrl + suffix);
+                br = new BufferedReader(new InputStreamReader(url.openStream()));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.startsWith("module:")) {
+                        line = line + ".";
+                        Pattern pattern = Pattern.compile(line.replace(".", "\\.") + "[^\\.]*");
+                        apiDocMap.put(pattern, finalDocUrl == null ? packageListUrl : finalDocUrl);
+                    }
+                }
+                break;
+            } catch (IOException e) {
+                System.err.println("Errors happened while accessing the " + suffix + " file at " + packageListUrl);
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                    }
                 }
             }
         }
-
     }
 
     /**
@@ -1008,27 +1017,7 @@ public class Options implements Cloneable, OptionProvider {
      * @param packageListUrl folder containing the package-list
      */
     private void addApiDocRootsOffline(String docUrl, String packageListUrl) {
-        BufferedReader br = null;
-        packageListUrl = fixApiDocRoot(packageListUrl);
-        try {
-            URL url = new URL(packageListUrl + "package-list");
-            br = new BufferedReader(new InputStreamReader(url.openStream()));
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line + ".";
-                Pattern pattern = Pattern.compile(line.replace(".", "\\.") + "[^\\.]*");
-                apiDocMap.put(pattern, fixApiDocRoot(docUrl));
-            }
-        } catch (IOException e) {
-            System.err.println("Unable to access the package-list file at " + packageListUrl);
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                }
-            }
-        }
+        tryFetch(docUrl, packageListUrl);
     }
 
     /**
@@ -1161,8 +1150,9 @@ public class Options implements Cloneable, OptionProvider {
     public boolean matchesCollPackageExpression(CharSequence s) {
         for (Pattern collPattern : collPackages) {
             Matcher m = collPattern.matcher(s);
-            if (strictMatching ? m.matches() : m.find())
+            if (strictMatching ? m.matches() : m.find()) {
                 return true;
+            }
         }
         return false;
     }

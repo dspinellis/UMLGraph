@@ -21,12 +21,9 @@ Visit the project's [home page](http://www.spinellis.gr/umlgraph) for more infor
 
 ## Compatibility
 
-Currently, only Java 8 is supported by the Doclet.
+If you build against Java 8, please use latest version of 5.X of the Doclet.
 
-In Java 9 the JavaDoc Doclet API changed substantially, and the doclet therefore
-needs to be largely rewritten.
-
-Sorry, this has not happened yet - volunteers for this task are welcome.
+Since Java 9 doclet APIs where completely rewritten, the Doclet in version 6 supports only supports Java 9 and above.
 
 ## Development versions
 

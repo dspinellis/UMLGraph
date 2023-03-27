@@ -110,19 +110,19 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.5.0</version>
         <configuration>
-            <tags>
-                <tag>
-                   <name>depend</name>
-                   <placement>X</placement>
-               </tag>
-               <tag>
-                   <name>hidden</name>
-                   <placement>X</placement>
-               </tag>
-               <tag>
-                   <name>opt</name>
-                   <placement>X</placement>
-               </tag>
+          <tags>
+            <tag>
+              <name>depend</name>
+              <placement>X</placement>
+            </tag>
+            <tag>
+              <name>hidden</name>
+              <placement>X</placement>
+            </tag>
+            <tag>
+              <name>opt</name>
+              <placement>X</placement>
+            </tag>
           </tags>
           <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
           <docletPath>${project.build.directory}${file.separator}${project.build.finalName}.jar</docletPath>
@@ -134,12 +134,10 @@
             <option>--hide="java.*"</option>
             <option>--collpackages=</option>
             <option>-qualify</option>
-            <option>-all</option>
             <option>-postfixpackage</option>
             <option>-nodefontsize 9</option>
             <option>-nodefontpackagesize 7</option>
-            <option>--link="https://docs.oracle.com/javase/7/docs/jdk/api/javadoc/doclet/"</option>
-            <option>--link="https://download.oracle.com/javase/7/docs/api/"</option>
+            <option>--link="https://docs.oracle.com/javase/9/docs/api/"</option>
           </additionalOptions>
           <detectJavaApiLink>false</detectJavaApiLink>
           <useStandardDocletOptions>true</useStandardDocletOptions>

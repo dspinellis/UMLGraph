@@ -57,8 +57,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
-import javax.lang.model.type.WildcardType;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileManager;
@@ -501,8 +499,9 @@ class ClassGraph {
             }
         }
         externalTableEnd();
-        if (url != null)
+        if (url != null) {
             w.print(", URL=\"" + url + "\"");
+        }
         nodeProperties(opt);
 
         // If needed, add a note for this node
@@ -674,8 +673,9 @@ class ClassGraph {
             }
             // Handle missing classes:
             Options opt = optionProvider.getOptionsFor(className);
-            if (opt.matchesHideExpression(className))
+            if (opt.matchesHideExpression(className)) {
                 continue;
+            }
             w.println(linePrefix + "// " + className);
             w.print(linePrefix + info.name + "[label=");
             externalTableStart(opt, className, classToUrl(className));
@@ -733,7 +733,7 @@ class ClassGraph {
             }
 
             // if source and dest are not already linked, add a dependency
-            RelationPattern rp = getClassInfo(c, true).getRelation(fri.cd.toString());
+            RelationPattern rp = getClassInfo(c, true).getRelation(fri.cd.getQualifiedName());
             if (rp == null) {
                 String destAdornment = fri.multiple ? "*" : "";
                 relation(opt, opt.inferRelationshipType, c, fri.cd, "", "", destAdornment);
@@ -810,7 +810,9 @@ class ClassGraph {
         for (TypeMirror type : types) {
             // skip primitives and type variables, as well as dependencies
             // on the source class
-            if (type.getKind().isPrimitive() || type instanceof NoType || type instanceof WildcardType || type instanceof TypeVariable
+            if (ElementUtil.isPrimitive(type)
+                    || ElementUtil.isType(type, TypeKind.TYPEVAR) || ElementUtil.isType(type, TypeKind.WILDCARD)
+                    || type instanceof NoType
                     || c.toString().equals(ElementUtil.getTypeElement(type).toString())) {
                 continue;
             }
@@ -828,7 +830,7 @@ class ClassGraph {
             }
 
             // if source and dest are not already linked, add a dependency
-            RelationPattern rp = getClassInfo(c, true).getRelation(fc.toString());
+            RelationPattern rp = getClassInfo(c, true).getRelation(fc.getQualifiedName());
             if (rp == null || rp.matchesOne(new RelationPattern(RelationDirection.OUT))) {
                 relation(opt, RelationType.DEPEND, c, fc, "", "", "");
             }
@@ -856,10 +858,10 @@ class ClassGraph {
 
     private FieldRelationInfo getFieldRelationInfo(VariableElement field) {
         TypeMirror type = field.asType();
-        if (type.getKind().isPrimitive() || type.getKind() == TypeKind.WILDCARD || type.getKind() == TypeKind.TYPEVAR) {
+        if (ElementUtil.isPrimitive(type) || ElementUtil.isType(type, TypeKind.WILDCARD) || ElementUtil.isType(type, TypeKind.TYPEVAR)) {
             return null;
         }
-
+        
         if (ElementUtil.dimensions(type).endsWith("[]")) {
             return new FieldRelationInfo(ElementUtil.getTypeElement(type), true);
         }
@@ -867,34 +869,48 @@ class ClassGraph {
         Options opt = optionProvider.getOptionsFor(docTrees, ElementUtil.getTypeElement(type));
         if (opt.matchesCollPackageExpression(ElementUtil.getQualifiedName(types, type))) {
             List<? extends TypeMirror> argTypes = getInterfaceTypeArguments(collectionClassDoc, type);
-            if (argTypes != null && argTypes.size() == 1 && !argTypes.get(0).getKind().isPrimitive()) {
-                return new FieldRelationInfo(ElementUtil.getTypeElement(argTypes.get(0)), true);
+            if (argTypes != null && argTypes.size() == 1 && !argTypes.get(0).getKind().isPrimitive() && !ElementUtil.isType(argTypes.get(0), TypeKind.TYPEVAR)) {
+                TypeMirror arg = argTypes.get(0);
+                return new FieldRelationInfo(ElementUtil.getTypeElement(arg), true);
             }
 
             argTypes = getInterfaceTypeArguments(mapClassDoc, type);
-            if (argTypes != null && argTypes.size() == 2 && !argTypes.get(1).getKind().isPrimitive()) {
-                return new FieldRelationInfo(ElementUtil.getTypeElement(argTypes.get(1)), true);
+            if (argTypes != null && argTypes.size() == 2 && !argTypes.get(1).getKind().isPrimitive() && !ElementUtil.isType(argTypes.get(1), TypeKind.TYPEVAR)) {
+                TypeMirror arg = argTypes.get(1);
+                return new FieldRelationInfo(ElementUtil.getTypeElement(arg), true);
             }
         }
 
         return new FieldRelationInfo(ElementUtil.getTypeElement(type), false);
     }
 
-    private List<? extends TypeMirror> getInterfaceTypeArguments(TypeElement iface, TypeMirror t) {
+    private List<? extends TypeMirror> getInterfaceTypeArguments(Element iface, TypeMirror t) {
         if (t instanceof DeclaredType) {
             DeclaredType pt = (DeclaredType) t;
             if (iface != null && iface.equals(pt.asElement())) {
                 return pt.getTypeArguments();
             } else {
-                for (TypeMirror pti : ElementUtil.getInterfacesTypes(iface)) {
+                for (TypeMirror pti : ElementUtil.getInterfacesTypes(pt.asElement())) {
                     List<? extends TypeMirror> result = getInterfaceTypeArguments(iface, pti);
                     if (result != null) {
                         return result;
                     }
                 }
-                if (ElementUtil.getSuperclassType(pt) != null) {
-                    return getInterfaceTypeArguments(iface, ElementUtil.getSuperclassType(pt));
+                TypeMirror superType = ElementUtil.getSuperclassType(pt);
+                if (superType != null && superType.getKind() != TypeKind.NONE) {
+                    return getInterfaceTypeArguments(iface, superType);
                 }
+            }
+        } else if (iface instanceof TypeElement) {
+            for (TypeMirror pti : ElementUtil.getInterfacesTypes((TypeElement) iface)) {
+                List<? extends TypeMirror> result = getInterfaceTypeArguments(iface, pti);
+                if (result != null) {
+                    return result;
+                }
+            }
+            TypeElement superType = ElementUtil.getSuperclass((TypeElement) iface);
+            if (superType != null && superType.asType().getKind() != TypeKind.NONE) {
+                return getInterfaceTypeArguments(iface, superType.asType());
             }
         }
         return null;

@@ -44,7 +44,7 @@ class ClassInfo {
      * classes linked with a bi-directional relation , and the ones referred by a
      * directed relation
      */
-    Map<Name, RelationPattern> relatedClasses = new HashMap<>();
+    Map<String, RelationPattern> relatedClasses = new HashMap<>();
 
     ClassInfo(boolean h) {
         hidden = h;
@@ -53,16 +53,16 @@ class ClassInfo {
     }
 
     public void addRelation(Name dest, RelationType rt, RelationDirection d) {
-        RelationPattern ri = relatedClasses.get(dest);
+        RelationPattern ri = relatedClasses.get(dest.toString());
         if (ri == null) {
             ri = new RelationPattern(RelationDirection.NONE);
-            relatedClasses.put(dest, ri);
+            relatedClasses.put(dest.toString(), ri);
         }
         ri.addRelation(rt, d);
     }
 
     public RelationPattern getRelation(CharSequence dest) {
-        return relatedClasses.get(dest);
+        return relatedClasses.get(dest.toString());
     }
 
     /** Start numbering from zero. */

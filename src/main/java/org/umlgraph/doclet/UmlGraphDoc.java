@@ -123,13 +123,12 @@ public class UmlGraphDoc implements Doclet {
                 continue;
             }
             if (!packages.contains(packageDoc.getSimpleName())) {
-                reporter.print(Diagnostic.Kind.WARNING, "Package processed " + packageDoc.getQualifiedName());
                 packages.add(packageDoc.getSimpleName());
                 OptionProvider view = new PackageView(outputFolder, packageDoc, root, opt);
                 UmlGraph.buildGraph(reporter, root, opt, view, packageDoc);
                 runGraphviz(opt.dotExecutable, outputFolder, ElementUtil.getModuleOf(root, packageDoc), packageDoc.getQualifiedName(), packageDoc.getSimpleName(), reporter);
                 alterHtmlDocs(opt, outputFolder, ElementUtil.getModuleOf(root, packageDoc), packageDoc.getQualifiedName(), packageDoc.getSimpleName(), "package-summary.html",
-                        Pattern.compile("(</[Hh]2>)|(<h1 title=\"Package\").*"), reporter);
+                        Pattern.compile("(</[Hh]2>)|(<h1 title=\"Package( |\")).*"), reporter);
             }
         }
     }
@@ -151,7 +150,6 @@ public class UmlGraphDoc implements Doclet {
 
         ContextView view = null;
         for (TypeElement classDoc : classDocs) {
-            reporter.print(Diagnostic.Kind.WARNING, "Class processed " + classDoc.getQualifiedName());
             try {
                 if (view == null) {
                     view = new ContextView(outputFolder, classDoc, root, opt);
