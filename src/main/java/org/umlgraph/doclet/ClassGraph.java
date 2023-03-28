@@ -184,8 +184,7 @@ class ClassGraph {
                 }
                 if (i < typeParameters.size() - 1) {
                     genericsInfo += ", ";
-                }
-                if (i == typeParameters.size() - 1) {
+                } else if (i == typeParameters.size() - 1) {
                     genericsInfo += ">";
                 }
             }
