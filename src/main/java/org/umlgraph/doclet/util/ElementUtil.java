@@ -15,6 +15,7 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -67,6 +68,9 @@ public class ElementUtil {
         Element element = types.asElement(t);
         if (element instanceof TypeElement) {
             return ((TypeElement) element).getQualifiedName();
+        }
+        if (element instanceof TypeVariable) {
+            return element.getSimpleName();
         }
         return "";
     }

@@ -162,18 +162,41 @@ class ClassGraph {
         linePostfix = opt.compact ? "" : "\n";
     }
 
-    /** Return the class's name, possibly by stripping the leading path */
-    private String qualifiedName(Options opt, Name className) {
-        if (opt.hideGenerics) {
-            className = removeTemplate(elementUtils, className);
+    /** Return the class's name, possibly by stripping the leading path 
+     * @param list */
+    private String qualifiedName(Options opt, Name className, List<? extends TypeParameterElement> typeParameters) {
+        String genericsInfo = "";
+        if (opt.hideGenerics || typeParameters == null || typeParameters.isEmpty()) {
+            // nothing to do
+        } else {
+            for (int i = 0; i < typeParameters.size(); i++) {
+                if (i == 0) {
+                    genericsInfo += "<";
+                }
+                TypeParameterElement type = typeParameters.get(i);
+                List<? extends TypeMirror> mirrors = type.getBounds();
+                if (opt.showQualifiedGenerics && mirrors != null && !mirrors.isEmpty()) {
+                    for (TypeMirror m : mirrors) {
+                        genericsInfo += ElementUtil.getQualifiedName(types, m);
+                    }
+                } else {
+                    genericsInfo += type.getSimpleName();
+                }
+                if (i < typeParameters.size() - 1) {
+                    genericsInfo += ", ";
+                }
+                if (i == typeParameters.size() - 1) {
+                    genericsInfo += ">";
+                }
+            }
         }
-        // Fast path - nothing to do:
-        if (opt.showQualified && (opt.showQualifiedGenerics || className.toString().indexOf('<') < 0)) {
-            return className.toString();
+        
+        if (opt.showQualified) {
+            return className.toString() + genericsInfo;
         }
         StringBuilder buf = new StringBuilder(className.length());
         qualifiedNameInner(opt, className, buf, 0, !opt.showQualified);
-        return buf.toString();
+        return buf.toString() + genericsInfo;
     }
 
     private static int qualifiedNameInner(Options opt, Name r, StringBuilder buf, int last, boolean strip) {
@@ -428,7 +451,7 @@ class ClassGraph {
         }
         stereotype(opt, c, Align.CENTER);
         Font font = c.getModifiers().contains(Modifier.ABSTRACT) && c.getKind() != ElementKind.INTERFACE ? Font.CLASS_ABSTRACT : Font.CLASS;
-        String qualifiedName = qualifiedName(opt, c.getQualifiedName());
+        String qualifiedName = qualifiedName(opt, c.getQualifiedName(), c.getTypeParameters());
         int idx = splitPackageClass(qualifiedName);
         if (opt.showComment) {
             tableLine(Align.LEFT, Font.CLASS.wrap(opt, htmlNewline(escape(TagUtil.getComment(docTrees, c)))));
@@ -680,7 +703,7 @@ class ClassGraph {
             w.print(linePrefix + info.name + "[label=");
             externalTableStart(opt, className, classToUrl(className));
             innerTableStart();
-            String qualifiedName = qualifiedName(opt, className);
+            String qualifiedName = qualifiedName(opt, className, null);
             int startTemplate = qualifiedName.indexOf('<');
             int idx = qualifiedName.lastIndexOf('.', startTemplate < 0 ? qualifiedName.length() - 1 : startTemplate);
             if (opt.postfixPackage && idx > 0 && idx < (qualifiedName.length() - 1)) {
