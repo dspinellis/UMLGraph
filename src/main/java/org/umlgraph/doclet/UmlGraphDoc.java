@@ -122,8 +122,8 @@ public class UmlGraphDoc implements Doclet {
             } else {
                 continue;
             }
-            if (!packages.contains(packageDoc.getSimpleName())) {
-                packages.add(packageDoc.getSimpleName());
+            if (!packages.contains(packageDoc.getQualifiedName())) {
+                packages.add(packageDoc.getQualifiedName());
                 OptionProvider view = new PackageView(outputFolder, packageDoc, root, opt);
                 UmlGraph.buildGraph(reporter, root, opt, view, packageDoc);
                 runGraphviz(opt.dotExecutable, outputFolder, ElementUtil.getModuleOf(root, packageDoc), packageDoc.getQualifiedName(), packageDoc.getSimpleName(), reporter);
