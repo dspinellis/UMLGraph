@@ -137,19 +137,21 @@ public class UmlGraph implements Doclet {
      */
     public static Options buildOptions(DocletEnvironment root, Options o) {
         commentOptions = o.clone();
-        commentOptions.setOptions(root.getDocTrees(), findClass(root, "UMLNoteOptions"));
+        commentOptions.setOptions(root.getDocTrees(), findClass(root, "UMLNoteOptions", false));
         commentOptions.shape = Shape.NOTE;
 
         Options opt = o.clone();
-        opt.setOptions(root.getDocTrees(), findClass(root, "UMLOptions"));
+        opt.setOptions(root.getDocTrees(), findClass(root, "UMLOptions", false));
         return opt;
     }
 
     /** Return the ClassDoc for the specified class; null if not found. */
-    private static TypeElement findClass(DocletEnvironment root, String name) {
+    private static TypeElement findClass(DocletEnvironment root, String name, boolean qualified) {
         Set<? extends Element> classes = root.getIncludedElements();
         for (Element element : classes) {
-            if (element instanceof TypeElement && ((TypeElement) element).getQualifiedName().toString().equals(name)) {
+            if (qualified && element instanceof TypeElement && ((TypeElement) element).getQualifiedName().toString().equals(name)) {
+                return (TypeElement) element;
+            } else if (!qualified && element instanceof TypeElement && element.getSimpleName().toString().equals(name)) {
                 return (TypeElement) element;
             }
         }
@@ -206,7 +208,7 @@ public class UmlGraph implements Doclet {
      */
     public static List<View> buildViews(Options opt, DocletEnvironment srcRootDoc, DocletEnvironment viewRootDoc) {
         if (opt.viewName != null) {
-            TypeElement viewClass = findClass(viewRootDoc, opt.viewName);
+            TypeElement viewClass = findClass(viewRootDoc, opt.viewName, true);
             if (viewClass == null) {
                 System.out.println("View " + opt.viewName + " not found! Exiting without generating any output.");
                 return null;
