@@ -1,7 +1,5 @@
 # UMLGraph - Declarative Drawing of UML Diagrams
 
-[![Build Status](https://travis-ci.org/dspinellis/UMLGraph.svg?branch=master)](https://travis-ci.org/dspinellis/UMLGraph)
-
 *UMLGraph* allows the declarative specification and drawing of UML diagrams.
 You can browse the system's documentation
 through [this link](http://www.spinellis.gr/umlgraph/doc/index.html),
@@ -64,3 +62,6 @@ javadoc {
 
 **Jar download**: <https://jitpack.io/com/github/dspinellis/UMLGraph/master-SNAPSHOT/UMLGraph-master-SNAPSHOT.jar>
 
+## See also
+* [Mermaid diagramming and charting tool](https://mermaid.js.org/) (JavaScript-based; easier syntax, good Markdown integration; interactive diagrams)
+* [PlantUML](https://plantuml.com/) (Java-based; supports IDEs and more diagram types)
