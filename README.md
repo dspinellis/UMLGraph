@@ -63,5 +63,7 @@ javadoc {
 **Jar download**: <https://jitpack.io/com/github/dspinellis/UMLGraph/master-SNAPSHOT/UMLGraph-master-SNAPSHOT.jar>
 
 ## See also
+* [D2: Declarative Diagraming](https://d2lang.com/) (Emphasis on aesthetics and extensionability)
 * [Mermaid diagramming and charting tool](https://mermaid.js.org/) (JavaScript-based; easier syntax, good Markdown integration; interactive diagrams)
 * [PlantUML](https://plantuml.com/) (Java-based; supports IDEs and more diagram types)
+* [Comparisson of textual diagraming systems](https://text-to-diagram.com/)
