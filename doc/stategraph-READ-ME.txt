@@ -1,0 +1,90 @@
+stategraph
+========
+
+Stategraph is a python script which allows the declarative specification and drawing of UML state diagrams.
+
+
+How to use it:
+--------
+
+1) Use the commands stated below to declare a state diagram and save it in a text file.
+2) Change your directory to the place where both the script and the text file are located
+3) Run the script as stated below
+4) At the test-output directory you will find the diagram in the format you provided.
+
+
+State diagram commands
+--------
+
+state(id, name, events[])
+-description:Creates a state
+-arguments: id: Unique identifier for the state inside the source (mandatory).
+           name: Caption to be displayed (defaults to the state id).
+           events[]: Events of the state (optional).
+
+
+transition(source, target, label, styling[]) 
+-description:Creates a transition
+-arguments: source: Source state identifier (mandatory).
+            target: Target state identifier (mandatory).
+            label: Caption to be displayed near the transition (optional).
+            styling[]: Array of styling attributes to be applied (optional).
+
+
+initial()
+-description:The initial state. To be referred as initial when referenced in a transition.
+
+
+final()
+-description:The final state. To be referred as final when referenced in a transition.
+
+
+compound_state(name) 
+-description: Creates a subgraph which includes states and transitions
+-arguments: name (optional)
+
+
+compound_end() 
+-description: Ends the compound state
+
+
+styles(element, styling[]) 
+-description: Applies styling to the element specified
+-arguments: element (mandatory), styling[] (mandatory)
+
+
+note(id, note)
+-description: Applies a note to the state specified
+-arguments: node_id (mandatory), note (mandatory)
+
+
+Running the script
+------------
+
+Run the script as stategraph.py [-o output_file] [-v] [input file]
+
+1) If an output file is not specified a pdf is generated using
+the name of the input file.
+
+2) The -v parameter will open the diagram for you to view
+
+example: Running the script as stategraph.py -recruitment.txt -v -o recruitment.png
+will create a png file called recruitment in the test-output directory as well as
+open the file right away.
+
+
+Example
+-------
+
+A full example containing both the declaration and the resulting diagram can be found
+under the stategraph example directory.
+
+The example is called recruitment.txt and the generated pdf is called
+recruitment.pdf
+
+
+Support
+-------
+
+If you are having issues, please let us know.
+Contact at: alkisplas@gmail.com
